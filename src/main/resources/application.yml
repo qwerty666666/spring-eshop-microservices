@@ -1,1 +1,13 @@
-
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  data:
+    web:
+      pageable:
+        page-parameter: page
+        size-parameter: per_page
+        max-page-size: 100
+        default-page-size: 30
+        one-indexed-parameters: true

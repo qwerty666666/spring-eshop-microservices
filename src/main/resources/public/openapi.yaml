@@ -1,0 +1,203 @@
+openapi: 3.0.3
+
+info:
+  version: 1.0.0
+  title: E-Shop
+  description: E-Shop REST API
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+
+tags:
+  - name: catalog
+
+servers:
+  - url: '/api'
+
+paths:
+  "/products":
+    get:
+      tags:
+        - catalog
+      summary: Get product list
+      parameters:
+        - $ref: '#/components/parameters/per_page'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+          description: Product List
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/pagination-result'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/product'
+
+  "/products/{id}":
+    get:
+      tags:
+        - catalog
+      summary: Get product information
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        200:
+          description: Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+              examples:
+                default:
+                  $ref: '#/components/examples/product'
+        404:
+          $ref: '#/components/responses/not-found'
+
+components:
+  schemas:
+    product:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        name:
+          type: string
+          example: Sneakers
+        sku:
+          type: array
+          items:
+            $ref: '#/components/schemas/sku'
+      required:
+        - id
+        - name
+        - sku
+
+    sku:
+      description: Stock Keeping Unit
+      type: object
+      properties:
+        price:
+          $ref: '#/components/schemas/money'
+        ean:
+          $ref: '#/components/schemas/ean'
+      required:
+        - price
+        - ean
+
+    uuid:
+      type: string
+      format: uuid
+      example: 123e4567-e89b-12d3-a456-426614174000
+
+    ean:
+      type: string
+      format: gtin13
+      description: Global Trade Item Number (GTIN-13)
+      example: '5901234123457'
+
+    money:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: decimal
+          minimum: 0
+          example: 100.1
+        currency:
+          type: string
+          description: 3 letter currency code as defined by ISO-4217
+          format: iso-4217
+          example: EUR
+      required:
+        - amount
+        - currency
+
+    base-error:
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 404
+        detail:
+          type: string
+          example: Resource not found
+      required:
+        - status
+        - detail
+
+    pagination-result:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          example: 2
+        perPage:
+          type: integer
+          minimum: 1
+          example: 30
+        totalItems:
+          type: integer
+          minimum: 0
+          example: 63
+        totalPages:
+          type: integer
+          minimum: 0
+          example: 3
+
+  responses:
+    not-found:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/base-error"
+          examples:
+            default:
+              $ref: '#/components/examples/not-found'
+
+  parameters:
+    per_page:
+      name: per_page
+      description: Results per page (max 100)
+      in: query
+      schema:
+        type: integer
+        maximum: 100
+        minimum: 1
+        default: 30
+    page:
+      name: page
+      description: Page number of the results to fetch
+      in: query
+      schema:
+        type: integer
+        default: 1
+
+  examples:
+    product:
+      value:
+        uuid: 123e4567-e89b-12d3-a456-426614174000
+        name: Sneakers
+        sku:
+          - ean: "5901234123457"
+            price:
+              amount: 342.35
+              currency: USD
+
+    not-found:
+      value:
+        status: 404
+        detail: Resource not found
