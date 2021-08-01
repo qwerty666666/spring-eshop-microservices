@@ -25,7 +25,7 @@ class PageableResponseTest {
 
         // when
 
-        var sut = new PagedResponse<>(page, converter);
+        var sut = new PagedResource<>(page, converter);
 
         // then
 
