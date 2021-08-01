@@ -112,9 +112,9 @@ class ProductControllerTest {
         Page<Product> page = new PageImpl<>(Collections.emptyList());
         when(productCrudService.getList(any())).thenReturn(page);
 
-        mockMvc.perform(get("/api/products/?per_page=300"));
+        mockMvc.perform(get("/api/products/?per_page=" + (ProductController.MAX_PAGE_SIZE + 10)));
 
-        verify(productCrudService).getList(Pageable.ofSize(100).withPage(0));
+        verify(productCrudService).getList(Pageable.ofSize(ProductController.MAX_PAGE_SIZE).withPage(0));
     }
 
     private List<Product> createProductList() {

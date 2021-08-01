@@ -21,7 +21,7 @@ paths:
         - catalog
       summary: Get product list
       parameters:
-        - $ref: '#/components/parameters/per_page'
+        - $ref: '#/components/parameters/product_list_per_page'
         - $ref: '#/components/parameters/page'
       responses:
         200:
@@ -171,11 +171,20 @@ components:
   parameters:
     per_page:
       name: per_page
-      description: Results per page (max 100)
+      description: Results per page
       in: query
       schema:
         type: integer
         maximum: 100
+        minimum: 1
+        default: 30
+    product_list_per_page:
+      name: per_page
+      description: Results per page
+      in: query
+      schema:
+        type: integer
+        maximum: 50
         minimum: 1
         default: 30
     page:
@@ -184,6 +193,7 @@ components:
       in: query
       schema:
         type: integer
+        minimum: 1
         default: 1
 
   examples:

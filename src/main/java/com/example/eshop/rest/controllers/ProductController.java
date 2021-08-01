@@ -3,6 +3,7 @@ package com.example.eshop.rest.controllers;
 import com.example.eshop.core.catalog.application.ProductCrudService;
 import com.example.eshop.core.catalog.application.ProductNotFoundException;
 import com.example.eshop.core.catalog.domain.Product.ProductId;
+import com.example.eshop.infrastructure.annotations.PageableSettings;
 import com.example.eshop.rest.resources.ErrorResponse;
 import com.example.eshop.rest.resources.ProductListResource;
 import com.example.eshop.rest.resources.ProductResource;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/products")
 public class ProductController {
     public static final int DEFAULT_PAGE_SIZE = 30;
+    public static final int MAX_PAGE_SIZE = 50;
 
     private final ProductCrudService productCrudService;
 
@@ -43,7 +45,10 @@ public class ProductController {
     }
 
     @GetMapping("/")
-    public ProductListResource getList(@PageableDefault(size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        return new ProductListResource(productCrudService.getList(pageable));
+    public ProductListResource getList(@PageableDefault(size = DEFAULT_PAGE_SIZE)
+            @PageableSettings(maxPageSize = MAX_PAGE_SIZE) Pageable pageable) {
+        var products = productCrudService.getList(pageable);
+
+        return new ProductListResource(products);
     }
 }
