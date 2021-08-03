@@ -1,5 +1,6 @@
 package com.example.eshop.core.catalog.application;
 
+import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
 import com.example.eshop.core.catalog.domain.Product;
 import com.example.eshop.core.catalog.domain.Product.ProductId;
 import com.example.eshop.core.catalog.domain.ProductRepository;
@@ -28,6 +29,6 @@ class ProductCrudServiceImpl implements ProductCrudService {
     @Override
     @Transactional
     public Page<Product> getList(Pageable pageable) {
-        return productRepository.findAll(pageable);
+        return productRepository.findAll(pageable, EntityGraphs.named("Product.sku"));
     }
 }

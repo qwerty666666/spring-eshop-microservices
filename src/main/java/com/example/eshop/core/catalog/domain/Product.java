@@ -14,6 +14,10 @@ import org.springframework.lang.NonNull;
 
 @Entity
 @Table(name = "products")
+@NamedEntityGraph(
+        name = "Product.sku",
+        attributeNodes = @NamedAttributeNode("sku")
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
