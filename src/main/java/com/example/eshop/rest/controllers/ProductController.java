@@ -44,7 +44,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ProductListResource getList(@PageableDefault(size = DEFAULT_PAGE_SIZE)
             @PageableSettings(maxPageSize = MAX_PAGE_SIZE) Pageable pageable) {
         var products = productCrudService.getList(pageable);
