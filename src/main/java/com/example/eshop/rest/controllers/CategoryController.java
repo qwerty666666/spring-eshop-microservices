@@ -22,6 +22,13 @@ public class CategoryController {
         this.categoryCrudService = categoryCrudService;
     }
 
+    @GetMapping
+    public List<CategoryResource> getList() {
+        var categories = categoryCrudService.getAll();
+
+        return categories.stream().map(CategoryResource::new).toList();
+    }
+
     @GetMapping("{id}")
     public Object getById(@PathVariable UUID id) {
         try {

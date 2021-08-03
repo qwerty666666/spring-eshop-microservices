@@ -1,10 +1,13 @@
 package com.example.eshop.core.catalog.application;
 
+import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
 import com.example.eshop.core.catalog.domain.Category;
 import com.example.eshop.core.catalog.domain.CategoryRepository;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,5 +24,12 @@ class CategoryCrudServiceImpl implements CategoryCrudService {
     public Category getCategory(UUID categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " not found"));
+    }
+
+    @Override
+    @Transactional
+    public List<Category> getAll() {
+        var categories = categoryRepository.findAll(EntityGraphs.named("Category.parent"));
+        return IterableUtils.toList(categories);
     }
 }

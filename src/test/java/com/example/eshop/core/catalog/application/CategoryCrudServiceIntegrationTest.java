@@ -36,4 +36,12 @@ class CategoryCrudServiceIntegrationTest {
         assertThatThrownBy(() -> categoryCrudService.getCategory(NOT_EXISTING_CATEGORY_ID))
                 .isInstanceOf(CategoryNotFoundException.class);
     }
+
+    @Test
+    @DataSet("categories.yml")
+    void shouldFindAllCategories() {
+        var categories = categoryCrudService.getAll();
+
+        assertThat(categories).hasSize(4);
+    }
 }
