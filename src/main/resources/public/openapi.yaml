@@ -25,24 +25,13 @@ paths:
         - $ref: '#/components/parameters/page'
       responses:
         200:
-          description: Product List
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/pagination-result'
-                  - type: object
-                    properties:
-                      items:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/product'
+          $ref: '#/components/responses/pagination-product-list'
 
   "/products/{id}":
     get:
       tags:
         - catalog
-      summary: Get product information
+      summary: Get Product information
       parameters:
         - name: id
           in: path
@@ -61,6 +50,73 @@ paths:
                   $ref: '#/components/examples/product'
         404:
           $ref: '#/components/responses/not-found'
+
+  "/categories":
+    get:
+      tags:
+        - catalog
+      summary: Get Category list
+      responses:
+        200:
+          description: Category List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/category'
+              examples:
+                default:
+                  $ref: '#/components/examples/categories'
+
+  "/categories/tree":
+    get:
+      tags:
+        - catalog
+      summary: Get Category hierarchy
+      responses:
+        200:
+          description: Category hierarchy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/categoryTree'
+              examples:
+                default:
+                  $ref: '#/components/examples/categoryTree'
+
+  "/categories/{id}":
+    get:
+      tags:
+        - catalog
+      summary: Get Category information
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: Category Information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/category'
+              examples:
+                default:
+                  $ref: '#/components/examples/category'
+        404:
+          $ref: '#/components/responses/not-found'
+
+  "/categories/{id}/products":
+    get:
+      tags:
+        - catalog
+      summary: Get Product list for given Category
+      parameters:
+        - $ref: '#/components/parameters/product_list_per_page'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          $ref: '#/components/responses/pagination-product-list'
 
 components:
   schemas:
@@ -157,6 +213,38 @@ components:
           minimum: 0
           example: 3
 
+    category:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        name:
+          type: string
+          example: Sneakers
+        parentId:
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+            - nullable: true
+      required:
+        - id
+        - name
+
+    categoryTree:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        name:
+          type: string
+          example: Sneakers
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/categoryTree'
+      required:
+        - id
+        - name
+
   responses:
     not-found:
       description: Resource not found
@@ -167,6 +255,20 @@ components:
           examples:
             default:
               $ref: '#/components/examples/not-found'
+
+    pagination-product-list:
+      description: Product List
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/pagination-result'
+              - type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/product'
 
   parameters:
     per_page:
@@ -195,6 +297,12 @@ components:
         type: integer
         minimum: 1
         default: 1
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/uuid'
 
   examples:
     product:
@@ -206,6 +314,39 @@ components:
             price:
               amount: 342.35
               currency: USD
+
+    category:
+      value:
+        id: 9b455ac1-1aa5-497f-a948-ea7a940ba359
+        name: 'Clothes'
+        parentId: 6842f43b-dfaa-4e4d-b4e2-bd7896c0bd05
+
+    categories:
+      value:
+        - id: 9b455ac1-1aa5-497f-a948-ea7a940ba359
+          name: 'Sneakers'
+          parentId: 6842f43b-dfaa-4e4d-b4e2-bd7896c0bd05
+        - id: 6842f43b-dfaa-4e4d-b4e2-bd7896c0bd05
+          name: 'Clothes'
+          parentId: null
+
+    categoryTree:
+      value:
+        - id: 6842f43b-dfaa-4e4d-b4e2-bd7896c0bd05
+          name: 'Clothes'
+          children:
+            - id: 9b455ac1-1aa5-497f-a948-ea7a940ba359
+              name: 'Sneakers'
+              children:
+                - id: 9b455ac1-1aa5-497f-a948-ea7a940ba359
+                  name: 'Running'
+                  children: []
+            - id: 818162f5-cf42-44ec-9eff-64d1a19b7b8d
+              name: 'Shorts'
+              children: []
+        - id: 592ab0c8-343d-490c-b47a-20583d1f32d3
+          name: 'Accessories'
+          children: []
 
     not-found:
       value:
