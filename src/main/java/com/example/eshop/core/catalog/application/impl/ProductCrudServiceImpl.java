@@ -31,7 +31,9 @@ class ProductCrudServiceImpl implements ProductCrudService {
     @Transactional
     public Product getProduct(ProductId productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException(String.format("Product with ID %s not found", productId)));
+                .orElseThrow(() -> new ProductNotFoundException(productId,
+                        String.format("Product with ID %s not found", productId))
+                );
     }
 
     @Override
@@ -44,7 +46,9 @@ class ProductCrudServiceImpl implements ProductCrudService {
     @Transactional
     public Page<Product> getForCategory(CategoryId categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryNotFoundException(categoryId, "Category with ID " + categoryId + " not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId,
+                        "Category with ID " + categoryId + " not found")
+                );
 
         return productRepository.findByCategory(category, pageable, EntityGraphs.named("Product.sku"));
     }

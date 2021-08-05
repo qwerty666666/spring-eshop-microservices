@@ -12,10 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/products")
@@ -30,25 +27,24 @@ public class ProductController {
         this.productCrudService = productCrudService;
     }
 
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleProductNotFoundException(ProductNotFoundException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Product " + e.getProductId() + " not found"),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
     @GetMapping("{id}")
     public Object getById(@PathVariable ProductId id) {
-        try {
-            var product = productCrudService.getProduct(id);
-
-            return new ProductResource(product);
-        } catch (ProductNotFoundException e) {
-            return new ResponseEntity<>(
-                    new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Product " + id + " not found"),
-                    HttpStatus.NOT_FOUND
-            );
-        }
+        var product = productCrudService.getProduct(id);
+        return new ProductResource(product);
     }
 
     @GetMapping
-    public ProductListResource getList(@PageableDefault(size = DEFAULT_PAGE_SIZE)
-            @PageableSettings(maxPageSize = MAX_PAGE_SIZE) Pageable pageable) {
+    public ProductListResource getList(@PageableSettings(maxPageSize = MAX_PAGE_SIZE,
+            defaultPageSize = DEFAULT_PAGE_SIZE) Pageable pageable) {
         var products = productCrudService.getList(pageable);
-
         return new ProductListResource(products);
     }
 }

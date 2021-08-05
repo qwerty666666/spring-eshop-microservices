@@ -52,7 +52,8 @@ class ProductControllerTest {
     @Test
     void givenGetByIdRequest_whenProductNotFound_thenReturn404() throws Exception {
         var product = createProduct();
-        when(productCrudService.getProduct(product.id())).thenThrow(ProductNotFoundException.class);
+        var id = product.id();
+        when(productCrudService.getProduct(id)).thenThrow(new ProductNotFoundException(id, ""));
 
         mockMvc.perform(get("/api/products/" + product.id()))
                 .andExpect(status().isNotFound())
@@ -63,7 +64,7 @@ class ProductControllerTest {
                         }""".formatted(product.id())
                 ));
 
-        verify(productCrudService).getProduct(product.id());
+        verify(productCrudService).getProduct(id);
     }
 
     private Product createProduct() {
