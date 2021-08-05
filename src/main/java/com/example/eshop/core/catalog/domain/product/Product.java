@@ -12,6 +12,7 @@ import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "products")
@@ -46,6 +47,11 @@ public class Product implements AggregateRoot<ProductId> {
     @Builder.Default
     private Set<ProductCategory> categories = new HashSet<>();
 
+    @Override
+    public ProductId id() {
+        return id;
+    }
+
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @EqualsAndHashCode
@@ -61,10 +67,5 @@ public class Product implements AggregateRoot<ProductId> {
         public String toString() {
             return id.toString();
         }
-    }
-
-    @Override
-    public ProductId id() {
-        return id;
     }
 }

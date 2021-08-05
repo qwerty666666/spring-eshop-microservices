@@ -4,7 +4,6 @@ import com.example.eshop.core.catalog.domain.product.Sku;
 
 public class SkuResource {
     public String ean;
-
     public MoneyResource price;
 
     public SkuResource(Sku sku) {

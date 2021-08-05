@@ -1,7 +1,6 @@
 package com.example.eshop.rest.resources;
 
 import com.example.eshop.core.shared.vo.Money;
-
 import java.math.BigDecimal;
 import java.util.Currency;
 
