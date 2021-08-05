@@ -1,7 +1,8 @@
-package com.example.eshop.core.catalog.domain;
+package com.example.eshop.core.catalog.domain.product;
 
-import com.example.eshop.core.catalog.domain.Category.CategoryId;
-import com.example.eshop.core.catalog.domain.Product.ProductId;
+import com.example.eshop.core.catalog.domain.category.Category;
+import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
+import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

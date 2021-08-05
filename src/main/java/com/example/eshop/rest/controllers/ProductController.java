@@ -2,7 +2,7 @@ package com.example.eshop.rest.controllers;
 
 import com.example.eshop.core.catalog.application.ProductCrudService;
 import com.example.eshop.core.catalog.application.ProductNotFoundException;
-import com.example.eshop.core.catalog.domain.Product.ProductId;
+import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import com.example.eshop.infrastructure.annotations.PageableSettings;
 import com.example.eshop.rest.resources.ErrorResponse;
 import com.example.eshop.rest.resources.ProductListResource;

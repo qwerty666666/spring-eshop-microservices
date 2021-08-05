@@ -1,6 +1,6 @@
 package com.example.eshop.infrastructure.converters;
 
-import com.example.eshop.core.catalog.domain.Category.CategoryId;
+import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import java.util.UUID;

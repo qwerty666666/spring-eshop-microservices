@@ -1,12 +1,12 @@
 package com.example.eshop.core.catalog.application;
 
 import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
-import com.example.eshop.core.catalog.domain.Category;
-import com.example.eshop.core.catalog.domain.Category.CategoryId;
-import com.example.eshop.core.catalog.domain.CategoryRepository;
-import com.example.eshop.core.catalog.domain.Product;
-import com.example.eshop.core.catalog.domain.Product.ProductId;
-import com.example.eshop.core.catalog.domain.ProductRepository;
+import com.example.eshop.core.catalog.domain.category.Category;
+import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
+import com.example.eshop.core.catalog.domain.category.CategoryRepository;
+import com.example.eshop.core.catalog.domain.product.Product;
+import com.example.eshop.core.catalog.domain.product.Product.ProductId;
+import com.example.eshop.core.catalog.domain.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

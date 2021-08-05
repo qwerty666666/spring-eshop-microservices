@@ -1,4 +1,4 @@
-package com.example.eshop.core.catalog.domain;
+package com.example.eshop.core.catalog.domain.product;
 
 import com.example.eshop.core.shared.vo.Money;
 import com.example.eshop.core.shared.Entity;

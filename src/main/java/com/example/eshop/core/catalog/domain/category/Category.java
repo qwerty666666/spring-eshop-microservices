@@ -1,6 +1,6 @@
-package com.example.eshop.core.catalog.domain;
+package com.example.eshop.core.catalog.domain.category;
 
-import com.example.eshop.core.catalog.domain.Category.CategoryId;
+import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.core.shared.AggregateRoot;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;

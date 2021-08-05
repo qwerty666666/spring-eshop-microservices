@@ -1,6 +1,6 @@
 package com.example.eshop.core.catalog.application;
 
-import com.example.eshop.core.catalog.domain.Category.CategoryId;
+import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 
 public class CategoryNotFoundException extends RuntimeException {
     private final CategoryId categoryId;

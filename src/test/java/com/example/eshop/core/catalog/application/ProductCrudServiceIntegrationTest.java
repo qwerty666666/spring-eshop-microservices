@@ -1,8 +1,8 @@
 package com.example.eshop.core.catalog.application;
 
-import com.example.eshop.core.catalog.domain.Category.CategoryId;
-import com.example.eshop.core.catalog.domain.Product;
-import com.example.eshop.core.catalog.domain.Product.ProductId;
+import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
+import com.example.eshop.core.catalog.domain.product.Product;
+import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.Test;

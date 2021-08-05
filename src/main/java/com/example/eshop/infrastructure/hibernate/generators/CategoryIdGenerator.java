@@ -1,8 +1,6 @@
 package com.example.eshop.infrastructure.hibernate.generators;
 
-import com.example.eshop.core.catalog.domain.Category;
-import com.example.eshop.core.catalog.domain.Category.CategoryId;
-import com.example.eshop.core.catalog.domain.Product;
+import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;

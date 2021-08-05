@@ -1,15 +1,14 @@
 package com.example.eshop.core.catalog.application;
 
 import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
-import com.example.eshop.core.catalog.domain.Category;
-import com.example.eshop.core.catalog.domain.Category.CategoryId;
-import com.example.eshop.core.catalog.domain.CategoryRepository;
+import com.example.eshop.core.catalog.domain.category.Category;
+import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
+import com.example.eshop.core.catalog.domain.category.CategoryRepository;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 class CategoryCrudServiceImpl implements CategoryCrudService {

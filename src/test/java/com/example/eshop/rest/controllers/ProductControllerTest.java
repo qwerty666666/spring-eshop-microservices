@@ -2,8 +2,8 @@ package com.example.eshop.rest.controllers;
 
 import com.example.eshop.core.catalog.application.ProductCrudService;
 import com.example.eshop.core.catalog.application.ProductNotFoundException;
-import com.example.eshop.core.catalog.domain.Product;
-import com.example.eshop.core.catalog.domain.Product.ProductId;
+import com.example.eshop.core.catalog.domain.product.Product;
+import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

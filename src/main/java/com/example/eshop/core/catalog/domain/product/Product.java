@@ -1,4 +1,4 @@
-package com.example.eshop.core.catalog.domain;
+package com.example.eshop.core.catalog.domain.product;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -8,7 +8,7 @@ import java.util.UUID;
 import com.example.eshop.core.shared.AggregateRoot;
 import lombok.*;
 import javax.persistence.*;
-import com.example.eshop.core.catalog.domain.Product.ProductId;
+import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

@@ -1,8 +1,9 @@
-package com.example.eshop.core.catalog.domain;
+package com.example.eshop.core.catalog.domain.product;
 
 import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraph;
 import com.cosium.spring.data.jpa.entity.graph.repository.EntityGraphJpaRepository;
-import com.example.eshop.core.catalog.domain.Product.ProductId;
+import com.example.eshop.core.catalog.domain.category.Category;
+import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

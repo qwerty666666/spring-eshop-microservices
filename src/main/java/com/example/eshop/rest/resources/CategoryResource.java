@@ -1,6 +1,6 @@
 package com.example.eshop.rest.resources;
 
-import com.example.eshop.core.catalog.domain.Category;
+import com.example.eshop.core.catalog.domain.category.Category;
 
 public class CategoryResource {
     public String id;

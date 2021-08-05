@@ -1,6 +1,6 @@
 package com.example.eshop.rest.resources;
 
-import com.example.eshop.core.catalog.domain.Sku;
+import com.example.eshop.core.catalog.domain.product.Sku;
 
 public class SkuResource {
     public String ean;

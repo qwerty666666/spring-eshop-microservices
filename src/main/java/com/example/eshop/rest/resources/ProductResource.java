@@ -1,6 +1,6 @@
 package com.example.eshop.rest.resources;
 
-import com.example.eshop.core.catalog.domain.Product;
+import com.example.eshop.core.catalog.domain.product.Product;
 import java.util.List;
 
 public class ProductResource {
