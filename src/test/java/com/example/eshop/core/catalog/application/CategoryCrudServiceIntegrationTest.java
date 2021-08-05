@@ -1,5 +1,6 @@
 package com.example.eshop.core.catalog.application;
 
+import com.example.eshop.core.catalog.domain.Category.CategoryId;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,12 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @DBRider
 class CategoryCrudServiceIntegrationTest {
-    private static final UUID PARENT_CATEGORY_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
-    private static final UUID NOT_EXISTING_CATEGORY_ID = UUID.fromString("12345678-1234-1234-1234-123456789012");
+    private static final CategoryId PARENT_CATEGORY_ID = new CategoryId(
+            UUID.fromString("11111111-1111-1111-1111-111111111111")
+    );
+    private static final CategoryId NOT_EXISTING_CATEGORY_ID = new CategoryId(
+            UUID.fromString("12345678-1234-1234-1234-123456789012")
+    );
 
     @Autowired
     CategoryCrudService categoryCrudService;

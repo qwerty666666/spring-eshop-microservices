@@ -117,6 +117,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/pagination-product-list'
+        404:
+          $ref: '#/components/responses/not-found'
 
 components:
   schemas:

@@ -1,10 +1,14 @@
 package com.example.eshop.core.catalog.domain;
 
+import com.example.eshop.core.catalog.domain.Category.CategoryId;
 import com.example.eshop.core.shared.AggregateRoot;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.lang.Nullable;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,11 +24,15 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Builder
-public class Category implements AggregateRoot<UUID> {
-    @Id
-    @Column(name = "id", nullable = false)
+public class Category implements AggregateRoot<CategoryId> {
+    @EmbeddedId
+    @GenericGenerator(
+            name = "categoryId_generator",
+            strategy = "com.example.eshop.infrastructure.hibernate.generators.ProductIdGenerator"
+    )
+    @GeneratedValue(generator = "categoryId_generator")
     @Getter(AccessLevel.NONE)
-    private UUID id;
+    private CategoryId id;
 
     @Column(name = "name", nullable = false)
     @lombok.NonNull
@@ -40,7 +48,24 @@ public class Category implements AggregateRoot<UUID> {
 
     @Override
     @Nullable
-    public UUID id() {
+    public CategoryId id() {
         return id;
+    }
+
+    @Embeddable
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @EqualsAndHashCode
+    public static class CategoryId implements Serializable {
+        @Column(name = "id", nullable = false)
+        private UUID id;
+
+        public CategoryId(UUID uuid) {
+            this.id = Objects.requireNonNull(uuid, "uuid must not be null");
+        }
+
+        @Override
+        public String toString() {
+            return id.toString();
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.eshop.infrastructure.web.argumentresolvers;
 import com.example.eshop.infrastructure.annotations.PageableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
@@ -82,6 +83,7 @@ public class PageableWithSettingsArgumentResolver implements HandlerMethodArgume
         // and rewrite global config with local
 
         pageableResolver.setMaxPageSize(settings.maxPageSize());
+        pageableResolver.setFallbackPageable(PageRequest.of(0, settings.defaultPageSize()));
 
         return pageableResolver;
     }

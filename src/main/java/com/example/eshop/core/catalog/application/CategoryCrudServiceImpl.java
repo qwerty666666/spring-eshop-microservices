@@ -2,6 +2,7 @@ package com.example.eshop.core.catalog.application;
 
 import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
 import com.example.eshop.core.catalog.domain.Category;
+import com.example.eshop.core.catalog.domain.Category.CategoryId;
 import com.example.eshop.core.catalog.domain.CategoryRepository;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ class CategoryCrudServiceImpl implements CategoryCrudService {
 
     @Override
     @Transactional
-    public Category getCategory(UUID categoryId) {
+    public Category getCategory(CategoryId categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId, "Category " + categoryId + " not found"));
     }
 
     @Override

@@ -10,7 +10,8 @@ import lombok.*;
 import javax.persistence.*;
 import com.example.eshop.core.catalog.domain.Product.ProductId;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.lang.NonNull;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "products")
@@ -39,6 +40,12 @@ public class Product implements AggregateRoot<ProductId> {
     @Builder.Default
     private Set<Sku> sku = new HashSet<>();
 
+    @OneToMany(mappedBy = "product")
+    // Use on cascade delete in ddl instead of CascadeType.DELETE to avoid N requests
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Builder.Default
+    private Set<ProductCategory> categories = new HashSet<>();
+
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @EqualsAndHashCode
@@ -46,7 +53,7 @@ public class Product implements AggregateRoot<ProductId> {
         @Column(name = "id", nullable = false)
         private UUID id;
 
-        public ProductId(@NonNull UUID uuid) {
+        public ProductId(UUID uuid) {
             this.id = Objects.requireNonNull(uuid, "uuid must not be null");
         }
 

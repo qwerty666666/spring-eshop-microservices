@@ -2,11 +2,14 @@ package com.example.eshop.rest.controllers;
 
 import com.example.eshop.core.catalog.application.CategoryCrudService;
 import com.example.eshop.core.catalog.application.CategoryNotFoundException;
+import com.example.eshop.core.catalog.application.ProductCrudService;
 import com.example.eshop.core.catalog.domain.Category;
+import com.example.eshop.core.catalog.domain.Category.CategoryId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.UUID;
@@ -21,9 +24,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CategoryControllerTest {
     @MockBean
     private CategoryCrudService categoryCrudService;
+    @MockBean
+    private ProductCrudService productCrudService;
 
     @Autowired
     private MockMvc mockMvc;
+
+    //--------------------------
+    // getById()
+    //--------------------------
 
     @Test
     void givenGetByIdRequest_whenCategoryExists_thenReturnOk() throws Exception {
@@ -38,25 +47,22 @@ class CategoryControllerTest {
     }
 
     @Test
-    void givenGetByIdRequest_whenCategoryDoesNotExist_thenReturnNotFound() throws Exception {
+    void givenGetByIdRequest_whenCategoryDoesNotExist_thenReturn404() throws Exception {
         var category = createCategory();
-        when(categoryCrudService.getCategory(category.id())).thenThrow(CategoryNotFoundException.class);
+        var id = category.id();
+        when(categoryCrudService.getCategory(id)).thenThrow(new CategoryNotFoundException(id, ""));
 
-        mockMvc.perform(get("/api/categories/" + category.id()))
-                .andExpect(status().isNotFound())
-                .andExpect(content().json("""
-                        {
-                            status: 404,
-                            detail: "Category %s not found"
-                        }
-                        """.formatted(category.id())
-                ));
+        assert404("/api/categories/" + id, id);
 
-        verify(categoryCrudService).getCategory(category.id());
+        verify(categoryCrudService).getCategory(id);
     }
 
+    //--------------------------
+    // getList()
+    //--------------------------
+
     @Test
-    void givenGetListRequest_thenReturnAllCategories() throws Exception {
+    void whenGetListRequest_thenReturnAllCategories() throws Exception {
         var categories = createCategoryList();
         when(categoryCrudService.getAll()).thenReturn(categories);
 
@@ -68,18 +74,55 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$[2].id").value("33333333-3333-3333-3333-333333333333"));
     }
 
+    //--------------------------
+    // getProducts()
+    //--------------------------
+
+    @Test
+    void givenGetProductsRequest_whenCategoryDoesNotExist_thenReturn404() throws Exception {
+        var category = createCategory();
+        var id = category.id();
+        var pageable = PageRequest.of(0, CategoryController.PRODUCTS_DEFAULT_PAGE_SIZE);
+        when(productCrudService.getForCategory(id, pageable)).thenThrow(new CategoryNotFoundException(id, ""));
+
+        assert404("/api/categories/" + id + "/products", id);
+
+        verify(productCrudService).getForCategory(id, pageable);
+    }
+
     private Category createCategory() {
         return Category.builder()
-                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .id(new CategoryId(UUID.fromString("11111111-1111-1111-1111-111111111111")))
                 .name("test")
                 .build();
     }
 
     private List<Category> createCategoryList() {
         return List.of(
-                Category.builder().id(UUID.fromString("11111111-1111-1111-1111-111111111111")).name("test").build(),
-                Category.builder().id(UUID.fromString("22222222-2222-2222-2222-222222222222")).name("test").build(),
-                Category.builder().id(UUID.fromString("33333333-3333-3333-3333-333333333333")).name("test").build()
+                Category.builder()
+                        .id(new CategoryId(UUID.fromString("11111111-1111-1111-1111-111111111111")))
+                        .name("test1")
+                        .build(),
+                Category.builder()
+                        .id(new CategoryId(UUID.fromString("22222222-2222-2222-2222-222222222222")))
+                        .name("test2")
+                        .build(),
+                Category.builder()
+                        .id(new CategoryId(UUID.fromString("33333333-3333-3333-3333-333333333333")))
+                        .name("test3").
+                        build()
         );
+    }
+
+    private void assert404(String url, CategoryId id) throws Exception {
+        mockMvc.perform(get(url))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("""
+                        {
+                            status: 404,
+                            detail: "Category %s not found"
+                        }
+                        """.formatted(id)
+                ));
     }
 }

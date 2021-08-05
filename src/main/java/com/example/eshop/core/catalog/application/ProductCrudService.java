@@ -1,5 +1,6 @@
 package com.example.eshop.core.catalog.application;
 
+import com.example.eshop.core.catalog.domain.Category.CategoryId;
 import com.example.eshop.core.catalog.domain.Product;
 import com.example.eshop.core.catalog.domain.Product.ProductId;
 import org.springframework.data.domain.Page;
@@ -15,4 +16,12 @@ public interface ProductCrudService {
      * Find Products for given page
      */
     Page<Product> getList(Pageable pageable);
+
+    /**
+     * Find Products for the given Category
+     *
+     * @throws CategoryNotFoundException if {@link com.example.eshop.core.catalog.domain.Category} with given
+     *                 {@code categoryId} doesn't exists
+     */
+    Page<Product> getForCategory(CategoryId categoryId, Pageable pageable);
 }

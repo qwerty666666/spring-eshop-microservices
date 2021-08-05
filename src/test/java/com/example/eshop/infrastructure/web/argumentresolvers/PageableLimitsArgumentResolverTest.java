@@ -64,6 +64,17 @@ class PageableLimitsArgumentResolverTest {
         assertThat(pageable).isEqualTo(PageRequest.of(0, 100));
     }
 
+    @Test
+    void shouldUseDefaultPageSizeWhenNotSpecified() throws NoSuchMethodException {
+        var request = new MockHttpServletRequest();
+        var param = new MethodParameter(Sample.class.getMethod("supportedMethod", Pageable.class), 0);
+
+        var pageable = resolver.resolveArgument(param, null, new ServletWebRequest(request), null);
+
+        int defaultPageSize = (int) PageableSettings.class.getMethod("defaultPageSize").getDefaultValue();
+        assertThat(pageable).isEqualTo(PageRequest.of(0, defaultPageSize));
+    }
+
     private NativeWebRequest createRequestMock() {
         return new ServletWebRequest(new MockHttpServletRequest());
     }

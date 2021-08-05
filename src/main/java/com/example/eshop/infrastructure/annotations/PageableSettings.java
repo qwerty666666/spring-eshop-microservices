@@ -17,4 +17,9 @@ public @interface PageableSettings {
      * Max allowed page size
      */
     int maxPageSize() default 2000;
+
+    /**
+     * Default page size
+     */
+    int defaultPageSize() default 20;
 }
