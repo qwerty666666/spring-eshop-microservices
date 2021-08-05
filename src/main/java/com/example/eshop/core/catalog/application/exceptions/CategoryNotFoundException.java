@@ -1,4 +1,4 @@
-package com.example.eshop.core.catalog.application;
+package com.example.eshop.core.catalog.application.exceptions;
 
 import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 

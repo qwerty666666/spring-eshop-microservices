@@ -1,5 +1,6 @@
 package com.example.eshop.core.catalog.application;
 
+import com.example.eshop.core.catalog.application.exceptions.CategoryNotFoundException;
 import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;

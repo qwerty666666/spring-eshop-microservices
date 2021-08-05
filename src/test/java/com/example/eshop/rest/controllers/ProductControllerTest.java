@@ -1,7 +1,7 @@
 package com.example.eshop.rest.controllers;
 
 import com.example.eshop.core.catalog.application.ProductCrudService;
-import com.example.eshop.core.catalog.application.ProductNotFoundException;
+import com.example.eshop.core.catalog.application.exceptions.ProductNotFoundException;
 import com.example.eshop.core.catalog.domain.product.Product;
 import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import org.junit.jupiter.api.Test;

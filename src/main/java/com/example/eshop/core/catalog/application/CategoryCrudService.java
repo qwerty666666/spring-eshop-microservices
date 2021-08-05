@@ -1,5 +1,6 @@
 package com.example.eshop.core.catalog.application;
 
+import com.example.eshop.core.catalog.application.exceptions.CategoryNotFoundException;
 import com.example.eshop.core.catalog.domain.category.Category;
 import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import java.util.List;

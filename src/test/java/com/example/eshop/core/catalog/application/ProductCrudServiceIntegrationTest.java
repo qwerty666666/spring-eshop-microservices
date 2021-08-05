@@ -1,5 +1,7 @@
 package com.example.eshop.core.catalog.application;
 
+import com.example.eshop.core.catalog.application.exceptions.CategoryNotFoundException;
+import com.example.eshop.core.catalog.application.exceptions.ProductNotFoundException;
 import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.core.catalog.domain.product.Product;
 import com.example.eshop.core.catalog.domain.product.Product.ProductId;

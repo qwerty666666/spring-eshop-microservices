@@ -1,6 +1,9 @@
-package com.example.eshop.core.catalog.application;
+package com.example.eshop.core.catalog.application.impl;
 
 import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
+import com.example.eshop.core.catalog.application.ProductCrudService;
+import com.example.eshop.core.catalog.application.exceptions.CategoryNotFoundException;
+import com.example.eshop.core.catalog.application.exceptions.ProductNotFoundException;
 import com.example.eshop.core.catalog.domain.category.Category;
 import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.core.catalog.domain.category.CategoryRepository;
