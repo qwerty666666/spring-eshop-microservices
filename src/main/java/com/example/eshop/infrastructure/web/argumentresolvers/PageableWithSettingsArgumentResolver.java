@@ -1,6 +1,6 @@
 package com.example.eshop.infrastructure.web.argumentresolvers;
 
-import com.example.eshop.infrastructure.annotations.PageableSettings;
+import com.example.eshop.infrastructure.web.PageableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;

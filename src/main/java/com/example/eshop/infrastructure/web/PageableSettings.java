@@ -1,4 +1,4 @@
-package com.example.eshop.infrastructure.annotations;
+package com.example.eshop.infrastructure.web;
 
 import java.lang.annotation.*;
 
@@ -7,7 +7,7 @@ import java.lang.annotation.*;
  * when injecting {@link org.springframework.data.domain.Pageable} into a controller method.
  *
  * It is helpful as Spring Boot {@link org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties}
- * only allows to set settings to whole application at once.
+ * only allows to set settings to whole application.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

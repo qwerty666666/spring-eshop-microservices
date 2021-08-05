@@ -4,7 +4,7 @@ import com.example.eshop.core.catalog.application.CategoryCrudService;
 import com.example.eshop.core.catalog.application.exceptions.CategoryNotFoundException;
 import com.example.eshop.core.catalog.application.ProductCrudService;
 import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
-import com.example.eshop.infrastructure.annotations.PageableSettings;
+import com.example.eshop.infrastructure.web.PageableSettings;
 import com.example.eshop.rest.resources.CategoryResource;
 import com.example.eshop.rest.resources.ErrorResponse;
 import com.example.eshop.rest.resources.ProductListResource;
