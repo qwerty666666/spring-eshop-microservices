@@ -3,6 +3,7 @@ package com.example.eshop.core.catalog.domain.category;
 import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.core.shared.AggregateRoot;
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.lang.Nullable;
 import javax.persistence.*;
@@ -67,5 +68,25 @@ public class Category implements AggregateRoot<CategoryId> {
         public String toString() {
             return id.toString();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+
+        Category category = (Category) o;
+
+        return Objects.equals(id, category.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

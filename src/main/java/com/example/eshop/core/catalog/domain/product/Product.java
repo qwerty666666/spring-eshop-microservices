@@ -9,10 +9,10 @@ import com.example.eshop.core.shared.AggregateRoot;
 import lombok.*;
 import javax.persistence.*;
 import com.example.eshop.core.catalog.domain.product.Product.ProductId;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "products")
@@ -67,5 +67,25 @@ public class Product implements AggregateRoot<ProductId> {
         public String toString() {
             return id.toString();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+
+        Product product = (Product) o;
+
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

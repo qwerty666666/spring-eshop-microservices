@@ -5,11 +5,13 @@ import com.example.eshop.core.shared.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -32,6 +34,7 @@ public class Sku implements Entity<UUID> {
     @Length(min = 13, max = 13)
     private String ean;
 
+    @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "amount", column = @Column(name = "price")),
             @AttributeOverride(name = "currency", column = @Column(name = "currency")),
@@ -45,5 +48,25 @@ public class Sku implements Entity<UUID> {
     @Override
     public UUID id() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+
+        Sku sku = (Sku) o;
+
+        return Objects.equals(id, sku.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

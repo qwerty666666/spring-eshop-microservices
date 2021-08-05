@@ -6,12 +6,14 @@ import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Join-table for products-categories relationship
@@ -21,7 +23,6 @@ import java.time.LocalDateTime;
         name = "products_categories",
         indexes = @Index(columnList = "category_id")
 )
-@EqualsAndHashCode
 public class ProductCategory {
     @EmbeddedId
     private Id id;
@@ -61,6 +62,26 @@ public class ProductCategory {
 
     public Product getProduct() {
         return product;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+
+        ProductCategory productCategory = (ProductCategory) o;
+
+        return Objects.equals(id, productCategory.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @Embeddable
