@@ -28,10 +28,10 @@ import java.util.UUID;
 public class Category implements AggregateRoot<CategoryId> {
     @EmbeddedId
     @GenericGenerator(
-            name = "categoryId_generator",
+            name = "category_id_generator",
             strategy = "com.example.eshop.infrastructure.hibernate.generators.ProductIdGenerator"
     )
-    @GeneratedValue(generator = "categoryId_generator")
+    @GeneratedValue(generator = "category_id_generator")
     @Getter(AccessLevel.NONE)
     private CategoryId id;
 
@@ -48,26 +48,8 @@ public class Category implements AggregateRoot<CategoryId> {
     private Set<Category> children = new HashSet<>();
 
     @Override
-    @Nullable
     public CategoryId id() {
         return id;
-    }
-
-    @Embeddable
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    @EqualsAndHashCode
-    public static class CategoryId implements Serializable {
-        @Column(name = "id", nullable = false)
-        private UUID id;
-
-        public CategoryId(UUID uuid) {
-            this.id = Objects.requireNonNull(uuid, "uuid must not be null");
-        }
-
-        @Override
-        public String toString() {
-            return id.toString();
-        }
     }
 
     @Override
@@ -88,5 +70,23 @@ public class Category implements AggregateRoot<CategoryId> {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+
+    @Embeddable
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @EqualsAndHashCode
+    public static class CategoryId implements Serializable {
+        @Column(name = "id", nullable = false)
+        private UUID id;
+
+        public CategoryId(UUID uuid) {
+            this.id = Objects.requireNonNull(uuid, "uuid must not be null");
+        }
+
+        @Override
+        public String toString() {
+            return id.toString();
+        }
     }
 }

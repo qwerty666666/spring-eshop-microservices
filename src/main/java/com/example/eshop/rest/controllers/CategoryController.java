@@ -44,14 +44,14 @@ public class CategoryController {
     }
 
     @GetMapping("{id}")
-    public Object getById(@PathVariable CategoryId id) {
+    public CategoryResource getById(@PathVariable CategoryId id) {
         var category = categoryCrudService.getCategory(id);
 
         return new CategoryResource(category);
     }
 
     @GetMapping("{id}/products")
-    public Object getProducts(
+    public ProductListResource getProducts(
             @PathVariable CategoryId id,
             @PageableSettings(
                     maxPageSize = PRODUCTS_MAX_PAGE_SIZE,

@@ -27,10 +27,10 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Product implements AggregateRoot<ProductId> {
     @EmbeddedId
     @GenericGenerator(
-            name = "productId_generator",
+            name = "product_id_generator",
             strategy = "com.example.eshop.infrastructure.hibernate.generators.ProductIdGenerator"
     )
-    @GeneratedValue(generator = "productId_generator")
+    @GeneratedValue(generator = "product_id_generator")
     @Getter(AccessLevel.NONE)
     private ProductId id;
 
@@ -52,23 +52,6 @@ public class Product implements AggregateRoot<ProductId> {
         return id;
     }
 
-    @Embeddable
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    @EqualsAndHashCode
-    public static class ProductId implements Serializable {
-        @Column(name = "id", nullable = false)
-        private UUID id;
-
-        public ProductId(UUID uuid) {
-            this.id = Objects.requireNonNull(uuid, "uuid must not be null");
-        }
-
-        @Override
-        public String toString() {
-            return id.toString();
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -87,5 +70,22 @@ public class Product implements AggregateRoot<ProductId> {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Embeddable
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @EqualsAndHashCode
+    public static class ProductId implements Serializable {
+        @Column(name = "id", nullable = false)
+        private UUID id;
+
+        public ProductId(UUID uuid) {
+            this.id = Objects.requireNonNull(uuid, "uuid must not be null");
+        }
+
+        @Override
+        public String toString() {
+            return id.toString();
+        }
     }
 }
