@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 @Service
 class CategoryCrudServiceImpl implements CategoryCrudService {
@@ -33,5 +34,15 @@ class CategoryCrudServiceImpl implements CategoryCrudService {
     public List<Category> getAll() {
         var categories = categoryRepository.findAll(EntityGraphs.named("Category.parent"));
         return IterableUtils.toList(categories);
+    }
+
+    @Override
+    @Transactional
+    public List<Category> getTree() {
+        var categories = categoryRepository.findAll(EntityGraphs.named("Category.children"));
+
+        return StreamSupport.stream(categories.spliterator(), false)
+                .filter(category -> category.getParent() == null)
+                .toList();
     }
 }

@@ -6,6 +6,7 @@ import com.example.eshop.core.catalog.application.ProductCrudService;
 import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.infrastructure.web.PageableSettings;
 import com.example.eshop.rest.resources.CategoryResource;
+import com.example.eshop.rest.resources.CategoryTreeResource;
 import com.example.eshop.rest.resources.ErrorResponse;
 import com.example.eshop.rest.resources.ProductListResource;
 import org.springframework.data.domain.Pageable;
@@ -60,5 +61,11 @@ public class CategoryController {
         var products = productCrudService.getForCategory(id, pageable);
 
         return new ProductListResource(products);
+    }
+
+    @GetMapping("/tree")
+    public List<CategoryTreeResource> getTree() {
+        var tree = categoryCrudService.getTree();
+        return CategoryTreeResource.treeOf(tree);
     }
 }

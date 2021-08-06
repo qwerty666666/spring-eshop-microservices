@@ -15,4 +15,9 @@ public interface CategoryCrudService {
      * @return all {@link Category}
      */
     List<Category> getAll();
+
+    /**
+     * @return list of root nodes
+     */
+    List<Category> getTree();
 }

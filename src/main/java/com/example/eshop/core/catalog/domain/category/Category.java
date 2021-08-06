@@ -19,6 +19,10 @@ import java.util.UUID;
         @NamedEntityGraph(
                 name = "Category.parent",
                 attributeNodes = { @NamedAttributeNode("parent") }
+        ),
+        @NamedEntityGraph(
+                name = "Category.children",
+                attributeNodes = { @NamedAttributeNode("children") }
         )
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

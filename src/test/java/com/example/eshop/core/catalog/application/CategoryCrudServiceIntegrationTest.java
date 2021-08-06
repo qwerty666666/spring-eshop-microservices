@@ -50,4 +50,15 @@ class CategoryCrudServiceIntegrationTest {
 
         assertThat(categories).hasSize(4);
     }
+
+    @Test
+    @DataSet("categories.yml")
+    void shouldReturnRootNodesForCategoryTree() {
+        var tree = categoryCrudService.getTree();
+
+        assertAll(
+                () -> assertThat(tree).as("Root nodes count").hasSize(1),
+                () -> assertThat(tree.get(0).id()).as("Root Category ids").isEqualTo(PARENT_CATEGORY_ID)
+        );
+    }
 }
