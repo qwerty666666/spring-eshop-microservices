@@ -12,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
@@ -69,9 +68,9 @@ class CategoryControllerTest {
         mockMvc.perform(get("/api/categories"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id").value("11111111-1111-1111-1111-111111111111"))
-                .andExpect(jsonPath("$[1].id").value("22222222-2222-2222-2222-222222222222"))
-                .andExpect(jsonPath("$[2].id").value("33333333-3333-3333-3333-333333333333"));
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[2].id").value(3));
     }
 
     //--------------------------
@@ -92,7 +91,7 @@ class CategoryControllerTest {
 
     private Category createCategory() {
         return Category.builder()
-                .id(new CategoryId(UUID.fromString("11111111-1111-1111-1111-111111111111")))
+                .id(new CategoryId(1L))
                 .name("test")
                 .build();
     }
@@ -100,15 +99,15 @@ class CategoryControllerTest {
     private List<Category> createCategoryList() {
         return List.of(
                 Category.builder()
-                        .id(new CategoryId(UUID.fromString("11111111-1111-1111-1111-111111111111")))
+                        .id(new CategoryId(1L))
                         .name("test1")
                         .build(),
                 Category.builder()
-                        .id(new CategoryId(UUID.fromString("22222222-2222-2222-2222-222222222222")))
+                        .id(new CategoryId(2L))
                         .name("test2")
                         .build(),
                 Category.builder()
-                        .id(new CategoryId(UUID.fromString("33333333-3333-3333-3333-333333333333")))
+                        .id(new CategoryId(3L))
                         .name("test3").
                         build()
         );

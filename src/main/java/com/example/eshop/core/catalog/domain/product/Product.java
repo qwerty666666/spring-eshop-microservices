@@ -4,13 +4,11 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import com.example.eshop.core.shared.AggregateRoot;
 import lombok.*;
 import javax.persistence.*;
 import com.example.eshop.core.catalog.domain.product.Product.ProductId;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -26,11 +24,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @Builder
 public class Product implements AggregateRoot<ProductId> {
     @EmbeddedId
-    @GenericGenerator(
-            name = "product_id_generator",
-            strategy = "com.example.eshop.infrastructure.hibernate.generators.ProductIdGenerator"
-    )
-    @GeneratedValue(generator = "product_id_generator")
     @Getter(AccessLevel.NONE)
     private ProductId id;
 
@@ -77,10 +70,11 @@ public class Product implements AggregateRoot<ProductId> {
     @EqualsAndHashCode
     public static class ProductId implements Serializable {
         @Column(name = "id", nullable = false)
-        private UUID id;
+        @GeneratedValue
+        private Long id;
 
-        public ProductId(UUID uuid) {
-            this.id = Objects.requireNonNull(uuid, "uuid must not be null");
+        public ProductId(Long id) {
+            this.id = Objects.requireNonNull(id, "id must not be null");
         }
 
         @Override

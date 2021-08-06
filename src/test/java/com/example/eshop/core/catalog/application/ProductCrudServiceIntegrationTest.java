@@ -21,25 +21,13 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @DBRider
 class ProductCrudServiceIntegrationTest {
-    private static final ProductId SNEAKERS_PRODUCT_ID = new ProductId(
-            UUID.fromString("11111111-1111-1111-1111-111111111111")
-    );
-    private static final ProductId SHIRT_PRODUCT_ID = new ProductId(
-            UUID.fromString("22222222-2222-2222-2222-222222222222")
-    );
-    private static final ProductId JACKET_PRODUCT_ID = new ProductId(
-            UUID.fromString("33333333-3333-3333-3333-333333333333")
-    );
-    private static final ProductId NON_EXISTENT_PRODUCT_ID = new ProductId(
-            UUID.fromString("12345678-1234-1234-1234-123456789012")
-    );
+    private static final ProductId SNEAKERS_PRODUCT_ID = new ProductId(1L);
+    private static final ProductId SHIRT_PRODUCT_ID = new ProductId(2L);
+    private static final ProductId JACKET_PRODUCT_ID = new ProductId(3L);
+    private static final ProductId NON_EXISTENT_PRODUCT_ID = new ProductId(123L);
 
-    private static final CategoryId CLOTHES_CATEGORY_ID = new CategoryId(
-            UUID.fromString("11111111-1111-1111-1111-111111111111")
-    );
-    private static final CategoryId NON_EXISTENT_CATEGORY_ID = new CategoryId(
-            UUID.fromString("12345678-1234-1234-1234-123456789012")
-    );
+    private static final CategoryId CLOTHES_CATEGORY_ID = new CategoryId(1L);
+    private static final CategoryId NON_EXISTENT_CATEGORY_ID = new CategoryId(123L);
 
     @Autowired
     ProductCrudService productCrudService;

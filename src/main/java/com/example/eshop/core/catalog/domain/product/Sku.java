@@ -12,7 +12,6 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Stock Keeping Unit
@@ -21,12 +20,12 @@ import java.util.UUID;
 @Table(name = "sku")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Sku implements Entity<UUID> {
+public class Sku implements Entity<Long> {
     @Id
     @GeneratedValue
     @Column(name = "id")
     @Getter(AccessLevel.NONE)
-    private UUID id;
+    private Long id;
 
     @NaturalId
     @Column(name = "ean", length = 13, unique = true, nullable = false, updatable = false)
@@ -46,7 +45,7 @@ public class Sku implements Entity<UUID> {
     private Product product;
 
     @Override
-    public UUID id() {
+    public Long id() {
         return id;
     }
 

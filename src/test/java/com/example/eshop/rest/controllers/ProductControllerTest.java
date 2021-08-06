@@ -69,7 +69,7 @@ class ProductControllerTest {
 
     private Product createProduct() {
         return Product.builder()
-                .id(new ProductId(UUID.fromString("11111111-1111-1111-1111-111111111111")))
+                .id(new ProductId(1L))
                 .name("test")
                 .build();
     }
@@ -92,8 +92,8 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.totalItems", is(3)))
                 .andExpect(jsonPath("$.totalPages", is(2)))
                 .andExpect(jsonPath("$.items", hasSize(2)))
-                .andExpect(jsonPath("$.items[0].id", is("11111111-1111-1111-1111-111111111111")))
-                .andExpect(jsonPath("$.items[1].id", is("22222222-2222-2222-2222-222222222222")));
+                .andExpect(jsonPath("$.items[0].id", is("1")))
+                .andExpect(jsonPath("$.items[1].id", is("2")));
 
         verify(productCrudService).getList(pageable);
     }
@@ -120,9 +120,9 @@ class ProductControllerTest {
 
     private List<Product> createProductList() {
         return List.of(
-                Product.builder().id(new ProductId(UUID.fromString("11111111-1111-1111-1111-111111111111"))).build(),
-                Product.builder().id(new ProductId(UUID.fromString("22222222-2222-2222-2222-222222222222"))).build(),
-                Product.builder().id(new ProductId(UUID.fromString("33333333-3333-3333-3333-333333333333"))).build()
+                Product.builder().id(new ProductId(1L)).build(),
+                Product.builder().id(new ProductId(2L)).build(),
+                Product.builder().id(new ProductId(3L)).build()
         );
     }
 }

@@ -4,14 +4,12 @@ import com.example.eshop.core.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.core.shared.AggregateRoot;
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.lang.Nullable;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "categories")
@@ -31,11 +29,6 @@ import java.util.UUID;
 @Builder
 public class Category implements AggregateRoot<CategoryId> {
     @EmbeddedId
-    @GenericGenerator(
-            name = "category_id_generator",
-            strategy = "com.example.eshop.infrastructure.hibernate.generators.ProductIdGenerator"
-    )
-    @GeneratedValue(generator = "category_id_generator")
     @Getter(AccessLevel.NONE)
     private CategoryId id;
 
@@ -81,11 +74,12 @@ public class Category implements AggregateRoot<CategoryId> {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @EqualsAndHashCode
     public static class CategoryId implements Serializable {
+        @GeneratedValue
         @Column(name = "id", nullable = false)
-        private UUID id;
+        private Long id;
 
-        public CategoryId(UUID uuid) {
-            this.id = Objects.requireNonNull(uuid, "uuid must not be null");
+        public CategoryId(Long id) {
+            this.id = Objects.requireNonNull(id, "id must not be null");
         }
 
         @Override

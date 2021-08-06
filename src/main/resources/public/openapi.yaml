@@ -37,7 +37,8 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/uuid'
+            type: string
+            example: 1
       responses:
         200:
           description: Product
@@ -126,7 +127,8 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/uuid'
+          type: string
+          example: 1
         name:
           type: string
           example: Sneakers
@@ -150,11 +152,6 @@ components:
       required:
         - price
         - ean
-
-    uuid:
-      type: string
-      format: uuid
-      example: 123e4567-e89b-12d3-a456-426614174000
 
     ean:
       type: string
@@ -219,14 +216,15 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/uuid'
+          type: string
+          example: 1
         name:
           type: string
           example: Sneakers
         parentId:
-          allOf:
-            - $ref: '#/components/schemas/uuid'
-            - nullable: true
+          type: string
+          example: 1
+          nullable: true
       required:
         - id
         - name
@@ -235,7 +233,8 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/uuid'
+          type: string
+          example: 1
         name:
           type: string
           example: Sneakers
@@ -304,12 +303,13 @@ components:
       in: path
       required: true
       schema:
-        $ref: '#/components/schemas/uuid'
+        type: string
+        example: 1
 
   examples:
     product:
       value:
-        uuid: 123e4567-e89b-12d3-a456-426614174000
+        id: 1
         name: Sneakers
         sku:
           - ean: "5901234123457"
@@ -319,34 +319,34 @@ components:
 
     category:
       value:
-        id: 9b455ac1-1aa5-497f-a948-ea7a940ba359
+        id: 1
         name: 'Clothes'
-        parentId: 6842f43b-dfaa-4e4d-b4e2-bd7896c0bd05
+        parentId: 2
 
     categories:
       value:
-        - id: 9b455ac1-1aa5-497f-a948-ea7a940ba359
-          name: 'Sneakers'
-          parentId: 6842f43b-dfaa-4e4d-b4e2-bd7896c0bd05
-        - id: 6842f43b-dfaa-4e4d-b4e2-bd7896c0bd05
+        - id: 1
           name: 'Clothes'
           parentId: null
+        - id: 2
+          name: 'Sneakers'
+          parentId: 1
 
     categoryTree:
       value:
-        - id: 6842f43b-dfaa-4e4d-b4e2-bd7896c0bd05
+        - id: 1
           name: 'Clothes'
           children:
-            - id: 9b455ac1-1aa5-497f-a948-ea7a940ba359
+            - id: 2
               name: 'Sneakers'
               children:
-                - id: 9b455ac1-1aa5-497f-a948-ea7a940ba359
+                - id: 3
                   name: 'Running'
                   children: []
-            - id: 818162f5-cf42-44ec-9eff-64d1a19b7b8d
+            - id: 4
               name: 'Shorts'
               children: []
-        - id: 592ab0c8-343d-490c-b47a-20583d1f32d3
+        - id: 5
           name: 'Accessories'
           children: []
 
