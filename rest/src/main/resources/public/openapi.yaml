@@ -10,6 +10,7 @@ info:
 
 tags:
   - name: catalog
+  - name: customer
 
 servers:
   - url: '/api'
@@ -120,6 +121,44 @@ paths:
           $ref: '#/components/responses/pagination-product-list'
         404:
           $ref: '#/components/responses/not-found'
+
+  "/customers":
+    post:
+      tags:
+        - customer
+      summary: Register new customer
+      requestBody:
+        $ref: '#/components/requestBodies/new-customer'
+      responses:
+        201:
+          $ref: '#/components/schemas/customer'
+        400:
+          $ref: '#/components/responses/validation-error'
+
+  "/customers/current":
+    get:
+      tags:
+        - customer
+      summary: Get the authenticated customer
+      responses:
+        200:
+          $ref: '#/components/responses/authenticated-customer'
+        401:
+          $ref: '#/components/responses/requires-authentication'
+
+    put:
+      tags:
+        - customer
+      summary: Update the authenticated customer
+      requestBody:
+        $ref: '#/components/requestBodies/update-customer'
+      responses:
+        200:
+          description: Customer updated
+        400:
+          $ref: '#/components/responses/validation-error'
+        401:
+          $ref: '#/components/responses/requires-authentication'
 
 components:
   schemas:
@@ -246,6 +285,67 @@ components:
         - id
         - name
 
+    base-customer:
+      type: object
+      description: Customer
+      properties:
+        firstname:
+          type: string
+          example: Rick
+        lastname:
+          type: string
+          example: Sanchez
+        email:
+          type: string
+          format: email
+          example: rick-sanchez@example.com
+        birthday:
+          allOf:
+            - $ref: '#/components/schemas/date'
+            - nullable: true
+              example: '1989-10-21'
+      required:
+        - firstname
+        - lastname
+        - email
+
+    customer:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: 1
+        - $ref: '#/components/schemas/base-customer'
+
+    new-customer:
+      allOf:
+        - $ref: '#/components/schemas/base-customer'
+        - type: object
+          properties:
+            password:
+              type: string
+          required:
+            - password
+
+    date:
+      type: string
+      format: date
+      example: 2000-07-21
+
+  requestBodies:
+    new-customer:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/new-customer'
+
+    update-customer:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/base-customer'
+
   responses:
     not-found:
       description: Resource not found
@@ -256,6 +356,9 @@ components:
           examples:
             default:
               $ref: '#/components/examples/not-found'
+
+    requires-authentication:
+      description: Requires authentication
 
     pagination-product-list:
       description: Product List
@@ -270,6 +373,39 @@ components:
                     type: array
                     items:
                       $ref: '#/components/schemas/product'
+
+    customer:
+      description: Customer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/customer'
+
+    authenticated-customer:
+      description: Authenticated Customer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/customer'
+
+    validation-error:
+      description: Validation Errors
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      example: email
+                    message:
+                      type: string
+                      example: Invalid email format
 
   parameters:
     per_page:
