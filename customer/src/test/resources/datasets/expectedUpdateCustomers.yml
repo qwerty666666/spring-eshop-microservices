@@ -1,0 +1,7 @@
+customers:
+  - id: 1
+    firstname: "firstname"
+    lastname: "lastname"
+    email: "test@test.test"
+    birthday: "1990-10-25"
+    password: "pass"
