@@ -1,4 +1,4 @@
-package com.example.eshop.catalog.infrastructure.config;
+package com.example.eshop.sharedkernel.config;
 
 import com.cosium.spring.data.jpa.entity.graph.repository.support.EntityGraphJpaRepositoryFactoryBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.example.eshop.catalog",
+        basePackages = "com.example.eshop",
         repositoryFactoryBeanClass = EntityGraphJpaRepositoryFactoryBean.class
 )
-@EntityScan(basePackages = "com.example.eshop.catalog")
+@EntityScan(basePackages = "com.example.eshop")
 public class DataConfig {
 }

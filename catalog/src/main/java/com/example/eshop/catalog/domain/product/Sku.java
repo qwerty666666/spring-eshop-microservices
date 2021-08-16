@@ -1,7 +1,7 @@
 package com.example.eshop.catalog.domain.product;
 
 import com.example.eshop.sharedkernel.domain.base.Entity;
-import com.example.eshop.sharedkernel.domain.financial.Money;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

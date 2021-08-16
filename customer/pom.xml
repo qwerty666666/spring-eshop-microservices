@@ -48,5 +48,11 @@
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>
         </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>com.github.database-rider</groupId>
+            <artifactId>rider-spring</artifactId>
+        </dependency>
     </dependencies>
 </project>

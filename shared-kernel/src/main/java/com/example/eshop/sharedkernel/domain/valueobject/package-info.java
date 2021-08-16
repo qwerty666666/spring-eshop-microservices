@@ -1,6 +1,6 @@
 @NonNullApi
 @NonNullFields
-package com.example.eshop.sharedkernel.domain.financial;
+package com.example.eshop.sharedkernel.domain.valueobject;
 
 import org.springframework.lang.NonNullApi;
 import org.springframework.lang.NonNullFields;

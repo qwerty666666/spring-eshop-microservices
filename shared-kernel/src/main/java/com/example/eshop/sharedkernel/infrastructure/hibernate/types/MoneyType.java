@@ -1,6 +1,6 @@
 package com.example.eshop.sharedkernel.infrastructure.hibernate.types;
 
-import com.example.eshop.sharedkernel.domain.financial.Money;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.BigIntegerType;

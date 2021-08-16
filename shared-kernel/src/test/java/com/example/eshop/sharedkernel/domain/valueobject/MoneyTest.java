@@ -1,21 +1,22 @@
-package com.example.eshop.sharedkernel.domain.financial;
+package com.example.eshop.sharedkernel.domain.valueobject;
 
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.Currency;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MoneyTest {
     @Test
-    void cantCreateMoneyWithExceededScale() {
+    void givenAmountWithExceededScale_whenCreateMoney_thenThrowsIlegalArgumentException() {
         assertThatThrownBy(() -> Money.of(10.123, "USD"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void ofFactoryShouldCreateMoney() {
+    void whenCreateMoney_thenMoneyHasCorrectFields() {
         double amount = 1.23;
         String usd = "USD";
 

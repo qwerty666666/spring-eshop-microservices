@@ -1,5 +1,6 @@
-package com.example.eshop.sharedkernel.domain.financial;
+package com.example.eshop.sharedkernel.domain.valueobject;
 
+import com.example.eshop.sharedkernel.domain.base.ValueObject;
 import lombok.Getter;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -12,7 +13,7 @@ import java.util.Currency;
  */
 @Getter
 @Embeddable
-public class Money {
+public class Money implements ValueObject {
     @Column(name = "money_amount", nullable = false)
     private BigDecimal amount;
     @Column(name = "money_currency", nullable = false)
