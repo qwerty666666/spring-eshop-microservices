@@ -1,4 +1,4 @@
-package com.example.eshop.customer.application.signup;
+package com.example.eshop.rest.requests;
 
 import com.example.eshop.customer.infrastructure.validation.ValidPassword;
 import com.example.eshop.sharedkernel.infrastructure.validation.email.ValidEmail;
@@ -6,7 +6,7 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
-public record SignUpCommand(
+public record SignUpRequest(
         @NotEmpty String firstname,
         @NotEmpty String lastname,
         @ValidEmail String email,

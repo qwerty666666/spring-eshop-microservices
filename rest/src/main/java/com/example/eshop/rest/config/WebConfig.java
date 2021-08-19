@@ -15,8 +15,6 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
     @Autowired
     PageableSettingsArgumentResolver pageableResolver;
-    @Autowired
-    ApplicationContext context;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

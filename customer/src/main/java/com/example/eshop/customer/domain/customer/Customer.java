@@ -53,7 +53,11 @@ public class Customer implements AggregateRoot<CustomerId> {
     private LocalDate birthday;
 
     protected Customer() {
-        id = DomainObjectId.randomId(CustomerId.class);
+        this(DomainObjectId.randomId(CustomerId.class));
+    }
+
+    private Customer(CustomerId id) {
+        this.id = id;
     }
 
     @Override
@@ -98,6 +102,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     }
 
     public static class CustomerBuilder {
+        private @Nullable CustomerId id;
         private String firstname;
         private String lastname;
         private Email email;
@@ -105,6 +110,11 @@ public class Customer implements AggregateRoot<CustomerId> {
         private @Nullable LocalDate birthday;
 
         CustomerBuilder() {
+        }
+
+        public CustomerBuilder id(CustomerId id) {
+            this.id = id;
+            return this;
         }
 
         public CustomerBuilder firstname(String firstname) {
@@ -133,7 +143,7 @@ public class Customer implements AggregateRoot<CustomerId> {
         }
 
         public Customer build() {
-            var customer = new Customer();
+            var customer = (id == null ? new Customer() : new Customer(id));
             customer.setFirstname(firstname);
             customer.setLastname(lastname);
             customer.setEmail(email);

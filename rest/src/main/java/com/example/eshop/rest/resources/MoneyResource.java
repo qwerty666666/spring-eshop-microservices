@@ -1,6 +1,6 @@
 package com.example.eshop.rest.resources;
 
-import com.example.eshop.sharedkernel.domain.financial.Money;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import java.math.BigDecimal;
 import java.util.Currency;
 
