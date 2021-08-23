@@ -6,6 +6,9 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
+/**
+ * Register new customer request DTO
+ */
 public record SignUpRequest(
         @NotEmpty String firstname,
         @NotEmpty String lastname,

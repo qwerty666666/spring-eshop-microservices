@@ -2,7 +2,6 @@ package com.example.eshop.rest.config;
 
 import com.example.eshop.rest.infrastructure.web.argumentresolvers.PageableSettingsArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

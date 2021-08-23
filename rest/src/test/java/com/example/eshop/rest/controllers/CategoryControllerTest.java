@@ -1,11 +1,10 @@
 package com.example.eshop.rest.controllers;
 
-import com.example.eshop.catalog.application.CategoryCrudService;
-import com.example.eshop.catalog.application.exceptions.CategoryNotFoundException;
-import com.example.eshop.catalog.application.ProductCrudService;
+import com.example.eshop.catalog.application.category.CategoryCrudService;
+import com.example.eshop.catalog.application.category.CategoryNotFoundException;
+import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
-import com.example.eshop.rest.controllers.CategoryController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,12 +17,15 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CategoryController.class)
 class CategoryControllerTest {
     @MockBean
     private CategoryCrudService categoryCrudService;
+
     @MockBean
     private ProductCrudService productCrudService;
 
@@ -92,7 +94,7 @@ class CategoryControllerTest {
 
     private Category createCategory() {
         return Category.builder()
-                .id(new CategoryId(1L))
+                .id(new CategoryId("1"))
                 .name("test")
                 .build();
     }
@@ -100,15 +102,15 @@ class CategoryControllerTest {
     private List<Category> createCategoryList() {
         return List.of(
                 Category.builder()
-                        .id(new CategoryId(1L))
+                        .id(new CategoryId("1"))
                         .name("test1")
                         .build(),
                 Category.builder()
-                        .id(new CategoryId(2L))
+                        .id(new CategoryId("2"))
                         .name("test2")
                         .build(),
                 Category.builder()
-                        .id(new CategoryId(3L))
+                        .id(new CategoryId("3"))
                         .name("test3").
                         build()
         );

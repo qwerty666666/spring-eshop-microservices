@@ -15,6 +15,7 @@ class CustomerBuilderTest {
 
     @Test
     void testValidation() {
+        //noinspection ConstantConditions
         assertAll(
                 // firstname
                 () -> assertFirstName(null, "Null firstname"),

@@ -5,6 +5,9 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
+/**
+ * Update authenticated customer request DTO
+ */
 public record UpdateCustomerRequest(
     @NotEmpty String firstname,
     @NotEmpty String lastname,

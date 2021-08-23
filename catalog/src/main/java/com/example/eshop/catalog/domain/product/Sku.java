@@ -1,6 +1,7 @@
 package com.example.eshop.catalog.domain.product;
 
 import com.example.eshop.sharedkernel.domain.base.Entity;
+import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,13 +9,29 @@ import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Length;
-
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * Stock Keeping Unit
+ * SKU - Stock Keeping Unit. It is distinct item for sale and for
+ * inventory management.
+ * <p>
+ * SKUs are unique identified by {@code EAN}.
+ * <p>
+ * From the customer's perspective SKU is a single item which can be
+ * added to cart. But typically, customers will work with {@link Product}
+ * instead - a group of SKU, where each SKU is a product variant with
+ * unique attributes like size, color, etc.
  */
 @javax.persistence.Entity
 @Table(name = "sku")
@@ -28,10 +45,13 @@ public class Sku implements Entity<Long> {
     private Long id;
 
     @NaturalId
-    @Column(name = "ean", length = 13, unique = true, nullable = false, updatable = false)
+    @Embedded
+    @AttributeOverride(
+            name = "ean",
+            column = @Column(name = "ean", length = 13, unique = true, nullable = false, updatable = false)
+    )
     @NotNull
-    @Length(min = 13, max = 13)
-    private String ean;
+    private Ean ean;
 
     @Embedded
     @AttributeOverrides({
@@ -40,7 +60,7 @@ public class Sku implements Entity<Long> {
     })
     private Money price;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Product product;
 
@@ -51,21 +71,15 @@ public class Sku implements Entity<Long> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Sku sku = (Sku) o;
 
-        return Objects.equals(id, sku.id);
+        return Objects.equals(ean, sku.ean);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return ean.hashCode();
     }
 }

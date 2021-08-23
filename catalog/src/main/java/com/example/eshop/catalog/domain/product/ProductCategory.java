@@ -3,6 +3,7 @@ package com.example.eshop.catalog.domain.product;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -10,19 +11,32 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * Join-table for products-categories relationship
+ *
+ * @see Product
+ * @see Category
  */
 @Entity
 @Table(
         name = "products_categories",
         indexes = @Index(columnList = "category_id")
 )
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductCategory {
     @EmbeddedId
     private Id id;
@@ -66,17 +80,11 @@ public class ProductCategory {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ProductCategory that = (ProductCategory) o;
 
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-
-        ProductCategory productCategory = (ProductCategory) o;
-
-        return Objects.equals(id, productCategory.id);
+        return Objects.equals(id, that.id);
     }
 
     @Override
@@ -86,12 +94,12 @@ public class ProductCategory {
 
     @Embeddable
     @EqualsAndHashCode
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
     public static class Id implements Serializable {
-        @AttributeOverride(name = "id", column = @Column(name = "category_id"))
+        @AttributeOverride(name = "uuid", column = @Column(name = "category_id", updatable = false, insertable = false))
         private CategoryId categoryId;
-        @AttributeOverride(name = "id", column = @Column(name = "product_id"))
+        @AttributeOverride(name = "uuid", column = @Column(name = "product_id", updatable = false, insertable = false))
         private ProductId productId;
     }
 }

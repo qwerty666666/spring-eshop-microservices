@@ -17,10 +17,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.cosium.spring.data</groupId>
-            <artifactId>spring-data-jpa-entity-graph</artifactId>
-        </dependency>
 
         <!-- Web -->
         <dependency>

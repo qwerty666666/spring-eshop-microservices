@@ -1,12 +1,12 @@
 package com.example.eshop.rest.controllers;
 
-import com.example.eshop.catalog.application.ProductCrudService;
-import com.example.eshop.catalog.application.exceptions.ProductNotFoundException;
+import com.example.eshop.catalog.application.product.ProductCrudService;
+import com.example.eshop.catalog.application.product.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.rest.infrastructure.web.PageableSettings;
-import com.example.eshop.rest.resources.ErrorResponse;
-import com.example.eshop.rest.resources.ProductListResource;
-import com.example.eshop.rest.resources.ProductResource;
+import com.example.eshop.rest.resources.shared.ErrorResponse;
+import com.example.eshop.rest.resources.catalog.ProductListResource;
+import com.example.eshop.rest.resources.catalog.ProductResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

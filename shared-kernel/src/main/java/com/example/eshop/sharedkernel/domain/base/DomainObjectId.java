@@ -1,27 +1,29 @@
 package com.example.eshop.sharedkernel.domain.base;
 
 import com.example.eshop.sharedkernel.domain.Assertions;
+import org.hibernate.Hibernate;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Base class for value objects that are used as Entity Identifiers.
  * <p>
- * This Identifiers are usually used by {@link AggregateRoot} for semantic references
+ * These Identifiers are usually used by {@link AggregateRoot} for semantic references
  * to other Aggregate Roots.
  */
 @MappedSuperclass
 public abstract class DomainObjectId implements ValueObject, Serializable {
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, updatable = false, insertable = false)
     protected String uuid;
+
+    protected DomainObjectId() {
+    }
 
     protected DomainObjectId(String uuid) {
         this.uuid = uuid;
-    }
-
-    protected DomainObjectId() {
     }
 
     /**
@@ -40,22 +42,17 @@ public abstract class DomainObjectId implements ValueObject, Serializable {
     }
 
     @Override
-    public int hashCode() {
-        return uuid.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        DomainObjectId id = (DomainObjectId) o;
+
+        return Objects.equals(uuid, id.uuid);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        DomainObjectId that = (DomainObjectId) o;
-
-        return uuid.equals(that.uuid);
+    public int hashCode() {
+        return uuid.hashCode();
     }
 
     @Override

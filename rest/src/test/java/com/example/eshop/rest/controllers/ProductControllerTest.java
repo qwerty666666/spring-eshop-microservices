@@ -1,7 +1,7 @@
 package com.example.eshop.rest.controllers;
 
-import com.example.eshop.catalog.application.ProductCrudService;
-import com.example.eshop.catalog.application.exceptions.ProductNotFoundException;
+import com.example.eshop.catalog.application.product.ProductCrudService;
+import com.example.eshop.catalog.application.product.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import org.junit.jupiter.api.Test;
@@ -19,9 +19,14 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
@@ -68,7 +73,7 @@ class ProductControllerTest {
 
     private Product createProduct() {
         return Product.builder()
-                .id(new ProductId(1L))
+                .id(new ProductId("1"))
                 .name("test")
                 .build();
     }
@@ -119,9 +124,9 @@ class ProductControllerTest {
 
     private List<Product> createProductList() {
         return List.of(
-                Product.builder().id(new ProductId(1L)).build(),
-                Product.builder().id(new ProductId(2L)).build(),
-                Product.builder().id(new ProductId(3L)).build()
+                Product.builder().id(new ProductId("1")).name("test").build(),
+                Product.builder().id(new ProductId("2")).name("test").build(),
+                Product.builder().id(new ProductId("3")).name("test").build()
         );
     }
 }

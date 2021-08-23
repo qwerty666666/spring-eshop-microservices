@@ -4,7 +4,7 @@ import com.example.eshop.sharedkernel.domain.base.Specification;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
 
 /**
- * Customer with Email already exists
+ * Check if {@link Customer} with given Email already exists
  */
 public interface UniqueEmailSpecification extends Specification<Email> {
 }

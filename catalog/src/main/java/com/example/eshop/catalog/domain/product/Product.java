@@ -1,27 +1,43 @@
 package com.example.eshop.catalog.domain.product;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
-import lombok.*;
-import javax.persistence.*;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
+import com.example.eshop.sharedkernel.domain.Assertions;
+import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
+import com.example.eshop.sharedkernel.domain.base.DomainObjectId;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.lang.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
+/**
+ * Product is a group of {@link Sku}, where each SKU is a distinct
+ * product variant with unique attribute set (like size, color, etc.).
+ * <p>
+ * From catalog perspective, users will work with {@code Product}
+ * instead of {@code SKU}.
+ */
 @Entity
 @Table(name = "products")
 @NamedEntityGraph(
         name = "Product.sku",
         attributeNodes = @NamedAttributeNode("sku")
 )
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Builder
 public class Product implements AggregateRoot<ProductId> {
     @EmbeddedId
     @Getter(AccessLevel.NONE)
@@ -31,30 +47,44 @@ public class Product implements AggregateRoot<ProductId> {
     private String name;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private Set<Sku> sku = new HashSet<>();
 
     @OneToMany(mappedBy = "product")
     // Use on cascade delete in ddl instead of CascadeType.DELETE to avoid N requests
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Builder.Default
     private Set<ProductCategory> categories = new HashSet<>();
+
+    protected Product() {
+        this(DomainObjectId.randomId(ProductId.class));
+    }
+
+    protected Product(ProductId id) {
+        this.id = id;
+    }
 
     @Override
     public ProductId id() {
         return id;
     }
 
+    public void setName(String name) {
+        Assertions.notEmpty(name, "Name must be non empty");
+        this.name = name;
+    }
+
+    public void addSku(Sku sku) {
+        Assertions.notNull(sku, "SKU must be not null");
+        this.sku.add(sku);
+    }
+
+    public static ProductBuilder builder() {
+        return new ProductBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Product product = (Product) o;
 
         return Objects.equals(id, product.id);
@@ -67,19 +97,32 @@ public class Product implements AggregateRoot<ProductId> {
 
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    @EqualsAndHashCode
-    public static class ProductId implements Serializable {
-        @Column(name = "id", nullable = false)
-        @GeneratedValue
-        private Long id;
+    public static class ProductId extends DomainObjectId {
+        public ProductId(String uuid) {
+            super(uuid);
+        }
+    }
 
-        public ProductId(Long id) {
-            this.id = Objects.requireNonNull(id, "id must not be null");
+    public static class ProductBuilder {
+        @Nullable
+        private ProductId id;
+        private String name;
+
+        public ProductBuilder id(ProductId id) {
+            this.id = id;
+            return this;
         }
 
-        @Override
-        public String toString() {
-            return id.toString();
+        public ProductBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Product build() {
+            var product = (id == null ? new Product() : new Product(id));
+            product.setName(name);
+
+            return product;
         }
     }
 }

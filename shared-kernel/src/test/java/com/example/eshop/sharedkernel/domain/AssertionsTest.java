@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class AssertionsTest {
     @Test
     void testNotNull() {
+        //noinspection ConstantConditions,ObviousNullCheck
         assertAll(
                 () -> assertThatThrownBy(() -> Assertions.notNull(null, "err"), "null argument")
                         .isInstanceOf(IllegalArgumentException.class)
@@ -21,6 +22,7 @@ class AssertionsTest {
 
     @Test
     void testNotEmpty() {
+        //noinspection ConstantConditions
         assertAll(
                 () -> assertThatThrownBy(() -> Assertions.notEmpty(null, "err"), "null argument")
                         .isInstanceOf(IllegalArgumentException.class)
@@ -43,6 +45,21 @@ class AssertionsTest {
                 () -> assertThatNoException()
                         .as("valid email")
                         .isThrownBy(() -> Assertions.notEmpty("qwe@qwe.qwe", "err"))
+        );
+    }
+
+    @Test
+    void testEan() {
+        assertAll(
+                () -> assertThatThrownBy(() -> Assertions.ean("invalid-13len", "err"), "non-digit ean")
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("err"),
+                () -> assertThatThrownBy(() -> Assertions.ean("12345678", "err"), "8-characters length")
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("err"),
+                () -> assertThatNoException()
+                        .as("valid ean")
+                        .isThrownBy(() -> Assertions.ean("4006381333931", "err"))
         );
     }
 }

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MoneyTest {
     @Test
-    void givenAmountWithExceededScale_whenCreateMoney_thenThrowsIlegalArgumentException() {
+    void givenAmountWithExceededScale_whenCreateMoney_thenThrowsIllegalArgumentException() {
         assertThatThrownBy(() -> Money.of(10.123, "USD"))
                 .isInstanceOf(IllegalArgumentException.class);
     }

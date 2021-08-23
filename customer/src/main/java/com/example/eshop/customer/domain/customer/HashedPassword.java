@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * Hashed password for storing in Databases
+ * Hashed password for storing password in Databases
  */
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

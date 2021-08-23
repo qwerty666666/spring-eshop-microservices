@@ -1,20 +1,22 @@
 package com.example.eshop.rest.resources;
 
+import com.example.eshop.rest.resources.shared.PagedResource;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class PageableResponseTest {
     @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
     void constructorFillsParametersCorrectly() {
         // given
-
         var items = List.of(1, 2, 3, 4, 5);
         int pageNumber = 1;
         int pageSize = 2;
@@ -24,11 +26,9 @@ class PageableResponseTest {
         var converter = mock(Function.class);
 
         // when
-
-        var sut = new PagedResource<>(page, converter);
+        var sut = new PagedResource(page, converter);
 
         // then
-
         for (var i : itemsOnPage) {
             verify(converter).apply(i);
         }
