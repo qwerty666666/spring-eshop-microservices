@@ -188,9 +188,15 @@ components:
           $ref: '#/components/schemas/money'
         ean:
           $ref: '#/components/schemas/ean'
+        quantity:
+          type: integer
+          minimum: 0
+          description: Available quantity for purchase
+          example: 12
       required:
         - price
         - ean
+        - quantity
 
     ean:
       type: string
