@@ -21,6 +21,7 @@
         <module>shared-kernel</module>
         <module>catalog</module>
         <module>rest</module>
+        <module>warehouse</module>
     </modules>
 
     <properties>
