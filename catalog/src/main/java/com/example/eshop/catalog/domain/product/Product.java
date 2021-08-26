@@ -4,9 +4,11 @@ import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.base.DomainObjectId;
+import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -38,12 +40,15 @@ import java.util.Set;
         attributeNodes = @NamedAttributeNode("sku")
 )
 @Getter
+@ToString(onlyExplicitlyIncluded = true)
 public class Product extends AggregateRoot<ProductId> {
     @EmbeddedId
     @Getter(AccessLevel.NONE)
+    @ToString.Include
     private ProductId id;
 
     @Column(name = "name", nullable = false)
+    @ToString.Include
     private String name;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -72,9 +77,24 @@ public class Product extends AggregateRoot<ProductId> {
         this.name = name;
     }
 
-    public void addSku(Sku sku) {
-        Assertions.notNull(sku, "SKU must be not null");
-        this.sku.add(sku);
+    /**
+     * Set available quantity for SKU with given {@code ean}
+     *
+     * @throws SkuNotFoundException if SKU with given {@code ean} not found in this Product
+     */
+    public void setSkuAvailableQuantity(Ean ean, int availableQuantity) {
+        Assertions.notNull(ean, "EAN must be non empty");
+        getSku(ean).setAvailableQuantity(availableQuantity);
+    }
+
+    /**
+     * @throws SkuNotFoundException if SKU with given {@code ean} not found in this Product
+     */
+    private Sku getSku(Ean ean) {
+        return this.sku.stream()
+                .filter(sku -> sku.getEan().equals(ean))
+                .findFirst()
+                .orElseThrow(() -> new SkuNotFoundException("SKU " + ean + " does not exist in Product " + this));
     }
 
     public static ProductBuilder builder() {

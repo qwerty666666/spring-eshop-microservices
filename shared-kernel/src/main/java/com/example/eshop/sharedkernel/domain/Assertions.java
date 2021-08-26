@@ -52,4 +52,15 @@ public class Assertions {
             throw new IllegalArgumentException(message);
         }
     }
+
+    /**
+     * Given {@code num} must be greater or equal to zero
+     *
+     * @throws IllegalArgumentException if {@code num} is negative
+     */
+    public static void nonNegative(int num, String message) {
+        if (num < 0) {
+            throw new IllegalArgumentException(message);
+        }
+    }
 }

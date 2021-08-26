@@ -62,4 +62,17 @@ class AssertionsTest {
                         .isThrownBy(() -> Assertions.ean("4006381333931", "err"))
         );
     }
+
+    @Test
+    void testNonNegative() {
+        assertAll(
+                () -> assertThatThrownBy(() -> Assertions.nonNegative(-1, "err"), "negative num")
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("err"),
+                () -> assertThatNoException().as("zero num")
+                        .isThrownBy(() -> Assertions.nonNegative(0, "err")),
+                () -> assertThatNoException().as("positive num")
+                        .isThrownBy(() -> Assertions.nonNegative(10, "err"))
+        );
+    }
 }

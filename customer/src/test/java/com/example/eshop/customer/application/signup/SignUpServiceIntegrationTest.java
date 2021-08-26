@@ -24,7 +24,7 @@ class SignUpServiceIntegrationTest {
 
     @Test
     @DataSet(value = "customers.yml")
-    @ExpectedDataSet(value = "expectedSignUpCustomers.yml", ignoreCols = { "id", "password" })
+    @ExpectedDataSet(value = "expectedSignUpCustomers.yml", ignoreCols = { "id", "password" }, orderBy = "email")
     void whenSignUpCustomer_thenDbUpdated() {
         var firstname = "firstname";
         var lastname = "lastname";
@@ -41,10 +41,10 @@ class SignUpServiceIntegrationTest {
         ));
 
         assertAll(
-                () -> assertThat(customer.getFirstname()).isEqualTo(firstname).as("firstname"),
-                () -> assertThat(customer.getLastname()).isEqualTo(lastname).as("lastname"),
-                () -> assertThat(customer.getBirthday()).isEqualTo(birthday).as("birthday"),
-                () -> assertThat(customer.getEmail()).isEqualTo(Email.fromString(email)).as("email")
+                () -> assertThat(customer.getFirstname()).as("firstname").isEqualTo(firstname),
+                () -> assertThat(customer.getLastname()).as("lastname").isEqualTo(lastname),
+                () -> assertThat(customer.getBirthday()).as("birthday").isEqualTo(birthday),
+                () -> assertThat(customer.getEmail()).as("email").isEqualTo(Email.fromString(email))
         );
     }
 }
