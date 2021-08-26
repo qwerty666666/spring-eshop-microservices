@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "stock_items")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public class StockItem implements AggregateRoot<Long> {
+public class StockItem extends AggregateRoot<Long> {
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false)

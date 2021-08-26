@@ -38,7 +38,7 @@ import java.util.Set;
         attributeNodes = @NamedAttributeNode("sku")
 )
 @Getter
-public class Product implements AggregateRoot<ProductId> {
+public class Product extends AggregateRoot<ProductId> {
     @EmbeddedId
     @Getter(AccessLevel.NONE)
     private ProductId id;

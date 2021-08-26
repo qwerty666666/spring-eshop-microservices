@@ -24,7 +24,7 @@ import java.time.LocalDate;
 @Table(name = "customers")
 @Entity
 @Getter
-public class Customer implements AggregateRoot<CustomerId> {
+public class Customer extends AggregateRoot<CustomerId> {
     @EmbeddedId
     private CustomerId id;
 

@@ -45,7 +45,7 @@ import java.util.Set;
         )
 })
 @Getter
-public class Category implements AggregateRoot<CategoryId> {
+public class Category extends AggregateRoot<CategoryId> {
     @EmbeddedId
     @Getter(AccessLevel.NONE)
     private CategoryId id;
