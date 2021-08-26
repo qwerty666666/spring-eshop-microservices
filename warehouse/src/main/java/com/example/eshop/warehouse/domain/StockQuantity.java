@@ -60,6 +60,10 @@ public class StockQuantity implements Comparable<StockQuantity> {
         return new StockQuantity(quantity - toSubtract.quantity);
     }
 
+    public int toInt() {
+        return quantity;
+    }
+
     @Override
     public int compareTo(StockQuantity o) {
         return quantity - o.quantity;

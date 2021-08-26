@@ -1,7 +1,9 @@
 package com.example.eshop.warehouse.domain;
 
+import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.warehouse.domain.events.ProductStockChangedEvent;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,14 @@ public class StockItem extends AggregateRoot<Long> {
     @NotNull
     private StockQuantity stockQuantity;
 
+    public StockItem(Ean ean, StockQuantity stockQuantity) {
+        Assertions.notNull(ean, "EAN must be non null");
+        Assertions.notNull(stockQuantity, "Stock Quantity must be non null");
+
+        this.ean = ean;
+        this.stockQuantity = stockQuantity;
+    }
+
     @Override
     public Long id() {
         return id;
@@ -55,11 +65,15 @@ public class StockItem extends AggregateRoot<Long> {
     public void decrease(StockQuantity quantity) {
         stockQuantity = stockQuantity.subtract(quantity);
 
+        registerDomainEvent(new ProductStockChangedEvent(ean, stockQuantity.toInt()));
+
         log.info("Stock Quantity is decreased by {}. Remaining quantity is {}.", quantity, stockQuantity);
     }
 
     public void increase(StockQuantity quantity) {
         stockQuantity = stockQuantity.add(quantity);
+
+        registerDomainEvent(new ProductStockChangedEvent(ean, stockQuantity.toInt()));
 
         log.info("Stock Quantity is increased by {}. New quantity is {}.", quantity, stockQuantity);
     }
