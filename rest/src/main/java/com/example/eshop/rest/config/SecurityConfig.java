@@ -29,13 +29,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .headers(headers -> headers
+                        // require for h2 console
+                        .frameOptions().disable()
+                )
                 .csrf().disable()
+                .formLogin().disable()
+                .logout().disable()
                 .httpBasic().and()
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeRequests(requests -> requests
-                        .antMatchers("/customers/current").authenticated()
+                        .antMatchers("/api/categories").permitAll()
+                        .antMatchers("/api/products").permitAll()
+                        .antMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 );
     }
