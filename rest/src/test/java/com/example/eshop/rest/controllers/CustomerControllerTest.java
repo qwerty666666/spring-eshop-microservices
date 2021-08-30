@@ -9,6 +9,7 @@ import com.example.eshop.customer.domain.customer.Customer;
 import com.example.eshop.customer.domain.customer.Customer.CustomerId;
 import com.example.eshop.customer.domain.customer.EmailAlreadyExistException;
 import com.example.eshop.customer.domain.customer.HashedPassword;
+import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -28,7 +28,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -46,8 +45,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = CustomerController.class)
 class CustomerControllerTest {
     private final static String CUSTOMER_EMAIL = "test@test.test";
+    private final static CustomerId CUSTOMER_ID = new CustomerId("1");
     private final static Customer CUSTOMER = Customer.builder()
-            .id(new CustomerId("1"))
+            .id(CUSTOMER_ID)
             .firstname("firstname")
             .lastname("lastname")
             .email(Email.fromString(CUSTOMER_EMAIL))
@@ -68,10 +68,7 @@ class CustomerControllerTest {
         @Primary
         public UserDetailsService userDetailsService() {
             return new InMemoryUserDetailsManager(List.of(
-                    User.withUsername(CUSTOMER_EMAIL)
-                            .password("pass")
-                            .authorities(Collections.emptyList())
-                            .build()
+                    new UserDetailsImpl(CUSTOMER_EMAIL, "pass", CUSTOMER_ID.toString())
             ));
         }
     }

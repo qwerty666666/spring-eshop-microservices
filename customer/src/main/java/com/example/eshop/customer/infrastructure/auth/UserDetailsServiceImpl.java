@@ -1,13 +1,11 @@
-package com.example.eshop.rest.infrastructure.auth;
+package com.example.eshop.customer.infrastructure.auth;
 
 import com.example.eshop.customer.application.exceptions.CustomerNotFoundException;
 import com.example.eshop.customer.application.query.QueryCustomerService;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import java.util.Collections;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -22,11 +20,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         try {
             var customer = queryCustomerService.getByEmail(email);
 
-            return User.builder()
-                    .username(email)
-                    .password(customer.getPassword().toString())
-                    .authorities(Collections.emptyList())
-                    .build();
+            return new UserDetailsImpl(
+                    email,
+                    customer.getPassword().toString(),
+                    customer.getId().toString()
+            );
         } catch (CustomerNotFoundException e) {
             throw new UsernameNotFoundException("Customer not found: " + email);
         }
