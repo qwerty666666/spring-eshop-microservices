@@ -63,4 +63,15 @@ public class Assertions {
             throw new IllegalArgumentException(message);
         }
     }
+
+    /**
+     * Given {@code num} must be positive
+     *
+     * @throws IllegalArgumentException if {@code num} is negative or zero
+     */
+    public static void positive(int num, String message) {
+        if (num <= 0) {
+            throw new IllegalArgumentException(message);
+        }
+    }
 }

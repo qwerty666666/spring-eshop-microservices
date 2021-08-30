@@ -22,6 +22,7 @@
         <module>catalog</module>
         <module>rest</module>
         <module>warehouse</module>
+        <module>cart</module>
     </modules>
 
     <properties>
