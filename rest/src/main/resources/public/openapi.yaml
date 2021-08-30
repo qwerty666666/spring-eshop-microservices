@@ -11,6 +11,7 @@ info:
 tags:
   - name: catalog
   - name: customer
+  - name: cart
 
 servers:
   - url: '/api'
@@ -159,6 +160,36 @@ paths:
           $ref: '#/components/responses/validation-error'
         401:
           $ref: '#/components/responses/requires-authentication'
+
+  "/cart":
+    get:
+      tags:
+        - cart
+      summary: Get cart for the authenticated customer
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires-authentication'
+        403:
+          $ref: '#/components/responses/forbidden'
+
+  "/cart/items":
+    put:
+      tags:
+        - cart
+      summary: Add new item to cart of authorized customer or
+        change quantity of already existed in cart item, if item
+        with the given EAN already exist in the cart
+      requestBody:
+        $ref: '#/components/requestBodies/upsert-cart-item'
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires-authentication'
+        403:
+          $ref: '#/components/responses/forbidden'
 
 components:
   schemas:
@@ -339,6 +370,33 @@ components:
       format: date
       example: 2000-07-21
 
+    cart:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1234
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/cart-item'
+
+    cart-item:
+      type: object
+      properties:
+        ean:
+          $ref: '#/components/schemas/ean'
+        quantity:
+          $ref: '#/components/schemas/cart-item-quantity'
+        productName:
+          type: string
+          example: Sneakers
+
+    cart-item-quantity:
+      type: integer
+      minimum: 1
+      example: 7
+
   requestBodies:
     new-customer:
       content:
@@ -351,6 +409,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/base-customer'
+
+    upsert-cart-item:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ean:
+                $ref: '#/components/schemas/ean'
+              quantity:
+                $ref: '#/components/schemas/cart-item-quantity'
 
   responses:
     not-found:
@@ -365,6 +434,9 @@ components:
 
     requires-authentication:
       description: Requires authentication
+
+    forbidden:
+      description: Forbidden
 
     pagination-product-list:
       description: Product List
@@ -393,6 +465,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/customer'
+
+    cart:
+      description: Cart
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cart'
 
     validation-error:
       description: Validation Errors

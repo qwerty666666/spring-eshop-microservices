@@ -32,6 +32,11 @@
             <artifactId>customer</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>cart</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Web -->
         <dependency>
