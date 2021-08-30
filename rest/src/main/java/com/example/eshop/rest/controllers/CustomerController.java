@@ -26,7 +26,7 @@ import javax.validation.Valid;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/api/customers")
 public class CustomerController {
     @Autowired
     private MessageSource messageSource;
