@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration("customerSecurityConfig")
+@Configuration("customer-SecurityConfig")
 public class SecurityConfig {
     @Bean
     public PasswordValidator passwordValidator() {

@@ -10,7 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration
+@Configuration("rest-securityConfig")
 @Import(com.example.eshop.customer.config.SecurityConfig.class)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
