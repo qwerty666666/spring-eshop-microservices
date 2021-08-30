@@ -3,6 +3,7 @@ package com.example.eshop.customer.application.signup;
 import com.example.eshop.customer.domain.customer.*;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -21,8 +22,9 @@ class SignUpServiceImplTest {
 
         var customerRepository = mock(CustomerRepository.class);
         var passwordFactory = mock(HashedPasswordFactory.class);
+        var eventPublisher = mock(ApplicationEventPublisher.class);
 
-        var service = new SignUpServiceImpl(customerRepository, passwordFactory, uniqueEmailSpecification);
+        var service = new SignUpServiceImpl(customerRepository, passwordFactory, uniqueEmailSpecification, eventPublisher);
 
         var signUpCommand = new SignUpCommand(
                 "firstname",

@@ -2,6 +2,7 @@ package com.example.eshop.customer.application.signup;
 
 import com.example.eshop.customer.domain.customer.*;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,15 +11,17 @@ public class SignUpServiceImpl implements SignUpService {
     private final CustomerRepository customerRepository;
     private final HashedPasswordFactory hashedPasswordFactory;
     private final UniqueEmailSpecification uniqueEmailSpecification;
+    private final ApplicationEventPublisher eventPublisher;
 
     public SignUpServiceImpl(
             CustomerRepository customerRepository,
             HashedPasswordFactory hashedPasswordFactory,
-            UniqueEmailSpecification uniqueEmailSpecification
-    ) {
+            UniqueEmailSpecification uniqueEmailSpecification,
+            ApplicationEventPublisher eventPublisher) {
         this.customerRepository = customerRepository;
         this.hashedPasswordFactory = hashedPasswordFactory;
         this.uniqueEmailSpecification = uniqueEmailSpecification;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -27,6 +30,8 @@ public class SignUpServiceImpl implements SignUpService {
         var customer = createCustomer(command);
 
         customerRepository.save(customer);
+
+        eventPublisher.publishEvent(new CustomerCreatedEvent(customer.getId().toString()));
 
         return customer;
     }
