@@ -1,4 +1,4 @@
-package com.example.eshop.cart.application.usecases.query.dto;
+package com.example.eshop.cart.application.usecases.cart.query.dto;
 
 import com.example.eshop.cart.domain.Cart;
 import java.util.List;

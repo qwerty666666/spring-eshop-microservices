@@ -1,4 +1,4 @@
-package com.example.eshop.cart.application.usecases.query.dto;
+package com.example.eshop.cart.application.usecases.cart.query.dto;
 
 import com.example.eshop.cart.domain.CartItem;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;

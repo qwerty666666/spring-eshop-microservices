@@ -1,4 +1,4 @@
-package com.example.eshop.cart.application.usecases.cartitem;
+package com.example.eshop.cart.application.usecases.cart.cartitem;
 
 import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.Cart;
@@ -23,6 +23,9 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ContextConfiguration(classes = AuthConfig.class)
 class CartItemServiceImplIntegrationTest {
+    private final static String NON_OWNER_CUSTOMER_ID = "2";
+    private final static Ean EAN = Ean.fromString("0799439112766");
+
     @MockBean
     private CartRepository cartRepository;
 
@@ -35,13 +38,14 @@ class CartItemServiceImplIntegrationTest {
     @BeforeEach
     void setUp() {
         var cart = new Cart(AuthConfig.CUSTOMER_ID);
+        cart.addItem(EAN, 10);
         when(cartRepository.findByNaturalId(eq(AuthConfig.CUSTOMER_ID))).thenReturn(Optional.of(cart));
     }
 
     @Test
     @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
     void whenUpsertCalledByNonCartOwner_thenThrowAccessDeniedException() {
-        var command = new UpsertCartItemCommand("2", Ean.fromString("0799439112766"), 10);
+        var command = new UpsertCartItemCommand(NON_OWNER_CUSTOMER_ID, EAN, 10);
 
         assertThatThrownBy(() -> cartItemService.upsert(command))
                 .isInstanceOf(AccessDeniedException.class);
@@ -50,8 +54,25 @@ class CartItemServiceImplIntegrationTest {
     @Test
     @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
     void whenUpsertCalledByCartOwner_thenNoExceptionIsThrown() {
-        var command = new UpsertCartItemCommand(AuthConfig.CUSTOMER_ID, Ean.fromString("0799439112766"), 10);
+        var command = new UpsertCartItemCommand(AuthConfig.CUSTOMER_ID, EAN, 10);
 
         assertThatNoException().isThrownBy(() -> cartItemService.upsert(command));
+    }
+
+    @Test
+    @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+    void whenRemoveCalledByNonCartOwner_thenThrowAccessDeniedException() {
+        var command = new RemoveCartItemCommand(NON_OWNER_CUSTOMER_ID, EAN);
+
+        assertThatThrownBy(() -> cartItemService.remove(command))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+    void whenRemoveCalledByCartOwner_thenNoExceptionIsThrown() {
+        var command = new RemoveCartItemCommand(AuthConfig.CUSTOMER_ID, EAN);
+
+        assertThatNoException().isThrownBy(() -> cartItemService.remove(command));
     }
 }

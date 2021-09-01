@@ -171,8 +171,6 @@ paths:
           $ref: '#/components/responses/cart'
         401:
           $ref: '#/components/responses/requires-authentication'
-        403:
-          $ref: '#/components/responses/forbidden'
 
   "/cart/items":
     put:
@@ -188,8 +186,20 @@ paths:
           $ref: '#/components/responses/cart'
         401:
           $ref: '#/components/responses/requires-authentication'
-        403:
-          $ref: '#/components/responses/forbidden'
+
+  "/cart/items/{ean}":
+    delete:
+      tags:
+        - cart
+      summary: Remove cart item with provided EAN from authorized
+        customer's cart
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires-authentication'
+        404:
+          $ref: '#/components/responses/not-found'
 
 components:
   schemas:
@@ -388,9 +398,6 @@ components:
           $ref: '#/components/schemas/ean'
         quantity:
           $ref: '#/components/schemas/cart-item-quantity'
-        productName:
-          type: string
-          example: Sneakers
 
     cart-item-quantity:
       type: integer

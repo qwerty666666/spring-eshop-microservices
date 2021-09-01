@@ -1,6 +1,6 @@
 package com.example.eshop.cart.application.eventlisteners;
 
-import com.example.eshop.cart.application.usecases.create.CreateCartService;
+import com.example.eshop.cart.application.usecases.cart.create.CreateCartService;
 import com.example.eshop.customer.domain.customer.CustomerCreatedEvent;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

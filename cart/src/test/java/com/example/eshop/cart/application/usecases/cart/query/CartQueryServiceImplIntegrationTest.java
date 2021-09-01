@@ -1,5 +1,6 @@
-package com.example.eshop.cart.application.usecases.query;
+package com.example.eshop.cart.application.usecases.cart.query;
 
+import com.example.eshop.cart.application.usecases.cart.query.CartQueryService;
 import com.example.eshop.cart.config.AuthConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

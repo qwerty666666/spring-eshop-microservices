@@ -43,7 +43,7 @@ public class Cart extends AggregateRoot<Long> {
     @NotNull
     private String customerId;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "ean")
     @OrderBy("creationTime")
     private Map<Ean, CartItem> items = new LinkedHashMap<>();
@@ -100,7 +100,7 @@ public class Cart extends AggregateRoot<Long> {
      */
     private CartItem getItem(Ean ean) {
         if (!containsItem(ean)) {
-            throw new CartItemNotFoundException("Cart does not contain CartItem " + ean);
+            throw new CartItemNotFoundException(ean, "Cart does not contain CartItem " + ean);
         }
 
         return items.get(ean);
@@ -111,6 +111,21 @@ public class Cart extends AggregateRoot<Long> {
      */
     public Collection<CartItem> getItems() {
         return Collections.unmodifiableCollection(this.items.values());
+    }
+
+    /**
+     * Removes {@link CartItem} from this Cart
+     *
+     * @throws CartItemNotFoundException if CartItem with given EAN does not exist in this Cart
+     */
+    public void removeItem(Ean ean) {
+        if (!containsItem(ean)) {
+            throw new CartItemNotFoundException(ean, "Cart does not contain CartItem " + ean);
+        }
+
+        log.info("Remove CartItem " + getItem(ean) + " from Cart");
+
+        items.remove(ean);
     }
 
     @Override

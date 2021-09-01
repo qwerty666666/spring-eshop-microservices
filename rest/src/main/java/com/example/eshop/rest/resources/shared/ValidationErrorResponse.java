@@ -9,6 +9,10 @@ public class ValidationErrorResponse {
     @JsonProperty
     private List<Error> errors = new ArrayList<>();
 
+    public ValidationErrorResponse addError(String field, String message) {
+        return addError(new Error(field, message));
+    }
+
     public ValidationErrorResponse addError(Error error) {
         errors.add(error);
         return this;

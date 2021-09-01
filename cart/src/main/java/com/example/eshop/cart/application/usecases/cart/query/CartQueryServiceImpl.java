@@ -1,7 +1,6 @@
-package com.example.eshop.cart.application.usecases.query;
+package com.example.eshop.cart.application.usecases.cart.query;
 
-import com.example.eshop.cart.application.usecases.query.dto.CartDto;
-import com.example.eshop.cart.domain.Cart;
+import com.example.eshop.cart.application.usecases.cart.query.dto.CartDto;
 import com.example.eshop.cart.domain.CartRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;

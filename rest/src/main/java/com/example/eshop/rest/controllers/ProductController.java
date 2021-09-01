@@ -8,10 +8,12 @@ import com.example.eshop.rest.resources.shared.ErrorResponse;
 import com.example.eshop.rest.resources.catalog.ProductListResource;
 import com.example.eshop.rest.resources.catalog.ProductResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/products")
@@ -19,17 +21,18 @@ public class ProductController {
     public static final int DEFAULT_PAGE_SIZE = 30;
     public static final int MAX_PAGE_SIZE = 50;
 
-    private final ProductCrudService productCrudService;
+    @Autowired
+    private ProductCrudService productCrudService;
 
     @Autowired
-    public ProductController(ProductCrudService productCrudService) {
-        this.productCrudService = productCrudService;
-    }
+    private MessageSource messageSource;
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleProductNotFoundException(ProductNotFoundException e) {
+    private ResponseEntity<ErrorResponse> handleProductNotFoundException(ProductNotFoundException e, Locale locale) {
+        var message = messageSource.getMessage("productNotFound", new Object[]{ e.getProductId() }, locale);
+
         return new ResponseEntity<>(
-                new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Product " + e.getProductId() + " not found"),
+                new ErrorResponse(HttpStatus.NOT_FOUND.value(), message),
                 HttpStatus.NOT_FOUND
         );
     }

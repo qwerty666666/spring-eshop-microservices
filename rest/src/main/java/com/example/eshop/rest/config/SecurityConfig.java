@@ -3,6 +3,7 @@ package com.example.eshop.rest.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -41,8 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeRequests(requests -> requests
-                        .antMatchers("/api/categories").permitAll()
-                        .antMatchers("/api/products").permitAll()
+                        .antMatchers("/api/categories/**").permitAll()
+                        .antMatchers("/api/products/**").permitAll()
+                        .antMatchers(HttpMethod.POST, "/api/customers").permitAll()
                         .antMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 );

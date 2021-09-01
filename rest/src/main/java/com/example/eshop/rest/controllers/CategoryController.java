@@ -9,11 +9,14 @@ import com.example.eshop.rest.resources.catalog.CategoryResource;
 import com.example.eshop.rest.resources.catalog.CategoryTreeResource;
 import com.example.eshop.rest.resources.shared.ErrorResponse;
 import com.example.eshop.rest.resources.catalog.ProductListResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -21,21 +24,24 @@ public class CategoryController {
     public static final int PRODUCTS_DEFAULT_PAGE_SIZE = ProductController.DEFAULT_PAGE_SIZE;
     public static final int PRODUCTS_MAX_PAGE_SIZE = ProductController.MAX_PAGE_SIZE;
 
-    private final CategoryCrudService categoryCrudService;
-    private final ProductCrudService productCrudService;
+    @Autowired
+    private CategoryCrudService categoryCrudService;
 
-    public CategoryController(CategoryCrudService categoryCrudService, ProductCrudService productCrudService) {
-        this.categoryCrudService = categoryCrudService;
-        this.productCrudService = productCrudService;
-    }
+    @Autowired
+    private ProductCrudService productCrudService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     /**
      * @return 404 response if Category doesn't exist
      */
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleCategoryNotFoundException(CategoryNotFoundException e) {
+    private ResponseEntity<ErrorResponse> handleCategoryNotFoundException(CategoryNotFoundException e, Locale locale) {
+        var message = messageSource.getMessage("categoryNotFound", new Object[]{ e.getCategoryId() }, locale);
+
         return new ResponseEntity<>(
-                new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Category " + e.getCategoryId() + " not found"),
+                new ErrorResponse(HttpStatus.NOT_FOUND.value(), message),
                 HttpStatus.NOT_FOUND
         );
     }

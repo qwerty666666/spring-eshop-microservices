@@ -69,4 +69,31 @@ class CartTest {
         assertThatThrownBy(() -> cart.changeItemQuantity(ean, qty))
                 .isInstanceOf(CartItemNotFoundException.class);
     }
+
+    @Test
+    void whenRemove_thenCartItemWithGivenEanRemoveFromItems() {
+        // Given
+        var removingEan = Ean.fromString("0799439112766");
+
+        var cart = new Cart("1");
+        cart.addItem(removingEan, 10);
+        cart.addItem(Ean.fromString("1111111111111"), 10);
+
+        // When
+        cart.removeItem(removingEan);
+
+        // Then
+        assertThat(cart.getItems()).extracting(CartItem::getEan).doesNotContain(removingEan);
+    }
+
+    @Test
+    void givenNonExistingInCartEan_whenRemove_thenThrowCartItemNotFoundException() {
+        // Given
+        var cart = new Cart("1");
+        Ean ean = Ean.fromString("0799439112766");
+
+        // When + Then
+        assertThatThrownBy(() -> cart.removeItem(ean))
+                .isInstanceOf(CartItemNotFoundException.class);
+    }
 }

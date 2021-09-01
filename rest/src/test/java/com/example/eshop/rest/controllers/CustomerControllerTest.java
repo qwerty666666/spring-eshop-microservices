@@ -117,7 +117,7 @@ class CustomerControllerTest {
     }
 
     private ResultActions performGetCurrentCustomerRequest() throws Exception {
-        return mockMvc.perform(get("/customers/current"));
+        return mockMvc.perform(get("/api/customers/current"));
     }
 
     //--------------------------
@@ -163,7 +163,7 @@ class CustomerControllerTest {
 
     private ResultActions performUpdateCurrentCustomerRequest() throws Exception {
         return mockMvc.perform(
-                put("/customers/current")
+                put("/api/customers/current")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                         {
@@ -225,7 +225,7 @@ class CustomerControllerTest {
 
     private ResultActions performSignUpRequest() throws Exception {
         return mockMvc.perform(
-                post("/customers")
+                post("/api/customers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

@@ -1,4 +1,4 @@
-package com.example.eshop.cart.application.usecases.cartitem;
+package com.example.eshop.cart.application.usecases.cart.cartitem;
 
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartRepository;
