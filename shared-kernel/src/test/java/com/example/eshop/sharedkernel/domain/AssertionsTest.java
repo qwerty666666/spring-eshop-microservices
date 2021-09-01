@@ -49,21 +49,6 @@ class AssertionsTest {
     }
 
     @Test
-    void testEan() {
-        assertAll(
-                () -> assertThatThrownBy(() -> Assertions.ean("invalid-13len", "err"), "non-digit ean")
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("err"),
-                () -> assertThatThrownBy(() -> Assertions.ean("12345678", "err"), "8-characters length")
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("err"),
-                () -> assertThatNoException()
-                        .as("valid ean")
-                        .isThrownBy(() -> Assertions.ean("4006381333931", "err"))
-        );
-    }
-
-    @Test
     void testNonNegative() {
         assertAll(
                 () -> assertThatThrownBy(() -> Assertions.nonNegative(-1, "err"), "negative num")

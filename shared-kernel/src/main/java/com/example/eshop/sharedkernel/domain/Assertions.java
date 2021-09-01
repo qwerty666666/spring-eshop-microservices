@@ -41,19 +41,6 @@ public class Assertions {
     }
 
     /**
-     * Given string is well-formed EAN-13
-     *
-     * @throws IllegalArgumentException if {@code ean} is null or has invalid format
-     */
-    public static void ean(String ean, String message) {
-        Assertions.notNull(ean, message);
-
-        if (!EAN_PATTERN.matcher(ean).matches()) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    /**
      * Given {@code num} must be greater or equal to zero
      *
      * @throws IllegalArgumentException if {@code num} is negative

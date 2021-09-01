@@ -9,10 +9,13 @@ import org.hibernate.validator.constraints.EAN;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Ean implements ValueObject {
+    private static final Pattern EAN_PATTERN = Pattern.compile("^[0-9]{13}$");
+
     @Column(name = "ean")
     @EAN
     private String ean;
@@ -24,10 +27,17 @@ public class Ean implements ValueObject {
     /**
      * Creates EAN from given String
      *
-     * @throws IllegalArgumentException if ean has invalid format
+     * @param ean EAN-13
+     *
+     * @throws InvalidEanFormatException if ean has invalid format
      */
     public static Ean fromString(String ean) {
-        Assertions.ean(ean, "Invalid EAN");
+        Assertions.notNull(ean, "EAN must be non null");
+
+        if (!EAN_PATTERN.matcher(ean).matches()) {
+            throw new InvalidEanFormatException(ean, "Invalid EAN format. Expected EAN-13, but provided " + ean);
+        }
+
         return new Ean(ean);
     }
 
