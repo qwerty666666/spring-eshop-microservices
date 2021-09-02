@@ -1,4 +1,4 @@
-package com.example.eshop.cart.domain;
+package com.example.eshop.cart.domain.cart;
 
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.junit.jupiter.api.Test;

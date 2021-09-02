@@ -4,7 +4,7 @@ import com.example.eshop.cart.application.usecases.cart.cartitem.CartItemService
 import com.example.eshop.cart.application.usecases.cart.cartitem.RemoveCartItemCommand;
 import com.example.eshop.cart.application.usecases.cart.cartitem.UpsertCartItemCommand;
 import com.example.eshop.cart.application.usecases.cart.query.CartQueryService;
-import com.example.eshop.cart.domain.CartItemNotFoundException;
+import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
 import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
 import com.example.eshop.rest.mappers.CartMapper;
 import com.example.eshop.rest.requests.PutItemToCartRequest;

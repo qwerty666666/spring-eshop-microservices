@@ -1,7 +1,7 @@
 package com.example.eshop.cart.application.usecases.cart.cartitem;
 
-import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.cart.domain.CartRepository;
+import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.domain.cart.CartRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;

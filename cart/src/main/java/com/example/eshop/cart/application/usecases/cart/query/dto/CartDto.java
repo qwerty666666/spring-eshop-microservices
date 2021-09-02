@@ -1,6 +1,6 @@
 package com.example.eshop.cart.application.usecases.cart.query.dto;
 
-import com.example.eshop.cart.domain.Cart;
+import com.example.eshop.cart.domain.cart.Cart;
 import java.util.List;
 
 public record CartDto(String id, List<CartItemDto> items) {

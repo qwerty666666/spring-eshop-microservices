@@ -1,8 +1,8 @@
 package com.example.eshop.cart.application.usecases.cart.cartitem;
 
 import com.example.eshop.cart.config.AuthConfig;
-import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.cart.domain.CartRepository;
+import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

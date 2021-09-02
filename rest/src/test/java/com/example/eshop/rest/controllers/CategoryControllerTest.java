@@ -5,11 +5,13 @@ import com.example.eshop.catalog.application.category.CategoryNotFoundException;
 import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
@@ -32,65 +34,64 @@ class CategoryControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    //--------------------------
-    // getById()
-    //--------------------------
+    @Nested
+    @ContextConfiguration
+    class GetById {
+        @Test
+        void givenGetByIdRequest_whenCategoryExists_thenReturnOk() throws Exception {
+            var category = createCategory();
+            when(categoryCrudService.getCategory(category.id())).thenReturn(category);
 
-    @Test
-    void givenGetByIdRequest_whenCategoryExists_thenReturnOk() throws Exception {
-        var category = createCategory();
-        when(categoryCrudService.getCategory(category.id())).thenReturn(category);
+            mockMvc.perform(get("/api/categories/" + category.id()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(category.id().toString()));
 
-        mockMvc.perform(get("/api/categories/" + category.id()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(category.id().toString()));
+            verify(categoryCrudService).getCategory(category.id());
+        }
 
-        verify(categoryCrudService).getCategory(category.id());
+        @Test
+        void givenGetByIdRequest_whenCategoryDoesNotExist_thenReturn404() throws Exception {
+            var category = createCategory();
+            var id = category.id();
+            when(categoryCrudService.getCategory(id)).thenThrow(new CategoryNotFoundException(id, ""));
+
+            assert404("/api/categories/" + id, id);
+
+            verify(categoryCrudService).getCategory(id);
+        }
     }
 
-    @Test
-    void givenGetByIdRequest_whenCategoryDoesNotExist_thenReturn404() throws Exception {
-        var category = createCategory();
-        var id = category.id();
-        when(categoryCrudService.getCategory(id)).thenThrow(new CategoryNotFoundException(id, ""));
+    @Nested
+    class GetList {
+        @Test
+        void whenGetListRequest_thenReturnAllCategories() throws Exception {
+            var categories = createCategoryList();
+            when(categoryCrudService.getAll()).thenReturn(categories);
 
-        assert404("/api/categories/" + id, id);
-
-        verify(categoryCrudService).getCategory(id);
+            mockMvc.perform(get("/api/categories"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", hasSize(3)))
+                    .andExpect(jsonPath("$[0].id").value(1))
+                    .andExpect(jsonPath("$[1].id").value(2))
+                    .andExpect(jsonPath("$[2].id").value(3));
+        }
     }
 
-    //--------------------------
-    // getList()
-    //--------------------------
+    @Nested
+    class GetProducts {
+        @Test
+        void givenGetProductsRequest_whenCategoryDoesNotExist_thenReturn404() throws Exception {
+            var category = createCategory();
+            var id = category.id();
+            var pageable = PageRequest.of(0, CategoryController.PRODUCTS_DEFAULT_PAGE_SIZE);
+            when(productCrudService.getForCategory(id, pageable)).thenThrow(new CategoryNotFoundException(id, ""));
 
-    @Test
-    void whenGetListRequest_thenReturnAllCategories() throws Exception {
-        var categories = createCategoryList();
-        when(categoryCrudService.getAll()).thenReturn(categories);
+            assert404("/api/categories/" + id + "/products", id);
 
-        mockMvc.perform(get("/api/categories"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[2].id").value(3));
+            verify(productCrudService).getForCategory(id, pageable);
+        }
     }
 
-    //--------------------------
-    // getProducts()
-    //--------------------------
-
-    @Test
-    void givenGetProductsRequest_whenCategoryDoesNotExist_thenReturn404() throws Exception {
-        var category = createCategory();
-        var id = category.id();
-        var pageable = PageRequest.of(0, CategoryController.PRODUCTS_DEFAULT_PAGE_SIZE);
-        when(productCrudService.getForCategory(id, pageable)).thenThrow(new CategoryNotFoundException(id, ""));
-
-        assert404("/api/categories/" + id + "/products", id);
-
-        verify(productCrudService).getForCategory(id, pageable);
-    }
 
     private Category createCategory() {
         return Category.builder()
@@ -120,11 +121,11 @@ class CategoryControllerTest {
         mockMvc.perform(get(url))
                 .andExpect(status().isNotFound())
                 .andExpect(content().json("""
-                        {
-                            status: 404,
-                            detail: "Category %s not found"
-                        }
-                        """.formatted(id)
+                            {
+                                status: 404,
+                                detail: "Category %s not found"
+                            }
+                            """.formatted(id)
                 ));
     }
 }

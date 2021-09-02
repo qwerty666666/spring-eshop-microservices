@@ -3,9 +3,9 @@ package com.example.eshop.sharedkernel.domain;
 import java.util.regex.Pattern;
 
 public class Assertions {
+    // TODO replace with RFC complaint, or with external lib
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-    private static final Pattern EAN_PATTERN = Pattern.compile("^[0-9]{13}$");
 
     /**
      * Given String is not null and well-formed email

@@ -1,8 +1,8 @@
 package com.example.eshop.cart.application.usecases.cart.cartitem;
 
-import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.cart.domain.CartItem;
-import com.example.eshop.cart.domain.CartItemNotFoundException;
+import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.domain.cart.CartItem;
+import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
 
 public interface CartItemService {
     /**

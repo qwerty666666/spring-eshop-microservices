@@ -1,9 +1,7 @@
 package com.example.eshop.cart.application.usecases.cart.create;
 
-import com.example.eshop.cart.application.usecases.cart.create.CreateCartService;
-import com.example.eshop.cart.application.usecases.cart.create.CreateCartServiceImpl;
-import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.cart.domain.CartRepository;
+import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.domain.cart.CartRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.eq;

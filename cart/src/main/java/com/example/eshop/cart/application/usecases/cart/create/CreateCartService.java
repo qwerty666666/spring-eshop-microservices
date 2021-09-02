@@ -1,6 +1,6 @@
 package com.example.eshop.cart.application.usecases.cart.create;
 
-import com.example.eshop.cart.domain.Cart;
+import com.example.eshop.cart.domain.cart.Cart;
 
 public interface CreateCartService {
     /**

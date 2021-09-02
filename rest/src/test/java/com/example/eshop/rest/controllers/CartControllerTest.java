@@ -6,8 +6,7 @@ import com.example.eshop.cart.application.usecases.cart.cartitem.UpsertCartItemC
 import com.example.eshop.cart.application.usecases.cart.query.CartQueryService;
 import com.example.eshop.cart.application.usecases.cart.query.dto.CartDto;
 import com.example.eshop.cart.application.usecases.cart.query.dto.CartItemDto;
-import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.cart.domain.CartItemNotFoundException;
+import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
 import com.example.eshop.rest.config.AuthConfig;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.junit.jupiter.api.BeforeEach;
