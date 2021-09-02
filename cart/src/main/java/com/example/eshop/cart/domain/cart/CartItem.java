@@ -3,6 +3,7 @@ package com.example.eshop.cart.domain.cart;
 import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.Entity;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
@@ -55,6 +58,18 @@ public class CartItem implements Entity<Long> {
     @ToString.Include
     private int quantity;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "price", nullable = false)),
+            @AttributeOverride(name = "currency", column = @Column(name = "currency", nullable = false))
+    })
+    @NotNull
+    private Money price;
+
+    @Column(name = "product_name")
+    @NotEmpty
+    private String productName;
+
     @ManyToOne
     @JoinColumn
     private Cart cart;
@@ -63,14 +78,18 @@ public class CartItem implements Entity<Long> {
     @CreationTimestamp
     private LocalDateTime creationTime;
 
-    CartItem(Cart cart, Ean ean, int quantity) {
+    CartItem(Cart cart, Ean ean, Money price, int quantity, String productName) {
         Assertions.notNull(cart, "cart must be positive number");
         Assertions.notNull(ean, "EAN must be not null");
+        Assertions.notNull(price, "price must be not null");
         Assertions.positive(quantity, "quantity must be positive number");
+        Assertions.notEmpty(productName, "productName must be non empty");
 
         this.cart = cart;
         this.ean = ean;
+        this.price = price;
         this.quantity = quantity;
+        this.productName = productName;
     }
 
     void setQuantity(int quantity) {

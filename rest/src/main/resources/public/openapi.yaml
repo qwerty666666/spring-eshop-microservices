@@ -396,6 +396,11 @@ components:
       properties:
         ean:
           $ref: '#/components/schemas/ean'
+        price:
+          $ref: '#/components/schemas/money'
+        productName:
+          type: string
+          example: Sneakers
         quantity:
           $ref: '#/components/schemas/cart-item-quantity'
 

@@ -5,10 +5,12 @@ import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.base.DomainObjectId;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -22,6 +24,7 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -39,16 +42,16 @@ import java.util.Set;
         name = "Product.sku",
         attributeNodes = @NamedAttributeNode("sku")
 )
-@Getter
 @ToString(onlyExplicitlyIncluded = true)
+@Slf4j
 public class Product extends AggregateRoot<ProductId> {
     @EmbeddedId
-    @Getter(AccessLevel.NONE)
     @ToString.Include
     private ProductId id;
 
     @Column(name = "name", nullable = false)
     @ToString.Include
+    @Getter
     private String name;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -90,11 +93,30 @@ public class Product extends AggregateRoot<ProductId> {
     /**
      * @throws SkuNotFoundException if SKU with given {@code ean} not found in this Product
      */
-    private Sku getSku(Ean ean) {
+    public Sku getSku(Ean ean) {
         return this.sku.stream()
                 .filter(sku -> sku.getEan().equals(ean))
                 .findFirst()
                 .orElseThrow(() -> new SkuNotFoundException("SKU " + ean + " does not exist in Product " + this));
+    }
+
+    public Set<Sku> getSku() {
+        return Collections.unmodifiableSet(sku);
+    }
+
+    /**
+     * Add new SKU to this Product
+     */
+    public void addSku(Ean ean, Money price, int quantity) {
+        var sku = new Sku(this, ean, price, quantity);
+
+        this.sku.add(sku);
+
+        log.info("Add new SKU " + sku);
+    }
+
+    public Set<ProductCategory> getCategories() {
+        return Collections.unmodifiableSet(categories);
     }
 
     public static ProductBuilder builder() {

@@ -4,13 +4,13 @@ import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import java.util.Optional;
@@ -32,13 +32,10 @@ class CartItemServiceImplIntegrationTest {
     @Autowired
     private CartItemService cartItemService;
 
-    @Autowired
-    UserDetailsService userDetailsService;
-
     @BeforeEach
     void setUp() {
         var cart = new Cart(AuthConfig.CUSTOMER_ID);
-        cart.addItem(EAN, 10);
+        cart.addItem(EAN, Money.USD(10), 10, "Test Product");
         when(cartRepository.findByNaturalId(eq(AuthConfig.CUSTOMER_ID))).thenReturn(Optional.of(cart));
     }
 

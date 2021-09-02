@@ -10,7 +10,7 @@ public interface CartMapper {
     default CartResource toCartResource(CartDto cart) {
         var items = cart.items()
                 .stream()
-                .map(item -> new CartItemResource(item.ean().toString(), item.quantity()))
+                .map(CartItemResource::new)
                 .toList();
 
         return new CartResource(cart.id(), items);

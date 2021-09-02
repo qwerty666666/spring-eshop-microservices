@@ -75,6 +75,18 @@ public class Sku implements Entity<Long> {
     @JoinColumn(nullable = false)
     private Product product;
 
+    Sku(Product product, Ean ean, Money price, int availableQuantity) {
+        Assertions.notNull(product, "product must be not null");
+        Assertions.notNull(ean, "ean must be not null");
+        Assertions.notNull(price, "price must be not null");
+        Assertions.nonNegative(availableQuantity, "availableQuantity must be non negative");
+
+        this.product = product;
+        this.ean = ean;
+        this.price = price;
+        this.availableQuantity = availableQuantity;
+    }
+
     @Override
     public Long id() {
         return id;

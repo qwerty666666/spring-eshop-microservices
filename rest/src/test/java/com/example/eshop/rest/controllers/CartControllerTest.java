@@ -9,6 +9,7 @@ import com.example.eshop.cart.application.usecases.cart.query.dto.CartItemDto;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
 import com.example.eshop.rest.config.AuthConfig;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -55,22 +56,30 @@ class CartControllerTest {
 
     private final static String CART_ID = "123";
     private final static Ean EAN = Ean.fromString("5901234123457");
+    private final static Double PRICE = 12.34;
+    private final static String CURRENCY = "USD";
     private final static int QUANTITY = 7;
+    private final static String PRODUCT_NAME = "Test Product";
     private final static String EXPECTED_CART_JSON = """
             {
-                  "id": "%s",
-                  "items": [
-                    {
-                      "ean": "%s",
-                      "quantity": %d
-                    }
-                  ]
-                }
-            """.formatted(CART_ID, EAN, QUANTITY);
+                 "id": "123",
+                 "items": [
+                     {
+                         "ean": "5901234123457",
+                         "price": {
+                             "amount": 12.34,
+                             "currency": "USD"
+                         },
+                         "productName": "Test Product",
+                         "quantity": 7
+                        }
+                 ]
+            }
+            """;
 
     @BeforeEach
     void setUp() {
-        var cart = new CartDto(CART_ID, List.of(new CartItemDto(EAN, QUANTITY)));
+        var cart = new CartDto(CART_ID, List.of(new CartItemDto(EAN, Money.of(PRICE, CURRENCY), QUANTITY, PRODUCT_NAME)));
         when(cartQueryService.getForCustomer(AuthConfig.CUSTOMER_ID)).thenReturn(cart);
     }
 

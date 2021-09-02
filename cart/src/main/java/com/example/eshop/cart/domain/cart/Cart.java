@@ -3,6 +3,7 @@ package com.example.eshop.cart.domain.cart;
 import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,14 +64,14 @@ public class Cart extends AggregateRoot<Long> {
      *
      * @throws CartItemAlreadyExistException if cart item with given EAN already exist in this cart
      */
-    public void addItem(Ean ean, int quantity) {
+    public void addItem(Ean ean, Money price, int quantity, String productName) {
         Assertions.notNull(ean, "EAN must be not null");
 
         if (containsItem(ean)) {
             throw new CartItemAlreadyExistException("Cart Item with ean " + ean + " already exist in cart");
         }
 
-        var item = new CartItem(this, ean, quantity);
+        var item = new CartItem(this, ean, price, quantity, productName);
         items.put(ean, item);
 
         log.info("New CartItem created " + item);

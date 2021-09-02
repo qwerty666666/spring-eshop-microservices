@@ -1,6 +1,5 @@
 package com.example.eshop.cart.application.usecases.cart.query;
 
-import com.example.eshop.cart.application.usecases.cart.query.CartQueryService;
 import com.example.eshop.cart.config.AuthConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ContextConfiguration(classes = AuthConfig.class)
 class CartQueryServiceImplIntegrationTest {
     @Autowired
-    CartQueryService cartQueryService;
+    private CartQueryService cartQueryService;
 
     @Test
     @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
