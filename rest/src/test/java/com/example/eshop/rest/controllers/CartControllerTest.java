@@ -1,11 +1,11 @@
 package com.example.eshop.rest.controllers;
 
-import com.example.eshop.cart.application.usecases.cart.cartitem.CartItemService;
-import com.example.eshop.cart.application.usecases.cart.cartitem.RemoveCartItemCommand;
-import com.example.eshop.cart.application.usecases.cart.cartitem.UpsertCartItemCommand;
-import com.example.eshop.cart.application.usecases.cart.query.CartQueryService;
-import com.example.eshop.cart.application.usecases.cart.query.dto.CartDto;
-import com.example.eshop.cart.application.usecases.cart.query.dto.CartItemDto;
+import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
+import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
+import com.example.eshop.cart.application.usecases.cartitemcrud.UpsertCartItemCommand;
+import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
+import com.example.eshop.cart.application.usecases.cartquery.dto.CartDto;
+import com.example.eshop.cart.application.usecases.cartquery.dto.CartItemDto;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
 import com.example.eshop.rest.config.AuthConfig;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -49,7 +49,7 @@ class CartControllerTest {
     private CartQueryService cartQueryService;
 
     @MockBean
-    private CartItemService cartItemService;
+    private CartItemCrudService cartItemCrudService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -117,7 +117,7 @@ class CartControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(EXPECTED_CART_JSON));
 
-            verify(cartItemService).upsert(eq(new UpsertCartItemCommand(AuthConfig.CUSTOMER_ID, EAN, QUANTITY)));
+            verify(cartItemCrudService).upsert(eq(new UpsertCartItemCommand(AuthConfig.CUSTOMER_ID, EAN, QUANTITY)));
         }
 
         @Test
@@ -150,18 +150,18 @@ class CartControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(EXPECTED_CART_JSON));
 
-            verify(cartItemService).remove(eq(new RemoveCartItemCommand(AuthConfig.CUSTOMER_ID, EAN)));
+            verify(cartItemCrudService).remove(eq(new RemoveCartItemCommand(AuthConfig.CUSTOMER_ID, EAN)));
         }
 
         @Test
         @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void givenNonExistingEan_whenRemoveCartItem_thenReturn404() throws Exception {
-            doThrow(CartItemNotFoundException.class).when(cartItemService).remove(any());
+            doThrow(CartItemNotFoundException.class).when(cartItemCrudService).remove(any());
 
             performRemoveCartItemRequest()
                     .andExpect(status().isNotFound());
 
-            verify(cartItemService).remove(eq(new RemoveCartItemCommand(AuthConfig.CUSTOMER_ID, EAN)));
+            verify(cartItemCrudService).remove(eq(new RemoveCartItemCommand(AuthConfig.CUSTOMER_ID, EAN)));
         }
 
         @Test

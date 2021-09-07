@@ -1,6 +1,8 @@
 package com.example.eshop.sharedkernel.domain;
 
 import org.junit.jupiter.api.Test;
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,10 +23,10 @@ class AssertionsTest {
     }
 
     @Test
-    void testNotEmpty() {
+    void testNotEmptyString() {
         //noinspection ConstantConditions
         assertAll(
-                () -> assertThatThrownBy(() -> Assertions.notEmpty(null, "err"), "null argument")
+                () -> assertThatThrownBy(() -> Assertions.notEmpty((String) null, "err"), "null argument")
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("err"),
                 () -> assertThatThrownBy(() -> Assertions.notEmpty("", "err"), "empty argument")
@@ -33,6 +35,22 @@ class AssertionsTest {
                 () -> assertThatNoException()
                         .as("not empty argument")
                         .isThrownBy(() -> Assertions.notEmpty(" ", "err"))
+        );
+    }
+
+    @Test
+    void testNotEmptyCollection() {
+        //noinspection ConstantConditions
+        assertAll(
+                () -> assertThatThrownBy(() -> Assertions.notEmpty((Collection<?>) null, "err"), "null argument")
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("err"),
+                () -> assertThatThrownBy(() -> Assertions.notEmpty(Collections.emptyList(), "err"), "empty list")
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("err"),
+                () -> assertThatNoException()
+                        .as("not empty argument")
+                        .isThrownBy(() -> Assertions.notEmpty(Collections.singletonList(1), "err"))
         );
     }
 

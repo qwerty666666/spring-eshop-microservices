@@ -14,6 +14,8 @@ import java.util.Currency;
 @Getter
 @Embeddable
 public class Money implements ValueObject {
+    public static final Money ZERO = Money.USD(0);
+
     @Column(name = "money_amount", nullable = false)
     private BigDecimal amount;
     @Column(name = "money_currency", nullable = false)
@@ -23,7 +25,7 @@ public class Money implements ValueObject {
     }
 
     private Money(BigDecimal amount, Currency currency) {
-        this.amount = amount;
+        this.amount = scaleAmount(amount, currency);
         this.currency = currency;
     }
 
@@ -40,10 +42,7 @@ public class Money implements ValueObject {
      * @throws IllegalArgumentException if amount scale exceeds currency scale
      */
     public static Money of(double amount, String currencyCode) {
-        var currency = createCurrency(currencyCode);
-        var amountBigDecimal = createAmount(amount, currency);
-
-        return new Money(amountBigDecimal, currency);
+        return new Money(BigDecimal.valueOf(amount), createCurrency(currencyCode));
     }
 
     /**
@@ -62,21 +61,47 @@ public class Money implements ValueObject {
         }
     }
     /**
-     * Creates amount from given double value.
+     * Creates amount from given value.
      * <p>
      * The scale of the amount must be compatible with the given currency.
      *
      * @throws IllegalArgumentException if amount scale exceeds currency scale
      */
-    private static BigDecimal createAmount(double amount, Currency currency) {
-        var bd = BigDecimal.valueOf(amount);
-
-        if (bd.scale() > currency.getDefaultFractionDigits()) {
+    private BigDecimal scaleAmount(BigDecimal amount, Currency currency) {
+        if (amount.scale() > currency.getDefaultFractionDigits()) {
             throw new IllegalArgumentException("Scale of amount " + amount + " is greater than the scale of the"
                     + "currency " + currency);
         }
 
-        return bd.setScale(currency.getDefaultFractionDigits(), RoundingMode.UNNECESSARY);
+        return amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.UNNECESSARY);
+    }
+
+    /**
+     * @return sum of {@code this} and {@code toAdd} amount
+     *
+     * @throws IllegalArgumentException if toAdd has different Currency
+     */
+    public Money add(Money toAdd) {
+        if (!currency.equals(toAdd.getCurrency())) {
+            throw new IllegalArgumentException("Can't add Money with different Currencies");
+        }
+
+        return new Money(amount.add(toAdd.amount), currency);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Money other = (Money) o;
+
+        return amount.equals(other.amount) && currency.equals(other.currency);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * amount.hashCode() + currency.hashCode();
     }
 
     @Override

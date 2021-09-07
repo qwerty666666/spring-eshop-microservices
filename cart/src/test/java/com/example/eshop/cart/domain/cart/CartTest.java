@@ -92,4 +92,17 @@ class CartTest {
         assertThatThrownBy(() -> cart.removeItem(ean))
                 .isInstanceOf(CartItemNotFoundException.class);
     }
+
+    @Test
+    void whenClear_thenCartShouldHasNoItems() {
+        // Given
+        var cart = new Cart("1");
+        cart.addItem(ean, price, qty, productName);
+
+        // When
+        cart.clear();
+
+        // Then
+        assertThat(cart.getItems()).isEmpty();
+    }
 }

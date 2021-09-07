@@ -8,6 +8,7 @@ import com.example.eshop.catalog.domain.category.CategoryRepository;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.ProductRepository;
+import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,5 +50,12 @@ class ProductCrudServiceImpl implements ProductCrudService {
                 );
 
         return productRepository.findByCategory(category, pageable, EntityGraphs.named("Product.sku"));
+    }
+
+    @Override
+    @Transactional
+    public Product getByEan(Ean ean) {
+        return productRepository.findBySku(ean)
+                .orElseThrow(() -> new ProductNotFoundException("Product with SKU " + ean + " not found"));
     }
 }

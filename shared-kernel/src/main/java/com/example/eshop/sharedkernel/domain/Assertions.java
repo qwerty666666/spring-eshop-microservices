@@ -1,5 +1,6 @@
 package com.example.eshop.sharedkernel.domain;
 
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 public class Assertions {
@@ -25,6 +26,17 @@ public class Assertions {
      */
     public static void notEmpty(String s, String message) {
         if (s == null || s.isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Given Collection is not empty
+     *
+     * @throws IllegalArgumentException if {@code collection} is empty or null
+     */
+    public static void notEmpty(Collection<?> collection, String message) {
+        if (collection == null || collection.isEmpty()) {
             throw new IllegalArgumentException(message);
         }
     }

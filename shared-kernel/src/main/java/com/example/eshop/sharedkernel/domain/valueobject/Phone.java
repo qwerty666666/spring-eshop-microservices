@@ -29,6 +29,8 @@ public class Phone implements ValueObject {
     }
 
     /**
+     * @param phone phone number in format +7xxxxxxxxxx
+     *
      * @throws InvalidPhoneFormatException if {@code phone} is null or bad formed
      */
     public static Phone fromString(String phone) {

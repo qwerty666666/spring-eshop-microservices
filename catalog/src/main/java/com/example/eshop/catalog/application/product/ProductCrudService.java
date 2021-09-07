@@ -5,6 +5,8 @@ import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
+import com.example.eshop.catalog.domain.product.Sku;
+import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -26,4 +28,11 @@ public interface ProductCrudService {
      *                 {@code categoryId} doesn't exists
      */
     Page<Product> getForCategory(CategoryId categoryId, Pageable pageable);
+
+    /**
+     * Find {@link Product} which has {@link Sku} with given {@code ean}
+     *
+     * @throws ProductNotFoundException if there is no such product
+     */
+    Product getByEan(Ean ean);
 }

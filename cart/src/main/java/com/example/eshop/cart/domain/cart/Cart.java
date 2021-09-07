@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(
@@ -33,7 +34,7 @@ import java.util.Objects;
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public class Cart extends AggregateRoot<Long> {
+public class Cart extends AggregateRoot<Long> implements Cloneable {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue
@@ -99,7 +100,7 @@ public class Cart extends AggregateRoot<Long> {
     /**
      * @throws CartItemNotFoundException if item with given {@code ean} does not exist in this cart
      */
-    private CartItem getItem(Ean ean) {
+    public CartItem getItem(Ean ean) {
         if (!containsItem(ean)) {
             throw new CartItemNotFoundException(ean, "Cart does not contain CartItem " + ean);
         }
@@ -112,6 +113,20 @@ public class Cart extends AggregateRoot<Long> {
      */
     public Collection<CartItem> getItems() {
         return Collections.unmodifiableCollection(this.items.values());
+    }
+
+    /**
+     * @return if cart has no items
+     */
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
+    /**
+     * @return quantity of all {@link CartItem}s in this cart
+     */
+    public int getTotalItemsQuantity() {
+        return items.values().stream().mapToInt(CartItem::getQuantity).sum();
     }
 
     /**
@@ -129,6 +144,15 @@ public class Cart extends AggregateRoot<Long> {
         items.remove(ean);
     }
 
+    /**
+     * Removes all {@link CartItem} from Cart
+     */
+    public void clear() {
+        this.items.clear();
+
+        log.info("Clear cart");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -141,5 +165,20 @@ public class Cart extends AggregateRoot<Long> {
     @Override
     public int hashCode() {
         return Objects.hashCode(customerId);
+    }
+
+    @Override
+    public Cart clone() {
+        var clone = new Cart(customerId);
+
+        clone.items = items.values().stream()
+                .collect(Collectors.toMap(
+                        CartItem::getEan,
+                        item -> new CartItem(clone, item.getEan(), item.getPrice(), item.getQuantity(), item.getProductName()),
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+        return clone;
     }
 }

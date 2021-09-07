@@ -1,9 +1,9 @@
 package com.example.eshop.rest.controllers;
 
-import com.example.eshop.cart.application.usecases.cart.cartitem.CartItemService;
-import com.example.eshop.cart.application.usecases.cart.cartitem.RemoveCartItemCommand;
-import com.example.eshop.cart.application.usecases.cart.cartitem.UpsertCartItemCommand;
-import com.example.eshop.cart.application.usecases.cart.query.CartQueryService;
+import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
+import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
+import com.example.eshop.cart.application.usecases.cartitemcrud.UpsertCartItemCommand;
+import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
 import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
 import com.example.eshop.rest.mappers.CartMapper;
@@ -31,7 +31,7 @@ import java.util.Locale;
 @RequestMapping("/api/cart")
 public class CartController {
     @Autowired
-    private CartItemService cartItemService;
+    private CartItemCrudService cartItemCrudService;
 
     @Autowired
     private CartQueryService cartQueryService;
@@ -67,7 +67,7 @@ public class CartController {
     public CartResource putCartItem(@Valid @RequestBody PutItemToCartRequest request,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         var command = new UpsertCartItemCommand(userDetails.getCustomerId(), request.ean(), request.quantity());
-        cartItemService.upsert(command);
+        cartItemCrudService.upsert(command);
 
         return getCartForCurrentCustomer(userDetails);
     }
@@ -78,7 +78,7 @@ public class CartController {
     @DeleteMapping("/items/{ean}")
     public Object removeCartItem(@PathVariable Ean ean, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         var command = new RemoveCartItemCommand(userDetails.getCustomerId(), ean);
-        cartItemService.remove(command);
+        cartItemCrudService.remove(command);
 
         return getCartForCurrentCustomer(userDetails);
     }
