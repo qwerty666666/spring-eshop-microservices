@@ -33,7 +33,7 @@ public abstract class PaymentService extends AggregateRoot<PaymentServiceId> {
     private String name;
 
     @Override
-    public PaymentServiceId id() {
+    public PaymentServiceId getId() {
         return id;
     }
 

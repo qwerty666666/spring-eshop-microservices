@@ -42,29 +42,29 @@ class ProductControllerTest {
         @Test
         void givenGetByIdRequest_whenProductExists_thenReturnOk() throws Exception {
             var product = createProduct();
-            when(productCrudService.getProduct(product.id())).thenReturn(product);
+            when(productCrudService.getProduct(product.getId())).thenReturn(product);
 
-            mockMvc.perform(get("/api/products/" + product.id()))
+            mockMvc.perform(get("/api/products/" + product.getId()))
                     .andExpect(status().isOk())
                     .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
-                    .andExpect(jsonPath("$.id").value(product.id().toString()));
+                    .andExpect(jsonPath("$.id").value(product.getId().toString()));
 
-            verify(productCrudService).getProduct(product.id());
+            verify(productCrudService).getProduct(product.getId());
         }
 
         @Test
         void givenGetByIdRequest_whenProductNotFound_thenReturn404() throws Exception {
             var product = createProduct();
-            var id = product.id();
+            var id = product.getId();
             when(productCrudService.getProduct(id)).thenThrow(new ProductNotFoundException(id, ""));
 
-            mockMvc.perform(get("/api/products/" + product.id()))
+            mockMvc.perform(get("/api/products/" + product.getId()))
                     .andExpect(status().isNotFound())
                     .andExpect(content().json("""
                             {
                                 status: 404,
                                 detail: "Product %s not found"
-                            }""".formatted(product.id())
+                            }""".formatted(product.getId())
                     ));
 
             verify(productCrudService).getProduct(id);

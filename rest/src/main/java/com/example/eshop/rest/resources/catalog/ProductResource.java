@@ -11,7 +11,7 @@ public class ProductResource {
     public List<SkuResource> sku;
 
     public ProductResource(Product product) {
-        this.id = product.id().toString();
+        this.id = product.getId().toString();
         this.name = product.getName();
         this.sku = product.getSku().stream().map(SkuResource::new).toList();
     }

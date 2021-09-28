@@ -47,7 +47,7 @@ public class StockItem extends AggregateRoot<Long> {
     }
 
     @Override
-    public Long id() {
+    public Long getId() {
         return id;
     }
 

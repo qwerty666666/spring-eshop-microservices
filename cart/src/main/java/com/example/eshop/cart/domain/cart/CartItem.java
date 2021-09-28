@@ -101,7 +101,7 @@ public class CartItem implements Entity<Long> {
     }
 
     @Override
-    public Long id() {
+    public Long getId() {
         return id;
     }
 

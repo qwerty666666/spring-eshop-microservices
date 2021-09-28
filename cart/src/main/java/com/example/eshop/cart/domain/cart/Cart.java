@@ -56,7 +56,7 @@ public class Cart extends AggregateRoot<Long> implements Cloneable {
     }
 
     @Override
-    public Long id() {
+    public Long getId() {
         return id;
     }
 

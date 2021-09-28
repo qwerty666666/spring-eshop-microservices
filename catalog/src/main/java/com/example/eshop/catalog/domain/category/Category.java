@@ -70,7 +70,7 @@ public class Category extends AggregateRoot<CategoryId> {
     }
 
     @Override
-    public CategoryId id() {
+    public CategoryId getId() {
         return id;
     }
 

@@ -29,7 +29,7 @@ class CategoryCrudServiceIntegrationTest {
         var category = categoryCrudService.getCategory(PARENT_CATEGORY_ID);
 
         assertAll(
-                () -> assertThat(category.id()).isEqualTo(PARENT_CATEGORY_ID),
+                () -> assertThat(category.getId()).isEqualTo(PARENT_CATEGORY_ID),
                 () -> assertThat(category.getName()).isEqualTo("parent")
         );
     }
@@ -56,10 +56,10 @@ class CategoryCrudServiceIntegrationTest {
 
         assertAll(
                 () -> assertThat(tree).as("Root nodes count").hasSize(1),
-                () -> assertThat(tree.get(0).id()).as("Root Category id").isEqualTo(PARENT_CATEGORY_ID),
+                () -> assertThat(tree.get(0).getId()).as("Root Category id").isEqualTo(PARENT_CATEGORY_ID),
                 () -> assertThat(tree.get(0).getChildren()).as("Root children")
                         .hasSize(2)
-                        .extracting(Category::id)
+                        .extracting(Category::getId)
                         .containsOnly(CHILD_1_CATEGORY_ID, CHILD_2_CATEGORY_ID)
         );
     }

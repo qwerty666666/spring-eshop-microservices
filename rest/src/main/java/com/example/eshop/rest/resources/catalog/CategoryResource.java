@@ -10,8 +10,8 @@ public class CategoryResource {
     public String parentId;
 
     public CategoryResource(Category category) {
-        this.id = category.id().toString();
+        this.id = category.getId().toString();
         this.name = category.getName();
-        this.parentId = category.getParent() != null ? category.getParent().id().toString() : null;
+        this.parentId = category.getParent() != null ? category.getParent().getId().toString() : null;
     }
 }

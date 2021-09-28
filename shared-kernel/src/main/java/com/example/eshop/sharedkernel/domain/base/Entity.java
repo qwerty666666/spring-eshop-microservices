@@ -8,5 +8,5 @@ import java.io.Serializable;
  */
 public interface Entity<ID extends Serializable> {
     @Nullable
-    ID id();
+    ID getId();
 }

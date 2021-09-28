@@ -33,7 +33,7 @@ public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
     private String name;
 
     @Override
-    public DeliveryServiceId id() {
+    public DeliveryServiceId getId() {
         return id;
     }
 

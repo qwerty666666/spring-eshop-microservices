@@ -9,7 +9,7 @@ public class CategoryTreeResource {
     public List<CategoryTreeResource> children;
 
     public CategoryTreeResource(Category category) {
-        this.id = category.id().toString();
+        this.id = category.getId().toString();
         this.name = category.getName();
         this.children = category.getChildren().stream().map(CategoryTreeResource::new).toList();
     }

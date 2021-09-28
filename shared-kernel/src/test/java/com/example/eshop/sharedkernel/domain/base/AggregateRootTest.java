@@ -33,7 +33,7 @@ class AggregateRootTest {
 
     private static class FakeAggregateRoot extends AggregateRoot<Integer> {
         @Override
-        public Integer id() {
+        public Integer getId() {
             return null;
         }
 

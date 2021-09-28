@@ -41,7 +41,7 @@ class ProductCrudServiceIntegrationTest {
         var product = productCrudService.getProduct(SNEAKERS_PRODUCT_ID);
 
         assertAll(
-                () -> assertThat(SNEAKERS_PRODUCT_ID).as("Product Id").isEqualTo(product.id()),
+                () -> assertThat(SNEAKERS_PRODUCT_ID).as("Product Id").isEqualTo(product.getId()),
                 () -> assertThat("sneakers").as("Product Name").isEqualTo(product.getName())
         );
     }
@@ -71,8 +71,8 @@ class ProductCrudServiceIntegrationTest {
                 () -> assertThat(page.getContent().size()).as("Page size").isEqualTo(size),
                 () -> assertThat(page.getTotalPages()).as("Total pages").isEqualTo(2),
                 () -> assertThat(page.getTotalElements()).as("Total Elements").isEqualTo(3),
-                () -> assertThat(page.getContent().get(0).id()).as("First Product").isEqualTo(SNEAKERS_PRODUCT_ID),
-                () -> assertThat(page.getContent().get(1).id()).as("Second Product").isEqualTo(SHIRT_PRODUCT_ID)
+                () -> assertThat(page.getContent().get(0).getId()).as("First Product").isEqualTo(SNEAKERS_PRODUCT_ID),
+                () -> assertThat(page.getContent().get(1).getId()).as("Second Product").isEqualTo(SHIRT_PRODUCT_ID)
         );
     }
 
@@ -90,7 +90,7 @@ class ProductCrudServiceIntegrationTest {
         assertAll(
                 () -> assertThat(page.getContent().size()).as("Product count").isEqualTo(2),
                 () -> assertThat(page.getContent()).as("Products found")
-                        .extracting(Product::id)
+                        .extracting(Product::getId)
                         .containsOnly(SHIRT_PRODUCT_ID, JACKET_PRODUCT_ID)
         );
     }

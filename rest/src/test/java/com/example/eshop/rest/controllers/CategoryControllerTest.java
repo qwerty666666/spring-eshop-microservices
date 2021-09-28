@@ -40,19 +40,19 @@ class CategoryControllerTest {
         @Test
         void givenGetByIdRequest_whenCategoryExists_thenReturnOk() throws Exception {
             var category = createCategory();
-            when(categoryCrudService.getCategory(category.id())).thenReturn(category);
+            when(categoryCrudService.getCategory(category.getId())).thenReturn(category);
 
-            mockMvc.perform(get("/api/categories/" + category.id()))
+            mockMvc.perform(get("/api/categories/" + category.getId()))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(category.id().toString()));
+                    .andExpect(jsonPath("$.id").value(category.getId().toString()));
 
-            verify(categoryCrudService).getCategory(category.id());
+            verify(categoryCrudService).getCategory(category.getId());
         }
 
         @Test
         void givenGetByIdRequest_whenCategoryDoesNotExist_thenReturn404() throws Exception {
             var category = createCategory();
-            var id = category.id();
+            var id = category.getId();
             when(categoryCrudService.getCategory(id)).thenThrow(new CategoryNotFoundException(id, ""));
 
             assert404("/api/categories/" + id, id);
@@ -82,7 +82,7 @@ class CategoryControllerTest {
         @Test
         void givenGetProductsRequest_whenCategoryDoesNotExist_thenReturn404() throws Exception {
             var category = createCategory();
-            var id = category.id();
+            var id = category.getId();
             var pageable = PageRequest.of(0, CategoryController.PRODUCTS_DEFAULT_PAGE_SIZE);
             when(productCrudService.getForCategory(id, pageable)).thenThrow(new CategoryNotFoundException(id, ""));
 

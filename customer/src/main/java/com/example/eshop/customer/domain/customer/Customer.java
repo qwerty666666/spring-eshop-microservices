@@ -61,7 +61,7 @@ public class Customer extends AggregateRoot<CustomerId> {
     }
 
     @Override
-    public CustomerId id() {
+    public CustomerId getId() {
         return id;
     }
 
