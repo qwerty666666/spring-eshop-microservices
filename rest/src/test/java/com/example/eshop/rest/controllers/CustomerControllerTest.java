@@ -9,28 +9,25 @@ import com.example.eshop.customer.domain.customer.Customer;
 import com.example.eshop.customer.domain.customer.Customer.CustomerId;
 import com.example.eshop.customer.domain.customer.EmailAlreadyExistException;
 import com.example.eshop.customer.domain.customer.HashedPassword;
-import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
+import com.example.eshop.rest.config.AuthConfig;
+import com.example.eshop.rest.config.MappersConfig;
+import com.example.eshop.rest.mappers.CustomerMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,21 +38,18 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CustomerController.class)
+@ActiveProfiles("test")
+@Import({MappersConfig.class, AuthConfig.class})
 class CustomerControllerTest {
-    private final static String CUSTOMER_EMAIL = "test@test.test";
-    private final static CustomerId CUSTOMER_ID = new CustomerId("1");
-    private final static Customer CUSTOMER = Customer.builder()
-            .id(CUSTOMER_ID)
-            .firstname("firstname")
-            .lastname("lastname")
-            .email(Email.fromString(CUSTOMER_EMAIL))
-            .birthday(LocalDate.of(1990, 10, 20))
-            .password(HashedPassword.fromHash("pass"))
-            .build();
+    private final static CustomerId CUSTOMER_ID = new CustomerId(AuthConfig.CUSTOMER_ID);
+    private final static String CUSTOMER_EMAIL = AuthConfig.CUSTOMER_EMAIL;
+    private final static String CUSTOMER_PASSWORD = AuthConfig.CUSTOMER_PASSWORD;
 
     private final static String NEW_FIRSTNAME = "newFirstname";
     private final static String NEW_LASTNAME = "newLastname";
@@ -63,73 +57,69 @@ class CustomerControllerTest {
     private final static LocalDate NEW_BIRTHDAY = LocalDate.of(1999, 9, 19);
     private final static String NEW_PASSWORD = "pass123";
 
-    @TestConfiguration
-    @ComponentScan(basePackages = "com.example.eshop.rest.mappers")
-    public static class Config {
-        @Bean
-        @Primary
-        public UserDetailsService userDetailsService() {
-            return new InMemoryUserDetailsManager(List.of(
-                    new UserDetailsImpl(CUSTOMER_EMAIL, "pass", CUSTOMER_ID.toString())
-            ));
-        }
-    }
+    private Customer customer;
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @MockBean
-    QueryCustomerService queryCustomerService;
-
+    private QueryCustomerService queryCustomerService;
     @MockBean
-    UpdateCustomerService updateCustomerService;
-
+    private UpdateCustomerService updateCustomerService;
     @MockBean
-    SignUpService signUpService;
+    private SignUpService signUpService;
 
     @BeforeEach
     void setUp() {
-        when(queryCustomerService.getByEmail(eq(CUSTOMER_EMAIL))).thenReturn(CUSTOMER);
+        customer = Customer.builder()
+                .id(CUSTOMER_ID)
+                .firstname("firstname")
+                .lastname("lastname")
+                .email(Email.fromString(CUSTOMER_EMAIL))
+                .birthday(LocalDate.of(1990, 10, 20))
+                .password(HashedPassword.fromHash(CUSTOMER_PASSWORD))
+                .build();
+
+        when(queryCustomerService.getByEmail(eq(CUSTOMER_EMAIL))).thenReturn(customer);
     }
 
     @Nested
-    @ContextConfiguration(classes = Config.class)
-    class GetCurrent {
+    class GetAuthenticated {
         @Test
         @WithUserDetails(CUSTOMER_EMAIL)
-        void givenAuthenticatedUser_whenGetCurrent_thenReturnThatUser() throws Exception {
-            performGetCurrentCustomerRequest()
+        void givenAuthenticatedUser_whenGetAuthenticated_thenReturnThatUser() throws Exception {
+            var expectedJson = objectMapper.writeValueAsString(customerMapper.toCustomerDto(customer));
+
+            performGetAuthenticatedRequest()
+                    .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(CUSTOMER.getId().toString()))
-                    .andExpect(jsonPath("$.firstname").value(CUSTOMER.getFirstname()))
-                    .andExpect(jsonPath("$.lastname").value(CUSTOMER.getLastname()))
-                    .andExpect(jsonPath("$.birthday").value(
-                            CUSTOMER.getBirthday() != null ? CUSTOMER.getBirthday().format(DateTimeFormatter.ISO_DATE) : "null"
-                    ))
-                    .andExpect(jsonPath("$.email").value(CUSTOMER.getEmail().toString()));
+                    .andExpect(content().json(expectedJson));
 
             verify(queryCustomerService).getByEmail(CUSTOMER_EMAIL);
         }
 
         @Test
-        void givenUnauthorizedUser_whenGetCurrent_thenReturn401() throws Exception {
-            performGetCurrentCustomerRequest()
+        void givenUnauthorizedUser_whenGetAuthenticated_thenReturn401() throws Exception {
+            performGetAuthenticatedRequest()
                     .andExpect(status().isUnauthorized());
         }
 
-        private ResultActions performGetCurrentCustomerRequest() throws Exception {
-            return mockMvc.perform(get("/api/customers/current"));
+        private ResultActions performGetAuthenticatedRequest() throws Exception {
+            return mockMvc.perform(get("/api/customers"));
         }
     }
 
     @Nested
-    @ContextConfiguration(classes = Config.class)
     class UpdateCurrent {
         @Test
         @WithUserDetails(CUSTOMER_EMAIL)
         void givenAuthenticatedCustomer_whenUpdateCustomer_thenReturnOk() throws Exception {
             // Given
-            var expectedCommand = new UpdateCustomerCommand(CUSTOMER.getId(), NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY);
+            var expectedCommand = new UpdateCustomerCommand(customer.getId(), NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY);
 
             // When + Then
             performUpdateCurrentCustomerRequest()
@@ -142,16 +132,13 @@ class CustomerControllerTest {
         @WithUserDetails(CUSTOMER_EMAIL)
         void givenAuthenticatedCustomer_whenUpdateCurrentCustomerWithAlreadyUsedEmail_thenReturn400() throws Exception {
             // Given
-            var expectedCommand = new UpdateCustomerCommand(CUSTOMER.getId(), NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY);
+            var expectedCommand = new UpdateCustomerCommand(customer.getId(), NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY);
 
             doThrow(EmailAlreadyExistException.class).when(updateCustomerService).updateCustomer(any());
 
             // When + Then
-            performUpdateCurrentCustomerRequest()
-                    .andExpect(status().is(400))
-                    .andExpect(jsonPath("$.errors", hasSize(1)))
-                    .andExpect(jsonPath("$.errors[0].field").value("email"))
-                    .andExpect(jsonPath("$.errors[0].message").value("This email address already used by another user"));
+            var response = performUpdateCurrentCustomerRequest();
+            assertEmailAlreadyUsedResponse(response);
 
             verify(updateCustomerService).updateCustomer(eq(expectedCommand));
         }
@@ -163,83 +150,85 @@ class CustomerControllerTest {
         }
 
         private ResultActions performUpdateCurrentCustomerRequest() throws Exception {
-            return mockMvc.perform(
-                    put("/api/customers/current")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("""
-                                    {
-                                        "firstname": "%s",
-                                        "lastname": "%s",
-                                        "email": "%s",
-                                        "birthday": "%s"
-                                    }
-                                    """.formatted(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL,
-                                    NEW_BIRTHDAY.format(DateTimeFormatter.ISO_DATE))
-                            )
-            );
+            var json = """
+                    {
+                        "firstname": "%s",
+                        "lastname": "%s",
+                        "email": "%s",
+                        "birthday": "%s"
+                    }
+                    """.formatted(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY.format(DateTimeFormatter.ISO_DATE));
+
+            return mockMvc.perform(put("/api/customers")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json));
         }
     }
 
     @Nested
-    @ContextConfiguration(classes = Config.class)
-    class SignUp {
+    class CreateCustomer {
         @Test
-        void whenSignUp_thenReturnNewCustomer() throws Exception {
+        void whenCreateCustomer_thenReturnNewCustomer() throws Exception {
             // Given
-            var command = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
-            when(signUpService.signUp(eq(command))).thenReturn(Customer.builder()
+            var newCustomer = Customer.builder()
                     .firstname(NEW_FIRSTNAME)
                     .lastname(NEW_LASTNAME)
                     .email(Email.fromString(NEW_EMAIL))
                     .birthday(NEW_BIRTHDAY)
-                    .password(HashedPassword.fromHash(""))
-                    .build()
-            );
+                    .password(HashedPassword.fromHash("pass"))
+                    .build();
+            var command = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
+
+            when(signUpService.signUp(eq(command))).thenReturn(newCustomer);
+
+            var expectedJson = objectMapper.writeValueAsString(customerMapper.toCustomerDto(newCustomer));
 
             // When + Then
             performSignUpRequest()
+                    .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").isNotEmpty())
-                    .andExpect(jsonPath("$.firstname").value(NEW_FIRSTNAME))
-                    .andExpect(jsonPath("$.lastname").value(NEW_LASTNAME))
-                    .andExpect(jsonPath("$.birthday").value(NEW_BIRTHDAY.format(DateTimeFormatter.ISO_DATE)))
-                    .andExpect(jsonPath("$.email").value(NEW_EMAIL));
+                    .andExpect(content().json(expectedJson));
 
             verify(signUpService).signUp(eq(command));
         }
 
         @Test
-        void givenAlreadyUsedEmail_whenSignUp_thenReturn400() throws Exception {
+        void givenAlreadyUsedEmail_whenCreateCustomer_thenReturn400() throws Exception {
             // Given
             var command = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
+
             when(signUpService.signUp(eq(command))).thenThrow(EmailAlreadyExistException.class);
 
             // When + Then
-            performSignUpRequest()
-                    .andExpect(status().is(400))
-                    .andExpect(jsonPath("$.errors", hasSize(1)))
-                    .andExpect(jsonPath("$.errors[0].field").value("email"))
-                    .andExpect(jsonPath("$.errors[0].message").value("This email address already used by another user"));
+            var response = performSignUpRequest();
+            assertEmailAlreadyUsedResponse(response);
 
             verify(signUpService).signUp(eq(command));
         }
 
         private ResultActions performSignUpRequest() throws Exception {
-            return mockMvc.perform(
-                    post("/api/customers")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("""
-                                    {
-                                        "firstname": "%s",
-                                        "lastname": "%s",
-                                        "email": "%s",
-                                        "birthday": "%s",
-                                        "password": "%s"
-                                    }
-                                    """.formatted(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL,
-                                    NEW_BIRTHDAY.format(DateTimeFormatter.ISO_DATE), NEW_PASSWORD)
-                            )
-            );
+            var json = """
+                    {
+                        "firstname": "%s",
+                        "lastname": "%s",
+                        "email": "%s",
+                        "birthday": "%s",
+                        "password": "%s"
+                    }
+                    """.formatted(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY.format(DateTimeFormatter.ISO_DATE), NEW_PASSWORD);
+
+            return mockMvc.perform(post("/api/customers")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json));
         }
+    }
+
+    private void assertEmailAlreadyUsedResponse(ResultActions resultActions) throws Exception {
+        resultActions
+                .andExpect(status().is(400))
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].field").value("email"))
+                .andExpect(jsonPath("$.errors[0].message").value("This email address already used by another user"));
+
     }
 }

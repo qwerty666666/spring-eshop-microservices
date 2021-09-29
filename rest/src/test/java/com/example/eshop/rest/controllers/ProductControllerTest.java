@@ -4,50 +4,64 @@ import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.catalog.application.product.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
+import com.example.eshop.rest.config.MappersConfig;
+import com.example.eshop.rest.mappers.ProductMapper;
+import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductController.class)
+@ActiveProfiles("test")
+@Import(MappersConfig.class)
 class ProductControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private ProductMapper productMapper;
+
     @MockBean
     ProductCrudService productCrudService;
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @Nested
-    class GetById {
+    class GetProductById {
         @Test
         void givenGetByIdRequest_whenProductExists_thenReturnOk() throws Exception {
             var product = createProduct();
             when(productCrudService.getProduct(product.getId())).thenReturn(product);
 
+            var expectedJson = objectMapper.writeValueAsString(productMapper.toProductDto(product));
+
             mockMvc.perform(get("/api/products/" + product.getId()))
+                    .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
-                    .andExpect(jsonPath("$.id").value(product.getId().toString()));
+                    .andExpect(content().json(expectedJson));
 
             verify(productCrudService).getProduct(product.getId());
         }
@@ -71,31 +85,30 @@ class ProductControllerTest {
         }
 
         private Product createProduct() {
-            return Product.builder()
-                    .id(new ProductId("1"))
-                    .name("test")
-                    .build();
+            var product = Product.builder().id(new ProductId("1")).name("test").build();
+            product.addSku(Ean.fromString("1111111111111"), Money.USD(10), 12);
+
+            return product;
         }
     }
 
     @Nested
-    class GetList {
+    class GetProductList {
         @Test
         void givenGetListRequest_whenPageableRequested_thenReturnListForThisPage() throws Exception {
             var productList = createProductList();
             var pageable = Pageable.ofSize(2).withPage(0);
+
             var resultPage = new PageImpl<>(productList.subList(0, 2), pageable, 3);
             when(productCrudService.getList(pageable)).thenReturn(resultPage);
 
+            var expectedDto = productMapper.toPagedProductListDto(resultPage);
+            var expectedJson = objectMapper.writeValueAsString(expectedDto);
+
             mockMvc.perform(get("/api/products/?page=1&per_page=2"))
+                    .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.page", is(1)))
-                    .andExpect(jsonPath("$.perPage", is(2)))
-                    .andExpect(jsonPath("$.totalItems", is(3)))
-                    .andExpect(jsonPath("$.totalPages", is(2)))
-                    .andExpect(jsonPath("$.items", hasSize(2)))
-                    .andExpect(jsonPath("$.items[0].id", is("1")))
-                    .andExpect(jsonPath("$.items[1].id", is("2")));
+                    .andExpect(content().json(expectedJson));
 
             verify(productCrudService).getList(pageable);
         }
@@ -107,25 +120,30 @@ class ProductControllerTest {
 
             mockMvc.perform(get("/api/products/"));
 
-            verify(productCrudService).getList(Pageable.ofSize(ProductController.DEFAULT_PAGE_SIZE).withPage(0));
+            verify(productCrudService).getList(Pageable.ofSize(30).withPage(0));
         }
 
         @Test
-        void givenGetListRequest_whenPageSizeRequestParameterGreaterThanMaxAllowed_thenRestrictSizeToMax() throws Exception {
+        void givenGetListRequest_whenPageSizeInvalid_thenReturn400() throws Exception {
             Page<Product> page = new PageImpl<>(Collections.emptyList());
             when(productCrudService.getList(any())).thenReturn(page);
 
-            mockMvc.perform(get("/api/products/?per_page=" + (ProductController.MAX_PAGE_SIZE + 10)));
-
-            verify(productCrudService).getList(Pageable.ofSize(ProductController.MAX_PAGE_SIZE).withPage(0));
+            mockMvc.perform(get("/api/products/?per_page=0"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
         }
 
         private List<Product> createProductList() {
-            return List.of(
-                    Product.builder().id(new ProductId("1")).name("test").build(),
-                    Product.builder().id(new ProductId("2")).name("test").build(),
-                    Product.builder().id(new ProductId("3")).name("test").build()
-            );
+            var product1 = Product.builder().id(new ProductId("1")).name("test").build();
+            product1.addSku(Ean.fromString("1111111111111"), Money.USD(10), 12);
+            product1.addSku(Ean.fromString("2222222222222"), Money.USD(10), 15);
+
+            var product2 = Product.builder().id(new ProductId("2")).name("test").build();
+            product2.addSku(Ean.fromString("3333333333333"), Money.USD(10.15), 1);
+
+            var product3 = Product.builder().id(new ProductId("3")).name("test").build();
+
+            return List.of(product1, product2, product3);
         }
     }
 }

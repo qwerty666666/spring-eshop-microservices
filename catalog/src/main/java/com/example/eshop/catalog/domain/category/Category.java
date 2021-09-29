@@ -20,11 +20,13 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Category - collection of {@link Product} grouped together.
@@ -59,7 +61,8 @@ public class Category extends AggregateRoot<CategoryId> {
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
-    private Set<Category> children = new HashSet<>();
+    @OrderColumn(name = "name")
+    private List<Category> children = new ArrayList<>();
 
     protected Category() {
         this(DomainObjectId.randomId(CategoryId.class));
@@ -86,6 +89,10 @@ public class Category extends AggregateRoot<CategoryId> {
     public void addChild(Category child) {
         Assertions.notNull(child, "Child must be not null");
         this.children.add(child);
+    }
+
+    public List<Category> getChildren() {
+        return Collections.unmodifiableList(children);
     }
 
     public static CategoryBuilder builder() {
@@ -121,7 +128,7 @@ public class Category extends AggregateRoot<CategoryId> {
         @Nullable
         private Category parent;
         @Nullable
-        private Set<Category> children;
+        private List<Category> children;
 
         public CategoryBuilder id(CategoryId id) {
             this.id = id;
@@ -138,7 +145,7 @@ public class Category extends AggregateRoot<CategoryId> {
             return this;
         }
 
-        public CategoryBuilder children(Set<Category> children) {
+        public CategoryBuilder children(List<Category> children) {
             this.children = children;
             return this;
         }

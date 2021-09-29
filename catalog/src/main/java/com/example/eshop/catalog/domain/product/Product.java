@@ -23,9 +23,12 @@ import javax.persistence.Entity;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -55,7 +58,8 @@ public class Product extends AggregateRoot<ProductId> {
     private String name;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Sku> sku = new HashSet<>();
+    @OrderColumn(name = "ean")  // TODO: replace to smth domain specific
+    private List<Sku> sku = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
     // Use on cascade delete in ddl instead of CascadeType.DELETE to avoid N requests
@@ -100,8 +104,8 @@ public class Product extends AggregateRoot<ProductId> {
                 .orElseThrow(() -> new SkuNotFoundException("SKU " + ean + " does not exist in Product " + this));
     }
 
-    public Set<Sku> getSku() {
-        return Collections.unmodifiableSet(sku);
+    public List<Sku> getSku() {
+        return Collections.unmodifiableList(sku);
     }
 
     /**

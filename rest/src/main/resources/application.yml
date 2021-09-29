@@ -12,3 +12,5 @@ spring:
         max-page-size: 100
         default-page-size: 30
         one-indexed-parameters: true
+  web:
+    locale: en_US

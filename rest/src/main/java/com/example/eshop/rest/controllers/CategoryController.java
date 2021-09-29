@@ -4,14 +4,19 @@ import com.example.eshop.catalog.application.category.CategoryCrudService;
 import com.example.eshop.catalog.application.category.CategoryNotFoundException;
 import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
-import com.example.eshop.rest.infrastructure.web.PageableSettings;
-import com.example.eshop.rest.resources.catalog.CategoryResource;
-import com.example.eshop.rest.resources.catalog.CategoryTreeResource;
-import com.example.eshop.rest.resources.shared.ErrorResponse;
-import com.example.eshop.rest.resources.catalog.ProductListResource;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.eshop.rest.api.CategoriesApi;
+import com.example.eshop.rest.controllers.utils.BasicErrorBuilder;
+import com.example.eshop.rest.dto.BasicErrorDto;
+import com.example.eshop.rest.dto.CategoryDto;
+import com.example.eshop.rest.dto.CategoryTreeItemDto;
+import com.example.eshop.rest.dto.PagedProductListDto;
+import com.example.eshop.rest.mappers.CategoryMapper;
+import com.example.eshop.rest.mappers.ProductMapper;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,74 +24,54 @@ import java.util.List;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("/api/categories")
-public class CategoryController {
-    public static final int PRODUCTS_DEFAULT_PAGE_SIZE = ProductController.DEFAULT_PAGE_SIZE;
-    public static final int PRODUCTS_MAX_PAGE_SIZE = ProductController.MAX_PAGE_SIZE;
-
-    @Autowired
-    private CategoryCrudService categoryCrudService;
-
-    @Autowired
-    private ProductCrudService productCrudService;
-
-    @Autowired
-    private MessageSource messageSource;
+@RequestMapping("/api")
+@RequiredArgsConstructor
+@Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
+public class CategoryController implements CategoriesApi {
+    private final CategoryCrudService categoryCrudService;
+    private final ProductCrudService productCrudService;
+    private final MessageSource messageSource;
+    private final CategoryMapper categoryMapper;
+    private final ProductMapper productMapper;
 
     /**
      * @return 404 response if Category doesn't exist
      */
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleCategoryNotFoundException(CategoryNotFoundException e, Locale locale) {
-        var message = messageSource.getMessage("categoryNotFound", new Object[]{ e.getCategoryId() }, locale);
-
-        return new ResponseEntity<>(
-                new ErrorResponse(HttpStatus.NOT_FOUND.value(), message),
-                HttpStatus.NOT_FOUND
-        );
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private BasicErrorDto handleCategoryNotFoundException(CategoryNotFoundException e, Locale locale) {
+        return BasicErrorBuilder.newInstance()
+                .setStatus(HttpStatus.NOT_FOUND)
+                .setDetail(getMessageSource().getMessage("categoryNotFound", new Object[]{ e.getCategoryId() }, locale))
+                .build();
     }
 
-    /**
-     * @return all categories
-     */
-    @GetMapping
-    public List<CategoryResource> getList() {
+    @Override
+    public ResponseEntity<CategoryDto> getCategoryById(String id) {
+        var category = categoryCrudService.getCategory(new CategoryId(id));
+
+        return ResponseEntity.ok(categoryMapper.toCategoryDto(category));
+    }
+
+    @Override
+    public ResponseEntity<List<CategoryDto>> getCategoryList() {
         var categories = categoryCrudService.getAll();
 
-        return categories.stream().map(CategoryResource::new).toList();
+        return ResponseEntity.ok(categoryMapper.toCategoryDtoList(categories));
     }
 
-    /**
-     * @return category by given {@code id}
-     */
-    @GetMapping("/{id}")
-    public CategoryResource getById(@PathVariable CategoryId id) {
-        var category = categoryCrudService.getCategory(id);
-
-        return new CategoryResource(category);
-    }
-
-    /**
-     * @return product for the given {@code category}
-     */
-    @GetMapping("/{id}/products")
-    public ProductListResource getProducts(
-            @PathVariable CategoryId id,
-            @PageableSettings(
-                    maxPageSize = PRODUCTS_MAX_PAGE_SIZE,
-                    defaultPageSize = PRODUCTS_DEFAULT_PAGE_SIZE
-            ) Pageable pageable) {
-        var products = productCrudService.getForCategory(id, pageable);
-
-        return new ProductListResource(products);
-    }
-
-    /**
-     * @return category hierarchy
-     */
-    @GetMapping("/tree")
-    public List<CategoryTreeResource> getTree() {
+    @Override
+    public ResponseEntity<List<CategoryTreeItemDto>> getCategoryTree() {
         var tree = categoryCrudService.getTree();
-        return CategoryTreeResource.treeOf(tree);
+
+        return ResponseEntity.ok(categoryMapper.toTree(tree));
+    }
+
+    @Override
+    public ResponseEntity<PagedProductListDto> getProductsByCategory(String id, Integer perPage, Integer page) {
+        var pageable = PageRequest.of(page - 1, perPage);
+        var products = productCrudService.getForCategory(new CategoryId(id), pageable);
+
+        return ResponseEntity.ok(productMapper.toPagedProductListDto(products));
     }
 }

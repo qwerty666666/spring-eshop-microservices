@@ -5,86 +5,83 @@ import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCo
 import com.example.eshop.cart.application.usecases.cartitemcrud.UpsertCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
-import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
+import com.example.eshop.rest.api.CartApi;
+import com.example.eshop.rest.controllers.base.BaseController;
+import com.example.eshop.rest.controllers.utils.BasicErrorBuilder;
+import com.example.eshop.rest.dto.BasicErrorDto;
+import com.example.eshop.rest.dto.CartDto;
+import com.example.eshop.rest.dto.CheckoutFormDto;
+import com.example.eshop.rest.dto.CheckoutRequestDto;
+import com.example.eshop.rest.dto.InlineResponse200Dto;
+import com.example.eshop.rest.dto.UpsertCartItemCommandDto;
 import com.example.eshop.rest.mappers.CartMapper;
-import com.example.eshop.rest.requests.PutItemToCartRequest;
-import com.example.eshop.rest.resources.cart.CartResource;
-import com.example.eshop.rest.resources.shared.ErrorResponse;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import javax.validation.Valid;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("/api/cart")
-public class CartController {
-    @Autowired
-    private CartItemCrudService cartItemCrudService;
-
-    @Autowired
-    private CartQueryService cartQueryService;
-
-    @Autowired
-    private CartMapper cartMapper;
-
-    @Autowired
-    private MessageSource messageSource;
+@RequestMapping("/api")
+@RequiredArgsConstructor
+@Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
+public class CartController extends BaseController implements CartApi {
+    private final CartItemCrudService cartItemCrudService;
+    private final CartQueryService cartQueryService;
+    private final CartMapper cartMapper;
+    private final MessageSource messageSource;
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleCartItemNotFoundException(CartItemNotFoundException e, Locale locale) {
-        var message = messageSource.getMessage("cartItemNotFound", new Object[]{ e.getEan() }, locale);
-
-        return new ResponseEntity<>(
-                new ErrorResponse(HttpStatus.NOT_FOUND.value(), message),
-                HttpStatus.NOT_FOUND
-        );
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private BasicErrorDto handleCartItemNotFoundException(CartItemNotFoundException e, Locale locale) {
+        return BasicErrorBuilder.newInstance()
+                .setStatus(HttpStatus.NOT_FOUND)
+                .setDetail(getMessageSource().getMessage("cartItemNotFound", new Object[]{ e.getEan() }, locale))
+                .build();
     }
 
-    /**
-     * Get Cart for the authenticated customer
-     */
-    @GetMapping("")
-    public CartResource getCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return getCartForCurrentCustomer(userDetails);
+    @Override
+    public ResponseEntity<CheckoutFormDto> checkout(CheckoutRequestDto checkoutRequestDto) {
+        return null;
     }
 
-    /**
-     * Add CartItem to the authenticated customer's cart, or change CartItem quantity
-     */
-    @PutMapping("/items")
-    public CartResource putCartItem(@Valid @RequestBody PutItemToCartRequest request,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        var command = new UpsertCartItemCommand(userDetails.getCustomerId(), request.ean(), request.quantity());
-        cartItemCrudService.upsert(command);
+    @Override
+    public ResponseEntity<CartDto> getCart() {
+        var cart = getCartForCurrentCustomer();
 
-        return getCartForCurrentCustomer(userDetails);
+        return ResponseEntity.ok(cartMapper.toCartDto(cart));
     }
 
-    /**
-     * Remove CartItem from the authenticated customer's cart
-     */
-    @DeleteMapping("/items/{ean}")
-    public Object removeCartItem(@PathVariable Ean ean, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        var command = new RemoveCartItemCommand(userDetails.getCustomerId(), ean);
+    @Override
+    public ResponseEntity<CartDto> removeCartItem(String ean) {
+        var userDetails = getUserDetailsOrFail();
+        var command = new RemoveCartItemCommand(userDetails.getCustomerId(), Ean.fromString(ean));
+
         cartItemCrudService.remove(command);
 
-        return getCartForCurrentCustomer(userDetails);
+        return getCart();
     }
 
-    private CartResource getCartForCurrentCustomer(UserDetailsImpl userDetails) {
-        var cart = cartQueryService.getForCustomer(userDetails.getCustomerId());
-        return cartMapper.toCartResource(cart);
+    @Override
+    public ResponseEntity<CartDto> upsertCartItem(UpsertCartItemCommandDto dto) {
+        var userDetails = getUserDetailsOrFail();
+        var command = new UpsertCartItemCommand(userDetails.getCustomerId(), Ean.fromString(dto.getEan()), dto.getQuantity());
+
+        cartItemCrudService.upsert(command);
+
+        return getCart();
+    }
+
+    private com.example.eshop.cart.application.usecases.cartquery.dto.CartDto getCartForCurrentCustomer() {
+        var userDetails = getUserDetailsOrFail();
+
+        return cartQueryService.getForCustomer(userDetails.getCustomerId());
     }
 }

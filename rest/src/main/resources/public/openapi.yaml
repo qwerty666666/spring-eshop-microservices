@@ -12,194 +12,189 @@ tags:
   - name: catalog
   - name: customer
   - name: cart
+  - name: checkout
 
 servers:
   - url: '/api'
 
 paths:
-  "/products":
+  /products:
     get:
       tags:
         - catalog
       summary: Get product list
+      operationId: getProductList
       parameters:
         - $ref: '#/components/parameters/product_list_per_page'
         - $ref: '#/components/parameters/page'
       responses:
         200:
-          $ref: '#/components/responses/pagination-product-list'
+          $ref: '#/components/responses/paged_product_list'
 
-  "/products/{id}":
+  /products/{id}:
     get:
       tags:
         - catalog
       summary: Get Product information
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            example: 1
-      responses:
-        200:
-          description: Product
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/product'
-              examples:
-                default:
-                  $ref: '#/components/examples/product'
-        404:
-          $ref: '#/components/responses/not-found'
-
-  "/categories":
-    get:
-      tags:
-        - catalog
-      summary: Get Category list
-      responses:
-        200:
-          description: Category List
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/category'
-              examples:
-                default:
-                  $ref: '#/components/examples/categories'
-
-  "/categories/tree":
-    get:
-      tags:
-        - catalog
-      summary: Get Category hierarchy
-      responses:
-        200:
-          description: Category hierarchy
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/categoryTree'
-              examples:
-                default:
-                  $ref: '#/components/examples/categoryTree'
-
-  "/categories/{id}":
-    get:
-      tags:
-        - catalog
-      summary: Get Category information
+      operationId: getProductById
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         200:
-          description: Category Information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/category'
-              examples:
-                default:
-                  $ref: '#/components/examples/category'
+          $ref: '#/components/responses/product'
         404:
-          $ref: '#/components/responses/not-found'
+          $ref: '#/components/responses/not_found'
 
-  "/categories/{id}/products":
+  /categories:
+    get:
+      tags:
+        - catalog
+      summary: Get Category list
+      operationId: getCategoryList
+      responses:
+        200:
+          $ref: '#/components/responses/category_list'
+
+  /categories/tree:
+    get:
+      tags:
+        - catalog
+      summary: Get Category hierarchy
+      operationId: getCategoryTree
+      responses:
+        200:
+          $ref: '#/components/responses/category_tree'
+
+  /categories/{id}:
+    get:
+      tags:
+        - catalog
+      summary: Get Category information
+      operationId: getCategoryById
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          $ref: '#/components/responses/category'
+        404:
+          $ref: '#/components/responses/not_found'
+
+  /categories/{id}/products:
     get:
       tags:
         - catalog
       summary: Get Product list for given Category
+      operationId: getProductsByCategory
       parameters:
         - $ref: '#/components/parameters/product_list_per_page'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/id'
       responses:
         200:
-          $ref: '#/components/responses/pagination-product-list'
+          $ref: '#/components/responses/paged_product_list'
         404:
-          $ref: '#/components/responses/not-found'
+          $ref: '#/components/responses/not_found'
 
-  "/customers":
-    post:
-      tags:
-        - customer
-      summary: Register new customer
-      requestBody:
-        $ref: '#/components/requestBodies/new-customer'
-      responses:
-        201:
-          $ref: '#/components/schemas/customer'
-        400:
-          $ref: '#/components/responses/validation-error'
-
-  "/customers/current":
+  /customers:
     get:
       tags:
         - customer
       summary: Get the authenticated customer
+      operationId: getAuthenticatedCustomer
       responses:
         200:
-          $ref: '#/components/responses/authenticated-customer'
+          $ref: '#/components/responses/authenticated_customer'
         401:
-          $ref: '#/components/responses/requires-authentication'
+          $ref: '#/components/responses/requires_authentication'
+
+    post:
+      tags:
+        - customer
+      summary: Register new customer
+      operationId: createCustomer
+      requestBody:
+        $ref: '#/components/requestBodies/new_customer'
+      responses:
+        201:
+          $ref: '#/components/responses/customer'
+        400:
+          $ref: '#/components/responses/validation_error'
 
     put:
       tags:
         - customer
       summary: Update the authenticated customer
+      operationId: updateAuthenticatedCustomer
       requestBody:
-        $ref: '#/components/requestBodies/update-customer'
+        $ref: '#/components/requestBodies/update_customer'
       responses:
         200:
           description: Customer updated
         400:
-          $ref: '#/components/responses/validation-error'
+          $ref: '#/components/responses/validation_error'
         401:
-          $ref: '#/components/responses/requires-authentication'
+          $ref: '#/components/responses/requires_authentication'
 
-  "/cart":
+  /cart:
     get:
       tags:
         - cart
       summary: Get cart for the authenticated customer
+      operationId: getCart
       responses:
         200:
           $ref: '#/components/responses/cart'
         401:
-          $ref: '#/components/responses/requires-authentication'
+          $ref: '#/components/responses/requires_authentication'
 
-  "/cart/items":
+  /cart/items:
     put:
       tags:
         - cart
       summary: Add new item to cart of authorized customer or
         change quantity of already existed in cart item, if item
         with the given EAN already exist in the cart
+      operationId: upsertCartItem
       requestBody:
-        $ref: '#/components/requestBodies/upsert-cart-item'
+        $ref: '#/components/requestBodies/upsert_cart_item'
       responses:
         200:
           $ref: '#/components/responses/cart'
         401:
-          $ref: '#/components/responses/requires-authentication'
+          $ref: '#/components/responses/requires_authentication'
 
-  "/cart/items/{ean}":
+  /cart/items/{ean}:
     delete:
       tags:
         - cart
       summary: Remove cart item with provided EAN from authorized
         customer's cart
+      operationId: removeCartItem
+      parameters:
+        - $ref: '#/components/parameters/ean'
       responses:
         200:
           $ref: '#/components/responses/cart'
         401:
-          $ref: '#/components/responses/requires-authentication'
+          $ref: '#/components/responses/requires_authentication'
         404:
-          $ref: '#/components/responses/not-found'
+          $ref: '#/components/responses/not_found'
+
+  /cart/checkout:
+    post:
+      tags:
+        - checkout
+      summary: Updates info during checkout
+      operationId: checkout
+      requestBody:
+        $ref: '#/components/requestBodies/checkout_order'
+      responses:
+        200:
+          $ref: '#/components/responses/checkout_form'
+        400:
+          $ref: '#/components/responses/validation_error'
+        401:
+          $ref: '#/components/responses/requires_authentication'
 
 components:
   schemas:
@@ -262,7 +257,7 @@ components:
         - amount
         - currency
 
-    base-error:
+    basic-error:
       type: object
       properties:
         status:
@@ -270,15 +265,37 @@ components:
           minimum: 100
           maximum: 600
           exclusiveMaximum: true
-          example: 404
         detail:
           type: string
-          example: Resource not found
       required:
         - status
         - detail
 
-    pagination-result:
+    validation-error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-error'
+      required:
+        - errors
+
+    field-error:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - field
+        - message
+      example:
+        field: email
+        message: Invalid email format
+
+    pageable:
       type: object
       properties:
         page:
@@ -314,8 +331,12 @@ components:
       required:
         - id
         - name
+      example:
+        id: 1
+        name: 'Clothes'
+        parentId: 2
 
-    categoryTree:
+    category-tree-item:
       type: object
       properties:
         id:
@@ -327,14 +348,14 @@ components:
         children:
           type: array
           items:
-            $ref: '#/components/schemas/categoryTree'
+            $ref: '#/components/schemas/category-tree-item'
       required:
         - id
         - name
 
-    base-customer:
+    customer-fields:
       type: object
-      description: Customer
+      description: Common customer's fields
       properties:
         firstname:
           type: string
@@ -347,10 +368,10 @@ components:
           format: email
           example: rick-sanchez@example.com
         birthday:
-          allOf:
-            - $ref: '#/components/schemas/date'
-            - nullable: true
-              example: '1989-10-21'
+          type: string
+          format: date
+          example: '2000-07-21'
+          nullable: true
       required:
         - firstname
         - lastname
@@ -362,23 +383,37 @@ components:
           properties:
             id:
               type: string
-              example: 1
-        - $ref: '#/components/schemas/base-customer'
+        - $ref: '#/components/schemas/customer-fields'
+      required:
+        - id
+        - firstname
+        - lastname
+        - email
+      example:
+        id: 1
+        firstname: 'Rick'
+        lastname: 'Sanchez'
+        email: 'rick-sanchez@example.com'
+        birthday: '2000-07-22'
 
     new-customer:
       allOf:
-        - $ref: '#/components/schemas/base-customer'
         - type: object
           properties:
             password:
               type: string
-          required:
-            - password
-
-    date:
-      type: string
-      format: date
-      example: 2000-07-21
+        - $ref: '#/components/schemas/customer-fields'
+      required:
+        - firstname
+        - lastname
+        - email
+        - password
+      example:
+        firstname: 'Rick'
+        lastname: 'Sanchez'
+        email: 'rick-sanchez@example.com'
+        birthday: '2000-07-21'
+        password: 'fuiwer89234'
 
     cart:
       type: object
@@ -404,65 +439,228 @@ components:
         quantity:
           $ref: '#/components/schemas/cart-item-quantity'
 
+    upsert-cart-item-command:
+      type: object
+      properties:
+        ean:
+          $ref: '#/components/schemas/ean'
+        quantity:
+          $ref: '#/components/schemas/cart-item-quantity'
+
     cart-item-quantity:
       type: integer
       minimum: 1
       example: 7
 
+    checkout-request:
+      type: object
+      properties:
+        deliveryServiceId:
+          type: string
+          example: 'courier'
+        paymentServiceId:
+          type: string
+          example: 'online'
+        address:
+          $ref: '#/components/schemas/delivery-address'
+
+    checkout-form:
+      type: object
+      properties:
+        cart:
+          $ref: '#/components/schemas/cart'
+        deliveryAddress:
+          $ref: '#/components/schemas/delivery-address'
+        availableDeliveries:
+          type: array
+          items:
+            $ref: '#/components/schemas/delivery-service'
+        availablePayments:
+          type: array
+          items:
+            $ref: '#/components/schemas/payment-service'
+        total:
+          $ref: '#/components/schemas/checkout-total'
+
+    delivery-address:
+      type: object
+      properties:
+        fullname:
+          type: string
+        phone:
+          $ref: '#/components/schemas/phone'
+        country:
+          type: string
+        city:
+          type: string
+        street:
+          type: string
+        building:
+          type: string
+        flat:
+          type: string
+      example:
+        fullname: 'Rick Sanches'
+        phone: '+79993334444'
+        country: 'Russia'
+        city: 'Khasavyurt'
+        street: 'Street'
+        building: '14/2'
+        flat: '12'
+
+    phone:
+      type: string
+      pattern: '^\+7\d{10}$'
+      example: '+79993334444'
+
+    delivery-service:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      example:
+        id: '123'
+        name: 'Courier'
+
+    payment-service:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      example:
+        id: '543'
+        name: 'Online'
+
+    checkout-total:
+      type: object
+      properties:
+        cartPrice:
+          $ref: '#/components/schemas/money'
+        deliveryPrice:
+          $ref: '#/components/schemas/money'
+        totalPrice:
+          $ref: '#/components/schemas/money'
+      example:
+        cartPrice:
+          amount: 100
+          currency: 'USD'
+        deliveryPrice:
+          amount: 10
+          currency: 'USD'
+        totalPrice:
+          amount: 110
+          currency: 'USD'
+
+    paged-product-list:
+      type: object
+      properties:
+        pageable:
+          $ref: '#/components/schemas/pageable'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/product'
+
+    paged:
+      type: object
+      properties:
+        pageable:
+          $ref: '#/components/schemas/pageable'
+        items:
+          type: array
+          items:
+            type: object
+
   requestBodies:
-    new-customer:
+    new_customer:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/new-customer'
 
-    update-customer:
+    update_customer:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/base-customer'
+            $ref: '#/components/schemas/customer-fields'
 
-    upsert-cart-item:
+    upsert_cart_item:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              ean:
-                $ref: '#/components/schemas/ean'
-              quantity:
-                $ref: '#/components/schemas/cart-item-quantity'
+            $ref: '#/components/schemas/upsert-cart-item-command'
+
+    checkout_order:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/checkout-request'
 
   responses:
-    not-found:
+    not_found:
       description: Resource not found
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/base-error"
+            $ref: '#/components/schemas/basic-error'
           examples:
             default:
-              $ref: '#/components/examples/not-found'
+              $ref: '#/components/examples/not_found'
 
-    requires-authentication:
+    requires_authentication:
       description: Requires authentication
 
     forbidden:
       description: Forbidden
 
-    pagination-product-list:
+    product:
+      description: Product
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/product'
+
+    paged_product_list:
       description: Product List
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/pagination-result'
-              - type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/product'
+            $ref: '#/components/schemas/paged-product-list'
+
+    category:
+      description: Category Information
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/category'
+
+    category_list:
+      description: Category List
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/category'
+          examples:
+            default:
+              $ref: '#/components/examples/categories'
+
+    category_tree:
+      description: Category hierarchy
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/category-tree-item'
+          examples:
+            default:
+              $ref: '#/components/examples/category_tree'
 
     customer:
       description: Customer
@@ -471,7 +669,7 @@ components:
           schema:
             $ref: '#/components/schemas/customer'
 
-    authenticated-customer:
+    authenticated_customer:
       description: Authenticated Customer
       content:
         application/json:
@@ -485,35 +683,21 @@ components:
           schema:
             $ref: '#/components/schemas/cart'
 
-    validation-error:
-      description: Validation Errors
+    checkout_form:
+      description: Checkout info
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              errors:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    field:
-                      type: string
-                      example: email
-                    message:
-                      type: string
-                      example: Invalid email format
+            $ref: '#/components/schemas/checkout-form'
+
+    validation_error:
+      description: Request parameters validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validation-error'
 
   parameters:
-    per_page:
-      name: per_page
-      description: Results per page
-      in: query
-      schema:
-        type: integer
-        maximum: 100
-        minimum: 1
-        default: 30
     product_list_per_page:
       name: per_page
       description: Results per page
@@ -523,6 +707,7 @@ components:
         maximum: 50
         minimum: 1
         default: 30
+
     page:
       name: page
       description: Page number of the results to fetch
@@ -531,6 +716,7 @@ components:
         type: integer
         minimum: 1
         default: 1
+
     id:
       name: id
       in: path
@@ -538,6 +724,13 @@ components:
       schema:
         type: string
         example: 1
+
+    ean:
+      name: ean
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ean'
 
   examples:
     product:
@@ -565,7 +758,7 @@ components:
           name: 'Sneakers'
           parentId: 1
 
-    categoryTree:
+    category_tree:
       value:
         - id: 1
           name: 'Clothes'
@@ -583,7 +776,7 @@ components:
           name: 'Accessories'
           children: []
 
-    not-found:
+    not_found:
       value:
         status: 404
         detail: Resource not found

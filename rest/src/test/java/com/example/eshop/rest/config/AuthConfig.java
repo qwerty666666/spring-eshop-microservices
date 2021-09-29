@@ -10,10 +10,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public class AuthConfig {
     public final static String CUSTOMER_ID = "1";
     public final static String CUSTOMER_EMAIL = "test@test.test";
+    public final static String CUSTOMER_PASSWORD = "pass";
 
     @Bean
     @Primary
     public UserDetailsService userDetailsService() {
-        return username -> new UserDetailsImpl(CUSTOMER_EMAIL, "pass", CUSTOMER_ID);
+        return username -> new UserDetailsImpl(CUSTOMER_EMAIL, CUSTOMER_PASSWORD, CUSTOMER_ID);
     }
 }

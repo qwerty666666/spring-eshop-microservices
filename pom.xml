@@ -22,11 +22,12 @@
         <module>catalog</module>
         <module>rest</module>
         <module>warehouse</module>
+        <module>customer</module>
         <module>cart</module>
     </modules>
 
     <properties>
-        <java.version>16</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>

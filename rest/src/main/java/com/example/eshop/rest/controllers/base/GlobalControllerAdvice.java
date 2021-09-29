@@ -1,8 +1,9 @@
 package com.example.eshop.rest.controllers.base;
 
+import com.example.eshop.rest.controllers.utils.ValidationErrorBuilder;
+import com.example.eshop.rest.dto.ValidationErrorDto;
 import com.example.eshop.rest.infrastructure.converters.EanParameterFormatter;
 import com.example.eshop.rest.infrastructure.converters.EanParameterInvalidFormatException;
-import com.example.eshop.rest.resources.shared.ValidationErrorResponse;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -14,7 +15,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path.Node;
 import java.util.Locale;
+import java.util.stream.StreamSupport;
 
 @ControllerAdvice
 public class GlobalControllerAdvice {
@@ -32,14 +37,14 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ValidationErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        var error = new ValidationErrorResponse();
+    private ValidationErrorDto onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        var error = ValidationErrorBuilder.newInstance();
 
         e.getBindingResult().getFieldErrors().forEach(fieldError -> {
             error.addError(fieldError.getField(), fieldError.getDefaultMessage());
         });
 
-        return error;
+        return error.build();
     }
 
     /**
@@ -48,9 +53,33 @@ public class GlobalControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ValidationErrorResponse onMethodArgumentNotValidException(EanParameterInvalidFormatException e, Locale locale) {
-        var message = messageSource.getMessage("invalidEanFormat", new Object[]{ e.getEan() }, locale);
+    private ValidationErrorDto onMethodArgumentNotValidException(EanParameterInvalidFormatException e, Locale locale) {
+        return ValidationErrorBuilder.newInstance()
+                .addError("ean", messageSource.getMessage("invalidEanFormat", new Object[]{ e.getEan() }, locale))
+                .build();
+    }
 
-        return new ValidationErrorResponse().addError("ean", message);
+    /**
+     * Handle exception from validating Controller's parameters
+     */
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    private ValidationErrorDto onConstraintViolationException(ConstraintViolationException e) {
+        var error = ValidationErrorBuilder.newInstance();
+
+        e.getConstraintViolations().forEach(violation -> {
+            error.addError(getFieldName(violation), violation.getMessage());
+        });
+
+        return error.build();
+    }
+
+    private String getFieldName(ConstraintViolation<?> violation) {
+        return StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
+                // find last Node in Path
+                .reduce((prev, next) -> next)
+                .map(Node::getName)
+                .orElse(null);
     }
 }

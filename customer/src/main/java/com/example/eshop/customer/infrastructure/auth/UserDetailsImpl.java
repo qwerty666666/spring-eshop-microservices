@@ -20,6 +20,10 @@ public class UserDetailsImpl implements UserDetails {
         return customerId;
     }
 
+    public String getEmail() {
+        return username;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();

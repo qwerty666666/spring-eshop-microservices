@@ -5,6 +5,9 @@ import java.util.List;
 
 public record CartDto(String id, List<CartItemDto> items) {
     public CartDto(Cart cart) {
-        this(cart.getId().toString(), cart.getItems().stream().map(CartItemDto::new).toList());
+        this(
+                cart.getId() == null ? null : cart.getId().toString(),
+                cart.getItems().stream().map(CartItemDto::new).toList()
+        );
     }
 }
