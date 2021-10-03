@@ -21,6 +21,12 @@ public class Ean implements ValueObject {
     private String ean;
 
     private Ean(String ean) {
+        Assertions.notNull(ean, "EAN must be non null");
+
+        if (!EAN_PATTERN.matcher(ean).matches()) {
+            throw new InvalidEanFormatException(ean, "Invalid EAN format. Expected EAN-13, but provided " + ean);
+        }
+
         this.ean = ean;
     }
 
@@ -32,12 +38,6 @@ public class Ean implements ValueObject {
      * @throws InvalidEanFormatException if ean has invalid format
      */
     public static Ean fromString(String ean) {
-        Assertions.notNull(ean, "EAN must be non null");
-
-        if (!EAN_PATTERN.matcher(ean).matches()) {
-            throw new InvalidEanFormatException(ean, "Invalid EAN format. Expected EAN-13, but provided " + ean);
-        }
-
         return new Ean(ean);
     }
 

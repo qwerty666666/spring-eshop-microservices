@@ -42,7 +42,7 @@ public class ProductController implements ProductsApi {
 
     @Override
     public ResponseEntity<ProductDto> getProductById(String id) {
-        var product = productCrudService.getProduct(new ProductId(id));
+        var product = productCrudService.getById(new ProductId(id));
 
         return ResponseEntity.ok(productMapper.toProductDto(product));
     }

@@ -70,7 +70,7 @@ public class CategoryController implements CategoriesApi {
     @Override
     public ResponseEntity<PagedProductListDto> getProductsByCategory(String id, Integer perPage, Integer page) {
         var pageable = PageRequest.of(page - 1, perPage);
-        var products = productCrudService.getForCategory(new CategoryId(id), pageable);
+        var products = productCrudService.getByCategory(new CategoryId(id), pageable);
 
         return ResponseEntity.ok(productMapper.toPagedProductListDto(products));
     }

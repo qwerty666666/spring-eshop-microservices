@@ -14,11 +14,10 @@ public class ProductStockChangedEventListener {
         this.productRepository = productRepository;
     }
 
-
     @EventListener
     @Transactional
     public void changeSkuQuantity(ProductStockChangedEvent event) {
-        productRepository.findBySku(event.ean())
+        productRepository.findByEan(event.ean())
                 .ifPresent(product -> product.setSkuAvailableQuantity(event.ean(), event.newQuantity()));
     }
 }

@@ -36,3 +36,27 @@ sku:
     currency: "USD"
     product_id: 3
     available_quantity: 10
+
+attributes:
+  - id: 1
+    name: size
+
+attribute_values:
+  - id: 1
+    attribute_id: 1
+    value: 40
+  - id: 2
+    attribute_id: 1
+    value: 41
+
+sku_attributes:
+  - sku_id: 1
+    attribute_value_id: 1
+  - sku_id: 2
+    attribute_value_id: 1
+  - sku_id: 2
+    attribute_value_id: 2
+  - sku_id: 3
+    attribute_value_id: 1
+  - sku_id: 4
+    attribute_value_id: 1

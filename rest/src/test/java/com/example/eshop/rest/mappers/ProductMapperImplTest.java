@@ -51,23 +51,23 @@ class ProductMapperImplTest {
     }
 
     private Product createProduct() {
-        var productId = "1";
-        var productName = "Sneakers";
-
-        var ean1 = Ean.fromString("1111111111111");
-        var price1 = Money.USD(1);
-        var quantity1 = 1;
-
-        var ean2 = Ean.fromString("2222222222222");
-        var price2 = Money.USD(2);
-        var quantity2 = 2;
-
         var product = Product.builder()
-                .id(new ProductId(productId))
-                .name(productName)
+                .id(new ProductId("1"))
+                .name("Sneakers")
                 .build();
-        product.addSku(ean1, price1, quantity1);
-        product.addSku(ean2, price2, quantity2);
+
+        product.addSku(Sku.builder()
+                .ean(Ean.fromString("1111111111111"))
+                .price(Money.USD(1))
+                .availableQuantity(1)
+                .build()
+        );
+        product.addSku(Sku.builder()
+                .ean(Ean.fromString("2222222222222"))
+                .price(Money.USD(2))
+                .availableQuantity(2)
+                .build()
+        );
 
         return product;
     }

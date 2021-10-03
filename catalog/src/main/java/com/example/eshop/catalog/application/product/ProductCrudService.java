@@ -14,7 +14,7 @@ public interface ProductCrudService {
     /**
      * @throws ProductNotFoundException if product with given {@code productId} doesn't exists
      */
-    Product getProduct(ProductId productId);
+    Product getById(ProductId productId);
 
     /**
      * Find Products for given page
@@ -27,7 +27,7 @@ public interface ProductCrudService {
      * @throws CategoryNotFoundException if {@link Category} with given
      *                 {@code categoryId} doesn't exists
      */
-    Page<Product> getForCategory(CategoryId categoryId, Pageable pageable);
+    Page<Product> getByCategory(CategoryId categoryId, Pageable pageable);
 
     /**
      * Find {@link Product} which has {@link Sku} with given {@code ean}

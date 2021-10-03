@@ -4,6 +4,7 @@ import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.catalog.application.product.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
+import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.rest.config.MappersConfig;
 import com.example.eshop.rest.mappers.ProductMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -53,7 +54,7 @@ class ProductControllerTest {
         @Test
         void givenGetByIdRequest_whenProductExists_thenReturnOk() throws Exception {
             var product = createProduct();
-            when(productCrudService.getProduct(product.getId())).thenReturn(product);
+            when(productCrudService.getById(product.getId())).thenReturn(product);
 
             var expectedJson = objectMapper.writeValueAsString(productMapper.toProductDto(product));
 
@@ -63,14 +64,14 @@ class ProductControllerTest {
                     .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
                     .andExpect(content().json(expectedJson));
 
-            verify(productCrudService).getProduct(product.getId());
+            verify(productCrudService).getById(product.getId());
         }
 
         @Test
         void givenGetByIdRequest_whenProductNotFound_thenReturn404() throws Exception {
             var product = createProduct();
             var id = product.getId();
-            when(productCrudService.getProduct(id)).thenThrow(new ProductNotFoundException(id, ""));
+            when(productCrudService.getById(id)).thenThrow(new ProductNotFoundException(id, ""));
 
             mockMvc.perform(get("/api/products/" + product.getId()))
                     .andExpect(status().isNotFound())
@@ -81,12 +82,17 @@ class ProductControllerTest {
                             }""".formatted(product.getId())
                     ));
 
-            verify(productCrudService).getProduct(id);
+            verify(productCrudService).getById(id);
         }
 
         private Product createProduct() {
             var product = Product.builder().id(new ProductId("1")).name("test").build();
-            product.addSku(Ean.fromString("1111111111111"), Money.USD(10), 12);
+            product.addSku(Sku.builder()
+                    .ean(Ean.fromString("1111111111111"))
+                    .price(Money.USD(10))
+                    .availableQuantity(12)
+                    .build()
+            );
 
             return product;
         }
@@ -135,11 +141,26 @@ class ProductControllerTest {
 
         private List<Product> createProductList() {
             var product1 = Product.builder().id(new ProductId("1")).name("test").build();
-            product1.addSku(Ean.fromString("1111111111111"), Money.USD(10), 12);
-            product1.addSku(Ean.fromString("2222222222222"), Money.USD(10), 15);
+            product1.addSku(Sku.builder()
+                    .ean(Ean.fromString("1111111111111"))
+                    .price(Money.USD(10))
+                    .availableQuantity(12)
+                    .build()
+            );
+            product1.addSku(Sku.builder()
+                    .ean(Ean.fromString("2222222222222"))
+                    .price(Money.USD(10))
+                    .availableQuantity(15)
+                    .build()
+            );
 
             var product2 = Product.builder().id(new ProductId("2")).name("test").build();
-            product2.addSku(Ean.fromString("3333333333333"), Money.USD(10.15), 1);
+            product2.addSku(Sku.builder()
+                    .ean(Ean.fromString("3333333333333"))
+                    .price(Money.USD(10.15))
+                    .availableQuantity(1)
+                    .build()
+            );
 
             var product3 = Product.builder().id(new ProductId("3")).name("test").build();
 

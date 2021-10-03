@@ -49,7 +49,6 @@ import java.util.Objects;
 @Getter
 public class Category extends AggregateRoot<CategoryId> {
     @EmbeddedId
-    @Getter(AccessLevel.NONE)
     private CategoryId id;
 
     @Column(name = "name", nullable = false)

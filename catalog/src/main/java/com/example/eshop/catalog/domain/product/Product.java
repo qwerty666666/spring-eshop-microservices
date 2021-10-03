@@ -5,15 +5,13 @@ import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.base.DomainObjectId;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SortComparator;
 import org.springframework.lang.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,48 +20,64 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Product is a group of {@link Sku}, where each SKU is a distinct
- * product variant with unique attribute set (like size, color, etc.).
+ * product variant with unique {@link Attribute} set (like size, color, etc.).
  * <p>
  * From catalog perspective, users will work with {@code Product}
  * instead of {@code SKU}.
  */
 @Entity
 @Table(name = "products")
-@NamedEntityGraph(
-        name = "Product.sku",
-        attributeNodes = @NamedAttributeNode("sku")
-)
-@ToString(onlyExplicitlyIncluded = true)
+@NamedEntityGraphs({
+        // Product.sku + Product.sku.attributes
+        @NamedEntityGraph(
+                name = "Product.sku",
+                attributeNodes = {
+                        @NamedAttributeNode(value = "sku", subgraph = "sku.attributes")
+                },
+                subgraphs = {
+                        @NamedSubgraph(
+                                name = "sku.attributes",
+                                attributeNodes = @NamedAttributeNode(
+                                        value = "attributes",
+                                        subgraph = "sku.attributes.attribute"
+                                )
+                        ),
+                        @NamedSubgraph(
+                                name = "sku.attributes.attribute",
+                                attributeNodes = @NamedAttributeNode(value = "attribute")
+                        ),
+                }
+        )
+})
+@Getter
+@ToString(of = { "id", "name" })
 @Slf4j
 public class Product extends AggregateRoot<ProductId> {
     @EmbeddedId
-    @ToString.Include
     private ProductId id;
 
     @Column(name = "name", nullable = false)
-    @ToString.Include
-    @Getter
     private String name;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderColumn(name = "ean")  // TODO: replace to smth domain specific
-    private List<Sku> sku = new ArrayList<>();
+    @SortComparator(ByAttributeValueSkuComparator.class)
+    private SortedSet<Sku> sku = new TreeSet<>(new ByAttributeValueSkuComparator());
 
     @OneToMany(mappedBy = "product")
-    // Use on cascade delete in ddl instead of CascadeType.DELETE to avoid N requests
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<ProductCategory> categories = new HashSet<>();
 
     protected Product() {
@@ -91,7 +105,7 @@ public class Product extends AggregateRoot<ProductId> {
      */
     public void setSkuAvailableQuantity(Ean ean, int availableQuantity) {
         Assertions.notNull(ean, "EAN must be non empty");
-        getSku(ean).setAvailableQuantity(availableQuantity);
+        getSku(ean).changeAvailableQuantity(availableQuantity);
     }
 
     /**
@@ -105,18 +119,38 @@ public class Product extends AggregateRoot<ProductId> {
     }
 
     public List<Sku> getSku() {
-        return Collections.unmodifiableList(sku);
+        return List.copyOf(sku);
     }
 
     /**
      * Add new SKU to this Product
      */
-    public void addSku(Ean ean, Money price, int quantity) {
-        var sku = new Sku(this, ean, price, quantity);
+    public void addSku(Sku sku) {
+        this.checkSkuHasTheSameAttributes(sku);
 
+        sku.setProduct(this);
         this.sku.add(sku);
 
         log.info("Add new SKU " + sku);
+    }
+
+    /**
+     * Check if given SKU has the same Attribute List as the other SKUs
+     * in this Product have.
+     *
+     * @throws IllegalArgumentException if Attribute List is different
+     */
+    private void checkSkuHasTheSameAttributes(Sku sku) {
+        if (getSku().isEmpty()) {
+            return;
+        }
+
+        var existed = getSku().get(0);
+
+        if (!existed.getAttributeList().equals(sku.getAttributeList())) {
+            throw new IllegalArgumentException("Given SKU has different Attribute List than the existed SKUs have " +
+                    "Given Attributes = " + sku.getAttributeList() + ". Existed Attributes = " + existed.getAttributeList());
+        }
     }
 
     public Set<ProductCategory> getCategories() {

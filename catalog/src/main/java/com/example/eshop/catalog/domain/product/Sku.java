@@ -7,23 +7,32 @@ import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.SortComparator;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * SKU - Stock Keeping Unit. It is distinct item for sale and for
@@ -40,14 +49,12 @@ import java.util.Objects;
 @Table(name = "sku")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@ToString(onlyExplicitlyIncluded = true)
+@ToString(of = { "id", "ean" })
 @Slf4j
 public class Sku implements Entity<Long> {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    @Getter(AccessLevel.NONE)
-    @ToString.Include
     private Long id;
 
     @NaturalId
@@ -57,13 +64,12 @@ public class Sku implements Entity<Long> {
             column = @Column(name = "ean", length = 13, unique = true, nullable = false, updatable = false)
     )
     @NotNull
-    @ToString.Include
     private Ean ean;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "amount", column = @Column(name = "price")),
-            @AttributeOverride(name = "currency", column = @Column(name = "currency")),
+            @AttributeOverride(name = "currency", column = @Column(name = "currency"))
     })
     private Money price;
 
@@ -75,21 +81,67 @@ public class Sku implements Entity<Long> {
     @JoinColumn(nullable = false)
     private Product product;
 
-    Sku(Product product, Ean ean, Money price, int availableQuantity) {
-        Assertions.notNull(product, "product must be not null");
-        Assertions.notNull(ean, "ean must be not null");
-        Assertions.notNull(price, "price must be not null");
-        Assertions.nonNegative(availableQuantity, "availableQuantity must be non negative");
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "sku_attributes",
+            joinColumns = @JoinColumn(name = "sku_id"),
+            inverseJoinColumns = @JoinColumn(name = "attribute_value_id")
+    )
+    @SortComparator(ByAttributeNameAttributeValueComparator.class)
+    private SortedSet<AttributeValue> attributes = new TreeSet<>(new ByAttributeNameAttributeValueComparator());
 
-        this.product = product;
-        this.ean = ean;
-        this.price = price;
-        this.availableQuantity = availableQuantity;
+    private Sku(SkuBuilder builder) {
+        this.setEan(builder.ean);
+        this.setPrice(builder.price);
+        this.setAvailableQuantity(builder.availableQuantity);
+        this.setAttributes(builder.attributes);
     }
 
     @Override
     public Long getId() {
         return id;
+    }
+
+    private void setEan(Ean ean) {
+        Assertions.notNull(ean, "ean must be not null");
+
+        this.ean = ean;
+    }
+
+    private void setPrice(Money price) {
+        Assertions.notNull(price, "price must be not null");
+
+        this.price = price;
+    }
+
+    @SneakyThrows
+    private void setAttributes(List<AttributeValue> attributes) {
+        Assertions.notNull(attributes, "attributes must be not null");
+
+        this.attributes.clear();
+        this.attributes.addAll(attributes);
+    }
+
+    void setProduct(Product product) {
+        Assertions.notNull(product, "product must be not null");
+
+        this.product = product;
+    }
+
+    /**
+     * Updated available quantity
+     */
+    void changeAvailableQuantity(int availableQuantity) {
+        setAvailableQuantity(availableQuantity);
+
+        log.info("SKU: " + this + ". Available quantity changed to " + availableQuantity);
+    }
+
+    private void setAvailableQuantity(int availableQuantity) {
+        Assertions.nonNegative(availableQuantity, "Available quantity can't be negative");
+
+        this.availableQuantity = availableQuantity;
+
+        log.info("SKU: " + this + ". Available quantity changed to " + availableQuantity);
     }
 
     /**
@@ -99,12 +151,12 @@ public class Sku implements Entity<Long> {
         return availableQuantity > 0;
     }
 
-    void setAvailableQuantity(int availableQuantity) {
-        Assertions.nonNegative(availableQuantity, "Available quantity can't be negative");
+    public List<AttributeValue> getAttributeValues() {
+        return List.copyOf(attributes);
+    }
 
-        this.availableQuantity = availableQuantity;
-
-        log.info("SKU: " + this + ". Available quantity changed to " + availableQuantity);
+    public List<Attribute> getAttributeList() {
+        return getAttributeValues().stream().map(AttributeValue::getAttribute).toList();
     }
 
     @Override
@@ -119,5 +171,40 @@ public class Sku implements Entity<Long> {
     @Override
     public int hashCode() {
         return ean.hashCode();
+    }
+
+    public static SkuBuilder builder() {
+        return new SkuBuilder();
+    }
+
+    public static class SkuBuilder {
+        private Ean ean;
+        private Money price;
+        private int availableQuantity;
+        private List<AttributeValue> attributes = new ArrayList<>();
+
+        public SkuBuilder ean(Ean ean) {
+            this.ean = ean;
+            return this;
+        }
+
+        public SkuBuilder price(Money price) {
+            this.price = price;
+            return this;
+        }
+
+        public SkuBuilder availableQuantity(int availableQuantity) {
+            this.availableQuantity = availableQuantity;
+            return this;
+        }
+
+        public SkuBuilder attributes(List<AttributeValue> attributes) {
+            this.attributes = attributes;
+            return this;
+        }
+
+        public Sku build() {
+            return new Sku(this);
+        }
     }
 }

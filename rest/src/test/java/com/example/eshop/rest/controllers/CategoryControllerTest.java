@@ -126,11 +126,11 @@ class CategoryControllerTest {
             var id = new CategoryId("1");
             var perPage = 5;
             var pageable = PageRequest.of(0, perPage);
-            when(productCrudService.getForCategory(id, pageable)).thenThrow(new CategoryNotFoundException(id, ""));
+            when(productCrudService.getByCategory(id, pageable)).thenThrow(new CategoryNotFoundException(id, ""));
 
             assert404("/api/categories/" + id + "/products/?per_page=" + perPage, id);
 
-            verify(productCrudService).getForCategory(id, pageable);
+            verify(productCrudService).getByCategory(id, pageable);
         }
     }
 

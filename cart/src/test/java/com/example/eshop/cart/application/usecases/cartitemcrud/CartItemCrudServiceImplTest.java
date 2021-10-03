@@ -4,6 +4,7 @@ import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.catalog.domain.product.Product;
+import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,12 @@ class CartItemCrudServiceImplTest {
         product = Product.builder()
                 .name(productName)
                 .build();
-        product.addSku(ean, price, 10);
+        product.addSku(Sku.builder()
+                .ean(ean)
+                .price(price)
+                .availableQuantity(10)
+                .build()
+        );
 
         productCrudService = mock(ProductCrudService.class);
         when(productCrudService.getByEan(eq(ean))).thenReturn(product);

@@ -1,6 +1,7 @@
 package com.example.eshop.catalog.domain.product;
 
 import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraph;
+import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
 import com.cosium.spring.data.jpa.entity.graph.repository.EntityGraphJpaRepository;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
@@ -20,5 +21,9 @@ public interface ProductRepository extends EntityGraphJpaRepository<Product, Pro
     Page<Product> findByCategory(@Param("category") Category category, Pageable pageable, EntityGraph entityGraph);
 
     @Query("select distinct p from Product p join p.sku s where s.ean = :ean")
-    Optional<Product> findBySku(@Param("ean") Ean ean);
+    Optional<Product> findByEan(@Param("ean") Ean ean, EntityGraph entityGraph);
+
+    default Optional<Product> findByEan(@Param("ean") Ean ean) {
+        return findByEan(ean, EntityGraphs.empty());
+    }
 }

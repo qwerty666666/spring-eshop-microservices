@@ -12,7 +12,6 @@ import com.example.eshop.rest.dto.BasicErrorDto;
 import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.dto.CheckoutFormDto;
 import com.example.eshop.rest.dto.CheckoutRequestDto;
-import com.example.eshop.rest.dto.InlineResponse200Dto;
 import com.example.eshop.rest.dto.UpsertCartItemCommandDto;
 import com.example.eshop.rest.mappers.CartMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
