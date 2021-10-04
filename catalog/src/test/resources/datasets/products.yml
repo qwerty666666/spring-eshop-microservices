@@ -60,3 +60,17 @@ sku_attributes:
     attribute_value_id: 1
   - sku_id: 4
     attribute_value_id: 1
+
+files:
+  - id: 1
+    location: file_1.png
+  - id: 2
+    location: file_2.png
+
+product_images:
+  - product_id: 1
+    file_id: 1
+    sort: 0
+  - product_id: 1
+    file_id: 2
+    sort: 1

@@ -1,5 +1,6 @@
 package com.example.eshop.catalog.domain.product;
 
+import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
@@ -18,12 +19,17 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -42,11 +48,12 @@ import java.util.TreeSet;
 @Entity
 @Table(name = "products")
 @NamedEntityGraphs({
-        // Product.sku + Product.sku.attributes
+        // Product.sku + Product.sku.attributes + Product.images
         @NamedEntityGraph(
-                name = "Product.sku",
+                name = "Product.skuAndImages",
                 attributeNodes = {
-                        @NamedAttributeNode(value = "sku", subgraph = "sku.attributes")
+                        @NamedAttributeNode(value = "sku", subgraph = "sku.attributes"),
+                        @NamedAttributeNode(value = "images"),
                 },
                 subgraphs = {
                         @NamedSubgraph(
@@ -79,6 +86,16 @@ public class Product extends AggregateRoot<ProductId> {
 
     @OneToMany(mappedBy = "product")
     private Set<ProductCategory> categories = new HashSet<>();
+
+    @OneToMany
+    @JoinTable(
+            name = "product_images",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"),
+            uniqueConstraints = @UniqueConstraint(name = "uniq_product_image", columnNames = { "product_id", "file_id" })
+    )
+    @OrderColumn(name = "sort")
+    private List<File> images = new ArrayList<>();
 
     protected Product() {
         this(DomainObjectId.randomId(ProductId.class));
@@ -155,6 +172,10 @@ public class Product extends AggregateRoot<ProductId> {
 
     public Set<ProductCategory> getCategories() {
         return Collections.unmodifiableSet(categories);
+    }
+
+    public List<File> getImages() {
+        return Collections.unmodifiableList(images);
     }
 
     public static ProductBuilder builder() {

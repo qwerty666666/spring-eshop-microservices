@@ -23,7 +23,7 @@ class ProductCrudServiceImpl implements ProductCrudService {
     @Override
     @Transactional
     public Product getById(ProductId productId) {
-        return productRepository.findById(productId, EntityGraphs.named("Product.sku"))
+        return productRepository.findById(productId, EntityGraphs.named("Product.skuAndImages"))
                 .orElseThrow(() -> new ProductNotFoundException(productId,
                         String.format("Product with ID %s not found", productId))
                 );
@@ -32,7 +32,7 @@ class ProductCrudServiceImpl implements ProductCrudService {
     @Override
     @Transactional
     public Page<Product> getList(Pageable pageable) {
-        return productRepository.findAll(pageable);
+        return productRepository.findAll(pageable, EntityGraphs.named("Product.skuAndImages"));
     }
 
     @Override
@@ -40,13 +40,13 @@ class ProductCrudServiceImpl implements ProductCrudService {
     public Page<Product> getByCategory(CategoryId categoryId, Pageable pageable) {
         Category category = categoryCrudService.getCategory(categoryId);
 
-        return productRepository.findByCategory(category, pageable, EntityGraphs.named("Product.sku"));
+        return productRepository.findByCategory(category, pageable, EntityGraphs.named("Product.skuAndImages"));
     }
 
     @Override
     @Transactional
     public Product getByEan(Ean ean) {
-        return productRepository.findByEan(ean, EntityGraphs.named("Product.sku"))
+        return productRepository.findByEan(ean, EntityGraphs.named("Product.skuAndImages"))
                 .orElseThrow(() -> new ProductNotFoundException("Product with SKU " + ean + " not found"));
     }
 }
