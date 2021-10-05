@@ -211,10 +211,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/sku'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+
       required:
         - id
         - name
         - sku
+        - images
+
+    image:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://example.com/images/photo.png
 
     sku:
       description: Stock Keeping Unit
@@ -229,6 +242,7 @@ components:
           minimum: 0
           description: Available quantity for purchase
           example: 12
+
       required:
         - price
         - ean
@@ -245,7 +259,6 @@ components:
       properties:
         amount:
           type: number
-          format: decimal
           minimum: 0
           example: 100.1
         currency:

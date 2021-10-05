@@ -178,6 +178,10 @@ public class Product extends AggregateRoot<ProductId> {
         return Collections.unmodifiableList(images);
     }
 
+    private void addImage(File image) {
+        this.images.add(image);
+    }
+
     public static ProductBuilder builder() {
         return new ProductBuilder();
     }
@@ -208,6 +212,7 @@ public class Product extends AggregateRoot<ProductId> {
         @Nullable
         private ProductId id;
         private String name;
+        private List<File> images = new ArrayList<>();
 
         public ProductBuilder id(ProductId id) {
             this.id = id;
@@ -218,10 +223,16 @@ public class Product extends AggregateRoot<ProductId> {
             this.name = name;
             return this;
         }
+        
+        public ProductBuilder addImage(File image) {
+            images.add(image);
+            return this;
+        }
 
         public Product build() {
             var product = (id == null ? new Product() : new Product(id));
             product.setName(name);
+            images.forEach(product::addImage);
 
             return product;
         }

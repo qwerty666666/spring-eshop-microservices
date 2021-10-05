@@ -6,7 +6,6 @@ import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.rest.dto.PagedProductListDto;
 import com.example.eshop.rest.dto.ProductDto;
 import com.example.eshop.rest.dto.SkuDto;
-import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
@@ -15,7 +14,7 @@ import java.util.stream.Stream;
 
 @Mapper(
         componentModel = "spring",
-        uses = { EanMapper.class, PageableMapper.class }
+        uses = { EanMapper.class, PageableMapper.class, ImageMapper.class }
 )
 public interface ProductMapper {
     ProductDto toProductDto(Product product);

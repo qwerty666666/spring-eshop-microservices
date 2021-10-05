@@ -1,5 +1,6 @@
 package com.example.eshop.rest.mappers;
 
+import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.Sku;
@@ -54,6 +55,8 @@ class ProductMapperImplTest {
         var product = Product.builder()
                 .id(new ProductId("1"))
                 .name("Sneakers")
+                .addImage(new File("img-1"))
+                .addImage(new File("img-2"))
                 .build();
 
         product.addSku(Sku.builder()
@@ -76,6 +79,8 @@ class ProductMapperImplTest {
         assertThat(productDto.getId()).as("product ID").isEqualTo(product.getId().toString());
         assertThat(productDto.getName()).as("product Name").isEqualTo(product.getName());
         Utils.assertListTheSame(product.getSku(), productDto.getSku(), ProductMapperImplTest::assertSkuEquals);
+        // check only collection size because we don't know what URL will be used in imageDto
+        assertThat(productDto.getImages()).as("images").hasSize(product.getImages().size());
     }
 
     private static void assertSkuEquals(Sku sku, SkuDto skuDto) {
@@ -83,6 +88,4 @@ class ProductMapperImplTest {
         assertThat(skuDto.getQuantity()).as("available quantity").isEqualTo(sku.getAvailableQuantity());
         Utils.assertPriceEquals(sku.getPrice(), skuDto.getPrice());
     }
-
-
 }

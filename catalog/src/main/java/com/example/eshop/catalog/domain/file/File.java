@@ -1,6 +1,7 @@
 package com.example.eshop.catalog.domain.file;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "files")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class File {
     @Id
     @Column(name = "id", nullable = false)
