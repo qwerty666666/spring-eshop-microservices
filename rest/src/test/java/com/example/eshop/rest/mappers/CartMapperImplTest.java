@@ -42,7 +42,7 @@ class CartMapperImplTest {
 
     private static void assertCartEquals(CartDto cart1, com.example.eshop.rest.dto.CartDto cart2) {
         assertThat(cart2.getId()).as("ID").isEqualTo(cart1.id());
-        Utils.assertListTheSame(cart1.items(), cart2.getItems(), CartMapperImplTest::assertCartItemEquals);
+        Utils.assertListEquals(cart1.items(), cart2.getItems(), CartMapperImplTest::assertCartItemEquals);
     }
 
     private static void assertCartItemEquals(CartItemDto item1, com.example.eshop.rest.dto.CartItemDto item2) {

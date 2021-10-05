@@ -17,11 +17,11 @@ public class Utils {
         assertThat(pageableDto.getTotalItems()).as("total items").isEqualTo(page.getTotalElements());
     }
 
-    public static <T1, T2> void assertListTheSame(List<T1> list1, List<T2> list2, BiConsumer<T1, T2> assertion) {
+    public static <T1, T2> void assertListEquals(List<T1> list1, List<T2> list2, BiConsumer<T1, T2> itemAssertion) {
         assertThat(list1).as("list size").hasSize(list2.size());
 
         for (int i = 0; i < list1.size(); i++) {
-            assertion.accept(list1.get(i), list2.get(i));
+            itemAssertion.accept(list1.get(i), list2.get(i));
         }
     }
 

@@ -242,11 +242,29 @@ components:
           minimum: 0
           description: Available quantity for purchase
           example: 12
-
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
       required:
         - price
         - ean
         - quantity
+        - attributes
+
+    attribute:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        value:
+          type: string
+      example:
+        id: 1
+        name: size
+        value: XXL
 
     ean:
       type: string

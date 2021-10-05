@@ -1,10 +1,13 @@
 package com.example.eshop.rest.mappers;
 
 import com.example.eshop.catalog.domain.file.File;
+import com.example.eshop.catalog.domain.product.Attribute;
+import com.example.eshop.catalog.domain.product.AttributeValue;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.rest.config.MappersConfig;
+import com.example.eshop.rest.dto.AttributeDto;
 import com.example.eshop.rest.dto.ProductDto;
 import com.example.eshop.rest.dto.SkuDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -48,7 +51,7 @@ class ProductMapperImplTest {
 
         // Then
         Utils.assertPageableEquals(page, dto.getPageable());
-        Utils.assertListTheSame(page.stream().toList(), dto.getItems(), ProductMapperImplTest::assertProductEquals);
+        Utils.assertListEquals(page.stream().toList(), dto.getItems(), this::assertProductEquals);
     }
 
     private Product createProduct() {
@@ -59,33 +62,49 @@ class ProductMapperImplTest {
                 .addImage(new File("img-2"))
                 .build();
 
+        var sizeAttribute = new Attribute(1L, "size");
+        var colorAttribute = new Attribute(2L, "color");
+
         product.addSku(Sku.builder()
                 .ean(Ean.fromString("1111111111111"))
                 .price(Money.USD(1))
                 .availableQuantity(1)
+                .addAttribute(new AttributeValue(sizeAttribute, "XXL"))
+                .addAttribute(new AttributeValue(colorAttribute, "red"))
                 .build()
         );
         product.addSku(Sku.builder()
                 .ean(Ean.fromString("2222222222222"))
                 .price(Money.USD(2))
                 .availableQuantity(2)
+                .addAttribute(new AttributeValue(sizeAttribute, "M"))
+                .addAttribute(new AttributeValue(colorAttribute, "blue"))
                 .build()
         );
 
         return product;
     }
 
-    private static void assertProductEquals(Product product, ProductDto productDto) {
-        assertThat(productDto.getId()).as("product ID").isEqualTo(product.getId().toString());
+    private void assertProductEquals(Product product, ProductDto productDto) {
+        assertThat(productDto.getId()).as("product ID")
+                .isEqualTo(product.getId() == null ? null : product.getId().toString());
         assertThat(productDto.getName()).as("product Name").isEqualTo(product.getName());
-        Utils.assertListTheSame(product.getSku(), productDto.getSku(), ProductMapperImplTest::assertSkuEquals);
+        Utils.assertListEquals(product.getSku(), productDto.getSku(), this::assertSkuEquals);
         // check only collection size because we don't know what URL will be used in imageDto
         assertThat(productDto.getImages()).as("images").hasSize(product.getImages().size());
     }
 
-    private static void assertSkuEquals(Sku sku, SkuDto skuDto) {
+    private void assertSkuEquals(Sku sku, SkuDto skuDto) {
         assertThat(skuDto.getEan()).as("Sku EAN").isEqualTo(sku.getEan().toString());
         assertThat(skuDto.getQuantity()).as("available quantity").isEqualTo(sku.getAvailableQuantity());
         Utils.assertPriceEquals(sku.getPrice(), skuDto.getPrice());
+        Utils.assertListEquals(sku.getAttributeValues(), skuDto.getAttributes(), this::assertAttributeEquals);
+    }
+
+    private void assertAttributeEquals(AttributeValue attributeValue, AttributeDto attributeDto) {
+        assertThat(attributeDto.getId()).as("Attribute ID")
+                .isEqualTo(attributeValue.getId() == null ? null : attributeValue.getId().toString());
+        assertThat(attributeDto.getName()).as("Attribute Name").isEqualTo(attributeValue.getAttribute().getName());
+        assertThat(attributeDto.getValue()).as("Attribute Value").isEqualTo(attributeValue.getValue());
     }
 }

@@ -203,6 +203,11 @@ public class Sku implements Entity<Long> {
             return this;
         }
 
+        public SkuBuilder addAttribute(AttributeValue attributeValue) {
+            this.attributes.add(attributeValue);
+            return this;
+        }
+
         public Sku build() {
             return new Sku(this);
         }
