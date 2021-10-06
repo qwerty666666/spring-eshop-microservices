@@ -20,7 +20,7 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class Category extends AggregateRoot<CategoryId> {
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
-    @OrderColumn(name = "name")
+    @OrderBy("name asc")
     private List<Category> children = new ArrayList<>();
 
     protected Category() {
