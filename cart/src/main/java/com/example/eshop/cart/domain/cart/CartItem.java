@@ -40,7 +40,6 @@ public class CartItem implements Entity<Long> {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue
-    @Getter(AccessLevel.NONE)
     @ToString.Include
     private Long id;
 

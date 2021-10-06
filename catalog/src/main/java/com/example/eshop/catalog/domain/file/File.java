@@ -31,7 +31,7 @@ public class File {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         File file = (File) o;
-        return Objects.equals(id, file.id);
+        return id != null && Objects.equals(id, file.id);
     }
 
     @Override

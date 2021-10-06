@@ -5,7 +5,6 @@ import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,6 +20,7 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -34,7 +34,8 @@ import java.util.Objects;
 @Entity
 @Table(
         name = "products_categories",
-        indexes = @Index(columnList = "category_id")
+        indexes = @Index(columnList = "category_id"),
+        uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "category_id" })
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductCategory {
@@ -50,6 +51,7 @@ public class ProductCategory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
 
     @CreationTimestamp
@@ -83,17 +85,15 @@ public class ProductCategory {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         ProductCategory that = (ProductCategory) o;
-
-        return Objects.equals(id, that.id);
+        return id != null && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id);
     }
 
     @Embeddable
-    @EqualsAndHashCode
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
     public static class Id implements Serializable {
@@ -101,5 +101,19 @@ public class ProductCategory {
         private CategoryId categoryId;
         @AttributeOverride(name = "uuid", column = @Column(name = "product_id", updatable = false, insertable = false))
         private ProductId productId;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+            Id id = (Id) o;
+            return categoryId != null && Objects.equals(categoryId, id.categoryId)
+                    && productId != null && Objects.equals(productId, id.productId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(categoryId, productId);
+        }
     }
 }

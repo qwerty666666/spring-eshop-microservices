@@ -52,7 +52,7 @@ public abstract class PaymentService extends AggregateRoot<PaymentServiceId> {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         PaymentService other = (PaymentService) o;
 
-        return Objects.equals(id, other.id);
+        return id != null && Objects.equals(id, other.id);
     }
 
     @Override

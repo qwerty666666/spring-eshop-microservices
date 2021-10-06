@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
 @Entity
@@ -24,6 +25,7 @@ public class Attribute {
     private Long id;
 
     @Column(name = "name", nullable = false)
+    @NotEmpty
     private String name;
 
     public Attribute(Long id, String name) {
@@ -36,7 +38,7 @@ public class Attribute {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Attribute attribute = (Attribute) o;
-        return Objects.equals(id, attribute.id);
+        return id != null && Objects.equals(id, attribute.id);
     }
 
     @Override

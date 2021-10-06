@@ -47,7 +47,7 @@ public abstract class DomainObjectId implements ValueObject, Serializable {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         DomainObjectId id = (DomainObjectId) o;
 
-        return Objects.equals(uuid, id.uuid);
+        return uuid != null && Objects.equals(uuid, id.uuid);
     }
 
     @Override

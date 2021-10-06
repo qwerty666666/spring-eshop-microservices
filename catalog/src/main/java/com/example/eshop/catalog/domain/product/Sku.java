@@ -13,6 +13,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.NaturalId;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
@@ -45,12 +46,13 @@ import java.util.Objects;
 @Table(name = "sku")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@ToString(of = { "id", "ean" })
+@ToString(onlyExplicitlyIncluded = true)
 @Slf4j
 public class Sku implements Entity<Long> {
     @Id
     @GeneratedValue
     @Column(name = "id")
+    @ToString.Include
     private Long id;
 
     @NaturalId
@@ -60,6 +62,7 @@ public class Sku implements Entity<Long> {
             column = @Column(name = "ean", length = 13, unique = true, nullable = false, updatable = false)
     )
     @NotNull
+    @ToString.Include
     private Ean ean;
 
     @Embedded
@@ -77,10 +80,14 @@ public class Sku implements Entity<Long> {
     @JoinColumn(nullable = false)
     private Product product;
 
-    // We use Eager-loading strategy there. It is bad practice,
-    // but it is appropriate for out case. See Product::getSku for details.
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "sku_attributes",
+    @ManyToMany(
+            // We use Eager-loading strategy there. It is bad practice,
+            // but it is appropriate for our case. See Product::getSku for details.
+            fetch = FetchType.EAGER,
+            cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH }
+    )
+    @JoinTable(
+            name = "sku_attributes",
             joinColumns = @JoinColumn(name = "sku_id"),
             inverseJoinColumns = @JoinColumn(name = "attribute_value_id")
     )

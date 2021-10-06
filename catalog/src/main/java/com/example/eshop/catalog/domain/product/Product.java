@@ -27,7 +27,6 @@ import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -68,13 +67,15 @@ import java.util.Set;
         )
 })
 @Getter
-@ToString(of = { "id", "name" })
+@ToString(onlyExplicitlyIncluded = true)
 @Slf4j
 public class Product extends AggregateRoot<ProductId> {
     @EmbeddedId
+    @ToString.Include
     private ProductId id;
 
     @Column(name = "name", nullable = false)
+    @ToString.Include
     private String name;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -87,8 +88,7 @@ public class Product extends AggregateRoot<ProductId> {
     @JoinTable(
             name = "product_images",
             joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "file_id"),
-            uniqueConstraints = @UniqueConstraint(name = "uniq_product_image", columnNames = { "product_id", "file_id" })
+            inverseJoinColumns = @JoinColumn(name = "file_id")
     )
     @OrderColumn(name = "sort")
     private List<File> images = new ArrayList<>();
@@ -199,7 +199,7 @@ public class Product extends AggregateRoot<ProductId> {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Product product = (Product) o;
 
-        return Objects.equals(id, product.id);
+        return id != null && Objects.equals(id, product.id);
     }
 
     @Override

@@ -65,14 +65,13 @@ public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        DeliveryService other = (DeliveryService) o;
-
-        return Objects.equals(id, other.id);
+        DeliveryService that = (DeliveryService) o;
+        return id != null && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return Objects.hash(id);
     }
 
     @Embeddable

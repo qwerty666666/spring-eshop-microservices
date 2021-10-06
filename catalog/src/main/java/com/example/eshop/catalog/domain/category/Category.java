@@ -104,7 +104,7 @@ public class Category extends AggregateRoot<CategoryId> {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Category category = (Category) o;
 
-        return Objects.equals(id, category.id);
+        return id != null && Objects.equals(id, category.id);
     }
 
     @Override
