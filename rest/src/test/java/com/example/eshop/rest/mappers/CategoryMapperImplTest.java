@@ -66,6 +66,6 @@ class CategoryMapperImplTest {
         assertThat(treeItemDto.getId()).as("ID").isEqualTo(category.getId().toString());
         assertThat(treeItemDto.getName()).as("Name").isEqualTo(category.getName());
 
-        Utils.assertListEquals(category.getChildren(), treeItemDto.getChildren(), CategoryMapperImplTest::assertCategoryTreeEquals);
+        AssertionUtils.assertListEquals(category.getChildren(), treeItemDto.getChildren(), CategoryMapperImplTest::assertCategoryTreeEquals);
     }
 }

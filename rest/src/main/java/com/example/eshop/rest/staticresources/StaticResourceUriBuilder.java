@@ -5,6 +5,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Component
 public class StaticResourceUriBuilder {
+    /**
+     * Base path for Images Endpoint
+     */
     public static final String IMAGES_PATH = "/images/";
 
     /**

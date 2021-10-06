@@ -1,6 +1,6 @@
 package com.example.eshop.rest.config;
 
-import com.example.eshop.rest.infrastructure.web.argumentresolvers.PageableSettingsArgumentResolver;
+import com.example.eshop.rest.infrastructure.argumentresolvers.PageableSettingsArgumentResolver;
 import com.example.eshop.rest.staticresources.ResourceProperties;
 import com.example.eshop.rest.staticresources.StaticResourceUriBuilder;
 import lombok.RequiredArgsConstructor;

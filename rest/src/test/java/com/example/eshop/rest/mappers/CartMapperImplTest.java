@@ -42,13 +42,13 @@ class CartMapperImplTest {
 
     private static void assertCartEquals(CartDto cart1, com.example.eshop.rest.dto.CartDto cart2) {
         assertThat(cart2.getId()).as("ID").isEqualTo(cart1.id());
-        Utils.assertListEquals(cart1.items(), cart2.getItems(), CartMapperImplTest::assertCartItemEquals);
+        AssertionUtils.assertListEquals(cart1.items(), cart2.getItems(), CartMapperImplTest::assertCartItemEquals);
     }
 
     private static void assertCartItemEquals(CartItemDto item1, com.example.eshop.rest.dto.CartItemDto item2) {
         assertThat(item2.getEan()).as("EAN").isEqualTo(item1.ean().toString());
         assertThat(item2.getProductName()).as("Product Name").isEqualTo(item1.productName());
         assertThat(item2.getQuantity()).as("Quantity").isEqualTo(item1.quantity());
-        Utils.assertPriceEquals(item1.price(), item2.getPrice());
+        AssertionUtils.assertPriceEquals(item1.price(), item2.getPrice());
     }
 }

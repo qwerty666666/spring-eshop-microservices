@@ -50,8 +50,8 @@ class ProductMapperImplTest {
         var dto = mapper.toPagedProductListDto(page);
 
         // Then
-        Utils.assertPageableEquals(page, dto.getPageable());
-        Utils.assertListEquals(page.stream().toList(), dto.getItems(), this::assertProductEquals);
+        AssertionUtils.assertPageableEquals(page, dto.getPageable());
+        AssertionUtils.assertListEquals(page.stream().toList(), dto.getItems(), this::assertProductEquals);
     }
 
     private Product createProduct() {
@@ -89,7 +89,7 @@ class ProductMapperImplTest {
         assertThat(productDto.getId()).as("product ID")
                 .isEqualTo(product.getId() == null ? null : product.getId().toString());
         assertThat(productDto.getName()).as("product Name").isEqualTo(product.getName());
-        Utils.assertListEquals(product.getSku(), productDto.getSku(), this::assertSkuEquals);
+        AssertionUtils.assertListEquals(product.getSku(), productDto.getSku(), this::assertSkuEquals);
         // check only collection size because we don't know what URL will be used in imageDto
         assertThat(productDto.getImages()).as("images").hasSize(product.getImages().size());
     }
@@ -97,8 +97,8 @@ class ProductMapperImplTest {
     private void assertSkuEquals(Sku sku, SkuDto skuDto) {
         assertThat(skuDto.getEan()).as("Sku EAN").isEqualTo(sku.getEan().toString());
         assertThat(skuDto.getQuantity()).as("available quantity").isEqualTo(sku.getAvailableQuantity());
-        Utils.assertPriceEquals(sku.getPrice(), skuDto.getPrice());
-        Utils.assertListEquals(sku.getAttributeValues(), skuDto.getAttributes(), this::assertAttributeEquals);
+        AssertionUtils.assertPriceEquals(sku.getPrice(), skuDto.getPrice());
+        AssertionUtils.assertListEquals(sku.getAttributeValues(), skuDto.getAttributes(), this::assertAttributeEquals);
     }
 
     private void assertAttributeEquals(AttributeValue attributeValue, AttributeDto attributeDto) {

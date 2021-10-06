@@ -1,4 +1,4 @@
-package com.example.eshop.rest.infrastructure.web;
+package com.example.eshop.rest.infrastructure;
 
 import java.lang.annotation.*;
 

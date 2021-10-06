@@ -9,7 +9,7 @@ import java.util.function.BiConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class Utils {
+public class AssertionUtils {
     public static void assertPageableEquals(Page<?> page, PageableDto pageableDto) {
         assertThat(pageableDto.getPage()).as("page number").isEqualTo(page.getNumber() + 1);
         assertThat(pageableDto.getPerPage()).as("page size").isEqualTo(page.getSize());

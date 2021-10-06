@@ -1,6 +1,6 @@
-package com.example.eshop.rest.infrastructure.web.argumentresolvers;
+package com.example.eshop.rest.infrastructure.argumentresolvers;
 
-import com.example.eshop.rest.infrastructure.web.PageableSettings;
+import com.example.eshop.rest.infrastructure.PageableSettings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
