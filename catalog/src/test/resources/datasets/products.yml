@@ -45,9 +45,11 @@ attribute_values:
   - id: 1
     attribute_id: 1
     value: 40
+    sort: 40
   - id: 2
     attribute_id: 1
     value: 41
+    sort: 41
 
 sku_attributes:
   - sku_id: 1

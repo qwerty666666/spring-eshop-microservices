@@ -33,7 +33,7 @@ class ProductTest {
         return Sku.builder()
                 .ean(Ean.fromString("1111111111111"))
                 .price(Money.USD(1))
-                .attributes(attributes.stream().map(attr -> new AttributeValue(attr, "1")).toList())
+                .attributes(attributes.stream().map(attr -> new AttributeValue(attr, "1", 1)).toList())
                 .build();
     }
 }

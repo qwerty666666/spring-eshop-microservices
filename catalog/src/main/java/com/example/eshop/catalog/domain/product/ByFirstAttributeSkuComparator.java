@@ -8,7 +8,7 @@ import java.util.Comparator;
  * SKU must have the same attributes list. If it is not,
  * SKU won't be sorted.
  */
-public class ByAttributeValueSkuComparator implements Comparator<Sku> {
+public class ByFirstAttributeSkuComparator implements Comparator<Sku> {
     @Override
     public int compare(Sku a, Sku b) {
         if (a.getAttributeList().isEmpty()) {
@@ -20,9 +20,6 @@ public class ByAttributeValueSkuComparator implements Comparator<Sku> {
             return 0;
         }
 
-        var aAttributeValue = a.getAttributeValues().get(0).getValue();
-        var bAttributeValue = b.getAttributeValues().get(0).getValue();
-
-        return aAttributeValue.compareTo(bAttributeValue);
+        return a.getAttributeValues().get(0).getSort() - b.getAttributeValues().get(0).getSort();
     }
 }

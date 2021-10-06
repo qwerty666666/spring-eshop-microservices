@@ -7,15 +7,12 @@ import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.SortComparator;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
@@ -25,14 +22,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * SKU - Stock Keeping Unit. It is distinct item for sale and for
@@ -81,13 +77,15 @@ public class Sku implements Entity<Long> {
     @JoinColumn(nullable = false)
     private Product product;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    // We use Eager-loading strategy there. It is bad practice,
+    // but it is appropriate for out case. See Product::getSku for details.
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "sku_attributes",
             joinColumns = @JoinColumn(name = "sku_id"),
             inverseJoinColumns = @JoinColumn(name = "attribute_value_id")
     )
-    @SortComparator(ByAttributeNameAttributeValueComparator.class)
-    private SortedSet<AttributeValue> attributes = new TreeSet<>(new ByAttributeNameAttributeValueComparator());
+    @OrderBy("sort asc")
+    private List<AttributeValue> attributes = new ArrayList<>();
 
     private Sku(SkuBuilder builder) {
         this.setEan(builder.ean);
@@ -113,7 +111,6 @@ public class Sku implements Entity<Long> {
         this.price = price;
     }
 
-    @SneakyThrows
     private void setAttributes(List<AttributeValue> attributes) {
         Assertions.notNull(attributes, "attributes must be not null");
 

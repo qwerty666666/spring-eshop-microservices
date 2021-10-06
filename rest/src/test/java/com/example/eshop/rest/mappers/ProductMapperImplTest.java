@@ -69,16 +69,16 @@ class ProductMapperImplTest {
                 .ean(Ean.fromString("1111111111111"))
                 .price(Money.USD(1))
                 .availableQuantity(1)
-                .addAttribute(new AttributeValue(sizeAttribute, "XXL"))
-                .addAttribute(new AttributeValue(colorAttribute, "red"))
+                .addAttribute(new AttributeValue(sizeAttribute, "XXL", 2))
+                .addAttribute(new AttributeValue(colorAttribute, "red", 1))
                 .build()
         );
         product.addSku(Sku.builder()
                 .ean(Ean.fromString("2222222222222"))
                 .price(Money.USD(2))
                 .availableQuantity(2)
-                .addAttribute(new AttributeValue(sizeAttribute, "M"))
-                .addAttribute(new AttributeValue(colorAttribute, "blue"))
+                .addAttribute(new AttributeValue(sizeAttribute, "M", 1))
+                .addAttribute(new AttributeValue(colorAttribute, "blue", 2))
                 .build()
         );
 

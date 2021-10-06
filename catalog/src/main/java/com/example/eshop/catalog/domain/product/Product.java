@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.SortComparator;
 import org.springframework.lang.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,8 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Product is a group of {@link Sku}, where each SKU is a distinct
@@ -81,8 +78,7 @@ public class Product extends AggregateRoot<ProductId> {
     private String name;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @SortComparator(ByAttributeValueSkuComparator.class)
-    private SortedSet<Sku> sku = new TreeSet<>(new ByAttributeValueSkuComparator());
+    private Set<Sku> sku = new HashSet<>();
 
     @OneToMany(mappedBy = "product")
     private Set<ProductCategory> categories = new HashSet<>();
@@ -136,7 +132,18 @@ public class Product extends AggregateRoot<ProductId> {
     }
 
     public List<Sku> getSku() {
-        return List.copyOf(sku);
+        return sku.stream()
+                // We can't use sort on field (using @SortComparator or @OrderBy) because
+                // comparator depends on nested collection Sku::attributes, and this
+                // collection is not initialized at the moment of initializing this::sku
+                // collection. Otherwise, sku collection initialization will fail with
+                // "collection was evicted" exception.
+                // Btw, it means that Sku::attribute collection must be Eager-loaded,
+                // otherwise this method will lead to N + 1 problem.
+                // And while we can access Sku only from Product AggregateRoot (i.e. from
+                // this method), we keep Sku::attributes Eager-loaded.
+                .sorted(new ByFirstAttributeSkuComparator())
+                .toList();
     }
 
     /**

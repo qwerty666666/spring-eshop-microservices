@@ -31,9 +31,13 @@ public class AttributeValue {
     @Column(name = "value", nullable = false)
     private String value;
 
-    public AttributeValue(Attribute attribute, String value) {
+    @Column(name = "sort", nullable = false)
+    private int sort;
+
+    public AttributeValue(Attribute attribute, String value, int sort) {
         this.attribute = attribute;
         this.value = value;
+        this.sort = sort;
     }
 
     @Override
