@@ -1,10 +1,8 @@
 package com.example.eshop.rest.mappers;
 
-import com.example.eshop.catalog.domain.product.AttributeValue;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.Sku;
-import com.example.eshop.rest.dto.AttributeDto;
 import com.example.eshop.rest.dto.PagedProductListDto;
 import com.example.eshop.rest.dto.ProductDto;
 import com.example.eshop.rest.dto.SkuDto;
@@ -16,7 +14,7 @@ import java.util.stream.Stream;
 
 @Mapper(
         componentModel = "spring",
-        uses = { EanMapper.class, PageableMapper.class, ImageMapper.class }
+        uses = { EanMapper.class, PageableMapper.class, ImageMapper.class, AttributeMapper.class }
 )
 public interface ProductMapper {
     ProductDto toProductDto(Product product);
@@ -27,9 +25,6 @@ public interface ProductMapper {
 
     @Mapping(target = "quantity", source = "availableQuantity")
     SkuDto toSkuDto(Sku sku);
-
-    @Mapping(target = "name", source = "attribute.name")
-    AttributeDto toAttributeDto(AttributeValue attributeValue);
 
     @Mapping(target = "items", expression = "java(toProductDtoList(page.get()))")
     @Mapping(target = "pageable", source = ".")

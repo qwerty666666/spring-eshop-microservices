@@ -220,6 +220,7 @@ public class Product extends AggregateRoot<ProductId> {
         private ProductId id;
         private String name;
         private List<File> images = new ArrayList<>();
+        private List<Sku> sku = new ArrayList<>();
 
         public ProductBuilder id(ProductId id) {
             this.id = id;
@@ -236,10 +237,16 @@ public class Product extends AggregateRoot<ProductId> {
             return this;
         }
 
+        public ProductBuilder addSku(Sku sku) {
+            this.sku.add(sku);
+            return this;
+        }
+
         public Product build() {
             var product = (id == null ? new Product() : new Product(id));
             product.setName(name);
             images.forEach(product::addImage);
+            sku.forEach(product::addSku);
 
             return product;
         }

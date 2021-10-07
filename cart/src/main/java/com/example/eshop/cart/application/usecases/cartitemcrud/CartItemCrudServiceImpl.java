@@ -58,14 +58,11 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
     }
 
     private Cart getCustomerCart(String customerId) {
-        var cart = cartRepository.findByNaturalId(customerId);
-
-        if (cart.isEmpty()) {
-            log.error("Can not find Cart for customer " + customerId);
-            throw new RuntimeException("Can not find Cart for customer " + customerId);
-        }
-
-        return cart.get();
+        return cartRepository.findByNaturalId(customerId)
+                .orElseThrow(() -> {
+                    log.error("Can not find Cart for customer " + customerId);
+                    return new RuntimeException("Can not find Cart for customer " + customerId);
+                });
     }
 
     private Product getProduct(Ean ean) {

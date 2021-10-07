@@ -4,11 +4,11 @@ import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudServ
 import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartitemcrud.UpsertCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
-import com.example.eshop.cart.application.usecases.cartquery.dto.CartDto;
-import com.example.eshop.cart.application.usecases.cartquery.dto.CartItemDto;
+import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
+import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.rest.config.AuthConfig;
-import com.example.eshop.rest.config.MappersConfig;
+import com.example.eshop.rest.config.ControllerTestConfig;
 import com.example.eshop.rest.mappers.CartMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -25,7 +25,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -39,12 +38,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = CartController.class)
 @ActiveProfiles("test")
-@Import({MappersConfig.class, AuthConfig.class})
+@Import(ControllerTestConfig.class)
 class CartControllerTest {
-    private final static String CART_ID = "123";
     private final static Ean EAN = Ean.fromString("5901234123457");
-    private final static Double PRICE = 12.34;
-    private final static String CURRENCY = "USD";
+    private final static Money PRICE = Money.USD(12.34);
     private final static int QUANTITY = 7;
     private final static String PRODUCT_NAME = "Test Product";
 
@@ -60,11 +57,12 @@ class CartControllerTest {
     @Autowired
     private CartMapper cartMapper;
 
-    private CartDto cart;
+    private Cart cart;
 
     @BeforeEach
     void setUp() {
-        cart = new CartDto(CART_ID, List.of(new CartItemDto(EAN, Money.of(PRICE, CURRENCY), QUANTITY, PRODUCT_NAME)));
+        cart = new Cart(AuthConfig.CUSTOMER_ID);
+        cart.addItem(EAN, PRICE, QUANTITY, PRODUCT_NAME);
 
         when(cartQueryService.getForCustomer(AuthConfig.CUSTOMER_ID)).thenReturn(cart);
     }

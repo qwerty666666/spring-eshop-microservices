@@ -4,6 +4,7 @@ import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudServ
 import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartitemcrud.UpsertCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
+import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
 import com.example.eshop.rest.api.CartApi;
 import com.example.eshop.rest.controllers.base.BaseController;
@@ -78,7 +79,7 @@ public class CartController extends BaseController implements CartApi {
         return getCart();
     }
 
-    private com.example.eshop.cart.application.usecases.cartquery.dto.CartDto getCartForCurrentCustomer() {
+    private Cart getCartForCurrentCustomer() {
         var userDetails = getUserDetailsOrFail();
 
         return cartQueryService.getForCustomer(userDetails.getCustomerId());

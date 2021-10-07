@@ -238,10 +238,7 @@ components:
         ean:
           $ref: '#/components/schemas/ean'
         quantity:
-          type: integer
-          minimum: 0
-          description: Available quantity for purchase
-          example: 12
+          $ref: '#/components/schemas/available-quantity'
         attributes:
           type: array
           items:
@@ -251,6 +248,12 @@ components:
         - ean
         - quantity
         - attributes
+
+    available-quantity:
+      type: integer
+      minimum: 0
+      description: Available quantity for purchase
+      example: 12
 
     attribute:
       type: object
@@ -469,6 +472,23 @@ components:
           example: Sneakers
         quantity:
           $ref: '#/components/schemas/cart-item-quantity'
+        availableQuantity:
+          $ref: '#/components/schemas/available-quantity'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+      required:
+        - ean
+        - price
+        - productName
+        - quantity
+        - attributes
+        - images
 
     upsert-cart-item-command:
       type: object

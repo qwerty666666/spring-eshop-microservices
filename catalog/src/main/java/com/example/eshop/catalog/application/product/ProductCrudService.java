@@ -9,6 +9,9 @@ import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface ProductCrudService {
     /**
@@ -34,5 +37,14 @@ public interface ProductCrudService {
      *
      * @throws ProductNotFoundException if there is no such product
      */
-    Product getByEan(Ean ean);
+    default Product getByEan(Ean ean) {
+        return Optional.ofNullable(getByEan(List.of(ean)).get(ean))
+                .orElseThrow(() -> new ProductNotFoundException("Product with SKU " + ean + " not found"));
+    }
+
+    /**
+     * Find {@link Product} which has {@link Sku} with given {@code ean}.
+     * If there is no Sku for some ean, then this ean will be mapped to null.
+     */
+    Map<Ean, Product> getByEan(List<Ean> ean);
 }

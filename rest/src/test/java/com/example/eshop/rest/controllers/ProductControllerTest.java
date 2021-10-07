@@ -5,6 +5,7 @@ import com.example.eshop.catalog.application.product.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.Sku;
+import com.example.eshop.rest.config.ControllerTestConfig;
 import com.example.eshop.rest.config.MappersConfig;
 import com.example.eshop.rest.mappers.ProductMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -37,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ProductController.class)
 @ActiveProfiles("test")
-@Import(MappersConfig.class)
+@Import(ControllerTestConfig.class)
 class ProductControllerTest {
     @Autowired
     private MockMvc mockMvc;

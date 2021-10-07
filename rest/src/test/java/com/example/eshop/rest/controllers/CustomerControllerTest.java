@@ -10,6 +10,7 @@ import com.example.eshop.customer.domain.customer.Customer.CustomerId;
 import com.example.eshop.customer.domain.customer.EmailAlreadyExistException;
 import com.example.eshop.customer.domain.customer.HashedPassword;
 import com.example.eshop.rest.config.AuthConfig;
+import com.example.eshop.rest.config.ControllerTestConfig;
 import com.example.eshop.rest.config.MappersConfig;
 import com.example.eshop.rest.mappers.CustomerMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
@@ -45,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = CustomerController.class)
 @ActiveProfiles("test")
-@Import({MappersConfig.class, AuthConfig.class})
+@Import(ControllerTestConfig.class)
 class CustomerControllerTest {
     private final static CustomerId CUSTOMER_ID = new CustomerId(AuthConfig.CUSTOMER_ID);
     private final static String CUSTOMER_EMAIL = AuthConfig.CUSTOMER_EMAIL;

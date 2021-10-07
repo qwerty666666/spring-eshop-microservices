@@ -12,17 +12,21 @@ import org.hibernate.annotations.NaturalId;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.MapKey;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,6 +36,12 @@ import java.util.stream.Collectors;
         name = "carts",
         indexes = @Index(name = "customerid", columnList = "customer_id", unique = true)
 )
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "Cart.items",
+                attributeNodes = @NamedAttributeNode("items")
+        )
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class Cart extends AggregateRoot<Long> implements Cloneable {
@@ -45,7 +55,7 @@ public class Cart extends AggregateRoot<Long> implements Cloneable {
     @NotNull
     private String customerId;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @MapKey(name = "ean")
     @OrderBy("creationTime")
     private Map<Ean, CartItem> items = new LinkedHashMap<>();
@@ -111,8 +121,8 @@ public class Cart extends AggregateRoot<Long> implements Cloneable {
     /**
      * @return cart items
      */
-    public Collection<CartItem> getItems() {
-        return Collections.unmodifiableCollection(this.items.values());
+    public List<CartItem> getItems() {
+        return List.copyOf(this.items.values());
     }
 
     /**

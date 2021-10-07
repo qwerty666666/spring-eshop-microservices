@@ -5,6 +5,7 @@ import com.example.eshop.catalog.application.category.CategoryNotFoundException;
 import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
+import com.example.eshop.rest.config.ControllerTestConfig;
 import com.example.eshop.rest.config.MappersConfig;
 import com.example.eshop.rest.mappers.CategoryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CategoryController.class)
 @ActiveProfiles("test")
-@Import(MappersConfig.class)
+@Import(ControllerTestConfig.class)
 class CategoryControllerTest {
     private Category parent;
     private Category child1;

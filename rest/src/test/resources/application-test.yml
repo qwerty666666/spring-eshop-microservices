@@ -2,3 +2,6 @@ spring:
   jackson:
     serialization:
       indent_output: true
+
+resources:
+  location: test

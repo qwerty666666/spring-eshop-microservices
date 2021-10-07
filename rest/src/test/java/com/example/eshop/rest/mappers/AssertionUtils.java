@@ -1,5 +1,9 @@
 package com.example.eshop.rest.mappers;
 
+import com.example.eshop.catalog.domain.file.File;
+import com.example.eshop.catalog.domain.product.AttributeValue;
+import com.example.eshop.rest.dto.AttributeDto;
+import com.example.eshop.rest.dto.ImageDto;
 import com.example.eshop.rest.dto.MoneyDto;
 import com.example.eshop.rest.dto.PageableDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -28,5 +32,17 @@ public class AssertionUtils {
     public static void assertPriceEquals(Money money, MoneyDto moneyDto) {
         assertThat(moneyDto.getAmount()).as("price amount").isEqualTo(money.getAmount());
         assertThat(moneyDto.getCurrency()).as("price currency").isEqualTo(money.getCurrency().getCurrencyCode());
+    }
+
+    public static void assertAttributeEquals(AttributeValue attributeValue, AttributeDto attributeDto) {
+        assertThat(attributeDto.getId()).as("Attribute ID")
+                .isEqualTo(attributeValue.getId() == null ? null : attributeValue.getId().toString());
+        assertThat(attributeDto.getName()).as("Attribute Name").isEqualTo(attributeValue.getAttribute().getName());
+        assertThat(attributeDto.getValue()).as("Attribute Value").isEqualTo(attributeValue.getValue());
+    }
+
+    public static void assertImageEquals(List<File> images, List<ImageDto> imageDtos) {
+        // check only collection size because we don't know what URL will be used in imageDto
+        assertThat(images).hasSize(imageDtos.size());
     }
 }
