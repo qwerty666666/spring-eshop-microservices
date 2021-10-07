@@ -5,7 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-public record UpsertCartItemCommand(
+public record AddCartItemCommand(
         @NotEmpty String customerId,
         @NotNull Ean ean,
         @Positive int quantity) {

@@ -9,7 +9,7 @@ public interface CartItemCrudService {
      * Add {@link CartItem} to Customer's {@link Cart}. If customer's cart already
      * contains given CartItem, then quantity will be changed.
      */
-    void upsert(UpsertCartItemCommand command);
+    void add(AddCartItemCommand command);
 
     /**
      * Removes {@link CartItem} from Customer's {@link Cart}.

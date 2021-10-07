@@ -2,18 +2,18 @@ package com.example.eshop.rest.controllers;
 
 import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
 import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
-import com.example.eshop.cart.application.usecases.cartitemcrud.UpsertCartItemCommand;
+import com.example.eshop.cart.application.usecases.cartitemcrud.AddCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
 import com.example.eshop.rest.api.CartApi;
 import com.example.eshop.rest.controllers.base.BaseController;
 import com.example.eshop.rest.controllers.utils.BasicErrorBuilder;
+import com.example.eshop.rest.dto.AddCartItemCommandDto;
 import com.example.eshop.rest.dto.BasicErrorDto;
 import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.dto.CheckoutFormDto;
 import com.example.eshop.rest.dto.CheckoutRequestDto;
-import com.example.eshop.rest.dto.UpsertCartItemCommandDto;
 import com.example.eshop.rest.mappers.CartMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.AccessLevel;
@@ -70,11 +70,11 @@ public class CartController extends BaseController implements CartApi {
     }
 
     @Override
-    public ResponseEntity<CartDto> upsertCartItem(UpsertCartItemCommandDto dto) {
+    public ResponseEntity<CartDto> addCartItem(AddCartItemCommandDto dto) {
         var userDetails = getUserDetailsOrFail();
-        var command = new UpsertCartItemCommand(userDetails.getCustomerId(), Ean.fromString(dto.getEan()), dto.getQuantity());
+        var command = new AddCartItemCommand(userDetails.getCustomerId(), Ean.fromString(dto.getEan()), dto.getQuantity());
 
-        cartItemCrudService.upsert(command);
+        cartItemCrudService.add(command);
 
         return getCart();
     }

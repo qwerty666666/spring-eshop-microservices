@@ -1,12 +1,11 @@
 package com.example.eshop.rest.controllers;
 
+import com.example.eshop.cart.application.usecases.cartitemcrud.AddCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
 import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
-import com.example.eshop.cart.application.usecases.cartitemcrud.UpsertCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
-import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.rest.config.AuthConfig;
 import com.example.eshop.rest.config.ControllerTestConfig;
 import com.example.eshop.rest.mappers.CartMapper;
@@ -98,13 +97,13 @@ class CartControllerTest {
         @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void whenPutCartItem_thenCartItemServiceUpsertIsCalledAndCartIsReturned() throws Exception {
             var expectedJson = objectMapper.writeValueAsString(cartMapper.toCartDto(cart));
-            var expectedCommand = new UpsertCartItemCommand(AuthConfig.CUSTOMER_ID, EAN, QUANTITY);
+            var expectedCommand = new AddCartItemCommand(AuthConfig.CUSTOMER_ID, EAN, QUANTITY);
 
             performPutCartItemRequest()
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(cartItemCrudService).upsert(eq(expectedCommand));
+            verify(cartItemCrudService).add(eq(expectedCommand));
         }
 
         @Test

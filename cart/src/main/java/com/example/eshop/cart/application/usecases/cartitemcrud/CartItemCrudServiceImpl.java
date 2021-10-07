@@ -24,7 +24,7 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
     @Override
     @PreAuthorize("#command.customerId() == principal.getCustomerId()")
     @Transactional
-    public void upsert(UpsertCartItemCommand command) {
+    public void add(AddCartItemCommand command) {
         var cart = getCustomerCart(command.customerId());
 
         var ean = command.ean();

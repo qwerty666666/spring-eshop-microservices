@@ -56,7 +56,7 @@ class CartItemCrudServiceImplTest {
         CartItemCrudService service = new CartItemCrudServiceImpl(cartRepository, productCrudService);
 
         // When
-        service.upsert(new UpsertCartItemCommand(customerId, ean, qty));
+        service.add(new AddCartItemCommand(customerId, ean, qty));
 
         // Then
         verify(cart).addItem(eq(ean), eq(price), eq(qty), eq(productName));
@@ -70,7 +70,7 @@ class CartItemCrudServiceImplTest {
         CartItemCrudService service = new CartItemCrudServiceImpl(cartRepository, productCrudService);
 
         // When
-        service.upsert(new UpsertCartItemCommand(customerId, ean, qty));
+        service.add(new AddCartItemCommand(customerId, ean, qty));
 
         // Then
         verify(cart).changeItemQuantity(eq(ean), eq(qty));

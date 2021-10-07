@@ -42,18 +42,18 @@ class CartItemCrudServiceImplIntegrationTest {
     @Test
     @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
     void whenUpsertCalledByNonCartOwner_thenThrowAccessDeniedException() {
-        var command = new UpsertCartItemCommand(NON_OWNER_CUSTOMER_ID, EAN, 10);
+        var command = new AddCartItemCommand(NON_OWNER_CUSTOMER_ID, EAN, 10);
 
-        assertThatThrownBy(() -> cartItemCrudService.upsert(command))
+        assertThatThrownBy(() -> cartItemCrudService.add(command))
                 .isInstanceOf(AccessDeniedException.class);
     }
 
     @Test
     @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
     void whenUpsertCalledByCartOwner_thenNoExceptionIsThrown() {
-        var command = new UpsertCartItemCommand(AuthConfig.CUSTOMER_ID, EAN, 10);
+        var command = new AddCartItemCommand(AuthConfig.CUSTOMER_ID, EAN, 10);
 
-        assertThatNoException().isThrownBy(() -> cartItemCrudService.upsert(command));
+        assertThatNoException().isThrownBy(() -> cartItemCrudService.add(command));
     }
 
     @Test

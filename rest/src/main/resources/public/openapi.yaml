@@ -154,9 +154,9 @@ paths:
       summary: Add new item to cart of authorized customer or
         change quantity of already existed in cart item, if item
         with the given EAN already exist in the cart
-      operationId: upsertCartItem
+      operationId: addCartItem
       requestBody:
-        $ref: '#/components/requestBodies/upsert_cart_item'
+        $ref: '#/components/requestBodies/add_cart_item'
       responses:
         200:
           $ref: '#/components/responses/cart'
@@ -490,7 +490,7 @@ components:
         - attributes
         - images
 
-    upsert-cart-item-command:
+    add-cart-item-command:
       type: object
       properties:
         ean:
@@ -639,11 +639,11 @@ components:
           schema:
             $ref: '#/components/schemas/customer-fields'
 
-    upsert_cart_item:
+    add_cart_item:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/upsert-cart-item-command'
+            $ref: '#/components/schemas/add-cart-item-command'
 
     checkout_order:
       content:
