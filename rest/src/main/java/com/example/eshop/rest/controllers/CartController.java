@@ -4,6 +4,7 @@ import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudServ
 import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartitemcrud.AddCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
+import com.example.eshop.cart.application.usecases.checkout.CheckoutProcessService;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
 import com.example.eshop.rest.api.CartApi;
@@ -15,6 +16,7 @@ import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.dto.CheckoutFormDto;
 import com.example.eshop.rest.dto.CheckoutRequestDto;
 import com.example.eshop.rest.mappers.CartMapper;
+import com.example.eshop.rest.mappers.CheckoutMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -37,6 +39,8 @@ public class CartController extends BaseController implements CartApi {
     private final CartQueryService cartQueryService;
     private final CartMapper cartMapper;
     private final MessageSource messageSource;
+    private final CheckoutProcessService checkoutProcessService;
+    private final CheckoutMapper checkoutMapper;
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -49,7 +53,13 @@ public class CartController extends BaseController implements CartApi {
 
     @Override
     public ResponseEntity<CheckoutFormDto> checkout(CheckoutRequestDto checkoutRequestDto) {
-        return null;
+        var customerId = getAuthenticatedUserDetailsOrFail().getCustomerId();
+        var cart = getCartForCurrentCustomer();
+        var createOrderDto = checkoutMapper.toOrderDto(checkoutRequestDto, customerId, cart);
+
+        var form = checkoutProcessService.process(createOrderDto);
+
+        return ResponseEntity.ok(checkoutMapper.toCheckoutFormDto(form));
     }
 
     @Override
@@ -61,7 +71,7 @@ public class CartController extends BaseController implements CartApi {
 
     @Override
     public ResponseEntity<CartDto> removeCartItem(String ean) {
-        var userDetails = getUserDetailsOrFail();
+        var userDetails = getAuthenticatedUserDetailsOrFail();
         var command = new RemoveCartItemCommand(userDetails.getCustomerId(), Ean.fromString(ean));
 
         cartItemCrudService.remove(command);
@@ -71,7 +81,7 @@ public class CartController extends BaseController implements CartApi {
 
     @Override
     public ResponseEntity<CartDto> addCartItem(AddCartItemCommandDto dto) {
-        var userDetails = getUserDetailsOrFail();
+        var userDetails = getAuthenticatedUserDetailsOrFail();
         var command = new AddCartItemCommand(userDetails.getCustomerId(), Ean.fromString(dto.getEan()), dto.getQuantity());
 
         cartItemCrudService.add(command);
@@ -80,7 +90,7 @@ public class CartController extends BaseController implements CartApi {
     }
 
     private Cart getCartForCurrentCustomer() {
-        var userDetails = getUserDetailsOrFail();
+        var userDetails = getAuthenticatedUserDetailsOrFail();
 
         return cartQueryService.getForCustomer(userDetails.getCustomerId());
     }

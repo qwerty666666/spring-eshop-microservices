@@ -4,6 +4,7 @@ import com.example.eshop.rest.controllers.utils.ValidationErrorBuilder;
 import com.example.eshop.rest.dto.ValidationErrorDto;
 import com.example.eshop.rest.infrastructure.converters.EanParameterFormatter;
 import com.example.eshop.rest.infrastructure.converters.EanParameterInvalidFormatException;
+import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -81,5 +82,19 @@ public class GlobalControllerAdvice {
                 .reduce((prev, next) -> next)
                 .map(Node::getName)
                 .orElse(null);
+    }
+
+    /**
+     * Handle exception from Domain Validation
+     */
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    private ValidationErrorDto onValidationException(ValidationException e) {
+        var error = ValidationErrorBuilder.newInstance();
+
+        e.getErrors().forEach(err -> error.addError(err.getField(), err.getMessage()));
+
+        return error.build();
     }
 }

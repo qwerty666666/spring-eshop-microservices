@@ -26,11 +26,11 @@ import java.util.Objects;
 public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
     @EmbeddedId
     @Column(name = "id", nullable = false)
-    private DeliveryServiceId id;
+    protected DeliveryServiceId id;
 
     @Column(name = "name")
     @NotEmpty
-    private String name;
+    protected String name;
 
     @Override
     public DeliveryServiceId getId() {

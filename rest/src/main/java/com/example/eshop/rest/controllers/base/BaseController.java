@@ -24,7 +24,7 @@ public class BaseController {
      * Returns currently authenticated {@link UserDetailsImpl} or
      * throws {@link NotAuthenticatedException} if user is not authenticated.
      */
-    protected UserDetailsImpl getUserDetailsOrFail() {
+    protected UserDetailsImpl getAuthenticatedUserDetailsOrFail() {
         return getAuthentication()
                 .map(auth -> (UserDetailsImpl)auth.getPrincipal())
                 .orElseThrow(() -> new NotAuthenticatedException("User is not authenticated"));

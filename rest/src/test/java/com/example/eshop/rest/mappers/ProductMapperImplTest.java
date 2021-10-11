@@ -7,7 +7,6 @@ import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.rest.config.MappersConfig;
-import com.example.eshop.rest.dto.AttributeDto;
 import com.example.eshop.rest.dto.ProductDto;
 import com.example.eshop.rest.dto.SkuDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -50,8 +49,8 @@ class ProductMapperImplTest {
         var dto = mapper.toPagedProductListDto(page);
 
         // Then
-        AssertionUtils.assertPageableEquals(page, dto.getPageable());
-        AssertionUtils.assertListEquals(page.stream().toList(), dto.getItems(), this::assertProductEquals);
+        Assertions.assertPageableEquals(page, dto.getPageable());
+        Assertions.assertListEquals(page.stream().toList(), dto.getItems(), this::assertProductEquals);
     }
 
     private Product createProduct() {
@@ -89,14 +88,14 @@ class ProductMapperImplTest {
         assertThat(productDto.getId()).as("product ID")
                 .isEqualTo(product.getId() == null ? null : product.getId().toString());
         assertThat(productDto.getName()).as("product Name").isEqualTo(product.getName());
-        AssertionUtils.assertListEquals(product.getSku(), productDto.getSku(), this::assertSkuEquals);
-        AssertionUtils.assertImageEquals(product.getImages(), productDto.getImages());
+        Assertions.assertListEquals(product.getSku(), productDto.getSku(), this::assertSkuEquals);
+        Assertions.assertImageEquals(product.getImages(), productDto.getImages());
     }
 
     private void assertSkuEquals(Sku sku, SkuDto skuDto) {
         assertThat(skuDto.getEan()).as("Sku EAN").isEqualTo(sku.getEan().toString());
         assertThat(skuDto.getQuantity()).as("available quantity").isEqualTo(sku.getAvailableQuantity());
-        AssertionUtils.assertPriceEquals(sku.getPrice(), skuDto.getPrice());
-        AssertionUtils.assertListEquals(sku.getAttributeValues(), skuDto.getAttributes(), AssertionUtils::assertAttributeEquals);
+        Assertions.assertPriceEquals(sku.getPrice(), skuDto.getPrice());
+        Assertions.assertListEquals(sku.getAttributeValues(), skuDto.getAttributes(), Assertions::assertAttributeEquals);
     }
 }

@@ -7,7 +7,7 @@ import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
-import com.example.eshop.cart.utils.FakeData;
+import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
 import com.example.eshop.sharedkernel.domain.Localizer;
 import org.junit.jupiter.api.BeforeEach;

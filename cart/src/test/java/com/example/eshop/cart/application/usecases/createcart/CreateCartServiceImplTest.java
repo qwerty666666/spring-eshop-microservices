@@ -1,7 +1,7 @@
 package com.example.eshop.cart.application.usecases.createcart;
 
 import com.example.eshop.cart.domain.cart.CartRepository;
-import com.example.eshop.cart.utils.FakeData;
+import com.example.eshop.cart.infrastructure.tests.FakeData;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.eq;

@@ -9,7 +9,7 @@ import com.example.eshop.cart.domain.checkout.order.OrderFactory;
 import com.example.eshop.cart.domain.checkout.order.OrderFactoryImpl;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
 import com.example.eshop.cart.domain.checkout.payment.PaymentServiceRepository;
-import com.example.eshop.cart.utils.FakeData;
+import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import com.example.eshop.sharedkernel.domain.Localizer;
 import org.junit.jupiter.api.BeforeEach;

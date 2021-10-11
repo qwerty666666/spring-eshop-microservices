@@ -1,4 +1,4 @@
-package com.example.eshop.cart.utils;
+package com.example.eshop.cart.infrastructure.tests;
 
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;

@@ -2,7 +2,7 @@ package com.example.eshop.cart.application.usecases.cartitemcrud;
 
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
-import com.example.eshop.cart.utils.FakeData;
+import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.catalog.application.product.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product;

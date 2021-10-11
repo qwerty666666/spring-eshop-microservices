@@ -26,11 +26,11 @@ import java.util.Objects;
 public abstract class PaymentService extends AggregateRoot<PaymentServiceId> {
     @EmbeddedId
     @Column(name = "id", nullable = false)
-    private PaymentServiceId id;
+    protected PaymentServiceId id;
 
     @Column(name = "name")
     @NotEmpty
-    private String name;
+    protected String name;
 
     @Override
     public PaymentServiceId getId() {

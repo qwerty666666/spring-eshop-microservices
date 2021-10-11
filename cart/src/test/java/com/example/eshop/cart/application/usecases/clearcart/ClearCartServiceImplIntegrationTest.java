@@ -3,7 +3,7 @@ package com.example.eshop.cart.application.usecases.clearcart;
 import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
-import com.example.eshop.cart.utils.FakeData;
+import com.example.eshop.cart.infrastructure.tests.FakeData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

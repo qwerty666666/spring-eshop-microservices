@@ -532,6 +532,12 @@ components:
             $ref: '#/components/schemas/payment-service'
         total:
           $ref: '#/components/schemas/checkout-total'
+      required:
+        - cart
+        - deliveryAddress
+        - availableDeliveries
+        - availablePayments
+        - total
 
     delivery-address:
       type: object

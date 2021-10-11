@@ -1,6 +1,6 @@
 package com.example.eshop.cart.domain.cart;
 
-import com.example.eshop.cart.utils.FakeData;
+import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.Nested;
