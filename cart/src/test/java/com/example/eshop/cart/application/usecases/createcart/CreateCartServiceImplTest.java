@@ -1,7 +1,7 @@
 package com.example.eshop.cart.application.usecases.createcart;
 
-import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
+import com.example.eshop.cart.utils.FakeData;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.eq;
@@ -11,17 +11,18 @@ import static org.mockito.Mockito.verify;
 class CreateCartServiceImplTest {
     @Test
     void whenCreateCart_thenCartIsSavedToRepository() {
-        // given
-        var customerId = "1";
-        var expectedCart = new Cart(customerId);
+        // Given
+        var customerId = FakeData.customerId();
+        var expectedCart = FakeData.emptyCart(customerId);
 
         var cartRepository = mock(CartRepository.class);
-        CreateCartService createCartService = new CreateCartServiceImpl(cartRepository);
 
-        // when
+        var createCartService = new CreateCartServiceImpl(cartRepository);
+
+        // When
         createCartService.create(customerId);
 
-        // then
+        // Then
         verify(cartRepository).save(eq(expectedCart));
     }
 }

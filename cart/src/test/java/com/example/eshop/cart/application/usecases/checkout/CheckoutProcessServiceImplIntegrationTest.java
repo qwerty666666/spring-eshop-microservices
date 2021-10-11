@@ -1,7 +1,7 @@
 package com.example.eshop.cart.application.usecases.checkout;
 
 import com.example.eshop.cart.config.AuthConfig;
-import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
+import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +17,12 @@ class CheckoutProcessServiceImplIntegrationTest {
 
     @Test
     @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
-    void whenPlaceOrderWithNotAuthorizedCustomerId_thenThrowAccessDeniedException() {
-        var orderDto = new OrderDto("nonAuthorizedCustomerId", new DeliveryAddress(), null, null);
+    void givenNonAuthorizedUser_whenProcess_thenThrowAccessDeniedException() {
+        var createOrderDto = CreateOrderDto.builder()
+                .customerId("nonAuthorizedCustomerId")
+                .build();
 
-        assertThatThrownBy(() -> checkoutProcessService.process(orderDto))
+        assertThatThrownBy(() -> checkoutProcessService.process(createOrderDto))
                 .isInstanceOf(AccessDeniedException.class);
     }
 }

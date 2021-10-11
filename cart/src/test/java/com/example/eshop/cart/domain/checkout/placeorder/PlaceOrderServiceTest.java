@@ -3,9 +3,6 @@ package com.example.eshop.cart.domain.checkout.placeorder;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
-import com.example.eshop.cart.domain.checkout.placeorder.OrderPlacedEvent;
-import com.example.eshop.cart.domain.checkout.placeorder.PlaceOrderService;
-import com.example.eshop.cart.domain.checkout.placeorder.PlaceOrderValidator;
 import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
@@ -25,18 +22,19 @@ import static org.mockito.Mockito.when;
 
 class PlaceOrderServiceTest {
     private Order order;
+    private ApplicationEventPublisher eventPublisher;
 
     @BeforeEach
     void setUp() {
         order = new Order("1", new Cart("1"), new DeliveryAddress(), new DeliveryServiceStub(true),
-                new PaymentServiceStub(true), DeliveryServiceStub.COST);
+                new PaymentServiceStub(true));
+
+        eventPublisher = mock(ApplicationEventPublisher.class);
     }
 
     @Test
     void whenPlaceOrder_thenOrderCreatedEventIsPublished() {
         // Given
-        var eventPublisher = mock(ApplicationEventPublisher.class);
-
         var validator = mock(PlaceOrderValidator.class);
         when(validator.validate(order)).thenReturn(new Errors());
 
@@ -55,11 +53,7 @@ class PlaceOrderServiceTest {
     @Test
     void whenPlaceInvalidOrder_thenThrowValidationException() {
         // Given
-        var eventPublisher = mock(ApplicationEventPublisher.class);
-
-        var errors = new Errors();
-        errors.addError("field", "message");
-
+        var errors = new Errors().addError("field", "message");
         var validator = mock(PlaceOrderValidator.class);
         when(validator.validate(order)).thenReturn(errors);
 

@@ -7,18 +7,19 @@ import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
-import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
+import com.example.eshop.cart.utils.FakeData;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
+import com.example.eshop.sharedkernel.domain.Localizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.mock;
 
+@SuppressWarnings("SameParameterValue")
 class PlaceOrderValidatorTest {
     private static final DeliveryService SUPPORTED_DELIVERY = new DeliveryServiceStub(true);
     private static final DeliveryService NOT_SUPPORTED_DELIVERY = new DeliveryServiceStub(false);
@@ -26,31 +27,26 @@ class PlaceOrderValidatorTest {
     private static final PaymentService SUPPORTED_PAYMENT = new PaymentServiceStub(true);
     private static final PaymentService NOT_SUPPORTED_PAYMENT = new PaymentServiceStub(false);
 
-    private final String customerId = "id";
-    private final String fullname = "fullname";
-    private final Phone phone = Phone.fromString("+79993334444");
-    private final String country = "country";
-    private final String city = "city";
-    private final String building = "building";
-    private final DeliveryAddress address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-    private Cart cart;
+    private final String customerId = FakeData.customerId();
+    private final String fullname = FakeData.fullname();
+    private final Phone phone = FakeData.phone();
+    private final String country = FakeData.country();
+    private final String city = FakeData.city();
+    private final String building = FakeData.building();
+    private final DeliveryAddress address = FakeData.deliveryAddress();
+    private final Cart cart = FakeData.cart();
 
     private PlaceOrderValidator validator;
 
     @BeforeEach
     void setUp() {
-        cart = new Cart("CustomerId");
-        cart.addItem(Ean.fromString("1234567890123"), Money.USD(123), 10, "test");
-
-        var messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("messages");
-
-        validator = new PlaceOrderValidator(messageSource);
+        validator = new PlaceOrderValidator(mock(Localizer.class));
     }
 
     @Test
     void validOrder() {
-        var order = new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT, Money.ZERO);
+        var order = new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
+
         var errors = validator.validate(order);
 
         assertThat(errors.isEmpty()).isTrue();
@@ -106,27 +102,27 @@ class PlaceOrderValidatorTest {
 
         private Order createOrderWithFullname(@Nullable String fullname) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT, Money.ZERO);
+            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
 
         private Order createOrderWithPhone(@Nullable Phone phone) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT, Money.ZERO);
+            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
 
         private Order createOrderWithCountry(@Nullable String country) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT, Money.ZERO);
+            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
 
         private Order createOrderWithCity(@Nullable String city) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT, Money.ZERO);
+            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
 
         private Order createOrderWithBuilding(@Nullable String building) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT, Money.ZERO);
+            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
     }
 
@@ -145,7 +141,7 @@ class PlaceOrderValidatorTest {
         }
 
         private Order createOrderWithDeliveryService(@Nullable DeliveryService deliveryService) {
-            return new Order(customerId, cart, address, deliveryService, SUPPORTED_PAYMENT, Money.ZERO);
+            return new Order(customerId, cart, address, deliveryService, SUPPORTED_PAYMENT);
         }
     }
 
@@ -164,7 +160,7 @@ class PlaceOrderValidatorTest {
         }
 
         private Order createOrderWithPaymentService(@Nullable PaymentService paymentService) {
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, paymentService, Money.ZERO);
+            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, paymentService);
         }
     }
 
@@ -183,7 +179,7 @@ class PlaceOrderValidatorTest {
         }
 
         private Order createOrderWithCart(@Nullable Cart cart) {
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT, Money.ZERO);
+            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
     }
 

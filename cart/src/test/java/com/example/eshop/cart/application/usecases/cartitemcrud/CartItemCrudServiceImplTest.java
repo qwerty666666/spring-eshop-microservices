@@ -2,7 +2,9 @@ package com.example.eshop.cart.application.usecases.cartitemcrud;
 
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
+import com.example.eshop.cart.utils.FakeData;
 import com.example.eshop.catalog.application.product.ProductCrudService;
+import com.example.eshop.catalog.application.product.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -11,68 +13,85 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class CartItemCrudServiceImplTest {
-    private final String customerId = "1";
-    private final Ean ean = Ean.fromString("0799439112766");
-    private final Money price = Money.USD(10);
-    private final int qty = 10;
-    private final String productName = "Test Product";
+    private final String customerId = FakeData.customerId();
+    private final Ean newEan = Ean.fromString("7239429347811");
+    private final Ean nonExistedInCatalogEan = Ean.fromString("1237569802342");
+    private final Cart cart = FakeData.cart(customerId);
+    private final Ean existedInCartEan = cart.getItems().get(0).getEan();
 
-    private Cart cart;
-    private Product product;
-
-    private CartRepository cartRepository;
-    private ProductCrudService productCrudService;
+    private CartItemCrudService cartItemCrudService;
 
     @BeforeEach
     void setUp() {
-        cart = mock(Cart.class);
+        // CartRepository
 
-        cartRepository = mock(CartRepository.class);
+        var cartRepository = mock(CartRepository.class);
         when(cartRepository.findByNaturalId(eq(customerId))).thenReturn(Optional.of(cart));
 
-        product = Product.builder()
-                .name(productName)
+        // ProductCrudService
+
+        var product = Product.builder()
+                .name("Test Product")
+                .addSku(Sku.builder()
+                        .ean(existedInCartEan)
+                        .price(Money.USD(10))
+                        .availableQuantity(10)
+                        .build()
+                )
+                .addSku(Sku.builder()
+                        .ean(newEan)
+                        .price(Money.USD(10))
+                        .availableQuantity(10)
+                        .build()
+                )
                 .build();
-        product.addSku(Sku.builder()
-                .ean(ean)
-                .price(price)
-                .availableQuantity(10)
-                .build()
-        );
 
-        productCrudService = mock(ProductCrudService.class);
-        when(productCrudService.getByEan(eq(ean))).thenReturn(product);
+        var productCrudService = mock(ProductCrudService.class);
+        when(productCrudService.getByEan(eq(newEan))).thenReturn(product);
+        when(productCrudService.getByEan(eq(nonExistedInCatalogEan))).thenThrow(new ProductNotFoundException(null, ""));
+
+        // CartItemService
+
+        cartItemCrudService = new CartItemCrudServiceImpl(cartRepository, productCrudService);
     }
 
     @Test
-    void givenNonExistingInCartEan_whenUpsert_thenNewCartItemShouldBeCreatedAndSavedToCart() {
+    void givenNonExistingInCartEan_whenAdd_thenNewCartItemShouldBeCreatedAndSavedToCart() {
         // Given
-        CartItemCrudService service = new CartItemCrudServiceImpl(cartRepository, productCrudService);
+        int quantity = 1;
 
         // When
-        service.add(new AddCartItemCommand(customerId, ean, qty));
+        cartItemCrudService.add(new AddCartItemCommand(customerId, newEan, quantity));
 
         // Then
-        verify(cart).addItem(eq(ean), eq(price), eq(qty), eq(productName));
+        assertThat(cart.containsItem(newEan)).isTrue();
+        assertThat(cart.getItem(newEan).getQuantity()).isEqualTo(quantity);
     }
 
     @Test
-    void givenExistingInCartEan_whenUpsert_thenCartItemQuantityShouldBeChanged() {
+    void givenExistingInCartEan_whenAdd_thenCartItemQuantityShouldBeChanged() {
         // Given
-        when(cart.containsItem(eq(ean))).thenReturn(true);
-
-        CartItemCrudService service = new CartItemCrudServiceImpl(cartRepository, productCrudService);
+        int quantity = 1;
 
         // When
-        service.add(new AddCartItemCommand(customerId, ean, qty));
+        cartItemCrudService.add(new AddCartItemCommand(customerId, existedInCartEan, quantity));
 
         // Then
-        verify(cart).changeItemQuantity(eq(ean), eq(qty));
+        assertThat(cart.containsItem(existedInCartEan)).isTrue();
+        assertThat(cart.getItem(existedInCartEan).getQuantity()).isEqualTo(quantity);
+    }
+
+    @Test
+    void givenNonExistedInCatalogEan_whenAdd_thenThrowProductNotFoundException() {
+        assertThatExceptionOfType(ProductNotFoundException.class).isThrownBy(() -> {
+            cartItemCrudService.add(new AddCartItemCommand(customerId, nonExistedInCatalogEan, 1));
+        });
     }
 }

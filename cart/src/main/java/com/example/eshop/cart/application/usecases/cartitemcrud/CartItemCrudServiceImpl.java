@@ -5,21 +5,18 @@ import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class CartItemCrudServiceImpl implements CartItemCrudService {
     private final CartRepository cartRepository;
     private final ProductCrudService productCrudService;
-
-    public CartItemCrudServiceImpl(CartRepository cartRepository, ProductCrudService productCrudService) {
-        this.cartRepository = cartRepository;
-        this.productCrudService = productCrudService;
-    }
 
     @Override
     @PreAuthorize("#command.customerId() == principal.getCustomerId()")
