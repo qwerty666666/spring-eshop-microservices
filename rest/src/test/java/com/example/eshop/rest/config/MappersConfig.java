@@ -1,7 +1,8 @@
 package com.example.eshop.rest.config;
 
 import com.example.eshop.catalog.application.product.ProductCrudService;
-import com.example.eshop.rest.staticresources.StaticResourceUriBuilder;
+import com.example.eshop.rest.AppProperties;
+import com.example.eshop.rest.utils.UriBuilder;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -19,14 +20,9 @@ public class MappersConfig {
         return mock(ProductCrudService.class);
     }
 
-    @Bean
     @Primary
-    public StaticResourceUriBuilder staticResourceUriBuilder() {
-        return new StaticResourceUriBuilder() {
-            @Override
-            public String buildImageUri(String location) {
-                return location;
-            }
-        };
+    @Bean
+    public UriBuilder uriBuilder() {
+        return new UriBuilder(new AppProperties());
     }
 }

@@ -196,6 +196,22 @@ paths:
         401:
           $ref: '#/components/responses/requires_authentication'
 
+  /cart/checkout/confirm:
+    post:
+      tags:
+        - checkout
+      summary: Create new Order from the authorized customer Cart
+      operationId: placeOrder
+      requestBody:
+        $ref: '#/components/requestBodies/checkout_order'
+      responses:
+        201:
+          $ref: '#/components/responses/created'
+        400:
+          $ref: '#/components/responses/validation_error'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
 components:
   schemas:
     product:
@@ -658,6 +674,14 @@ components:
             $ref: '#/components/schemas/checkout-request'
 
   responses:
+    created:
+      description: Created
+      headers:
+        Location:
+          schema:
+            type: string
+            example: /api/products/123/
+
     not_found:
       description: Resource not found
       content:

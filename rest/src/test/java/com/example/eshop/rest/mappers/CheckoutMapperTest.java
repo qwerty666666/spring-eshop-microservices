@@ -34,6 +34,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -80,7 +81,7 @@ class CheckoutMapperTest {
         var paymentService = new PaymentServiceStub(new PaymentServiceId("1"), "payment");
 
         var checkoutForm = CheckoutForm.builder()
-                .order(new Order(FakeData.customerId(), FakeData.cart(), FakeData.deliveryAddress(), deliveryService, paymentService))
+                .order(new Order(UUID.randomUUID(), FakeData.customerId(), FakeData.cart(), FakeData.deliveryAddress(), deliveryService, paymentService))
                 .availableDeliveries(List.of(deliveryService))
                 .availablePayments(List.of(paymentService))
                 .total(new Total(Money.USD(1), Money.USD(2.3), Money.USD(10)))

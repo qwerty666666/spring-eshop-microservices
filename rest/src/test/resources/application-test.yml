@@ -3,5 +3,5 @@ spring:
     serialization:
       indent_output: true
 
-resources:
-  location: test
+app:
+  static_resources_location: test

@@ -1,8 +1,8 @@
 package com.example.eshop.rest.config;
 
+import com.example.eshop.rest.AppProperties;
 import com.example.eshop.rest.infrastructure.argumentresolvers.PageableSettingsArgumentResolver;
-import com.example.eshop.rest.staticresources.ResourceProperties;
-import com.example.eshop.rest.staticresources.StaticResourceUriBuilder;
+import com.example.eshop.rest.utils.UriBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
     private final PageableSettingsArgumentResolver pageableResolver;
-    private final ResourceProperties resourceProperties;
+    private final AppProperties appProperties;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
-                .addResourceHandler(StaticResourceUriBuilder.IMAGES_PATH + "/**")
-                .addResourceLocations(resourceProperties.getLocation());
+                .addResourceHandler(UriBuilder.IMAGES_BASE_PATH + "/**")
+                .addResourceLocations(appProperties.getStaticResourcesLocation());
     }
 }
