@@ -21,7 +21,7 @@ public interface ProductRepository extends EntityGraphJpaRepository<Product, Pro
     @Query("select distinct p from Product p join p.categories pc where pc.category = :category")
     Page<Product> findByCategory(@Param("category") Category category, Pageable pageable, EntityGraph entityGraph);
 
-    @Query("select distinct p from Product p join p.sku s where s.ean = :ean")
+    @Query("select distinct p from Product p join p.sku s where s.ean in :ean")
     List<Product> findByEan(@Param("ean") List<Ean> ean, EntityGraph entityGraph);
 
     default Optional<Product> findByEan(@Param("ean") Ean ean) {

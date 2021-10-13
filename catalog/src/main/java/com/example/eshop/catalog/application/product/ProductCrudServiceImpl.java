@@ -14,9 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +52,10 @@ class ProductCrudServiceImpl implements ProductCrudService {
     @Override
     @Transactional
     public Map<Ean, Product> getByEan(List<Ean> ean) {
+        if (ean.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
         var products = productRepository.findByEan(ean, EntityGraphs.named("Product.skuAndImages"));
 
         var eanProductMap = products.stream()
@@ -58,6 +63,6 @@ class ProductCrudServiceImpl implements ProductCrudService {
                 .collect(Collectors.toMap(Sku::getEan, Sku::getProduct));
 
         return ean.stream()
-                .collect(Collectors.toMap(Function.identity(), eanProductMap::get));
+                .collect(HashMap::new, (map, e) -> map.put(e, eanProductMap.get(e)), HashMap::putAll);
     }
 }
