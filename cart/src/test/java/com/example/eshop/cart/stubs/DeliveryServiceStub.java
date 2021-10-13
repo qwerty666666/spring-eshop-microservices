@@ -28,6 +28,6 @@ public class DeliveryServiceStub extends DeliveryService {
         }
 
         var period = new ShipmentPeriod(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
-        return new ShipmentInfo(order.getCart(), order.getAddress(), period, COST);
+        return new ShipmentInfo(order.getAddress(), period, COST);
     }
 }

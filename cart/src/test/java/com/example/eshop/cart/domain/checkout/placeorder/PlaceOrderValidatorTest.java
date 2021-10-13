@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.lang.Nullable;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -45,7 +46,7 @@ class PlaceOrderValidatorTest {
 
     @Test
     void validOrder() {
-        var order = new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
+        var order = new Order(UUID.randomUUID(), customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
 
         var errors = validator.validate(order);
 
@@ -102,27 +103,27 @@ class PlaceOrderValidatorTest {
 
         private Order createOrderWithFullname(@Nullable String fullname) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
+            return new Order(UUID.randomUUID(), customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
 
         private Order createOrderWithPhone(@Nullable Phone phone) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
+            return new Order(UUID.randomUUID(), customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
 
         private Order createOrderWithCountry(@Nullable String country) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
+            return new Order(UUID.randomUUID(), customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
 
         private Order createOrderWithCity(@Nullable String city) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
+            return new Order(UUID.randomUUID(), customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
 
         private Order createOrderWithBuilding(@Nullable String building) {
             var address = new DeliveryAddress(fullname, phone, country, city, null, building, null);
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
+            return new Order(UUID.randomUUID(), customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
     }
 
@@ -141,7 +142,7 @@ class PlaceOrderValidatorTest {
         }
 
         private Order createOrderWithDeliveryService(@Nullable DeliveryService deliveryService) {
-            return new Order(customerId, cart, address, deliveryService, SUPPORTED_PAYMENT);
+            return new Order(UUID.randomUUID(), customerId, cart, address, deliveryService, SUPPORTED_PAYMENT);
         }
     }
 
@@ -160,11 +161,12 @@ class PlaceOrderValidatorTest {
         }
 
         private Order createOrderWithPaymentService(@Nullable PaymentService paymentService) {
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, paymentService);
+            return new Order(UUID.randomUUID(), customerId, cart, address, SUPPORTED_DELIVERY, paymentService);
         }
     }
 
     @Nested
+    @SuppressWarnings("ConstantConditions")
     class CartTest {
         @Test
         void nullCart() {
@@ -179,7 +181,7 @@ class PlaceOrderValidatorTest {
         }
 
         private Order createOrderWithCart(@Nullable Cart cart) {
-            return new Order(customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
+            return new Order(UUID.randomUUID(), customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
     }
 

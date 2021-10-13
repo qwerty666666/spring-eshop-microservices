@@ -1,8 +1,7 @@
 package com.example.eshop.cart.domain.checkout.placeorder;
 
-import com.example.eshop.cart.domain.cart.Cart;
-import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
+import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
@@ -10,11 +9,11 @@ import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -26,28 +25,16 @@ class PlaceOrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        order = new Order("1", new Cart("1"), new DeliveryAddress(), new DeliveryServiceStub(true),
-                new PaymentServiceStub(true));
+        order = new Order(
+                UUID.randomUUID(),
+                FakeData.customerId(),
+                FakeData.emptyCart(),
+                FakeData.deliveryAddress(),
+                new DeliveryServiceStub(true),
+                new PaymentServiceStub(true)
+        );
 
         eventPublisher = mock(ApplicationEventPublisher.class);
-    }
-
-    @Test
-    void whenPlaceOrder_thenOrderCreatedEventIsPublished() {
-        // Given
-        var validator = mock(PlaceOrderValidator.class);
-        when(validator.validate(order)).thenReturn(new Errors());
-
-        var service = new PlaceOrderService(eventPublisher, validator);
-
-        var expectedEvent = new OrderPlacedEvent(order);
-
-        // When
-        service.place(order);
-
-        // Then
-        verify(validator).validate(order);
-        verify(eventPublisher).publishEvent(eq(expectedEvent));
     }
 
     @Test
@@ -57,7 +44,7 @@ class PlaceOrderServiceTest {
         var validator = mock(PlaceOrderValidator.class);
         when(validator.validate(order)).thenReturn(errors);
 
-        var service = new PlaceOrderService(eventPublisher, validator);
+        var service = new PlaceOrderService(validator);
 
         // When + Then
         var exception = catchThrowableOfType(() -> service.place(order), ValidationException.class);

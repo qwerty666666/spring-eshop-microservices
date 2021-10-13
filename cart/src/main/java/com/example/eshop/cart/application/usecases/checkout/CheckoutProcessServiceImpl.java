@@ -52,9 +52,6 @@ public class CheckoutProcessServiceImpl implements CheckoutProcessService {
     }
 
     private Total getTotal(Order order) {
-        var delivery = order.getDeliveryService();
-        var shipmentInfo = delivery != null ? delivery.getShipmentInfo(order) : null;
-
-        return new Total(order.getCart(), shipmentInfo);
+        return new Total(order.getCart(), order.getShipmentInfo());
     }
 }

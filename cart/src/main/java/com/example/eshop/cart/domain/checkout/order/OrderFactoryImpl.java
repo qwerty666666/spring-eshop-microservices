@@ -15,6 +15,7 @@ import com.example.eshop.sharedkernel.domain.Localizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ public class OrderFactoryImpl implements OrderFactory {
                 getPaymentService(createOrderDto.paymentServiceId());
 
         return new Order(
+                UUID.randomUUID(),
                 createOrderDto.customerId(),
                 createOrderDto.cart().clone(),      // clone cart to avoid modifications
                 createOrderDto.address(),

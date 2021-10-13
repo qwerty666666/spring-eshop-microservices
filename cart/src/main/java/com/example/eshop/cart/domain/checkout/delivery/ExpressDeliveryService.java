@@ -26,6 +26,6 @@ public class ExpressDeliveryService extends DeliveryService {
         var now = LocalDate.now();
         var period = new ShipmentPeriod(now.plusDays(1), now.plusDays(2));
 
-        return new ShipmentInfo(order.getCart(), order.getAddress(), period, PRICE);
+        return new ShipmentInfo(order.getAddress(), period, PRICE);
     }
 }

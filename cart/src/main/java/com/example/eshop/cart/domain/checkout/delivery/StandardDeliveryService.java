@@ -16,6 +16,6 @@ public class StandardDeliveryService extends DeliveryService {
         var now = LocalDate.now();
         var period = new ShipmentPeriod(now.plusDays(5), now.plusDays(6));
 
-        return new ShipmentInfo(order.getCart(), order.getAddress(), period, PRICE);
+        return new ShipmentInfo(order.getAddress(), period, PRICE);
     }
 }

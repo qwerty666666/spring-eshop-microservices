@@ -181,6 +181,7 @@ public class Cart extends AggregateRoot<Long> implements Cloneable {
     public Cart clone() {
         var clone = new Cart(customerId);
 
+        clone.id = id;
         clone.items = items.values().stream()
                 .collect(Collectors.toMap(
                         CartItem::getEan,
