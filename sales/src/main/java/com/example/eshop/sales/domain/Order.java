@@ -31,6 +31,11 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Order extends AggregateRoot<UUID> {
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
     @Id
     @Column(name = "id", nullable = false)
     private UUID id;

@@ -225,6 +225,26 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/paged_order_list'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+  /orders/{order_id}:
+    get:
+      tags:
+        - order
+      summary: Get order info
+      operationId: getOrder
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+      responses:
+        200:
+          $ref: '#/components/responses/order'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+        403:
+          $ref: '#/components/responses/forbidden'
+        404:
+          $ref: '#/components/responses/not_found'
 
 components:
   schemas:
@@ -899,6 +919,13 @@ components:
           schema:
             $ref: '#/components/schemas/paged-order-list'
 
+    order:
+      description: Order Info
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order'
+
     validation_error:
       description: Request parameters validation errors
       content:
@@ -943,6 +970,15 @@ components:
       schema:
         type: string
         example: 1
+
+    order_id:
+      name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 'bc046a6e-1e2b-468a-9a98-1ce99f087249'
 
     ean:
       name: ean

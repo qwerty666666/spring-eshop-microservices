@@ -84,11 +84,15 @@ public class FakeData {
     }
 
     public static Order order(String customerId) {
+        return order(UUID.randomUUID(), customerId);
+    }
+
+    public static Order order(UUID id, String customerId) {
         var orderLines = List.of(
                 new OrderLine(Ean.fromString("1111111111111"), 1, Money.USD(12), productName()),
                 new OrderLine(Ean.fromString("2222222222222"),  2, Money.USD(123), productName())
         );
 
-        return new Order(UUID.randomUUID(), customerId, delivery(), payment(), LocalDateTime.now(), orderLines);
+        return new Order(id, customerId, delivery(), payment(), LocalDateTime.now(), orderLines);
     }
 }

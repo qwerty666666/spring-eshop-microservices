@@ -3,6 +3,7 @@ package com.example.eshop.rest.controllers;
 import com.example.eshop.rest.config.AuthConfig;
 import com.example.eshop.rest.config.ControllerTestConfig;
 import com.example.eshop.rest.mappers.OrderMapper;
+import com.example.eshop.sales.application.services.queryorder.OrderNotFoundException;
 import com.example.eshop.sales.application.services.queryorder.QueryOrderService;
 import com.example.eshop.sales.domain.Order;
 import com.example.eshop.sales.infrastructure.tests.FakeData;
@@ -23,6 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,13 +49,24 @@ class OrderControllerTest {
     @MockBean
     private QueryOrderService queryOrderService;
 
+    private Order order;
     private Page<Order> orders;
+
+    // authenticated user is not owner of this order
+    private Order nonOwnerOrder;
+    private UUID notExistedOrderId = UUID.fromString("bc046a6e-1e2b-468a-9a98-1ce99f087249");
 
     @BeforeEach
     void setUp() {
-        orders = new PageImpl<>(List.of(FakeData.order(AuthConfig.CUSTOMER_ID)));
+        order = FakeData.order(AuthConfig.CUSTOMER_ID);
+        orders = new PageImpl<>(List.of(order));
+
+        nonOwnerOrder = FakeData.order(UUID.fromString("c8ca0699-1a8b-423a-bf62-12f21eb58a57"), "non-owner-customer-id");
 
         when(queryOrderService.getForCustomer(eq(AuthConfig.CUSTOMER_ID), any())).thenReturn(orders);
+        when(queryOrderService.getById(eq(order.getId()))).thenReturn(order);
+        when(queryOrderService.getById(eq(nonOwnerOrder.getId()))).thenReturn(nonOwnerOrder);
+        when(queryOrderService.getById(eq(notExistedOrderId))).thenThrow(OrderNotFoundException.class);
     }
 
     @Nested
@@ -88,6 +101,45 @@ class OrderControllerTest {
                             .param("page", String.valueOf(page))
                             .param("per_page", String.valueOf(pageSize))
             );
+        }
+    }
+
+    @Nested
+    class GetOrderTests {
+        @Test
+        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        void whenGetOrder_thenReturnOrderWithGivenId() throws Exception {
+            var expectedJson = objectMapper.writeValueAsString(orderMapper.toOrderDto(order));
+
+            performGetOrderRequest(order.getId())
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(expectedJson));
+
+            verify(queryOrderService).getById(eq(order.getId()));
+        }
+
+        @Test
+        void givenUnauthorizedRequest_whenGetOrder_thenReturn401() throws Exception {
+            performGetOrderRequest(order.getId())
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        void givenNonOwnerOrderId_whenGetOrder_thenReturn403() throws Exception {
+            performGetOrderRequest(nonOwnerOrder.getId())
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        void givenNonExistedOrderId_whenGetOrder_thenReturn404() throws Exception {
+            performGetOrderRequest(notExistedOrderId)
+                    .andExpect(status().isNotFound());
+        }
+
+        private ResultActions performGetOrderRequest(UUID id) throws Exception {
+            return mockMvc.perform(get("/api/orders/" + id));
         }
     }
 }
