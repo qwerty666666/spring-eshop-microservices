@@ -37,8 +37,8 @@ public class OrderLine {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "price", nullable = false)),
-            @AttributeOverride(name = "currency", column = @Column(name = "price_currency", nullable = false))
+            @AttributeOverride(name = "amount", column = @Column(name = "item_price", nullable = false)),
+            @AttributeOverride(name = "currency", column = @Column(name = "item_price_currency", nullable = false))
     })
     private Money itemPrice;
 
