@@ -5,9 +5,9 @@ import com.example.eshop.customer.application.signup.SignUpService;
 import com.example.eshop.customer.application.updatecustomer.UpdateCustomerCommand;
 import com.example.eshop.customer.application.updatecustomer.UpdateCustomerService;
 import com.example.eshop.customer.domain.customer.EmailAlreadyExistException;
-import com.example.eshop.rest.api.CustomersApi;
+import com.example.eshop.rest.api.CustomerApi;
 import com.example.eshop.rest.controllers.base.BaseController;
-import com.example.eshop.rest.controllers.utils.ValidationErrorBuilder;
+import com.example.eshop.rest.controllers.base.ValidationErrorBuilder;
 import com.example.eshop.rest.dto.CustomerDto;
 import com.example.eshop.rest.dto.CustomerFieldsDto;
 import com.example.eshop.rest.dto.NewCustomerDto;
@@ -29,7 +29,7 @@ import java.util.Locale;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
-public class CustomerController extends BaseController implements CustomersApi {
+public class CustomerController extends BaseController implements CustomerApi {
     private final MessageSource messageSource;
     private final QueryCustomerService queryCustomerService;
     private final UpdateCustomerService updateCustomerService;

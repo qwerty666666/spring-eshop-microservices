@@ -1,6 +1,5 @@
 package com.example.eshop.rest.controllers.base;
 
-import com.example.eshop.rest.controllers.utils.ValidationErrorBuilder;
 import com.example.eshop.rest.dto.ValidationErrorDto;
 import com.example.eshop.rest.infrastructure.converters.EanParameterFormatter;
 import com.example.eshop.rest.infrastructure.converters.EanParameterInvalidFormatException;

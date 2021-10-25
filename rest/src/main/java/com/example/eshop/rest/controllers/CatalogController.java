@@ -3,13 +3,16 @@ package com.example.eshop.rest.controllers;
 import com.example.eshop.catalog.application.category.CategoryCrudService;
 import com.example.eshop.catalog.application.category.CategoryNotFoundException;
 import com.example.eshop.catalog.application.product.ProductCrudService;
+import com.example.eshop.catalog.application.product.ProductNotFoundException;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
-import com.example.eshop.rest.api.CategoriesApi;
-import com.example.eshop.rest.controllers.utils.BasicErrorBuilder;
+import com.example.eshop.catalog.domain.product.Product.ProductId;
+import com.example.eshop.rest.api.CatalogApi;
+import com.example.eshop.rest.controllers.base.BasicErrorBuilder;
 import com.example.eshop.rest.dto.BasicErrorDto;
 import com.example.eshop.rest.dto.CategoryDto;
 import com.example.eshop.rest.dto.CategoryTreeItemDto;
 import com.example.eshop.rest.dto.PagedProductListDto;
+import com.example.eshop.rest.dto.ProductDto;
 import com.example.eshop.rest.mappers.CategoryMapper;
 import com.example.eshop.rest.mappers.ProductMapper;
 import lombok.AccessLevel;
@@ -19,7 +22,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,12 +33,26 @@ import java.util.Locale;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
-public class CategoryController implements CategoriesApi {
-    private final CategoryCrudService categoryCrudService;
+public class CatalogController implements CatalogApi {
     private final ProductCrudService productCrudService;
-    private final MessageSource messageSource;
-    private final CategoryMapper categoryMapper;
+    private final CategoryCrudService categoryCrudService;
+
     private final ProductMapper productMapper;
+    private final CategoryMapper categoryMapper;
+
+    private final MessageSource messageSource;
+
+    /**
+     * @return 404 response if Product doesn't exist
+     */
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private BasicErrorDto handleProductNotFoundException(ProductNotFoundException e, Locale locale) {
+        return BasicErrorBuilder.newInstance()
+                .setStatus(HttpStatus.NOT_FOUND)
+                .setDetail(getMessageSource().getMessage("productNotFound", new Object[]{ e.getProductId() }, locale))
+                .build();
+    }
 
     /**
      * @return 404 response if Category doesn't exist
@@ -44,6 +64,21 @@ public class CategoryController implements CategoriesApi {
                 .setStatus(HttpStatus.NOT_FOUND)
                 .setDetail(getMessageSource().getMessage("categoryNotFound", new Object[]{ e.getCategoryId() }, locale))
                 .build();
+    }
+
+    @Override
+    public ResponseEntity<ProductDto> getProductById(String id) {
+        var product = productCrudService.getById(new ProductId(id));
+
+        return ResponseEntity.ok(productMapper.toProductDto(product));
+    }
+
+    @Override
+    public ResponseEntity<PagedProductListDto> getProductList(Integer perPage, Integer page) {
+        var pageable = PageRequest.of(page - 1, perPage);
+        var products = productCrudService.getList(pageable);
+
+        return ResponseEntity.ok(productMapper.toPagedProductListDto(products));
     }
 
     @Override

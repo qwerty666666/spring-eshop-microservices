@@ -1,4 +1,4 @@
-package com.example.eshop.rest.controllers.utils;
+package com.example.eshop.rest.controllers.base;
 
 import com.example.eshop.rest.dto.FieldErrorDto;
 import com.example.eshop.rest.dto.ValidationErrorDto;

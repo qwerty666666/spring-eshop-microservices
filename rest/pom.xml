@@ -150,6 +150,7 @@
                                 <!-- skip generation of Api Controller -->
                                 <skipDefaultInterface>true</skipDefaultInterface>
                                 <interfaceOnly>true</interfaceOnly>
+                                <useTags>true</useTags>
                             </configOptions>
                         </configuration>
                     </execution>
