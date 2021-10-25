@@ -13,6 +13,7 @@ tags:
   - name: customer
   - name: cart
   - name: checkout
+  - name: order
 
 servers:
   - url: '/api'
@@ -211,6 +212,19 @@ paths:
           $ref: '#/components/responses/validation_error'
         401:
           $ref: '#/components/responses/requires_authentication'
+
+  /orders:
+    get:
+      tags:
+        - order
+      summary: Get authorized customer orders list
+      operationId: getOrderList
+      parameters:
+        - $ref: '#/components/parameters/orders_list_per_page'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+          $ref: '#/components/responses/paged_order_list'
 
 components:
   schemas:
@@ -638,6 +652,16 @@ components:
           items:
             $ref: '#/components/schemas/product'
 
+    paged-order-list:
+      type: object
+      properties:
+        pageable:
+          $ref: '#/components/schemas/pageable'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/order'
+
     paged:
       type: object
       properties:
@@ -647,6 +671,103 @@ components:
           type: array
           items:
             type: object
+
+    order:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/order-line'
+        address:
+          $ref: '#/components/schemas/delivery-address'
+        delivery:
+          $ref: '#/components/schemas/order-delivery'
+        payment:
+          $ref: '#/components/schemas/order-payment'
+        total:
+          $ref: '#/components/schemas/order-total'
+
+    order-line:
+      type: object
+      properties:
+        id:
+          type: string
+        ean:
+          $ref: '#/components/schemas/ean'
+        quantity:
+          type: integer
+        productName:
+          type: string
+        itemPrice:
+          $ref: '#/components/schemas/money'
+        linePrice:
+          $ref: '#/components/schemas/money'
+      required:
+        - id
+        - ean
+        - quantity
+        - productName
+        - itemPrice
+        - linePrice
+      example:
+        id: 123
+        ean: '5901234123457'
+        quantity: 3
+        productName: 'Sneakers'
+        itemPrice:
+          amount: 100
+          currency: USD
+        totalPrice:
+          amount: 300
+          currency: USD
+
+    order-delivery:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+      example:
+        name: Courier
+
+    order-payment:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+      example:
+        name: Cash
+
+    order-total:
+      type: object
+      properties:
+        cartPrice:
+          $ref: '#/components/schemas/money'
+        deliveryPrice:
+          $ref: '#/components/schemas/money'
+        totalPrice:
+          $ref: '#/components/schemas/money'
+      required:
+        - cartPrice
+        - deliveryPrice
+        - totalPrice
+      example:
+        cartPrice:
+          amount: 100
+          currency: 'USD'
+        deliveryPrice:
+          amount: 10
+          currency: 'USD'
+        totalPrice:
+          amount: 110
+          currency: 'USD'
 
   requestBodies:
     new_customer:
@@ -771,6 +892,13 @@ components:
           schema:
             $ref: '#/components/schemas/checkout-form'
 
+    paged_order_list:
+      description: Order List
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/paged-order-list'
+
     validation_error:
       description: Request parameters validation errors
       content:
@@ -788,6 +916,16 @@ components:
         maximum: 50
         minimum: 1
         default: 30
+
+    orders_list_per_page:
+      name: per_page
+      description: Results per page
+      in: query
+      schema:
+        type: integer
+        maximum: 30
+        minimum: 1
+        default: 10
 
     page:
       name: page
