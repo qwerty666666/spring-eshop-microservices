@@ -18,6 +18,6 @@ public class QueryOrderServiceImpl implements QueryOrderService {
     @Transactional
     @PreAuthorize("#customerId == principal.getCustomerId()")
     public Page<Order> getForCustomer(String customerId, Pageable pageable) {
-        return orderRepository.findByCustomerId(customerId, pageable);
+        return orderRepository.findByCustomerIdWithOrderLines(customerId, pageable);
     }
 }

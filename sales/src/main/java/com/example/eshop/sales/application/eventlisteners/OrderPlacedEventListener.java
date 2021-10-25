@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class OrderPlacedEventListener {
-    private final OrderMapper mapper;
+    private final OrderPlacedEventMapper mapper;
     private final CreateOrderService createOrderService;
 
     @EventListener
     public void onOrderPlaced(OrderPlacedEvent event) {
-        var order = mapper.toOrder(event.order());
+        var order = mapper.toOrder(event);
 
         createOrderService.save(order);
     }

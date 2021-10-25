@@ -1,5 +1,6 @@
 package com.example.eshop.sales.application.eventlisteners;
 
+import com.example.eshop.cart.application.usecases.placeorder.OrderPlacedEvent;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
@@ -13,13 +14,16 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface OrderMapper {
-    default com.example.eshop.sales.domain.Order toOrder(Order order) {
+public interface OrderPlacedEventMapper {
+    default com.example.eshop.sales.domain.Order toOrder(OrderPlacedEvent event) {
+        var order = event.order();
+
         return new com.example.eshop.sales.domain.Order(
                 order.getId(),
                 order.getCustomerId(),
                 toDelivery(order),
                 toPayment(order.getPaymentService()),
+                event.creationDate(),
                 order.getCart().getItems().stream().map(this::toOrderLine).toList()
         );
     }

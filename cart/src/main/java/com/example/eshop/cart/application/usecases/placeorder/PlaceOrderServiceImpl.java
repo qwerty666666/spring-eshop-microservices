@@ -8,6 +8,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +17,7 @@ public class PlaceOrderServiceImpl implements PlaceOrderService {
     private final com.example.eshop.cart.domain.checkout.placeorder.PlaceOrderService placeOrderService;
     private final ApplicationEventPublisher eventPublisher;
     private final OrderFactory orderFactory;
+    private final Clock clock;
 
     @Override
     @PreAuthorize("#createOrderDto.customerId() == principal.getCustomerId()")
@@ -27,7 +30,7 @@ public class PlaceOrderServiceImpl implements PlaceOrderService {
         placeOrderService.place(order);
 
         // and publish application event
-        eventPublisher.publishEvent(new OrderPlacedEvent(order));
+        eventPublisher.publishEvent(new OrderPlacedEvent(order, LocalDateTime.now(clock)));
 
         return order;
     }

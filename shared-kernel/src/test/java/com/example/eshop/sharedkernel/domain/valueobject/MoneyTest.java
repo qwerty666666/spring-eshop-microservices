@@ -10,6 +10,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MoneyTest {
+    private final static Money FIVE_USD = Money.USD(5);
+
     @Test
     void givenAmountWithExceededScale_whenCreateMoney_thenThrowsIllegalArgumentException() {
         assertThatThrownBy(() -> Money.of(10.123, "USD"))
@@ -31,10 +33,9 @@ class MoneyTest {
 
     @Test
     void whenAddWithDifferentCurrency_thenThrowIllegalArgumentException() {
-        var usd = Money.of(10, "USD");
-        var eur = Money.of(10, "EUR");
+        var tenEur = Money.of(10, "EUR");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> usd.add(eur));
+        assertThatIllegalArgumentException().isThrownBy(() -> FIVE_USD.add(tenEur));
     }
 
     @Test
@@ -44,5 +45,10 @@ class MoneyTest {
         var eight = Money.USD(8);
 
         assertThat(five.add(three)).isEqualTo(eight);
+    }
+
+    @Test
+    void whenMultiply_thenReturnMoneyWithAmountMultipliedByGivenNumber() {
+        assertThat(FIVE_USD.multiply(3)).isEqualTo(Money.USD(15));
     }
 }

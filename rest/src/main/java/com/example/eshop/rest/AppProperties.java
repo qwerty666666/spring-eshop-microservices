@@ -15,10 +15,16 @@ public class AppProperties {
     private String schema = "http";
 
     /**
-     * Service host with port (localhost:8080)
+     * Service host (localhost)
      */
     @NotEmpty
     private String host;
+
+    /**
+     * Service (8080)
+     */
+    @NotEmpty
+    private String port;
 
     /**
      * Base path to api Endpoints (/api)

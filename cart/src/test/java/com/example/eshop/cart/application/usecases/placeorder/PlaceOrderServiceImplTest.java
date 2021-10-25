@@ -1,7 +1,6 @@
 package com.example.eshop.cart.application.usecases.placeorder;
 
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
-import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.order.OrderFactory;
@@ -15,6 +14,10 @@ import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowableOfType;
@@ -27,6 +30,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class PlaceOrderServiceImplTest {
+    private final static LocalDateTime CREATION_DATE = LocalDateTime.of(2021, Month.APRIL, 10, 3, 34, 10);
+
+    private Clock clock;
     private CreateOrderDto createOrderDto;
     private Order order;
     private OrderFactory orderFactory;
@@ -34,6 +40,8 @@ class PlaceOrderServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        clock = Clock.fixed(CREATION_DATE.atZone(ZoneId.of("UTC")).toInstant(), ZoneId.of("UTC"));
+
         createOrderDto = new CreateOrderDto(FakeData.customerId(), FakeData.cart(), FakeData.deliveryAddress(),
                 new DeliveryServiceId("1"), new PaymentServiceId("1"));
 
@@ -56,9 +64,9 @@ class PlaceOrderServiceImplTest {
     void whenPlaceOrder_thenOrderCreatedEventIsPublished() {
         // Given
         var domainService = mock(PlaceOrderService.class);
-        var service = new PlaceOrderServiceImpl(domainService, eventPublisher, orderFactory);
+        var service = new PlaceOrderServiceImpl(domainService, eventPublisher, orderFactory, clock);
 
-        var expectedEvent = new OrderPlacedEvent(order);
+        var expectedEvent = new OrderPlacedEvent(order, CREATION_DATE);
 
         // When
         service.place(createOrderDto);
@@ -74,7 +82,7 @@ class PlaceOrderServiceImplTest {
         var domainService = mock(PlaceOrderService.class);
         doThrow(new ValidationException(new Errors())).when(domainService).place(eq(order));
 
-        var service = new PlaceOrderServiceImpl(domainService, eventPublisher, orderFactory);
+        var service = new PlaceOrderServiceImpl(domainService, eventPublisher, orderFactory, clock);
 
         // When
         //noinspection ResultOfMethodCallIgnored

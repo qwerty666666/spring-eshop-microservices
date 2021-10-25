@@ -1,6 +1,7 @@
 package com.example.eshop.sales.domain;
 
 import com.example.eshop.sharedkernel.domain.Assertions;
+import com.example.eshop.sharedkernel.domain.base.Entity;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
@@ -10,7 +11,6 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,10 +19,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.Positive;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "order_lines")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderLine {
+public class OrderLine implements Entity<Long> {
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false)
@@ -61,6 +61,34 @@ public class OrderLine {
         this.quantity = quantity;
         this.itemPrice = itemPrice;
         this.productName = productName;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @return total price of this line, i.e. {@code itemPrice * quantity}
+     */
+    public Money getPrice() {
+        return itemPrice.multiply(quantity);
+    }
+
+    public Money getItemPrice() {
+        return itemPrice;
+    }
+
+    public Ean getEan() {
+        return ean;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public String getProductName() {
+        return productName;
     }
 
     void setOrder(Order order) {

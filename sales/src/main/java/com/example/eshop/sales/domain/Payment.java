@@ -2,12 +2,14 @@ package com.example.eshop.sales.domain;
 
 import com.example.eshop.sharedkernel.domain.Assertions;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Payment {
     @Column(name = "payment_id", nullable = false)
     private String id;

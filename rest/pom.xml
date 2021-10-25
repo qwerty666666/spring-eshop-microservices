@@ -12,8 +12,6 @@
     </parent>
 
     <properties>
-        <org.mapstruct.version>1.5.0.Beta1</org.mapstruct.version>
-        <lombok.version>1.18.20</lombok.version>
         <openapi.generator.maven.plugin.version>5.2.0</openapi.generator.maven.plugin.version>
     </properties>
 
@@ -36,6 +34,11 @@
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>cart</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>sales</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -67,7 +70,6 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

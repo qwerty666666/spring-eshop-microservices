@@ -1,6 +1,8 @@
 package com.example.eshop.sales.domain;
 
 import com.example.eshop.sharedkernel.domain.Assertions;
+import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,13 +13,13 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +30,7 @@ import java.util.UUID;
 @Table(name = "orders")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Order {
+public class Order extends AggregateRoot<UUID> {
     @Id
     @Column(name = "id", nullable = false)
     private UUID id;
@@ -51,17 +53,22 @@ public class Order {
     @NotNull
     private OrderStatus status;
 
-    public Order(UUID id, String customerId, Delivery delivery, Payment payment, List<OrderLine> lines) {
+    @NotNull
+    private LocalDateTime creationDate;
+
+    public Order(UUID id, String customerId, Delivery delivery, Payment payment, LocalDateTime creationDate, List<OrderLine> lines) {
         Assertions.notNull(id, "id must be not null");
         Assertions.notEmpty(customerId, "customerId must be not empty");
         Assertions.notEmpty(lines, "OrderLines must be not empty");
         Assertions.notNull(delivery, "delivery must be not null");
         Assertions.notNull(payment, "payment must be not null");
+        Assertions.notNull(creationDate, "creationDate must be not null");
 
         this.id = id;
         this.customerId = customerId;
         this.delivery = delivery;
         this.payment = payment;
+        this.creationDate = creationDate;
 
         lines.forEach(this::addLine);
     }
@@ -81,6 +88,20 @@ public class Order {
 
     public List<OrderLine> getLines() {
         return Collections.unmodifiableList(lines);
+    }
+
+    /**
+     * @return total price of all {@link OrderLine}s
+     */
+    public Money getCartPrice() {
+        return lines.stream().map(OrderLine::getPrice).reduce(Money.ZERO, Money::add);
+    }
+
+    /**
+     * @return total price of order, i.e. {@code delieryPrice + cartPrice}
+     */
+    public Money getPrice() {
+        return delivery.getPrice().add(getCartPrice());
     }
 
     @Override

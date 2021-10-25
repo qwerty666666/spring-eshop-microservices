@@ -38,6 +38,7 @@ public class Money implements ValueObject {
      *
      * @param amount amount of money in minor unit of the currency. For example, 2 for Euro, 0 for Yen
      * @param currencyCode ISO-4217 currency code
+     *
      * @throws IllegalArgumentException if currencyCode is not a supported ISO-4217 code or null, or amount scale
      * @throws IllegalArgumentException if amount scale exceeds currency scale
      */
@@ -49,7 +50,9 @@ public class Money implements ValueObject {
      * Returns the {@link Currency} instance for the given currency code.
      *
      * @param currencyCode ISO-4217 currency code
+     *
      * @return {@link Currency} instance
+     *
      * @throws IllegalArgumentException if currencyCode is not a supported ISO-4217 code or null
      */
     private static Currency createCurrency(String currencyCode) {
@@ -87,6 +90,13 @@ public class Money implements ValueObject {
         }
 
         return new Money(amount.add(toAdd.amount), currency);
+    }
+
+    /**
+     * @return Money whose amount is multiplied by {@code mul}
+     */
+    public Money multiply(int mul) {
+        return new Money(amount.multiply(BigDecimal.valueOf(mul)), currency);
     }
 
     @Override

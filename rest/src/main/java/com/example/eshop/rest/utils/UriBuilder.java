@@ -40,6 +40,7 @@ public class UriBuilder {
     private UriComponentsBuilder getServerUriComponentsBuilder() {
         return UriComponentsBuilder.newInstance()
                 .scheme(appProperties.getSchema())
-                .host(appProperties.getHost());
+                .host(appProperties.getHost())
+                .port(appProperties.getPort());
     }
 }
