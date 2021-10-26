@@ -1,0 +1,11 @@
+# This file contains properties specific to environment or properties
+# with sensitive data that can't be stored in VCS.
+#
+# You should copy content of this file to application-{env}.yml and
+# set up given properties.
+
+app:
+  schema: http
+  host: localhost
+  port: 8080
+  static_resources_location: file:/path/to/static/resources/directory
