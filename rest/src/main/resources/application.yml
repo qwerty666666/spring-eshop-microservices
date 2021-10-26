@@ -16,3 +16,10 @@ spring:
     basename: messages, cart_messages
   web:
     locale: en_US
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        exclude: shutdown

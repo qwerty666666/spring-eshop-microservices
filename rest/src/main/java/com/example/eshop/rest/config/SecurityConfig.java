@@ -1,6 +1,8 @@
 package com.example.eshop.rest.config;
 
+import com.example.eshop.customer.domain.rbac.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
@@ -42,10 +44,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeRequests(requests -> requests
+                        // /api Endpoints
                         .antMatchers("/api/categories/**").permitAll()
                         .antMatchers("/api/products/**").permitAll()
                         .antMatchers(HttpMethod.POST, "/api/customers").permitAll()
                         .antMatchers("/api/**").authenticated()
+                        // Actuator Endpoints
+                        .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Role.ADMIN)
+                        // Others
                         .anyRequest().permitAll()
                 );
     }
