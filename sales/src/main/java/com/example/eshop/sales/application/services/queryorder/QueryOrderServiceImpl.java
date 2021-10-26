@@ -19,13 +19,13 @@ public class QueryOrderServiceImpl implements QueryOrderService {
     @Transactional(readOnly = true)
     @PreAuthorize("#customerId == principal.getCustomerId()")
     public Page<Order> getForCustomer(String customerId, Pageable pageable) {
-        return orderRepository.findByCustomerIdWithOrderLines(customerId, pageable);
+        return orderRepository.findOrdersWithLinesByCustomerId(customerId, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Order getById(UUID orderId) {
-        return orderRepository.findByIdWithOrderLines(orderId)
+        return orderRepository.findOrderWithLinesById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order " + orderId + " does not exist"));
     }
 }

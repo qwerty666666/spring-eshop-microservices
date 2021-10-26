@@ -2,18 +2,17 @@ package com.example.eshop.sales.domain;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
-    @Query(value = "select distinct o from Order o join fetch o.lines l where o.customerId = :customerId",
-            countQuery = "select count(o) from Order o where o.customerId = :customerId")
-    Page<Order> findByCustomerIdWithOrderLines(String customerId, Pageable pageable);
+    @EntityGraph(attributePaths = "lines")
+    Page<Order> findOrdersWithLinesByCustomerId(String customerId, Pageable pageable);
 
-    @Query("select distinct o from Order o join fetch o.lines l where o.id = :id")
-    Optional<Order> findByIdWithOrderLines(UUID id);
+    @EntityGraph(attributePaths = "lines")
+    Optional<Order> findOrderWithLinesById(UUID id);
 }
