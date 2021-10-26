@@ -1,6 +1,8 @@
 package com.example.eshop.customer.domain.customer;
 
 import com.example.eshop.customer.domain.customer.Customer.CustomerId;
+import com.example.eshop.customer.domain.rbac.Role;
+import com.example.eshop.customer.domain.rbac.User;
 import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.base.DomainObjectId;
@@ -13,6 +15,9 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Embedded;
 import javax.persistence.AttributeOverride;
@@ -20,11 +25,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "customers")
 @Entity
 @Getter
-public class Customer extends AggregateRoot<CustomerId> {
+public class Customer extends AggregateRoot<CustomerId> implements User {
     @EmbeddedId
     private CustomerId id;
 
@@ -51,6 +58,14 @@ public class Customer extends AggregateRoot<CustomerId> {
     @Column(name = "birthday")
     @Nullable
     private LocalDate birthday;
+
+    @ManyToMany
+    @JoinTable(
+            name = "USER_ROLE",
+            joinColumns = {@JoinColumn(name = "USER_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")}
+    )
+    private Set<Role> roles = new HashSet<>();
 
     protected Customer() {
         this(DomainObjectId.randomId(CustomerId.class));

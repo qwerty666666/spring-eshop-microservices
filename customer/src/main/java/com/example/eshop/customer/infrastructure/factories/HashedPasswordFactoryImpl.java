@@ -3,18 +3,17 @@ package com.example.eshop.customer.infrastructure.factories;
 import com.example.eshop.customer.domain.customer.HashedPassword;
 import com.example.eshop.customer.domain.customer.HashedPasswordFactory;
 import com.example.eshop.customer.domain.customer.PasswordPolicyException;
+import lombok.RequiredArgsConstructor;
 import org.passay.PasswordData;
 import org.passay.PasswordValidator;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class HashedPasswordFactoryImpl implements HashedPasswordFactory {
     private final PasswordEncoder passwordEncoder;
     private final PasswordValidator passwordValidator;
-
-    public HashedPasswordFactoryImpl(PasswordEncoder passwordEncoder, PasswordValidator passwordValidator) {
-        this.passwordEncoder = passwordEncoder;
-        this.passwordValidator = passwordValidator;
-    }
 
     @Override
     public HashedPassword createFromPlainPassword(String plain) {

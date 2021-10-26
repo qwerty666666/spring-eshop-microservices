@@ -1,20 +1,16 @@
 package com.example.eshop.customer.infrastructure.auth;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
-import java.util.Collections;
 
+@RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
     private final String username;
     private final String password;
     private final String customerId;
-
-    public UserDetailsImpl(String username, String password, String customerId) {
-        this.username = username;
-        this.password = password;
-        this.customerId = customerId;
-    }
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public String getCustomerId() {
         return customerId;
@@ -26,7 +22,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return authorities;
     }
 
     @Override
