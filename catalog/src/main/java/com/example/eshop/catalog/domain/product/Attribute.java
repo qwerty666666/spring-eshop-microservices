@@ -43,6 +43,6 @@ public class Attribute {
 
     @Override
     public int hashCode() {
-        return name == null ? 0 : name.hashCode();
+        return 0;
     }
 }

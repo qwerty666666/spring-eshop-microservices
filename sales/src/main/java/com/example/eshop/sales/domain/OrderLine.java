@@ -105,6 +105,6 @@ public class OrderLine implements Entity<Long> {
 
     @Override
     public int hashCode() {
-        return id == null ? 0 : id.intValue();
+        return Objects.hash(order, ean);
     }
 }

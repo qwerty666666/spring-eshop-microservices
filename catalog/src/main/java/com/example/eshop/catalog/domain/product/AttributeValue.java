@@ -54,9 +54,7 @@ public class AttributeValue {
 
     @Override
     public int hashCode() {
-        var result = attribute == null ? 0 : attribute.hashCode();
-        result = result * 31 + (value == null ? 0 : value.hashCode());
-        return result;
+        return 0;
     }
 
     @Override

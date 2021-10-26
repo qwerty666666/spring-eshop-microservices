@@ -71,7 +71,7 @@ public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return 0;
     }
 
     @Embeddable

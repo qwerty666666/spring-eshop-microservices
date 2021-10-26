@@ -90,7 +90,7 @@ public class ProductCategory {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return 0;
     }
 
     @Embeddable

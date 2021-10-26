@@ -57,7 +57,7 @@ public abstract class PaymentService extends AggregateRoot<PaymentServiceId> {
 
     @Override
     public int hashCode() {
-        return name == null ? 0 : name.hashCode();
+        return 0;
     }
 
     @Embeddable
