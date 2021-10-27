@@ -29,6 +29,7 @@
 
     <properties>
         <java.version>17</java.version>
+
         <mapstruct.version>1.5.0.Beta1</mapstruct.version>
         <lombok.version>1.18.20</lombok.version>
         <spring-boot.version>2.5.2</spring-boot.version>
@@ -37,6 +38,8 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <passay.version>1.6.1</passay.version>
         <rider-spring.version>1.25.0</rider-spring.version>
+
+        <integration.test.classes.pattern>**/*IntegrationTest*.java</integration.test.classes.pattern>
     </properties>
 
     <dependencies>
@@ -128,30 +131,29 @@
 
     <build>
         <plugins>
+            <!-- Unit Tests -->
             <plugin>
-                <!-- Execute Integration Tests in *IntegrationTest.java classes -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/*IntegrationTest.java</exclude>
+                        <!-- exclude integration tests -->
+                        <exclude>${integration.test.classes.pattern}</exclude>
                     </excludes>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>integration-test</id>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <phase>integration-test</phase>
-                        <configuration>
-                            <includes>
-                                <include>**/*IntegrationTest.java</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
+            </plugin>
+
+            <!-- Integration Tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <includes>
+                        <include>${integration.test.classes.pattern}</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
