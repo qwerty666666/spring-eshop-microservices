@@ -31,6 +31,7 @@
         <java.version>17</java.version>
         <org.mapstruct.version>1.5.0.Beta1</org.mapstruct.version>
         <lombok.version>1.18.20</lombok.version>
+        <spring.boot.version>2.5.2</spring.boot.version>
     </properties>
 
     <dependencies>
@@ -42,12 +43,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Third party -->
