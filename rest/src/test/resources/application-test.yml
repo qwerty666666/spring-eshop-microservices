@@ -4,4 +4,7 @@ spring:
       indent_output: true
 
 app:
-  static_resources_location: test
+  schema: http
+  host: localhost
+  port: 80
+  static_resources_location: /tmp/test
