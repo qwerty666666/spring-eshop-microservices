@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.passay.PasswordData;
 import org.passay.PasswordValidator;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
-@Component
 @RequiredArgsConstructor
 public class HashedPasswordFactoryImpl implements HashedPasswordFactory {
     private final PasswordEncoder passwordEncoder;

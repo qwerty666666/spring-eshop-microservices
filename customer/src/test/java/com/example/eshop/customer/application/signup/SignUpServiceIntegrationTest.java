@@ -2,6 +2,7 @@ package com.example.eshop.customer.application.signup;
 
 import com.example.eshop.customer.domain.customer.CustomerCreatedEvent;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
@@ -44,6 +45,7 @@ class SignUpServiceIntegrationTest {
     @Test
     @DataSet(value = "customers.yml")
     @ExpectedDataSet(value = "expectedSignUpCustomers.yml", ignoreCols = { "id", "password" }, orderBy = "email")
+    @DBUnit(cacheConnection = false)
     void whenSignUpCustomer_thenDbUpdatedAndCustomerCreatedEventPublished() {
         // Given
         var firstname = "firstname";

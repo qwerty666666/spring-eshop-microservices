@@ -1,5 +1,7 @@
 package com.example.eshop.customer.config;
 
+import com.example.eshop.customer.domain.customer.HashedPasswordFactory;
+import com.example.eshop.customer.infrastructure.factories.HashedPasswordFactoryImpl;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.LengthRule;
@@ -22,5 +24,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public HashedPasswordFactory hashedPasswordFactory() {
+        return new HashedPasswordFactoryImpl(passwordEncoder(), passwordValidator());
     }
 }
