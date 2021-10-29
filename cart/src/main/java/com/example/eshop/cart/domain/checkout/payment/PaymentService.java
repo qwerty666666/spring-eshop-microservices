@@ -25,7 +25,6 @@ import java.util.Objects;
 @Table(name = "payments")
 public abstract class PaymentService extends AggregateRoot<PaymentServiceId> {
     @EmbeddedId
-    @Column(name = "id", nullable = false)
     protected PaymentServiceId id;
 
     @Column(name = "name")

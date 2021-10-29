@@ -25,7 +25,6 @@ import java.util.Objects;
 @Table(name = "deliveries")
 public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
     @EmbeddedId
-    @Column(name = "id", nullable = false)
     protected DeliveryServiceId id;
 
     @Column(name = "name")
