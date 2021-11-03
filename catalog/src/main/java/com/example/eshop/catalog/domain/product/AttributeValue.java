@@ -10,14 +10,21 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
+/**
+ * Class represents unique value for {@link Attribute}.
+ */
 @Entity
-@Table(name = "attribute_values")
+@Table(
+        name = "attribute_values",
+        indexes = { @Index(name = "attribute_values_attribute_id_idx", columnList = "attribute_id") }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttributeValue {
@@ -28,7 +35,7 @@ public class AttributeValue {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "attribute_id", nullable = false)
     @NotNull
     private Attribute attribute;
 

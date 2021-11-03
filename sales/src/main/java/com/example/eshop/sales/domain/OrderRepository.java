@@ -10,9 +10,15 @@ import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
+    /**
+     * Finds {@link Order}s for given Customer.
+     */
     @EntityGraph(attributePaths = "lines")
     Page<Order> findOrdersWithLinesByCustomerId(String customerId, Pageable pageable);
 
+    /**
+     * Finds {@link Order} by given ID.
+     */
     @EntityGraph(attributePaths = "lines")
     Optional<Order> findOrderWithLinesById(UUID id);
 }

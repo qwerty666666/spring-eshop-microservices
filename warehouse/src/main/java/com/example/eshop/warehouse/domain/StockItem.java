@@ -51,15 +51,23 @@ public class StockItem extends AggregateRoot<Long> {
         return id;
     }
 
+    /**
+     * @return EAN for this item
+     */
     public Ean getEan() {
         return ean;
     }
 
+    /**
+     * @return stock quantity for this ean
+     */
     public StockQuantity getStockQuantity() {
         return stockQuantity;
     }
 
     /**
+     * Decreases stock quantity by given amount {@code quantity}
+     *
      * @throws InsufficientStockQuantityException if {@code quantity} is greater than existed stock quantity
      */
     public void decrease(StockQuantity quantity) {
@@ -70,6 +78,9 @@ public class StockItem extends AggregateRoot<Long> {
         log.info("Stock Quantity is decreased by {}. Remaining quantity is {}.", quantity, stockQuantity);
     }
 
+    /**
+     * Increases stock quantity by given amount {@code quantity}
+     */
     public void increase(StockQuantity quantity) {
         stockQuantity = stockQuantity.add(quantity);
 

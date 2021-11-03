@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Represents permission to perform some operation.
+ */
 @Entity
 @Table(name = "permissions")
 @Getter

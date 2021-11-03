@@ -1,7 +1,7 @@
 spring:
   jpa:
-    hibernate:
-      ddl-auto: create
+#    hibernate:
+#      ddl-auto: create
     show-sql: true
     open-in-view: false
   data:
@@ -31,3 +31,4 @@ server:
     include-exception: false
     include-stacktrace: never
     include-binding-errors: never
+

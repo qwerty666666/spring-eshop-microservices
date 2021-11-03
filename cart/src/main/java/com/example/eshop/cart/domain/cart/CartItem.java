@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
@@ -27,10 +26,13 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Class represents single item in {@link Cart}.
+ */
 @javax.persistence.Entity
 @Table(
         name = "cart_items",
-        uniqueConstraints = @UniqueConstraint(columnNames = { "cart_id", "ean" })
+        uniqueConstraints = @UniqueConstraint(name = "cart_items_uniq_item", columnNames = { "cart_id", "ean" })
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -44,10 +46,7 @@ public class CartItem implements Entity<Long> {
     private Long id;
 
     @Embedded
-    @AttributeOverride(
-            name = "ean",
-            column = @Column(name = "ean", nullable = false)
-    )
+    @AttributeOverride(name = "ean", column = @Column(name = "ean", nullable = false))
     @NotNull
     @ToString.Include
     private Ean ean;
@@ -58,19 +57,17 @@ public class CartItem implements Entity<Long> {
     private int quantity;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "price", nullable = false)),
-            @AttributeOverride(name = "currency", column = @Column(name = "currency", nullable = false))
-    })
+    @AttributeOverride(name = "amount", column = @Column(name = "price", nullable = false))
+    @AttributeOverride(name = "currency", column = @Column(name = "currency", nullable = false))
     @NotNull
     private Money price;
 
-    @Column(name = "product_name")
+    @Column(name = "product_name", nullable = false)
     @NotEmpty
     private String productName;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
     @Column(name = "create_time", nullable = false)
@@ -91,6 +88,11 @@ public class CartItem implements Entity<Long> {
         this.productName = productName;
     }
 
+    /**
+     * Set quantity.
+     * <p>
+     * This method must be called only through {@link Cart} Aggregate Root.
+     */
     void setQuantity(int quantity) {
         Assertions.positive(quantity, "Quantity should be positive number");
 

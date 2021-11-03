@@ -1,5 +1,6 @@
 package com.example.eshop.catalog.domain.product;
 
+import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.sharedkernel.domain.Assertions;
@@ -22,11 +23,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,36 +37,34 @@ import java.util.Set;
 
 /**
  * Product is a group of {@link Sku}, where each SKU is a distinct
- * product variant with unique {@link Attribute} set (like size, color, etc.).
+ * product variant with unique {@link Attribute}s set (like size, color, etc.).
  * <p>
  * From catalog perspective, users will work with {@code Product}
  * instead of {@code SKU}.
  */
 @Entity
 @Table(name = "products")
-@NamedEntityGraphs({
+@NamedEntityGraph(
         // Product.sku + Product.sku.attributes + Product.images
-        @NamedEntityGraph(
-                name = "Product.skuAndImages",
-                attributeNodes = {
-                        @NamedAttributeNode(value = "sku", subgraph = "sku.attributes"),
-                        @NamedAttributeNode(value = "images"),
-                },
-                subgraphs = {
-                        @NamedSubgraph(
-                                name = "sku.attributes",
-                                attributeNodes = @NamedAttributeNode(
-                                        value = "attributes",
-                                        subgraph = "sku.attributes.attribute"
-                                )
-                        ),
-                        @NamedSubgraph(
-                                name = "sku.attributes.attribute",
-                                attributeNodes = @NamedAttributeNode(value = "attribute")
-                        ),
-                }
-        )
-})
+        name = "Product.skuAndImages",
+        attributeNodes = {
+                @NamedAttributeNode(value = "sku", subgraph = "sku.attributes"),
+                @NamedAttributeNode(value = "images"),
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "sku.attributes",
+                        attributeNodes = @NamedAttributeNode(
+                                value = "attributes",
+                                subgraph = "sku.attributes.attribute"
+                        )
+                ),
+                @NamedSubgraph(
+                        name = "sku.attributes.attribute",
+                        attributeNodes = @NamedAttributeNode(value = "attribute")
+                ),
+        }
+)
 @Getter
 @ToString(onlyExplicitlyIncluded = true)
 @Slf4j
@@ -75,6 +74,7 @@ public class Product extends AggregateRoot<ProductId> {
     private ProductId id;
 
     @Column(name = "name", nullable = false)
+    @NotEmpty
     @ToString.Include
     private String name;
 
@@ -106,8 +106,12 @@ public class Product extends AggregateRoot<ProductId> {
         return id;
     }
 
+    /**
+     * Sets the name of the product
+     */
     public void setName(String name) {
         Assertions.notEmpty(name, "Name must be non empty");
+
         this.name = name;
     }
 
@@ -118,6 +122,7 @@ public class Product extends AggregateRoot<ProductId> {
      */
     public void setSkuAvailableQuantity(Ean ean, int availableQuantity) {
         Assertions.notNull(ean, "EAN must be non empty");
+
         getSku(ean).changeAvailableQuantity(availableQuantity);
     }
 
@@ -126,11 +131,14 @@ public class Product extends AggregateRoot<ProductId> {
      */
     public Sku getSku(Ean ean) {
         return this.sku.stream()
-                .filter(sku -> sku.getEan().equals(ean))
+                .filter(s -> s.getEan().equals(ean))
                 .findFirst()
                 .orElseThrow(() -> new SkuNotFoundException("SKU " + ean + " does not exist in Product " + this));
     }
 
+    /**
+     * @return List of SKU sorted by SKU's attributes
+     */
     public List<Sku> getSku() {
         return sku.stream()
                 // We can't use sort on field (using @SortComparator or @OrderBy) because
@@ -177,18 +185,32 @@ public class Product extends AggregateRoot<ProductId> {
         }
     }
 
+    /**
+     * @return unmodifiable list of {@link Category}
+     */
     public Set<ProductCategory> getCategories() {
         return Collections.unmodifiableSet(categories);
     }
 
+    /**
+     * @return unmodifiable List of product's Images
+     */
     public List<File> getImages() {
         return Collections.unmodifiableList(images);
     }
 
-    private void addImage(File image) {
+    /**
+     * Adds new image to the end of the images collection
+     */
+    public void addImage(File image) {
+        Assertions.notNull(image, "image should be non null");
+
         this.images.add(image);
     }
 
+    /**
+     * @return new {@link ProductBuilder} instance
+     */
     public static ProductBuilder builder() {
         return new ProductBuilder();
     }
@@ -207,6 +229,9 @@ public class Product extends AggregateRoot<ProductId> {
         return Objects.hashCode(id);
     }
 
+    /**
+     * ID object for {@link Product}
+     */
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ProductId extends DomainObjectId {
@@ -215,12 +240,15 @@ public class Product extends AggregateRoot<ProductId> {
         }
     }
 
+    /**
+     * Builder for {@link Product}
+     */
     public static class ProductBuilder {
         @Nullable
         private ProductId id;
         private String name;
-        private List<File> images = new ArrayList<>();
-        private List<Sku> sku = new ArrayList<>();
+        private final List<File> images = new ArrayList<>();
+        private final List<Sku> sku = new ArrayList<>();
 
         public ProductBuilder id(ProductId id) {
             this.id = id;

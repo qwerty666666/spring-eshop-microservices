@@ -1,7 +1,8 @@
 package com.example.eshop.customer.domain.customer;
 
 /**
- * Customer with given Email already registered
+ * Thrown if {@link Customer} with given Email already registered
+ * and therefore this Email can't be used.
  */
 public class EmailAlreadyExistException extends RuntimeException {
     public EmailAlreadyExistException(String message) {

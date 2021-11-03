@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+/**
+ * Provides info about Payment for {@link Order}
+ */
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter

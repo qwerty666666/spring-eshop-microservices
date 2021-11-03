@@ -38,6 +38,7 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <passay.version>1.6.1</passay.version>
         <rider-spring.version>1.25.0</rider-spring.version>
+        <hibernate-types-52.version>2.14.0</hibernate-types-52.version>
 
         <integration.test.classes.pattern>**/*IntegrationTest*.java</integration.test.classes.pattern>
     </properties>
@@ -92,6 +93,11 @@
                 <groupId>com.cosium.spring.data</groupId>
                 <artifactId>spring-data-jpa-entity-graph</artifactId>
                 <version>${spring-data-jpa-entity-graph.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.vladmihalcea</groupId>
+                <artifactId>hibernate-types-52</artifactId>
+                <version>${hibernate-types-52.version}</version>
             </dependency>
 
             <!-- Third party -->

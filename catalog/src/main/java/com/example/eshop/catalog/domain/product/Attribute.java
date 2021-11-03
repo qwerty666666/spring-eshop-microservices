@@ -13,6 +13,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
+/**
+ * Class represents {@link Sku}'s property (like size, color, etc.)
+ */
 @Entity
 @Table(name = "attributes")
 @Getter

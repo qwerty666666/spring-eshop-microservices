@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +21,7 @@ public class File {
     private Long id;
 
     @Column(name = "location", nullable = false, unique = true)
+    @NotEmpty
     private String location;
 
     public File(String location) {

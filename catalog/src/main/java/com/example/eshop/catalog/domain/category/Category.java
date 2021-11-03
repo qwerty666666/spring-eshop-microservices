@@ -18,7 +18,6 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -36,16 +35,14 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "categories")
-@NamedEntityGraphs({
-        @NamedEntityGraph(
-                name = "Category.parent",
-                attributeNodes = { @NamedAttributeNode("parent") }
-        ),
-        @NamedEntityGraph(
-                name = "Category.children",
-                attributeNodes = { @NamedAttributeNode("children") }
-        )
-})
+@NamedEntityGraph(
+        name = "Category.parent",
+        attributeNodes = { @NamedAttributeNode("parent") }
+)
+@NamedEntityGraph(
+        name = "Category.children",
+        attributeNodes = { @NamedAttributeNode("children") }
+)
 @Getter
 public class Category extends AggregateRoot<CategoryId> {
     @EmbeddedId
@@ -112,6 +109,9 @@ public class Category extends AggregateRoot<CategoryId> {
         return Objects.hashCode(id);
     }
 
+    /**
+     * ID object for {@link Category}
+     */
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class CategoryId extends DomainObjectId {

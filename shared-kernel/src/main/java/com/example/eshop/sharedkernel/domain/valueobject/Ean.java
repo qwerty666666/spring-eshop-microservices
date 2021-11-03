@@ -18,16 +18,16 @@ public class Ean implements ValueObject {
 
     @Column(name = "ean")
     @EAN
-    private String ean;
+    private String eanCode;
 
-    private Ean(String ean) {
-        Assertions.notNull(ean, "EAN must be non null");
+    private Ean(String eanCode) {
+        Assertions.notNull(eanCode, "EAN must be non null");
 
-        if (!EAN_PATTERN.matcher(ean).matches()) {
-            throw new InvalidEanFormatException(ean, "Invalid EAN format. Expected EAN-13, but provided " + ean);
+        if (!EAN_PATTERN.matcher(eanCode).matches()) {
+            throw new InvalidEanFormatException(eanCode, "Invalid EAN format. Expected EAN-13, but provided " + eanCode);
         }
 
-        this.ean = ean;
+        this.eanCode = eanCode;
     }
 
     /**
@@ -43,7 +43,7 @@ public class Ean implements ValueObject {
 
     @Override
     public String toString() {
-        return ean;
+        return eanCode;
     }
 
     @Override
@@ -52,11 +52,11 @@ public class Ean implements ValueObject {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Ean email1 = (Ean) o;
 
-        return Objects.equals(ean, email1.ean);
+        return Objects.equals(eanCode, email1.eanCode);
     }
 
     @Override
     public int hashCode() {
-        return ean.hashCode();
+        return eanCode.hashCode();
     }
 }

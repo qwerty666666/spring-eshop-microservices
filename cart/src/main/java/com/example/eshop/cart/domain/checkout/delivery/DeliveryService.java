@@ -27,7 +27,7 @@ public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
     @EmbeddedId
     protected DeliveryServiceId id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     @NotEmpty
     protected String name;
 
