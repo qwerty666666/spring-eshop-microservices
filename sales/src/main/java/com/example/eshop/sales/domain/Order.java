@@ -46,6 +46,7 @@ import java.util.UUID;
 public class Order extends AggregateRoot<UUID> {
     @Id
     @Column(name = "id", nullable = false)
+    @Type(type="org.hibernate.type.PostgresUUIDType")
     private UUID id;
 
     @Column(name = "customer_id", nullable = false)

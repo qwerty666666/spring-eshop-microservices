@@ -2,16 +2,17 @@ package com.example.eshop.cart.application.eventlisteners;
 
 import com.example.eshop.cart.application.usecases.createcart.CreateCartService;
 import com.example.eshop.customer.domain.customer.CustomerCreatedEvent;
+import com.example.eshop.sharedtest.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
+@IntegrationTest
 class CustomerCreatedEventListenerIntegrationTest {
     @MockBean
     CreateCartService createCartService;
@@ -26,6 +27,6 @@ class CustomerCreatedEventListenerIntegrationTest {
 
         eventPublisher.publishEvent(event);
 
-        verify(createCartService).create(eq(customerId));
+        verify(createCartService).create(customerId);
     }
 }

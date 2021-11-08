@@ -5,6 +5,7 @@ import com.example.eshop.customer.domain.customer.CustomerRepository;
 import com.example.eshop.customer.domain.customer.HashedPasswordFactory;
 import com.example.eshop.customer.domain.customer.PasswordPolicyException;
 import com.example.eshop.customer.domain.customer.UniqueEmailSpecification;
+import com.example.eshop.sharedtest.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
+@IntegrationTest
 @ContextConfiguration(classes = SecurityConfig.class)
-public class PasswordPoliciesIntegrationTest {
+class PasswordPoliciesIntegrationTest {
     @Autowired
     HashedPasswordFactory hashedPasswordFactory;
 

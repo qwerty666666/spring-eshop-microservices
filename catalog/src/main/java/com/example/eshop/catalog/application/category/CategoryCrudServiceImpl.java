@@ -4,21 +4,17 @@ import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.category.CategoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Service
+@RequiredArgsConstructor
 class CategoryCrudServiceImpl implements CategoryCrudService {
     private final CategoryRepository categoryRepository;
-
-    @Autowired
-    public CategoryCrudServiceImpl(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     @Override
     @Transactional

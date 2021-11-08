@@ -59,8 +59,10 @@
             <artifactId>spring-security-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.database-rider</groupId>
-            <artifactId>rider-spring</artifactId>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Third party -->

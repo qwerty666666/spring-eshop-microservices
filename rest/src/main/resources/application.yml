@@ -1,9 +1,10 @@
 spring:
   jpa:
-#    hibernate:
-#      ddl-auto: create
-    show-sql: true
     open-in-view: false
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   data:
     web:
       pageable:
