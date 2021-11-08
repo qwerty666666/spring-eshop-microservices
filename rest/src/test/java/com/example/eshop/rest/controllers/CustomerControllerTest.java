@@ -85,7 +85,7 @@ class CustomerControllerTest {
                 .password(HashedPassword.fromHash(CUSTOMER_PASSWORD))
                 .build();
 
-        when(queryCustomerService.getByEmail(eq(CUSTOMER_EMAIL))).thenReturn(customer);
+        when(queryCustomerService.getByEmail(CUSTOMER_EMAIL)).thenReturn(customer);
     }
 
     @Nested
@@ -126,7 +126,7 @@ class CustomerControllerTest {
             performUpdateCurrentCustomerRequest()
                     .andExpect(status().isOk());
 
-            verify(updateCustomerService).updateCustomer(eq(expectedCommand));
+            verify(updateCustomerService).updateCustomer(expectedCommand);
         }
 
         @Test
@@ -141,7 +141,7 @@ class CustomerControllerTest {
             var response = performUpdateCurrentCustomerRequest();
             assertEmailAlreadyUsedResponse(response);
 
-            verify(updateCustomerService).updateCustomer(eq(expectedCommand));
+            verify(updateCustomerService).updateCustomer(expectedCommand);
         }
 
         @Test
@@ -180,7 +180,7 @@ class CustomerControllerTest {
                     .build();
             var command = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
 
-            when(signUpService.signUp(eq(command))).thenReturn(newCustomer);
+            when(signUpService.signUp(command)).thenReturn(newCustomer);
 
             var expectedJson = objectMapper.writeValueAsString(customerMapper.toCustomerDto(newCustomer));
 
@@ -190,7 +190,7 @@ class CustomerControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(signUpService).signUp(eq(command));
+            verify(signUpService).signUp(command);
         }
 
         @Test
@@ -198,13 +198,13 @@ class CustomerControllerTest {
             // Given
             var command = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
 
-            when(signUpService.signUp(eq(command))).thenThrow(EmailAlreadyExistException.class);
+            when(signUpService.signUp(command)).thenThrow(EmailAlreadyExistException.class);
 
             // When + Then
             var response = performSignUpRequest();
             assertEmailAlreadyUsedResponse(response);
 
-            verify(signUpService).signUp(eq(command));
+            verify(signUpService).signUp(command);
         }
 
         private ResultActions performSignUpRequest() throws Exception {

@@ -21,5 +21,6 @@ public record CreateOrderDto(
 
     @Builder
     public CreateOrderDto {
+        // We use constructor because of @Builder is not allowed on Record
     }
 }

@@ -64,9 +64,9 @@ class OrderControllerTest {
         nonOwnerOrder = FakeData.order(UUID.fromString("c8ca0699-1a8b-423a-bf62-12f21eb58a57"), "non-owner-customer-id");
 
         when(queryOrderService.getForCustomer(eq(AuthConfig.CUSTOMER_ID), any())).thenReturn(orders);
-        when(queryOrderService.getById(eq(order.getId()))).thenReturn(order);
-        when(queryOrderService.getById(eq(nonOwnerOrder.getId()))).thenReturn(nonOwnerOrder);
-        when(queryOrderService.getById(eq(notExistedOrderId))).thenThrow(OrderNotFoundException.class);
+        when(queryOrderService.getById(order.getId())).thenReturn(order);
+        when(queryOrderService.getById(nonOwnerOrder.getId())).thenReturn(nonOwnerOrder);
+        when(queryOrderService.getById(notExistedOrderId)).thenThrow(OrderNotFoundException.class);
     }
 
     @Nested
@@ -86,7 +86,7 @@ class OrderControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(queryOrderService).getForCustomer(eq(AuthConfig.CUSTOMER_ID), eq(expectedPageable));
+            verify(queryOrderService).getForCustomer(AuthConfig.CUSTOMER_ID, expectedPageable);
         }
 
         @Test
@@ -115,7 +115,7 @@ class OrderControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(queryOrderService).getById(eq(order.getId()));
+            verify(queryOrderService).getById(order.getId());
         }
 
         @Test

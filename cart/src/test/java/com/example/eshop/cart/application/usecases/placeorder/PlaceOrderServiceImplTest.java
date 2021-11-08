@@ -22,7 +22,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -55,7 +54,7 @@ class PlaceOrderServiceImplTest {
         );
 
         orderFactory = mock(OrderFactory.class);
-        when(orderFactory.create(eq(createOrderDto))).thenReturn(order);
+        when(orderFactory.create(createOrderDto)).thenReturn(order);
 
         eventPublisher = mock(ApplicationEventPublisher.class);
     }
@@ -72,15 +71,15 @@ class PlaceOrderServiceImplTest {
         service.place(createOrderDto);
 
         // Then
-        verify(domainService).place(eq(order));
-        verify(eventPublisher).publishEvent(eq(expectedEvent));
+        verify(domainService).place(order);
+        verify(eventPublisher).publishEvent(expectedEvent);
     }
 
     @Test
     void givenInvalidCreateOrderDto_whenPlace_thenNoEventIsPublished() {
         // Given
         var domainService = mock(PlaceOrderService.class);
-        doThrow(new ValidationException(new Errors())).when(domainService).place(eq(order));
+        doThrow(new ValidationException(new Errors())).when(domainService).place(order);
 
         var service = new PlaceOrderServiceImpl(domainService, eventPublisher, orderFactory, clock);
 
@@ -89,7 +88,7 @@ class PlaceOrderServiceImplTest {
         catchThrowableOfType(() -> service.place(createOrderDto), ValidationException.class);
 
         // Then
-        verify(domainService).place(eq(order));
+        verify(domainService).place(order);
         verify(eventPublisher, never()).publishEvent(any());
     }
 }

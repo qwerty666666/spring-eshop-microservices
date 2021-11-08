@@ -16,7 +16,6 @@ class EmailTest {
     void givenEmail_whenEmailToString_thenReturnOriginalEmail() {
         var email = "rick-sanchez@example.com";
 
-        assertThat(Email.fromString(email).toString())
-                .isEqualTo(email);
+        assertThat(Email.fromString(email)).hasToString(email);
     }
 }

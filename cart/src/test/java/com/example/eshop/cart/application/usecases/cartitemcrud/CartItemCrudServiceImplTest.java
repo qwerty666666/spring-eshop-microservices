@@ -15,7 +15,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,7 +32,7 @@ class CartItemCrudServiceImplTest {
         // CartRepository
 
         var cartRepository = mock(CartRepository.class);
-        when(cartRepository.findByNaturalId(eq(customerId))).thenReturn(Optional.of(cart));
+        when(cartRepository.findByNaturalId(customerId)).thenReturn(Optional.of(cart));
 
         // ProductCrudService
 
@@ -54,8 +53,8 @@ class CartItemCrudServiceImplTest {
                 .build();
 
         var productCrudService = mock(ProductCrudService.class);
-        when(productCrudService.getByEan(eq(newEan))).thenReturn(product);
-        when(productCrudService.getByEan(eq(nonExistedInCatalogEan))).thenThrow(new ProductNotFoundException(null, ""));
+        when(productCrudService.getByEan(newEan)).thenReturn(product);
+        when(productCrudService.getByEan(nonExistedInCatalogEan)).thenThrow(new ProductNotFoundException(null, ""));
 
         // CartItemService
 
@@ -90,8 +89,9 @@ class CartItemCrudServiceImplTest {
 
     @Test
     void givenNonExistedInCatalogEan_whenAdd_thenThrowProductNotFoundException() {
-        assertThatExceptionOfType(ProductNotFoundException.class).isThrownBy(() -> {
-            cartItemCrudService.add(new AddCartItemCommand(customerId, nonExistedInCatalogEan, 1));
-        });
+        var command = new AddCartItemCommand(customerId, nonExistedInCatalogEan, 1);
+
+        assertThatExceptionOfType(ProductNotFoundException.class)
+                .isThrownBy(() -> cartItemCrudService.add(command));
     }
 }

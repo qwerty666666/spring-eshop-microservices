@@ -26,7 +26,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,7 +64,7 @@ class CartControllerTest {
         cart = new Cart(customerId);
         cart.addItem(EAN, PRICE, QUANTITY, PRODUCT_NAME);
 
-        when(cartQueryService.getForCustomer(eq(customerId))).thenReturn(cart);
+        when(cartQueryService.getForCustomer(customerId)).thenReturn(cart);
     }
 
     @Nested
@@ -105,7 +104,7 @@ class CartControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(cartItemCrudService).add(eq(expectedCommand));
+            verify(cartItemCrudService).add(expectedCommand);
         }
 
         @Test
@@ -140,7 +139,7 @@ class CartControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(cartItemCrudService).remove(eq(expectedCommand));
+            verify(cartItemCrudService).remove(expectedCommand);
         }
 
         @Test
@@ -153,7 +152,7 @@ class CartControllerTest {
             performRemoveCartItemRequest()
                     .andExpect(status().isNotFound());
 
-            verify(cartItemCrudService).remove(eq(expectedCommand));
+            verify(cartItemCrudService).remove(expectedCommand);
         }
 
         @Test

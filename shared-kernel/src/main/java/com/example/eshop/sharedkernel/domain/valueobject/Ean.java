@@ -8,26 +8,27 @@ import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.EAN;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Ean implements ValueObject {
+public class Ean implements ValueObject, Serializable {
     private static final Pattern EAN_PATTERN = Pattern.compile("^[0-9]{13}$");
 
     @Column(name = "ean")
     @EAN
-    private String eanCode;
+    private String ean;
 
-    private Ean(String eanCode) {
-        Assertions.notNull(eanCode, "EAN must be non null");
+    private Ean(String ean) {
+        Assertions.notNull(ean, "EAN must be non null");
 
-        if (!EAN_PATTERN.matcher(eanCode).matches()) {
-            throw new InvalidEanFormatException(eanCode, "Invalid EAN format. Expected EAN-13, but provided " + eanCode);
+        if (!EAN_PATTERN.matcher(ean).matches()) {
+            throw new InvalidEanFormatException(ean, "Invalid EAN format. Expected EAN-13, but provided " + ean);
         }
 
-        this.eanCode = eanCode;
+        this.ean = ean;
     }
 
     /**
@@ -43,7 +44,7 @@ public class Ean implements ValueObject {
 
     @Override
     public String toString() {
-        return eanCode;
+        return ean;
     }
 
     @Override
@@ -52,11 +53,11 @@ public class Ean implements ValueObject {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Ean email1 = (Ean) o;
 
-        return Objects.equals(eanCode, email1.eanCode);
+        return Objects.equals(ean, email1.ean);
     }
 
     @Override
     public int hashCode() {
-        return eanCode.hashCode();
+        return ean.hashCode();
     }
 }

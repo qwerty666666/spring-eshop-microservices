@@ -56,8 +56,8 @@ class CustomerBuilderTest {
 
     void assertBuilder(String firstname, String lastname, Email email, HashedPassword password, String description) {
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> callBuilder(firstname, lastname, email, password))
-                .as(description);
+                .as(description)
+                .isThrownBy(() -> callBuilder(firstname, lastname, email, password));
     }
 
     void callBuilder(String firstname, String lastname, Email email, HashedPassword password) {

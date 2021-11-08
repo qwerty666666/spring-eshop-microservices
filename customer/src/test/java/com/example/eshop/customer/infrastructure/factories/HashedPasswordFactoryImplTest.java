@@ -47,7 +47,7 @@ class HashedPasswordFactoryImplTest {
         var hashedPassword = factory.createFromPlainPassword(plainPassword);
 
         // Then
-        assertThat(hashedPassword.toString()).isEqualTo(encodedPassword);
+        assertThat(hashedPassword).hasToString(encodedPassword);
         verify(passwordEncoder).encode("pass");
     }
 }

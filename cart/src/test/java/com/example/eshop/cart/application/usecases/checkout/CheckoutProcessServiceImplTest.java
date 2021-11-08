@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,7 +65,7 @@ class CheckoutProcessServiceImplTest {
         cartItemsPrice = cart.getItems().stream().map(CartItem::getPrice).reduce(Money.ZERO, Money::add);
 
         var cartRepository = mock(CartRepository.class);
-        when(cartRepository.findByNaturalId(eq(customerId))).thenReturn(Optional.of(cart));
+        when(cartRepository.findByNaturalId(customerId)).thenReturn(Optional.of(cart));
     }
 
     @Test

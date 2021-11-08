@@ -5,7 +5,6 @@ import com.example.eshop.sharedkernel.domain.valueobject.Email;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -18,7 +17,7 @@ class SignUpServiceImplTest {
         var email = "test@test.test";
 
         var uniqueEmailSpecification = mock(UniqueEmailSpecification.class);
-        when(uniqueEmailSpecification.isSatisfiedBy(eq(Email.fromString(email)))).thenReturn(false);
+        when(uniqueEmailSpecification.isSatisfiedBy(Email.fromString(email))).thenReturn(false);
 
         var customerRepository = mock(CustomerRepository.class);
         var passwordFactory = mock(HashedPasswordFactory.class);
@@ -37,6 +36,6 @@ class SignUpServiceImplTest {
         // When + Then
         assertThatExceptionOfType(EmailAlreadyExistException.class)
                 .isThrownBy(() -> service.signUp(signUpCommand));
-        verify(uniqueEmailSpecification).isSatisfiedBy(eq(Email.fromString(email)));
+        verify(uniqueEmailSpecification).isSatisfiedBy(Email.fromString(email));
     }
 }

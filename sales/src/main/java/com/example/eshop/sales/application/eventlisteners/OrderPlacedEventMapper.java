@@ -37,7 +37,7 @@ public interface OrderPlacedEventMapper {
 
         return Delivery.builder()
                 .id(deliveryService.getId() == null ? null : deliveryService.getId().toString())
-                .name(order.getDeliveryService().getName())
+                .name(deliveryService.getName())
                 .price(order.getShipmentInfo() == null ? Money.ZERO : order.getShipmentInfo().price())
                 .address(toAddress(order.getAddress()))
                 .build();

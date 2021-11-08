@@ -11,8 +11,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class UpdateCustomerServiceImplTest {
     @Test
@@ -22,7 +23,7 @@ class UpdateCustomerServiceImplTest {
         var id = new CustomerId("1");
 
         var uniqueEmailSpecification = mock(UniqueEmailSpecification.class);
-        when(uniqueEmailSpecification.isSatisfiedBy(eq(Email.fromString(email)))).thenReturn(false);
+        when(uniqueEmailSpecification.isSatisfiedBy(Email.fromString(email))).thenReturn(false);
 
         var customerRepository = mock(CustomerRepository.class);
         when(customerRepository.findById(id)).thenReturn(Optional.of(mock(Customer.class)));
@@ -40,7 +41,7 @@ class UpdateCustomerServiceImplTest {
         assertThatExceptionOfType(EmailAlreadyExistException.class)
                 .isThrownBy(() -> service.updateCustomer(command));
 
-        verify(uniqueEmailSpecification).isSatisfiedBy(eq(Email.fromString(email)));
+        verify(uniqueEmailSpecification).isSatisfiedBy(Email.fromString(email));
     }
 
     @Test

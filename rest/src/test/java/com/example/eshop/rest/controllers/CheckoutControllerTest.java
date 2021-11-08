@@ -34,7 +34,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -70,7 +69,7 @@ class CheckoutControllerTest {
 
     @BeforeEach
     void setUp() {
-        when(cartQueryService.getForCustomer(eq(customerId))).thenReturn(cart);
+        when(cartQueryService.getForCustomer(customerId)).thenReturn(cart);
 
         createOrderDto = CreateOrderDto.builder()
                 .customerId(customerId)
@@ -102,7 +101,7 @@ class CheckoutControllerTest {
         @Test
         @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void givenInvalidRequest_whenCheckout_thenReturn400() throws Exception {
-            when(checkoutProcessService.process(eq(createOrderDto)))
+            when(checkoutProcessService.process(createOrderDto))
                     .thenThrow(new ValidationException(new Errors()));
 
             performCheckoutRequest()
@@ -113,7 +112,7 @@ class CheckoutControllerTest {
         @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void whenCheckout_thenReturnCheckout() throws Exception {
             // Given
-            when(checkoutProcessService.process(eq(createOrderDto))).thenReturn(checkoutForm);
+            when(checkoutProcessService.process(createOrderDto)).thenReturn(checkoutForm);
 
             var expectedJson = objectMapper.writeValueAsString(checkoutMapper.toCheckoutFormDto(checkoutForm));
 
@@ -122,7 +121,7 @@ class CheckoutControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(checkoutProcessService).process(eq(createOrderDto));
+            verify(checkoutProcessService).process(createOrderDto);
         }
 
         private ResultActions performCheckoutRequest() throws Exception {
@@ -149,7 +148,7 @@ class CheckoutControllerTest {
         @Test
         @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void givenInvalidRequest_whenPlaceOrder_thenReturn400() throws Exception {
-            when(placeOrderService.place(eq(createOrderDto))).thenThrow(new ValidationException(new Errors()));
+            when(placeOrderService.place(createOrderDto)).thenThrow(new ValidationException(new Errors()));
 
             performPlaceOrderRequest()
                     .andExpect(status().isBadRequest());
@@ -165,8 +164,8 @@ class CheckoutControllerTest {
                     .andExpect(status().isCreated())
                     .andExpect(header().exists(HttpHeaders.LOCATION));
 
-            verify(placeOrderService).place(eq(createOrderDto));
-            verify(clearCartService).clear(eq(customerId));
+            verify(placeOrderService).place(createOrderDto);
+            verify(clearCartService).clear(customerId);
         }
 
         private ResultActions performPlaceOrderRequest() throws Exception {
