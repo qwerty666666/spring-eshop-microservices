@@ -19,5 +19,5 @@ jobs:
           cache: 'maven'
 
       # build project and run tests
-      - name: Maven Test
-        run: mvn -B clean test
+      - name: Maven Verify
+        run: mvn -B clean verify
