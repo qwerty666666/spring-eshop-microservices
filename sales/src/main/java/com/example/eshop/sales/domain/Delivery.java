@@ -7,11 +7,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 
+/**
+ * Provides info about Shipping.
+ */
 @Embeddable
 @Getter
 @Builder
@@ -27,10 +29,8 @@ public class Delivery {
     private Address address;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "delivery_price", nullable = false)),
-            @AttributeOverride(name = "currency", column = @Column(name = "delivery_price_currency", nullable = false))
-    })
+    @AttributeOverride(name = "amount", column = @Column(name = "delivery_price", nullable = false))
+    @AttributeOverride(name = "currency", column = @Column(name = "delivery_price_currency", nullable = false))
     private Money price;
 
     public Delivery(String id, String name, Address address, Money price) {

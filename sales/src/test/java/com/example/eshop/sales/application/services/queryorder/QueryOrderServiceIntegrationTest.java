@@ -2,8 +2,8 @@ package com.example.eshop.sales.application.services.queryorder;
 
 import com.example.eshop.sales.config.AuthConfig;
 import com.example.eshop.sales.domain.Order;
+import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@DbTest
 @SpringBootTest
-@DBRider
 class QueryOrderServiceIntegrationTest {
     private final static UUID ORDER_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
     private final static UUID NOT_EXISTED_ORDER_ID = UUID.fromString("c8ca0699-1a8b-423a-bf62-12f21eb58a57");
@@ -30,7 +30,9 @@ class QueryOrderServiceIntegrationTest {
         @Test
         @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void whenGetForCustomerCalledByNonOwner_thenThrowAccessDeniedException() {
-            assertThatThrownBy(() -> queryOrderService.getForCustomer("non-owner", Pageable.unpaged()))
+            var pageable = Pageable.unpaged();
+
+            assertThatThrownBy(() -> queryOrderService.getForCustomer("non-owner", pageable))
                     .isInstanceOf(AccessDeniedException.class);
         }
 

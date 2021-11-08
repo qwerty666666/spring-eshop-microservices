@@ -3,10 +3,14 @@ package com.example.eshop.sales.domain;
 import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
+import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -26,13 +30,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Class represents Order. Order contains list of {@link OrderLine}
+ * each of which provides info about products in Order.
+ * <p>
+ * Order can have different {@link OrderStatus}, but we use only PENDING
+ * status.
+ */
 @Entity
 @Table(name = "orders")
+@TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Slf4j
 public class Order extends AggregateRoot<UUID> {
     @Id
     @Column(name = "id", nullable = false)
+    @Type(type="org.hibernate.type.PostgresUUIDType")
     private UUID id;
 
     @Column(name = "customer_id", nullable = false)
@@ -44,18 +58,24 @@ public class Order extends AggregateRoot<UUID> {
     private List<OrderLine> lines = new ArrayList<>();
 
     @Embedded
+    @NotNull
     private Delivery delivery;
 
     @Embedded
+    @NotNull
     private Payment payment;
 
     @Enumerated(EnumType.STRING)
+    @Type(type = "pgsql_enum")
     @NotNull
     private OrderStatus status;
 
     @NotNull
     private LocalDateTime creationDate;
 
+    /**
+     * Creates new Order and set PENDING status.
+     */
     public Order(UUID id, String customerId, Delivery delivery, Payment payment, LocalDateTime creationDate, List<OrderLine> lines) {
         Assertions.notNull(id, "id must be not null");
         Assertions.notEmpty(customerId, "customerId must be not empty");
@@ -71,6 +91,8 @@ public class Order extends AggregateRoot<UUID> {
         this.creationDate = creationDate;
 
         lines.forEach(this::addLine);
+
+        setStatus(OrderStatus.PENDING);
     }
 
     @Override
@@ -78,12 +100,15 @@ public class Order extends AggregateRoot<UUID> {
         return id;
     }
 
-    public void setStatus(OrderStatus status) {
-        Assertions.notNull(status, "Status must be not null");
-
+    private void setStatus(OrderStatus status) {
         this.status = status;
+
+        log.info("Status changed " + status);
     }
 
+    /**
+     * Adds new {@link OrderLine} to this Order
+     */
     public void addLine(OrderLine line) {
         Assertions.notNull(line, "line must be not null");
 
@@ -91,6 +116,9 @@ public class Order extends AggregateRoot<UUID> {
         line.setOrder(this);
     }
 
+    /**
+     * @return unmodifiable List of {@link OrderLine} in order they were added to this Order
+     */
     public List<OrderLine> getLines() {
         return Collections.unmodifiableList(lines);
     }

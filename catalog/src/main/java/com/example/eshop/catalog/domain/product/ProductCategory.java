@@ -20,7 +20,7 @@ import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -34,8 +34,7 @@ import java.util.Objects;
 @Entity
 @Table(
         name = "products_categories",
-        indexes = @Index(columnList = "category_id"),
-        uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "category_id" })
+        indexes = @Index(name = "products_categories_category_idx", columnList = "category_id")
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductCategory {
@@ -43,7 +42,7 @@ public class ProductCategory {
     private Id id;
 
     // Use unidirectional association for categories to avoid populating
-    // category.products list, so use cascade delete in ddl
+    // category.products list. And use cascade delete in DDL
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("categoryId")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -55,12 +54,19 @@ public class ProductCategory {
     private Product product;
 
     @CreationTimestamp
+    @NotNull
     private LocalDateTime addedOn;
 
+    /**
+     * @return {@link CategoryId} from association
+     */
     public CategoryId getCategoryId() {
         return id.categoryId;
     }
 
+    /**
+     * @return {@link ProductId} from association
+     */
     public ProductId getProductId() {
         return id.productId;
     }
@@ -72,10 +78,16 @@ public class ProductCategory {
         return addedOn;
     }
 
+    /**
+     * @return {@link Category} from association
+     */
     public Category getCategory() {
         return category;
     }
 
+    /**
+     * @return {@link Product} from association
+     */
     public Product getProduct() {
         return product;
     }
@@ -93,10 +105,15 @@ public class ProductCategory {
         return 0;
     }
 
+    /**
+     * Primary Key of {@link ProductCategory}.
+     * <p>
+     * (Category, Product) tuple is unique per table.
+     */
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
-    public static class Id implements Serializable {
+    private static class Id implements Serializable {
         @AttributeOverride(name = "uuid", column = @Column(name = "category_id", updatable = false, insertable = false))
         private CategoryId categoryId;
         @AttributeOverride(name = "uuid", column = @Column(name = "product_id", updatable = false, insertable = false))

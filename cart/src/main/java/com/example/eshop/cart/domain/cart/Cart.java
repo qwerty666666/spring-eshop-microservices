@@ -15,11 +15,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.MapKey;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -30,27 +28,29 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Class represents Shopping Cart.
+ * <p>
+ * Cart contains List of {@link CartItem}. Each item identified by unique EAN.
+ * When we add/remove/modify sku in Cart, {@link CartItem} with associated EAN
+ * is updated.
+ */
 @Entity
-@Table(
-        name = "carts",
-        indexes = @Index(name = "customerid", columnList = "customer_id", unique = true)
+@Table(name = "carts")
+@NamedEntityGraph(
+        name = "Cart.items",
+        attributeNodes = @NamedAttributeNode("items")
 )
-@NamedEntityGraphs({
-        @NamedEntityGraph(
-                name = "Cart.items",
-                attributeNodes = @NamedAttributeNode("items")
-        )
-})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public class Cart extends AggregateRoot<Long> implements Cloneable {
+public class Cart extends AggregateRoot<Long> {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue
     private Long id;
 
     @NaturalId
-    @Column(name = "customer_id", nullable = false)
+    @Column(name = "customer_id", nullable = false, unique = true)
     @NotNull
     private String customerId;
 
@@ -61,7 +61,25 @@ public class Cart extends AggregateRoot<Long> implements Cloneable {
 
     public Cart(String customerId) {
         Assertions.notEmpty(customerId, "CustomerId must be non empty");
+
         this.customerId = customerId;
+    }
+
+    /**
+     * Copy constructor.
+     * <p>
+     * It makes deep clone of the {@code cart}.
+     */
+    public Cart(Cart cart) {
+        id = cart.id;
+        customerId = cart.customerId;
+        items = cart.items.values().stream()
+                .collect(Collectors.toMap(
+                        CartItem::getEan,
+                        item -> new CartItem(this, item.getEan(), item.getPrice(), item.getQuantity(), item.getProductName()),
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 
     @Override
@@ -174,21 +192,5 @@ public class Cart extends AggregateRoot<Long> implements Cloneable {
     @Override
     public int hashCode() {
         return Objects.hashCode(customerId);
-    }
-
-    @Override
-    public Cart clone() {
-        var clone = new Cart(customerId);
-
-        clone.id = id;
-        clone.items = items.values().stream()
-                .collect(Collectors.toMap(
-                        CartItem::getEan,
-                        item -> new CartItem(clone, item.getEan(), item.getPrice(), item.getQuantity(), item.getProductName()),
-                        (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
-
-        return clone;
     }
 }

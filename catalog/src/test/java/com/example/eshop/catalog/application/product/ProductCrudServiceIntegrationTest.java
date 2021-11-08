@@ -4,8 +4,8 @@ import com.example.eshop.catalog.application.category.CategoryNotFoundException;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
+import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@DBRider
+@DbTest
 class ProductCrudServiceIntegrationTest {
     private static final ProductId SNEAKERS_PRODUCT_ID = new ProductId("1");
     private static final ProductId SHIRT_PRODUCT_ID = new ProductId("2");
@@ -99,7 +99,7 @@ class ProductCrudServiceIntegrationTest {
             assertAll(
                     () -> assertThat(page.getTotalElements()).as("Total elements").isEqualTo(2),
                     () -> assertThat(page.getTotalPages()).as("Total pages").isEqualTo(2),
-                    () -> assertThat(page.getNumber()).as("Page number").isEqualTo(0),
+                    () -> assertThat(page.getNumber()).as("Page number").isZero(),
                     () -> assertThat(page.getNumberOfElements()).as("Page size").isEqualTo(1)
             );
         }
@@ -107,7 +107,9 @@ class ProductCrudServiceIntegrationTest {
         @Test
         @DataSet(value = "products_categories.yml", cleanAfter = true)
         void givenNonExistingCategoryId_whenGetForCategory_thenThrowCategoryNotFoundException() {
-            assertThatThrownBy(() -> productCrudService.getByCategory(NON_EXISTENT_CATEGORY_ID, PageRequest.ofSize(1)))
+            var pageable = PageRequest.ofSize(1);
+
+            assertThatThrownBy(() -> productCrudService.getByCategory(NON_EXISTENT_CATEGORY_ID, pageable))
                     .isInstanceOf(CategoryNotFoundException.class);
         }
     }

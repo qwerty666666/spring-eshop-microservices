@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,7 +20,7 @@ class QueryCustomerServiceImplTest {
         var email = "test@test.test";
 
         var customerRepository = mock(CustomerRepository.class);
-        when(customerRepository.findByEmail(eq(Email.fromString(email)))).thenReturn(Optional.empty());
+        when(customerRepository.findByEmail(Email.fromString(email))).thenReturn(Optional.empty());
 
         var service = new QueryCustomerServiceImpl(customerRepository);
 
@@ -29,7 +28,7 @@ class QueryCustomerServiceImplTest {
         assertThatExceptionOfType(CustomerNotFoundException.class)
                 .isThrownBy(() -> service.getByEmail(email));
 
-        verify(customerRepository).findByEmail(eq(Email.fromString(email)));
+        verify(customerRepository).findByEmail(Email.fromString(email));
     }
 
     @Test
@@ -39,7 +38,7 @@ class QueryCustomerServiceImplTest {
         var expected = mock(Customer.class);
 
         var customerRepository = mock(CustomerRepository.class);
-        when(customerRepository.findByEmail(eq(Email.fromString(email)))).thenReturn(Optional.of(expected));
+        when(customerRepository.findByEmail(Email.fromString(email))).thenReturn(Optional.of(expected));
 
         var service = new QueryCustomerServiceImpl(customerRepository);
 
@@ -49,6 +48,6 @@ class QueryCustomerServiceImplTest {
         // Then
         assertThat(actual).isSameAs(expected);
 
-        verify(customerRepository).findByEmail(eq(Email.fromString(email)));
+        verify(customerRepository).findByEmail(Email.fromString(email));
     }
 }

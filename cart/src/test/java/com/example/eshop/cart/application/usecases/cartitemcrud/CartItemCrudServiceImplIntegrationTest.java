@@ -5,6 +5,7 @@ import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedtest.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@IntegrationTest
 class CartItemCrudServiceImplIntegrationTest {
     private final static String OWNER_CUSTOMER_ID = AuthConfig.CUSTOMER_ID;
     private final static String NON_OWNER_CUSTOMER_ID = "non-owner";
@@ -34,7 +35,7 @@ class CartItemCrudServiceImplIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        when(cartRepository.findByNaturalId(eq(OWNER_CUSTOMER_ID))).thenReturn(Optional.of(cart));
+        when(cartRepository.findByNaturalId(OWNER_CUSTOMER_ID)).thenReturn(Optional.of(cart));
     }
 
     @Test

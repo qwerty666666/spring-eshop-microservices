@@ -27,7 +27,7 @@ public abstract class PaymentService extends AggregateRoot<PaymentServiceId> {
     @EmbeddedId
     protected PaymentServiceId id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     @NotEmpty
     protected String name;
 

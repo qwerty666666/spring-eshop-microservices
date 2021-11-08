@@ -11,6 +11,9 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 
+/**
+ * Provides info about Customer and Delivery Address
+ */
 @Embeddable
 @Getter
 @Builder

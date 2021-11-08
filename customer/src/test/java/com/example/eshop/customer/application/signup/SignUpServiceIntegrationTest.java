@@ -2,10 +2,10 @@ package com.example.eshop.customer.application.signup;
 
 import com.example.eshop.customer.domain.customer.CustomerCreatedEvent;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
+import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,12 +17,11 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@DbTest
 @SpringBootTest
-@DBRider
 class SignUpServiceIntegrationTest {
     @TestConfiguration
     public static class Config {
@@ -45,7 +44,7 @@ class SignUpServiceIntegrationTest {
     @Test
     @DataSet(value = "customers.yml")
     @ExpectedDataSet(value = "expectedSignUpCustomers.yml", ignoreCols = { "id", "password" }, orderBy = "email")
-    @DBUnit(cacheConnection = false)
+    @DBUnit(cacheConnection = false, caseSensitiveTableNames = true)
     void whenSignUpCustomer_thenDbUpdatedAndCustomerCreatedEventPublished() {
         // Given
         var firstname = "firstname";
@@ -71,6 +70,6 @@ class SignUpServiceIntegrationTest {
                 () -> assertThat(customer.getEmail()).as("email").isEqualTo(Email.fromString(email))
         );
 
-        verify(eventPublisher).publishEvent(eq(new CustomerCreatedEvent(customer.getId().toString())));
+        verify(eventPublisher).publishEvent(new CustomerCreatedEvent(customer.getId().toString()));
     }
 }

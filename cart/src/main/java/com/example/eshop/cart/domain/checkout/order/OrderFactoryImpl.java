@@ -40,7 +40,7 @@ public class OrderFactoryImpl implements OrderFactory {
         return new Order(
                 UUID.randomUUID(),
                 createOrderDto.customerId(),
-                createOrderDto.cart().clone(),      // clone cart to avoid modifications
+                new Cart(createOrderDto.cart()),      // clone cart to avoid modifications
                 createOrderDto.address(),
                 delivery,
                 payment

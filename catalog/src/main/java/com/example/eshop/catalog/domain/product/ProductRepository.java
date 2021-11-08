@@ -18,12 +18,21 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends EntityGraphJpaRepository<Product, ProductId>,
         PagingAndSortingRepository<Product, ProductId> {
+    /**
+     * Finds {@link Product} by given {@link Category}
+     */
     @Query("select distinct p from Product p join p.categories pc where pc.category = :category")
     Page<Product> findByCategory(@Param("category") Category category, Pageable pageable, EntityGraph entityGraph);
 
+    /**
+     * Finds {@link Product}s which have {@link Sku} with given {@code ean}
+     */
     @Query("select distinct p from Product p join p.sku s where s.ean in :ean")
     List<Product> findByEan(@Param("ean") List<Ean> ean, EntityGraph entityGraph);
 
+    /**
+     * Finds {@link Product} which has {@link Sku} with given {@code ean}
+     */
     default Optional<Product> findByEan(@Param("ean") Ean ean) {
         var products = findByEan(List.of(ean), EntityGraphs.empty());
 

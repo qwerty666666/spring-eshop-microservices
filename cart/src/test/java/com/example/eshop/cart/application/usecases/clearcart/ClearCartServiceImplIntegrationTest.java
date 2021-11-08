@@ -4,6 +4,7 @@ import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
+import com.example.eshop.sharedtest.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@IntegrationTest
 class ClearCartServiceImplIntegrationTest {
     @Autowired
     private ClearCartService clearCartService;

@@ -12,13 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.NaturalId;
 import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -40,10 +40,13 @@ import java.util.Objects;
  * From the customer's perspective SKU is a single item which can be
  * added to cart. But typically, customers will work with {@link Product}
  * instead - a group of SKU, where each SKU is a product variant with
- * unique attributes like size, color, etc.
+ * unique attributes set {@link Attribute} like size, color, etc.
  */
 @javax.persistence.Entity
-@Table(name = "sku")
+@Table(
+        name = "sku",
+        indexes = { @Index(name = "sku_product_id_idx", columnList = "product_id") }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString(onlyExplicitlyIncluded = true)
@@ -51,7 +54,7 @@ import java.util.Objects;
 public class Sku implements Entity<Long> {
     @Id
     @GeneratedValue
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     @ToString.Include
     private Long id;
 
@@ -66,10 +69,9 @@ public class Sku implements Entity<Long> {
     private Ean ean;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "price")),
-            @AttributeOverride(name = "currency", column = @Column(name = "currency"))
-    })
+    @AttributeOverride(name = "amount", column = @Column(name = "price", nullable = false))
+    @AttributeOverride(name = "currency", column = @Column(name = "currency", nullable = false))
+    @NotNull
     private Money price;
 
     @Column(name = "available_quantity", nullable = false)
@@ -125,6 +127,11 @@ public class Sku implements Entity<Long> {
         this.attributes.addAll(attributes);
     }
 
+    /**
+     * Sets Product for this SKU.
+     * <p>
+     * This method must be called only through {@link Product} Aggregate Root.
+     */
     void setProduct(Product product) {
         Assertions.notNull(product, "product must be not null");
 
@@ -132,7 +139,9 @@ public class Sku implements Entity<Long> {
     }
 
     /**
-     * Updated available quantity
+     * Updated available quantity.
+     * <p>
+     * This method must be called only through {@link Product} Aggregate Root.
      */
     void changeAvailableQuantity(int availableQuantity) {
         setAvailableQuantity(availableQuantity);
@@ -155,10 +164,16 @@ public class Sku implements Entity<Long> {
         return availableQuantity > 0;
     }
 
+    /**
+     * @return unmodifiable List of SKU {@link AttributeValue} of this SKU
+     */
     public List<AttributeValue> getAttributeValues() {
         return List.copyOf(attributes);
     }
 
+    /**
+     * @return unmodifiable List of {@link Attribute} of this SKU
+     */
     public List<Attribute> getAttributeList() {
         return getAttributeValues().stream().map(AttributeValue::getAttribute).toList();
     }
@@ -177,10 +192,16 @@ public class Sku implements Entity<Long> {
         return ean.hashCode();
     }
 
+    /**
+     * @return new {@link SkuBuilder} instance
+     */
     public static SkuBuilder builder() {
         return new SkuBuilder();
     }
 
+    /**
+     * Builder for {@link Sku}
+     */
     public static class SkuBuilder {
         private Ean ean;
         private Money price;

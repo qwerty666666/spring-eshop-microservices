@@ -14,10 +14,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class represents set of {@link Permission}
+ * grouped together.
+ * <p>
+ * Roles are assigned to {@link User}.
+ */
 @Entity
 @Table(name = "roles")
 @Getter
 public class Role  {
+    /**
+     * Administrator Role name
+     */
     public static final String ADMIN = "ADMIN";
 
     @Id
@@ -30,12 +39,15 @@ public class Role  {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "ROLE_PERMISSION",
+            name = "ROLES_PERMISSIONS",
             joinColumns = {@JoinColumn(name = "ROLE_ID")},
             inverseJoinColumns = {@JoinColumn(name = "PERMISSION_ID")}
     )
     private Set<Permission> permissions = new HashSet<>();
 
+    /**
+     * @return set of {@link Permission} for this role
+     */
     public Set<Permission> getPermissions() {
         return Collections.unmodifiableSet(permissions);
     }

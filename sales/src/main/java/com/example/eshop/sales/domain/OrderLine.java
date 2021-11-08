@@ -8,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
@@ -16,9 +15,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Objects;
 
+/**
+ * Represents single line in {@link Order}.
+ * <p>
+ * Each line is identified by EAN and has information about
+ * product, price and quantity.
+ */
 @javax.persistence.Entity
 @Table(name = "order_lines")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,6 +35,7 @@ public class OrderLine implements Entity<Long> {
     private Long id;
 
     @Embedded
+    @NotNull
     private Ean ean;
 
     @Column(name = "quantity", nullable = false)
@@ -36,16 +43,16 @@ public class OrderLine implements Entity<Long> {
     private int quantity;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "item_price", nullable = false)),
-            @AttributeOverride(name = "currency", column = @Column(name = "item_price_currency", nullable = false))
-    })
+    @AttributeOverride(name = "amount", column = @Column(name = "item_price", nullable = false))
+    @AttributeOverride(name = "currency", column = @Column(name = "item_price_currency", nullable = false))
+    @NotNull
     private Money itemPrice;
 
     @Column(name = "product_name", nullable = false)
     private String productName;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     private Order order;
 
     // TODO Attributes
