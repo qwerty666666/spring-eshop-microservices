@@ -34,8 +34,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
-          mvn -B clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-          -DskipTests
+          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          -P code-coverage
           -Dsonar.projectKey=qwerty666666_spring-eshop
           -Dsonar.organization=qwerty666666
           -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.coverage.jacoco.xmlReportPaths=./rest/target/site/jacoco/jacoco.xml,./rest/target/site/jacoco-aggregate/jacoco.xml
