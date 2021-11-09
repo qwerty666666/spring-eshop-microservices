@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class EanParameterInvalidFormatException extends RuntimeException {
-    private String ean;
+    private final String ean;
 
     public EanParameterInvalidFormatException(String ean) {
         this.ean = ean;

@@ -25,7 +25,7 @@ public class Assertions {
         assertThat(pageableDto.getPage()).as("page number").isEqualTo(page.getNumber() + 1);
         assertThat(pageableDto.getPerPage()).as("page size").isEqualTo(page.getSize());
         assertThat(pageableDto.getTotalPages()).as("total pages").isEqualTo(page.getTotalPages());
-        assertThat(pageableDto.getTotalItems()).as("total items").isEqualTo(page.getTotalElements());
+        assertThat(pageableDto.getTotalItems()).as("total items").isEqualTo((int)page.getTotalElements());
     }
 
     public static <T1, T2> void assertListEquals(List<T1> list1, List<T2> list2, BiConsumer<T1, T2> itemAssertion) {

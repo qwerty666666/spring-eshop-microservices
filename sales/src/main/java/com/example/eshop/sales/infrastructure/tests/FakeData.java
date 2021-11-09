@@ -9,10 +9,13 @@ import com.example.eshop.sales.domain.Payment;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FakeData {
     public static Ean ean() {
         return Ean.fromString("1234567890123");

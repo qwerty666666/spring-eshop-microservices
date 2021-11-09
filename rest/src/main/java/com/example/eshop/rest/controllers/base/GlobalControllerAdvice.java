@@ -41,7 +41,10 @@ public class GlobalControllerAdvice {
         var error = ValidationErrorBuilder.newInstance();
 
         e.getBindingResult().getFieldErrors().forEach(fieldError -> {
-            error.addError(fieldError.getField(), fieldError.getDefaultMessage());
+            var field = fieldError.getField();
+            var message = fieldError.getDefaultMessage();
+
+            error.addError(field, message);
         });
 
         return error.build();
@@ -69,7 +72,10 @@ public class GlobalControllerAdvice {
         var error = ValidationErrorBuilder.newInstance();
 
         e.getConstraintViolations().forEach(violation -> {
-            error.addError(getFieldName(violation), violation.getMessage());
+            var field = getFieldName(violation);
+            var message = violation.getMessage();
+
+            error.addError(field, message);
         });
 
         return error.build();

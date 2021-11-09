@@ -29,7 +29,7 @@ public abstract class DomainObjectId implements ValueObject, Serializable {
     /**
      * Creates random instance of {@code idClass}
      *
-     * @throws RuntimeException if {@code idClass} has no String constructor
+     * @throws DomainObjectIdInstantiationException if {@code idClass} has no String constructor
      */
     public static <ID extends DomainObjectId> ID randomId(Class<ID> idClass) {
         Assertions.notNull(idClass, "idClass must not be null");
@@ -37,7 +37,7 @@ public abstract class DomainObjectId implements ValueObject, Serializable {
         try {
             return idClass.getConstructor(String.class).newInstance(UUID.randomUUID().toString());
         } catch (Exception e) {
-            throw new RuntimeException("Can't create " + idClass + " instance", e);
+            throw new DomainObjectIdInstantiationException("Can't create " + idClass + " instance", e);
         }
     }
 

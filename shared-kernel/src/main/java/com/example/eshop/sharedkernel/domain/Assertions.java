@@ -1,8 +1,11 @@
 package com.example.eshop.sharedkernel.domain;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Assertions {
     // TODO replace with RFC complaint, or with external lib
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"

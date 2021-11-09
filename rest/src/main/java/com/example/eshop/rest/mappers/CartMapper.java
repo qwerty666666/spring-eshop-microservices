@@ -7,13 +7,11 @@ import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.dto.CartItemDto;
-import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
-import java.util.Map;
 
 @Mapper(
         componentModel = "spring",

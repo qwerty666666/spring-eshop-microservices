@@ -12,8 +12,8 @@ import java.util.UUID;
 public class UriBuilder {
     private final AppProperties appProperties;
 
-    public final static String ORDER_URI_TEMPLATE = "/orders/{id}";
-    public final static String IMAGES_BASE_PATH = "/images/";
+    public static final String ORDER_URI_TEMPLATE = "/orders/{id}";
+    public static final String IMAGES_BASE_PATH = "/images/";
 
     /**
      * Builds Absolute Uri to Order Endpoint

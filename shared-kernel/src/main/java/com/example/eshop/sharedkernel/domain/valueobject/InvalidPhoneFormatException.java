@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class InvalidPhoneFormatException extends RuntimeException {
-    private String phone;
+    private final String phone;
 
     public InvalidPhoneFormatException(String phone, String message) {
         super(message);

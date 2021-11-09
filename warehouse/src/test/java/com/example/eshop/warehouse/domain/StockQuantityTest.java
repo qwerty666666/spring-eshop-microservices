@@ -21,9 +21,9 @@ class StockQuantityTest {
     @Test
     void testCompareTo() {
         assertAll(
-                () -> assertThat(FIVE.compareTo(TEN)).isNegative(),
-                () -> assertThat(TEN.compareTo(FIVE)).isPositive(),
-                () -> assertThat(FIVE.compareTo(FIVE)).isZero()
+                () -> assertThat(FIVE).isLessThan(TEN),
+                () -> assertThat(TEN).isGreaterThan(FIVE),
+                () -> assertThat(FIVE).isEqualByComparingTo(FIVE)
         );
     }
 

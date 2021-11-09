@@ -24,6 +24,6 @@ class EanTest {
     void givenEan_whenEanToString_thenReturnOriginalEan() {
         String ean = "4006381333931";
 
-        assertThat(Ean.fromString(ean).toString()).isEqualTo(ean);
+        assertThat(Ean.fromString(ean)).hasToString(ean);
     }
 }

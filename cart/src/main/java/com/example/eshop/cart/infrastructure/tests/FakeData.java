@@ -5,7 +5,10 @@ import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FakeData {
     public static DeliveryAddress deliveryAddress() {
         return new DeliveryAddress(fullname(), phone(), country(), city(), street(), building(), flat());
