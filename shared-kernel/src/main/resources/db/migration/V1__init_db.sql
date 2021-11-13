@@ -238,5 +238,5 @@ CREATE TABLE stock_items
     ean      character varying(255) UNIQUE NOT NULL,
     quantity integer                       NOT NULL,
     CONSTRAINT stock_items_pkey PRIMARY KEY (id),
-    CONSTRAINT stock_items_non_negative_qty CHECK (quantity > 0)
+    CONSTRAINT stock_items_non_negative_qty CHECK (quantity >= 0)
 );
