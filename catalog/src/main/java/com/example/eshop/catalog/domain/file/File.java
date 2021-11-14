@@ -28,6 +28,13 @@ public class File {
         this.location = location;
     }
 
+    /**
+     * @return if file is on external storage
+     */
+    public boolean isExternal() {
+        return location.matches("^http[s]?://.*");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

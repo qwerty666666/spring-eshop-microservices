@@ -14,7 +14,8 @@ public abstract class ImageMapper {
     public ImageDto toImageDto(File image) {
         var dto = new ImageDto();
 
-        dto.setUrl(uriBuilder.buildImageUri(image.getLocation()).toString());
+        var url = image.isExternal() ? image.getLocation() : uriBuilder.buildImageUri(image.getLocation()).toString();
+        dto.setUrl(url);
 
         return dto;
     }
