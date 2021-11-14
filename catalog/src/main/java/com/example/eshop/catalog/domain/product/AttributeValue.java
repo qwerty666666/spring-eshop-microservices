@@ -3,6 +3,7 @@ package com.example.eshop.catalog.domain.product;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -27,7 +28,7 @@ import java.util.Objects;
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AttributeValue {
+public class AttributeValue implements Comparable<AttributeValue> {
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false)
@@ -67,5 +68,10 @@ public class AttributeValue {
     @Override
     public String toString() {
         return attribute.getName() + " -> " + getValue();
+    }
+
+    @Override
+    public int compareTo(AttributeValue o) {
+        return o.getSort() - getSort();
     }
 }

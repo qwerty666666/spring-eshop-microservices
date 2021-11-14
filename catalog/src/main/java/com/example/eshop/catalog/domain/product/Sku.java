@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.SortNatural;
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,13 +26,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * SKU - Stock Keeping Unit. It is distinct item for sale and for
@@ -88,13 +92,14 @@ public class Sku implements Entity<Long> {
             fetch = FetchType.EAGER,
             cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH }
     )
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
             name = "sku_attributes",
             joinColumns = @JoinColumn(name = "sku_id"),
             inverseJoinColumns = @JoinColumn(name = "attribute_value_id")
     )
-    @OrderBy("sort asc")
-    private List<AttributeValue> attributes = new ArrayList<>();
+    @SortNatural
+    private SortedSet<AttributeValue> attributes = new TreeSet<>();
 
     private Sku(SkuBuilder builder) {
         this.setEan(builder.ean);
