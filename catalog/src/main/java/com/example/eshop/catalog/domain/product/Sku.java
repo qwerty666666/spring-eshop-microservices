@@ -13,7 +13,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.SortNatural;
+import org.hibernate.annotations.SortComparator;
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -98,8 +98,8 @@ public class Sku implements Entity<Long> {
             joinColumns = @JoinColumn(name = "sku_id"),
             inverseJoinColumns = @JoinColumn(name = "attribute_value_id")
     )
-    @SortNatural
-    private SortedSet<AttributeValue> attributes = new TreeSet<>();
+    @SortComparator(AttributesComparator.class)
+    private SortedSet<AttributeValue> attributes = new TreeSet<>(new AttributesComparator());
 
     private Sku(SkuBuilder builder) {
         this.setEan(builder.ean);
