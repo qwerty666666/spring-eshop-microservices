@@ -2,7 +2,7 @@ package com.example.eshop.rest.config;
 
 import com.example.eshop.catalog.application.product.ProductCrudService;
 import com.example.eshop.rest.AppProperties;
-import com.example.eshop.rest.utils.UriBuilder;
+import com.example.eshop.rest.utils.UriFactory;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,7 +22,7 @@ public class MappersConfig {
 
     @Primary
     @Bean
-    public UriBuilder uriBuilder() {
-        return new UriBuilder(new AppProperties());
+    public UriFactory uriBuilder() {
+        return new UriFactory(new AppProperties());
     }
 }

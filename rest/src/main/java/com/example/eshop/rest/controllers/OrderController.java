@@ -7,6 +7,7 @@ import com.example.eshop.rest.dto.BasicErrorDto;
 import com.example.eshop.rest.dto.OrderDto;
 import com.example.eshop.rest.dto.PagedOrderListDto;
 import com.example.eshop.rest.mappers.OrderMapper;
+import com.example.eshop.rest.utils.UriFactory;
 import com.example.eshop.sales.application.services.queryorder.OrderNotFoundException;
 import com.example.eshop.sales.application.services.queryorder.QueryOrderService;
 import lombok.AccessLevel;
@@ -28,7 +29,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(UriFactory.API_BASE_PATH_PROPERTY)
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class OrderController extends BaseController implements OrderApi {

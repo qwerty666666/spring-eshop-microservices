@@ -14,6 +14,7 @@ import com.example.eshop.rest.dto.CustomerFieldsDto;
 import com.example.eshop.rest.dto.NewCustomerDto;
 import com.example.eshop.rest.dto.ValidationErrorDto;
 import com.example.eshop.rest.mappers.CustomerMapper;
+import com.example.eshop.rest.utils.UriFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(UriFactory.API_BASE_PATH_PROPERTY)
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CustomerController extends BaseController implements CustomerApi {
