@@ -15,6 +15,10 @@ public class UriFactory {
      */
     public static final String API_BASE_PATH_PROPERTY = "${app.api-base-path}";
     /**
+     * Base path to REST Endpoints
+     */
+    public static final String SWAGGER_UI_URL_PROPERTY = "${app.api-base-path}";
+    /**
      * Template to Order Details Endpoint
      */
     public static final String ORDER_URI_TEMPLATE = "/orders/{id}";
