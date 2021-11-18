@@ -5,6 +5,7 @@ import com.example.eshop.customer.application.signup.SignUpService;
 import com.example.eshop.customer.application.updatecustomer.UpdateCustomerCommand;
 import com.example.eshop.customer.application.updatecustomer.UpdateCustomerService;
 import com.example.eshop.customer.domain.customer.EmailAlreadyExistException;
+import com.example.eshop.customer.domain.customer.PasswordPolicyException;
 import com.example.eshop.rest.api.CustomerApi;
 import com.example.eshop.rest.controllers.base.BaseController;
 import com.example.eshop.rest.controllers.base.ValidationErrorBuilder;
@@ -41,9 +42,20 @@ public class CustomerController extends BaseController implements CustomerApi {
      */
     @ExceptionHandler(EmailAlreadyExistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private ValidationErrorDto handleEmailAlreadyInSUeException(Locale locale) {
+    private ValidationErrorDto handleEmailAlreadyExistException(Locale locale) {
         return ValidationErrorBuilder.newInstance()
                 .addError("email", getMessageSource().getMessage("emailAlreadyInUse", null, locale))
+                .build();
+    }
+
+    /**
+     * @return validation error if password is not comply to policies
+     */
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    private ValidationErrorDto handlePasswordPolicyException(PasswordPolicyException e) {
+        return ValidationErrorBuilder.newInstance()
+                .addError("password", String.join(" ", e.getPolicyViolationMessages()))
                 .build();
     }
 

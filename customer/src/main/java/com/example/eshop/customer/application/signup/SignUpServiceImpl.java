@@ -2,27 +2,18 @@ package com.example.eshop.customer.application.signup;
 
 import com.example.eshop.customer.domain.customer.*;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class SignUpServiceImpl implements SignUpService {
     private final CustomerRepository customerRepository;
     private final HashedPasswordFactory hashedPasswordFactory;
     private final UniqueEmailSpecification uniqueEmailSpecification;
     private final ApplicationEventPublisher eventPublisher;
-
-    public SignUpServiceImpl(
-            CustomerRepository customerRepository,
-            HashedPasswordFactory hashedPasswordFactory,
-            UniqueEmailSpecification uniqueEmailSpecification,
-            ApplicationEventPublisher eventPublisher) {
-        this.customerRepository = customerRepository;
-        this.hashedPasswordFactory = hashedPasswordFactory;
-        this.uniqueEmailSpecification = uniqueEmailSpecification;
-        this.eventPublisher = eventPublisher;
-    }
 
     @Override
     @Transactional

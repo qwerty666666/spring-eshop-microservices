@@ -9,9 +9,9 @@ import com.example.eshop.customer.domain.customer.Customer;
 import com.example.eshop.customer.domain.customer.Customer.CustomerId;
 import com.example.eshop.customer.domain.customer.EmailAlreadyExistException;
 import com.example.eshop.customer.domain.customer.HashedPassword;
+import com.example.eshop.customer.domain.customer.PasswordPolicyException;
 import com.example.eshop.rest.config.AuthConfig;
 import com.example.eshop.rest.config.ControllerTestConfig;
-import com.example.eshop.rest.config.MappersConfig;
 import com.example.eshop.rest.mappers.CustomerMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,10 +29,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -207,6 +208,21 @@ class CustomerControllerTest {
             verify(signUpService).signUp(command);
         }
 
+        @Test
+        void givenInvalidPassword_whenCreateCustomer_thenReturn400() throws Exception {
+            // Given
+            var command = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
+
+            var policyViolationMessage = "Test policy violation message";
+            when(signUpService.signUp(command)).thenThrow(new PasswordPolicyException(List.of(policyViolationMessage)));
+
+            // When + Then
+            var response = performSignUpRequest();
+            assertPasswordPolicyViolationResponse(response, policyViolationMessage);
+
+            verify(signUpService).signUp(command);
+        }
+
         private ResultActions performSignUpRequest() throws Exception {
             var json = """
                     {
@@ -230,6 +246,13 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.errors", hasSize(1)))
                 .andExpect(jsonPath("$.errors[0].field").value("email"))
                 .andExpect(jsonPath("$.errors[0].message").value("This email address already used by another user"));
+    }
 
+    private void assertPasswordPolicyViolationResponse(ResultActions resultActions, String errorMessage) throws Exception {
+        resultActions
+                .andExpect(status().is(400))
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].field").value("password"))
+                .andExpect(jsonPath("$.errors[0].message").value(containsString(errorMessage)));
     }
 }

@@ -18,8 +18,7 @@ public class HashedPasswordFactoryImpl implements HashedPasswordFactory {
         var validationResult = passwordValidator.validate(new PasswordData(plain));
 
         if (!validationResult.isValid()) {
-            var message = String.join(" ", passwordValidator.getMessages(validationResult));
-            throw new PasswordPolicyException(message);
+            throw new PasswordPolicyException(passwordValidator.getMessages(validationResult));
         }
 
         return HashedPassword.fromHash(passwordEncoder.encode(plain));
