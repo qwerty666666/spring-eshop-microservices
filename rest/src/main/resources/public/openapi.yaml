@@ -2,8 +2,53 @@ openapi: 3.0.3
 
 info:
   version: 1.0.0
-  title: E-Shop
-  description: E-Shop REST API
+  title: Spring E-Shop
+  description: |
+    Simple REST API for e-shop.
+
+    This API allows to:
+    - register new customers
+    - manage profile info
+    - retrieve catalog data
+    - manage shopping carts
+    - purchase products through checkout flow
+    - retrieve order history
+
+    ## Customer
+    `Customer` is a registered user.
+
+    Only registered users can interact with cart and orders API.
+
+    ## Catalog
+    `Products` in catalog are grouped together in `Categories`.
+
+    `Categories` are hierarchical and form a `Category Tree`.
+
+    Every `Product` contains list of `SKU`, where each `SKU` is a distinct
+    product variant with unique attributes like size. Every `SKU` is unique
+    identified by `EAN` code.
+
+    ## Cart
+    Every `Customer` has a Shopping `Cart`.
+
+    `Cart` consist of `items` where each `item` has unique `SKU`.
+    Customer can add, remove and update `SKU` in the Shopping `Cart`.
+
+    _Note_: When `Customer` creates `Order`, the Shopping `Cart` is cleared.
+
+    ## Checkout
+    `Checkout` is a process before place `Order` where customer can choose
+    different options like payment and delivery service.
+
+    ## Order
+    `Order` contains information about purchase: delivery info, status,
+    prices, etc..
+
+    ---
+
+    ## Authentication
+    This API use `Basic Auth` with credentials of Customer's _email_ and _password_.
+
   license:
     name: MIT
     url: https://spdx.org/licenses/MIT
