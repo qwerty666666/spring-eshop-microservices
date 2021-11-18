@@ -9,11 +9,26 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class UriBuilder {
-    private final AppProperties appProperties;
-
+public class UriFactory {
+    /**
+     * Base path to REST Endpoints
+     */
+    public static final String API_BASE_PATH_PROPERTY = "${app.api-base-path}";
+    /**
+     * Base path to REST Endpoints
+     */
+    public static final String SWAGGER_UI_URL_PROPERTY = "${app.api-base-path}";
+    /**
+     * Template to Order Details Endpoint
+     */
     public static final String ORDER_URI_TEMPLATE = "/orders/{id}";
-    public static final String IMAGES_BASE_PATH = "/images/";
+
+    /**
+     * Base path to static images
+     */
+    public static final String IMAGES_BASE_PATH = "/images";
+
+    private final AppProperties appProperties;
 
     /**
      * Builds Absolute Uri to Order Endpoint

@@ -15,6 +15,7 @@ import com.example.eshop.rest.dto.PagedProductListDto;
 import com.example.eshop.rest.dto.ProductDto;
 import com.example.eshop.rest.mappers.CategoryMapper;
 import com.example.eshop.rest.mappers.ProductMapper;
+import com.example.eshop.rest.utils.UriFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(UriFactory.API_BASE_PATH_PROPERTY)
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CatalogController implements CatalogApi {

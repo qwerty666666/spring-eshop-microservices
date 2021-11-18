@@ -13,6 +13,7 @@ import com.example.eshop.rest.dto.AddCartItemCommandDto;
 import com.example.eshop.rest.dto.BasicErrorDto;
 import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.mappers.CartMapper;
+import com.example.eshop.rest.utils.UriFactory;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(UriFactory.API_BASE_PATH_PROPERTY)
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CartController extends BaseController implements CartApi {

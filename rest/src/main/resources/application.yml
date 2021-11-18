@@ -23,13 +23,18 @@ management:
     web:
       exposure:
         include: '*'
-        exclude: shutdown
 
 server:
   error:
     whitelabel:
       enabled: false
-    include-exception: false
-    include-stacktrace: never
-    include-binding-errors: never
 
+app:
+  schema: ${APP_SCHEMA}
+  host: ${APP_HOST}
+  port: ${APP_PORT}
+  static-resources-location: ${APP_STATIC_RESOURCES_LOCATION}
+  api-base-path: /api
+  oas:
+    url: /spec
+    spec-file-url: /openapi.yaml

@@ -11,7 +11,7 @@ import com.example.eshop.rest.controllers.base.BaseController;
 import com.example.eshop.rest.dto.CheckoutFormDto;
 import com.example.eshop.rest.dto.CheckoutRequestDto;
 import com.example.eshop.rest.mappers.CheckoutMapper;
-import com.example.eshop.rest.utils.UriBuilder;
+import com.example.eshop.rest.utils.UriFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(UriFactory.API_BASE_PATH_PROPERTY)
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CheckoutController extends BaseController implements CheckoutApi {
@@ -31,7 +31,7 @@ public class CheckoutController extends BaseController implements CheckoutApi {
     private final PlaceOrderService placeOrderService;
     private final CheckoutMapper checkoutMapper;
 
-    private final UriBuilder uriBuilder;
+    private final UriFactory uriFactory;
 
     @Override
     public ResponseEntity<CheckoutFormDto> checkout(CheckoutRequestDto checkoutRequestDto) {
@@ -53,7 +53,7 @@ public class CheckoutController extends BaseController implements CheckoutApi {
         clearCartService.clear(getAuthenticatedUserDetailsOrFail().getCustomerId());
 
         // and return Location to created order
-        var location = uriBuilder.buildOrderUri(order.getId());
+        var location = uriFactory.buildOrderUri(order.getId());
 
         return ResponseEntity.created(location).build();
     }

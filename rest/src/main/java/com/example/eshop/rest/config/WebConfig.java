@@ -2,7 +2,7 @@ package com.example.eshop.rest.config;
 
 import com.example.eshop.rest.AppProperties;
 import com.example.eshop.rest.infrastructure.argumentresolvers.PageableSettingsArgumentResolver;
-import com.example.eshop.rest.utils.UriBuilder;
+import com.example.eshop.rest.utils.UriFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
-                .addResourceHandler(UriBuilder.IMAGES_BASE_PATH + "/**")
+                .addResourceHandler(UriFactory.IMAGES_BASE_PATH + "/*")
                 .addResourceLocations(appProperties.getStaticResourcesLocation());
     }
 }
