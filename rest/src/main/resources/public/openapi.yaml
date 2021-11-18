@@ -18,6 +18,9 @@ tags:
 servers:
   - url: '/api'
 
+security:
+  - basicAuth: []
+
 paths:
   /products:
     get:
@@ -25,6 +28,7 @@ paths:
         - catalog
       summary: Get product list
       operationId: getProductList
+      security: []
       parameters:
         - $ref: '#/components/parameters/product_list_per_page'
         - $ref: '#/components/parameters/page'
@@ -38,6 +42,7 @@ paths:
         - catalog
       summary: Get Product information
       operationId: getProductById
+      security: []
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -52,6 +57,7 @@ paths:
         - catalog
       summary: Get Category list
       operationId: getCategoryList
+      security: []
       responses:
         200:
           $ref: '#/components/responses/category_list'
@@ -62,6 +68,7 @@ paths:
         - catalog
       summary: Get Category hierarchy
       operationId: getCategoryTree
+      security: []
       responses:
         200:
           $ref: '#/components/responses/category_tree'
@@ -72,6 +79,7 @@ paths:
         - catalog
       summary: Get Category information
       operationId: getCategoryById
+      security: []
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -86,6 +94,7 @@ paths:
         - catalog
       summary: Get Product list for given Category
       operationId: getProductsByCategory
+      security: []
       parameters:
         - $ref: '#/components/parameters/product_list_per_page'
         - $ref: '#/components/parameters/page'
@@ -113,6 +122,7 @@ paths:
         - customer
       summary: Register new customer
       operationId: createCustomer
+      security: []
       requestBody:
         $ref: '#/components/requestBodies/new_customer'
       responses:
@@ -1035,3 +1045,8 @@ components:
       value:
         status: 404
         detail: Resource not found
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
