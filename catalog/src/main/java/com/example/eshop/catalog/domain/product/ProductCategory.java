@@ -34,7 +34,10 @@ import java.util.Objects;
 @Entity
 @Table(
         name = "products_categories",
-        indexes = @Index(name = "products_categories_category_idx", columnList = "category_id")
+        indexes = {
+                @Index(name = "products_categories_category_idx", columnList = "category_id"),
+                @Index(name = "products_categories_product_idx", columnList = "product_id"),
+        }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductCategory {

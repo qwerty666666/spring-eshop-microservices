@@ -15,6 +15,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -76,9 +77,10 @@ public class Customer extends AggregateRoot<CustomerId> implements User {
 
     @ManyToMany
     @JoinTable(
-            name = "USERS_ROLES",
-            joinColumns = { @JoinColumn(name = "USER_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") }
+            name = "users_roles",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "role_id") },
+            indexes = @Index(name = "users_roles_user_id_idx", columnList = "user_id")
     )
     private Set<Role> roles = new HashSet<>();
 

@@ -16,10 +16,10 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -32,7 +32,10 @@ import java.util.Objects;
 @javax.persistence.Entity
 @Table(
         name = "cart_items",
-        uniqueConstraints = @UniqueConstraint(name = "cart_items_uniq_item", columnNames = { "cart_id", "ean" })
+        indexes = {
+                @Index(name = "cart_items_cart_id_idx", columnList = "cart_id"),
+                @Index(name = "cart_items_uniq_item", columnList = "cart_id, ean", unique = true),
+        }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter

@@ -19,6 +19,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.NamedAttributeNode;
@@ -88,7 +89,8 @@ public class Product extends AggregateRoot<ProductId> {
     @JoinTable(
             name = "product_images",
             joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "file_id")
+            inverseJoinColumns = @JoinColumn(name = "file_id"),
+            indexes = @Index(name = "product_images_product_id_idx", columnList = "product_id")
     )
     @OrderColumn(name = "sort")
     private List<File> images = new ArrayList<>();

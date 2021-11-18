@@ -18,6 +18,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
@@ -38,7 +39,10 @@ import java.util.UUID;
  * status.
  */
 @Entity
-@Table(name = "orders")
+@Table(
+        name = "orders",
+        indexes = @Index(name = "orders_customer_id_idx", columnList = "customer_id")
+)
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter

@@ -96,7 +96,8 @@ public class Sku implements Entity<Long> {
     @JoinTable(
             name = "sku_attributes",
             joinColumns = @JoinColumn(name = "sku_id"),
-            inverseJoinColumns = @JoinColumn(name = "attribute_value_id")
+            inverseJoinColumns = @JoinColumn(name = "attribute_value_id"),
+            indexes = @Index(name = "sku_attributes_sku_id_idx", columnList = "sku_id")
     )
     @SortComparator(AttributesComparator.class)
     private SortedSet<AttributeValue> attributes = new TreeSet<>(new AttributesComparator());

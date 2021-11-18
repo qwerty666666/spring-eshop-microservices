@@ -13,6 +13,7 @@ import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -26,7 +27,10 @@ import java.util.Objects;
  * product, price and quantity.
  */
 @javax.persistence.Entity
-@Table(name = "order_lines")
+@Table(
+        name = "order_lines",
+        indexes = @Index(name = "order_lines_order_id_idx", columnList = "order_id")
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderLine implements Entity<Long> {
     @Id
