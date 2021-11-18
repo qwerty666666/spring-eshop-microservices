@@ -19,7 +19,7 @@ jobs:
       - uses: ./.github/actions/build
         with:
           code-coverage: true
-          integration-tests: true
+          tests: integration
 
       # Cache Sonar packages
       - name: Cache SonarCloud packages

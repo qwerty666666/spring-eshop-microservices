@@ -10,5 +10,5 @@ jobs:
       # Checkout
       - uses: actions/checkout@v2
 
-      # Build and run tests
+      # Builds
       - uses: ./.github/actions/build
