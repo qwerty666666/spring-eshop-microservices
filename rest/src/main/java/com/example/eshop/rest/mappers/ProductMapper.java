@@ -9,6 +9,7 @@ import com.example.eshop.rest.dto.SkuDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
+import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -19,7 +20,8 @@ import java.util.stream.Stream;
 public interface ProductMapper {
     ProductDto toProductDto(Product product);
 
-    default String toString(ProductId id) {
+    @Nullable
+    default String toString(@Nullable ProductId id) {
         return id == null ? null : id.toString();
     }
 

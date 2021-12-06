@@ -10,7 +10,9 @@ import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.lang.Nullable;
@@ -30,6 +32,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -80,10 +83,10 @@ public class Product extends AggregateRoot<ProductId> {
     private String name;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Sku> sku = new HashSet<>();
+    private final Set<Sku> sku = new HashSet<>();
 
     @OneToMany(mappedBy = "product")
-    private Set<ProductCategory> categories = new HashSet<>();
+    private final Set<ProductCategory> categories = new HashSet<>();
 
     @OneToMany
     @JoinTable(
@@ -93,7 +96,10 @@ public class Product extends AggregateRoot<ProductId> {
             indexes = @Index(name = "product_images_product_id_idx", columnList = "product_id")
     )
     @OrderColumn(name = "sort")
-    private List<File> images = new ArrayList<>();
+    private final List<File> images = new ArrayList<>();
+
+    @Column(name = "description")
+    private String description;
 
     protected Product() {
         this(DomainObjectId.randomId(ProductId.class));
@@ -101,6 +107,15 @@ public class Product extends AggregateRoot<ProductId> {
 
     protected Product(ProductId id) {
         this.id = id;
+    }
+
+    protected Product(ProductBuilder builder) {
+        this.id = builder.id != null ? builder.id : DomainObjectId.randomId(ProductId.class);
+
+        setName(builder.name);
+        setDescription(builder.description != null ? builder.description : "");
+        addImages(builder.images);
+        addSku(builder.sku);
     }
 
     @Override
@@ -157,6 +172,15 @@ public class Product extends AggregateRoot<ProductId> {
     }
 
     /**
+     * Add all Sku from {@code sku} collection
+     */
+    public void addSku(Collection<Sku> sku) {
+        Assertions.notNull(sku, "sku collection must be not null");
+
+        sku.forEach(this::addSku);
+    }
+
+    /**
      * Add new SKU to this Product
      */
     public void addSku(Sku sku) {
@@ -202,12 +226,37 @@ public class Product extends AggregateRoot<ProductId> {
     }
 
     /**
+     * Adds all images from {@code images} collection
+     */
+    public void addImages(Collection<File> images) {
+        Assertions.notNull(images, "images collection must be not null");
+
+        images.forEach(this::addImage);
+    }
+
+    /**
      * Adds new image to the end of the images collection
      */
     public void addImage(File image) {
         Assertions.notNull(image, "image should be non null");
 
         this.images.add(image);
+    }
+
+    /**
+     * Sets description of then Product
+     */
+    public void setDescription(String description) {
+        Assertions.notNull(description, "description should be not null");
+
+        this.description = description;
+    }
+
+    /**
+     * @return the description of the Product
+     */
+    public String getDescription() {
+        return description != null ? description : "";
     }
 
     /**
@@ -219,8 +268,13 @@ public class Product extends AggregateRoot<ProductId> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+
         Product product = (Product) o;
 
         return id != null && Objects.equals(id, product.id);
@@ -245,22 +299,17 @@ public class Product extends AggregateRoot<ProductId> {
     /**
      * Builder for {@link Product}
      */
+    @Accessors(fluent = true, chain = true)
     public static class ProductBuilder {
+        @Setter
         @Nullable
         private ProductId id;
+        @Setter
         private String name;
+        @Setter
+        private String description;
         private final List<File> images = new ArrayList<>();
         private final List<Sku> sku = new ArrayList<>();
-
-        public ProductBuilder id(ProductId id) {
-            this.id = id;
-            return this;
-        }
-
-        public ProductBuilder name(String name) {
-            this.name = name;
-            return this;
-        }
         
         public ProductBuilder addImage(File image) {
             images.add(image);
@@ -273,12 +322,7 @@ public class Product extends AggregateRoot<ProductId> {
         }
 
         public Product build() {
-            var product = (id == null ? new Product() : new Product(id));
-            product.setName(name);
-            images.forEach(product::addImage);
-            sku.forEach(product::addSku);
-
-            return product;
+            return new Product(this);
         }
     }
 }

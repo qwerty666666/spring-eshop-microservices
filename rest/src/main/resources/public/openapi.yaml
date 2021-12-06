@@ -312,6 +312,9 @@ components:
         name:
           type: string
           example: Sneakers
+        description:
+          type: string
+          example: Very cool Sneakers, omg!!
         sku:
           type: array
           items:
@@ -320,10 +323,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/image'
-
       required:
         - id
         - name
+        - description
         - sku
         - images
 
@@ -1043,22 +1046,6 @@ components:
         $ref: '#/components/schemas/ean'
 
   examples:
-    product:
-      value:
-        id: 1
-        name: Sneakers
-        sku:
-          - ean: "5901234123457"
-            price:
-              amount: 342.35
-              currency: USD
-
-    category:
-      value:
-        id: 1
-        name: 'Clothes'
-        parentId: 2
-
     categories:
       value:
         - id: 1

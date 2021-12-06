@@ -57,6 +57,7 @@ class ProductMapperImplTest {
         var product = Product.builder()
                 .id(new ProductId("1"))
                 .name("Sneakers")
+                .description("description")
                 .addImage(new File("img-1"))
                 .addImage(new File("img-2"))
                 .build();
@@ -88,6 +89,7 @@ class ProductMapperImplTest {
         assertThat(productDto.getId()).as("product ID")
                 .isEqualTo(product.getId() == null ? null : product.getId().toString());
         assertThat(productDto.getName()).as("product Name").isEqualTo(product.getName());
+        assertThat(productDto.getDescription()).as("product Description").isEqualTo(product.getDescription());
         Assertions.assertListEquals(product.getSku(), productDto.getSku(), this::assertSkuEquals);
         Assertions.assertImageEquals(product.getImages(), productDto.getImages());
     }

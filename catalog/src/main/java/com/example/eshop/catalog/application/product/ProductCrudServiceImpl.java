@@ -89,10 +89,11 @@ class ProductCrudServiceImpl implements ProductCrudService {
 
     private void fetchSku(List<Product> products) {
         em.createQuery("""
-                select product from Product product
-                    join fetch product.sku sku
-                    join fetch sku.attributes attr_value
-                    join fetch attr_value.attribute attr
+                select product
+                    from Product product
+                    left join fetch product.sku sku
+                    left join fetch sku.attributes attr_value
+                    left join fetch attr_value.attribute attr
                     where product in :products"""
         )
                 .setParameter("products", products)
@@ -100,7 +101,12 @@ class ProductCrudServiceImpl implements ProductCrudService {
     }
 
     private void fetchImages(List<Product> products) {
-        em.createQuery("select p from Product p join fetch p.images where p in :products")
+        em.createQuery("""
+                select p
+                    from Product p
+                    left join fetch p.images
+                    where p in :products"""
+        )
                 .setParameter("products", products)
                 .getResultList();
     }
