@@ -12,6 +12,7 @@ import com.example.eshop.sharedkernel.domain.valueobject.Phone;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,8 +93,10 @@ public class FakeData {
 
     public static Order order(UUID id, String customerId) {
         var orderLines = List.of(
-                new OrderLine(Ean.fromString("1111111111111"), 1, Money.USD(12), productName()),
-                new OrderLine(Ean.fromString("2222222222222"),  2, Money.USD(123), productName())
+                new OrderLine(Ean.fromString("1111111111111"), 1, Money.USD(12), productName(),
+                        Collections.emptyList(), Collections.emptyList()),
+                new OrderLine(Ean.fromString("2222222222222"),  2, Money.USD(123), productName(),
+                        Collections.emptyList(), Collections.emptyList())
         );
 
         return new Order(id, customerId, delivery(), payment(), LocalDateTime.now(), orderLines);

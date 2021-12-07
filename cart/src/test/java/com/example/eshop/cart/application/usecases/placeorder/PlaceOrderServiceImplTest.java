@@ -18,6 +18,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowableOfType;
@@ -36,6 +37,7 @@ class PlaceOrderServiceImplTest {
     private Order order;
     private OrderFactory orderFactory;
     private ApplicationEventPublisher eventPublisher;
+    private ProductInfoProvider productInfoProvider;
 
     @BeforeEach
     void setUp() {
@@ -57,15 +59,18 @@ class PlaceOrderServiceImplTest {
         when(orderFactory.create(createOrderDto)).thenReturn(order);
 
         eventPublisher = mock(ApplicationEventPublisher.class);
+
+        productInfoProvider = mock(ProductInfoProvider.class);
+        when(productInfoProvider.getProductsInfo(any())).thenReturn(Collections.emptyMap());
     }
 
     @Test
     void whenPlaceOrder_thenOrderCreatedEventIsPublished() {
         // Given
         var domainService = mock(PlaceOrderService.class);
-        var service = new PlaceOrderServiceImpl(domainService, eventPublisher, orderFactory, clock);
+        var service = new PlaceOrderServiceImpl(domainService, eventPublisher, orderFactory, clock, productInfoProvider);
 
-        var expectedEvent = new OrderPlacedEvent(order, CREATION_DATE);
+        var expectedEvent = new OrderPlacedEvent(order, CREATION_DATE, Collections.emptyMap());
 
         // When
         service.place(createOrderDto);
@@ -81,7 +86,7 @@ class PlaceOrderServiceImplTest {
         var domainService = mock(PlaceOrderService.class);
         doThrow(new ValidationException(new Errors())).when(domainService).place(order);
 
-        var service = new PlaceOrderServiceImpl(domainService, eventPublisher, orderFactory, clock);
+        var service = new PlaceOrderServiceImpl(domainService, eventPublisher, orderFactory, clock, productInfoProvider);
 
         // When
         //noinspection ResultOfMethodCallIgnored

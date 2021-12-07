@@ -18,20 +18,29 @@ public class PlaceOrderServiceImpl implements PlaceOrderService {
     private final ApplicationEventPublisher eventPublisher;
     private final OrderFactory orderFactory;
     private final Clock clock;
+    private final ProductInfoProvider productInfoProvider;
 
     @Override
     @PreAuthorize("#createOrderDto.customerId() == principal.getCustomerId()")
     @Transactional
     public Order place(CreateOrderDto createOrderDto) {
-        // create order with customer's cart
-        var order = orderFactory.create(createOrderDto);
+        var order = createOrder(createOrderDto);
 
-        // place order
         placeOrderService.place(order);
 
-        // and publish application event
-        eventPublisher.publishEvent(new OrderPlacedEvent(order, LocalDateTime.now(clock)));
+        publishOrderCreatedEvent(order);
 
         return order;
+    }
+
+    private Order createOrder(CreateOrderDto createOrderDto) {
+        return orderFactory.create(createOrderDto);
+    }
+
+    private void publishOrderCreatedEvent(Order order) {
+        var creationDate = LocalDateTime.now(clock);
+        var productInfo = productInfoProvider.getProductsInfo(order.getCart());
+
+        eventPublisher.publishEvent(new OrderPlacedEvent(order, creationDate, productInfo));
     }
 }

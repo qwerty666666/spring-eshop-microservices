@@ -1,6 +1,8 @@
 package com.example.eshop.sales.application.eventlisteners;
 
 import com.example.eshop.cart.application.usecases.placeorder.OrderPlacedEvent;
+import com.example.eshop.cart.application.usecases.placeorder.ProductAttribute;
+import com.example.eshop.cart.application.usecases.placeorder.ProductInfo;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
@@ -8,6 +10,7 @@ import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.sales.domain.Address;
 import com.example.eshop.sales.domain.Delivery;
 import com.example.eshop.sales.domain.OrderLine;
+import com.example.eshop.sales.domain.OrderLineAttribute;
 import com.example.eshop.sales.domain.Payment;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.mapstruct.Mapper;
@@ -17,6 +20,11 @@ import org.mapstruct.Mapping;
 public interface OrderPlacedEventMapper {
     default com.example.eshop.sales.domain.Order toOrder(OrderPlacedEvent event) {
         var order = event.order();
+        var productsInfo = event.productsInfo();
+
+        var orderLines = order.getCart().getItems().stream()
+                .map(item -> toOrderLine(item, productsInfo.get(item.getEan())))
+                .toList();
 
         return new com.example.eshop.sales.domain.Order(
                 order.getId(),
@@ -24,7 +32,7 @@ public interface OrderPlacedEventMapper {
                 toDelivery(order),
                 toPayment(order.getPaymentService()),
                 event.creationDate(),
-                order.getCart().getItems().stream().map(this::toOrderLine).toList()
+                orderLines
         );
     }
 
@@ -53,6 +61,10 @@ public interface OrderPlacedEventMapper {
 
     Address toAddress(DeliveryAddress address);
 
-    @Mapping(target = "itemPrice", source = "price")
-    OrderLine toOrderLine(CartItem item);
+    @Mapping(target = "itemPrice", source = "item.price")
+    OrderLine toOrderLine(CartItem item, ProductInfo productInfo);
+
+    default OrderLineAttribute toOrderLineAttribute(ProductAttribute attr) {
+        return new OrderLineAttribute(attr.attributeId(), attr.value(), attr.name());
+    }
 }

@@ -784,6 +784,14 @@ components:
           $ref: '#/components/schemas/money'
         linePrice:
           $ref: '#/components/schemas/money'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
       required:
         - id
         - ean
@@ -791,6 +799,8 @@ components:
         - productName
         - itemPrice
         - linePrice
+        - images
+        - attributes
       example:
         id: 123
         ean: '5901234123457'
@@ -799,9 +809,15 @@ components:
         itemPrice:
           amount: 100
           currency: USD
-        totalPrice:
+        linePrice:
           amount: 300
           currency: USD
+        images:
+          - url: https://example.com/images/photo.png
+        attributes:
+          - id: 1
+            name: size
+            value: XXL
 
     order-delivery:
       type: object

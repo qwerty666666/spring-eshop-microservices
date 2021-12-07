@@ -6,6 +6,7 @@ import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +24,10 @@ class OrderTest {
     @BeforeEach
     void setUp() {
         var orderLines = List.of(
-                new OrderLine(Ean.fromString("1111111111111"), ORDER_LINE_1_QUANTITY, ORDER_LINE_1_PRICE, FakeData.productName()),
-                new OrderLine(Ean.fromString("2222222222222"),  ORDER_LINE_2_QUANTITY, ORDER_LINE_2_PRICE, FakeData.productName())
+                new OrderLine(Ean.fromString("1111111111111"), ORDER_LINE_1_QUANTITY, ORDER_LINE_1_PRICE,
+                        FakeData.productName(), Collections.emptyList(), Collections.emptyList()),
+                new OrderLine(Ean.fromString("2222222222222"),  ORDER_LINE_2_QUANTITY, ORDER_LINE_2_PRICE,
+                        FakeData.productName(), Collections.emptyList(), Collections.emptyList())
         );
 
         order = new Order(

@@ -8,16 +8,24 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import javax.persistence.AttributeOverride;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -59,19 +67,32 @@ public class OrderLine implements Entity<Long> {
     @NotNull
     private Order order;
 
-    // TODO Attributes
+    @ElementCollection
+    @CollectionTable(name = "order_line_attributes", joinColumns = @JoinColumn(name = "order_line_id"))
+    @OrderColumn(name = "sort")
+    private final List<OrderLineAttribute> attributes = new ArrayList<>();
 
+    @ElementCollection
+    @Column(name = "location")
+    @CollectionTable(name = "order_line_images", joinColumns = @JoinColumn(name = "order_line_id"))
+    @OrderColumn(name = "sort")
+    private final List<String> images = new ArrayList<>();
 
-    public OrderLine(Ean ean, int quantity, Money itemPrice, String productName) {
+    public OrderLine(Ean ean, int quantity, Money itemPrice, String productName,
+            Collection<OrderLineAttribute> attributes, Collection<String> images) {
         Assertions.notNull(ean, "ean must be not null");
         Assertions.positive(quantity, "quantity must be positive");
         Assertions.notNull(itemPrice, "itemPrice must be not null");
         Assertions.notEmpty(productName, "productName must be not empty");
+        Assertions.notNull(attributes, "attributes must be not null");
+        Assertions.notNull(images, "images must be not null");
 
         this.ean = ean;
         this.quantity = quantity;
         this.itemPrice = itemPrice;
         this.productName = productName;
+        this.attributes.addAll(attributes);
+        this.images.addAll(images);
     }
 
     @Override
@@ -102,14 +123,26 @@ public class OrderLine implements Entity<Long> {
         return productName;
     }
 
+    public List<OrderLineAttribute> getAttributes() {
+        return Collections.unmodifiableList(attributes);
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
     void setOrder(Order order) {
         this.order = order;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
         OrderLine orderLine = (OrderLine) o;
         return id != null && Objects.equals(id, orderLine.id);
     }

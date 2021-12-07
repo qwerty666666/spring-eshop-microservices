@@ -59,7 +59,7 @@ public class Order extends AggregateRoot<UUID> {
     @OneToMany(mappedBy = "order", orphanRemoval = true, cascade = CascadeType.ALL)
     @OrderColumn(name = "sort")
     @NotEmpty
-    private List<OrderLine> lines = new ArrayList<>();
+    private final List<OrderLine> lines = new ArrayList<>();
 
     @Embedded
     @NotNull
@@ -83,7 +83,7 @@ public class Order extends AggregateRoot<UUID> {
     public Order(UUID id, String customerId, Delivery delivery, Payment payment, LocalDateTime creationDate, List<OrderLine> lines) {
         Assertions.notNull(id, "id must be not null");
         Assertions.notEmpty(customerId, "customerId must be not empty");
-        Assertions.notEmpty(lines, "OrderLines must be not empty");
+        Assertions.notEmpty(lines, "orderLines must be not empty");
         Assertions.notNull(delivery, "delivery must be not null");
         Assertions.notNull(payment, "payment must be not null");
         Assertions.notNull(creationDate, "creationDate must be not null");
@@ -143,8 +143,12 @@ public class Order extends AggregateRoot<UUID> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
         Order order = (Order) o;
         return id != null && Objects.equals(id, order.id);
     }
