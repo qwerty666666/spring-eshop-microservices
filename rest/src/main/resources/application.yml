@@ -14,7 +14,7 @@ spring:
         default-page-size: 30
         one-indexed-parameters: true
   messages:
-    basename: messages, cart_messages
+    basename: messages, cart_messages, order_statuses
   web:
     locale: en_US
 

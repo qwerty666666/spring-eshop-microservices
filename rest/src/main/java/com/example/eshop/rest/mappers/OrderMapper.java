@@ -5,14 +5,19 @@ import com.example.eshop.rest.dto.ImageDto;
 import com.example.eshop.rest.dto.MoneyDto;
 import com.example.eshop.rest.dto.OrderDto;
 import com.example.eshop.rest.dto.OrderLineDto;
+import com.example.eshop.rest.dto.OrderStatusDto;
+import com.example.eshop.rest.dto.OrderStatusDto.CodeEnum;
 import com.example.eshop.rest.dto.OrderTotalDto;
 import com.example.eshop.rest.dto.PagedOrderListDto;
 import com.example.eshop.sales.domain.Order;
 import com.example.eshop.sales.domain.OrderLine;
 import com.example.eshop.sales.domain.OrderLineAttribute;
+import com.example.eshop.sales.domain.OrderStatus;
+import com.example.eshop.sharedkernel.domain.Localizer;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.stream.Stream;
@@ -21,29 +26,43 @@ import java.util.stream.Stream;
         componentModel = "spring",
         uses = { PageableMapper.class, PhoneMapper.class, EanMapper.class }
 )
-public interface OrderMapper {
+public abstract class OrderMapper {
+    private Localizer localizer;
+
+    // we can't use constructor injection in MapStruct for not @Mapper::uses dependencies
+    @Autowired
+    public void setLocalizer(Localizer localizer) {
+        this.localizer = localizer;
+    }
+
     @Mapping(target = "items", expression = "java(toOrderDtoList(orders.get()))")
     @Mapping(target = "pageable", source = ".")
-    PagedOrderListDto toPagedOrderListDto(Page<Order> orders);
-
-    List<OrderDto> toOrderDtoList(Stream<Order> orders);
+    public abstract PagedOrderListDto toPagedOrderListDto(Page<Order> orders);
 
     @Mapping(target = "total", expression = "java(toOrderTotalDto(order))")
     @Mapping(target = "address", source = "delivery.address")
-    OrderDto toOrderDto(Order order);
+    public abstract OrderDto toOrderDto(Order order);
+
+    protected OrderStatusDto toOrderStatusDto(OrderStatus status) {
+        return new OrderStatusDto()
+                .code(Enum.valueOf(CodeEnum.class, status.name()))
+                .name(localizer.getMessage(status.getMessageCode()));
+    }
+
+    protected abstract List<OrderDto> toOrderDtoList(Stream<Order> orders);
 
     @Mapping(target = "linePrice", expression = "java(toMoneyDto(line.getPrice()))")
-    OrderLineDto toOrderLineDto(OrderLine line);
+    protected abstract OrderLineDto toOrderLineDto(OrderLine line);
 
     @Mapping(target = "url", source = ".")
-    ImageDto toImageDto(String image);
+    protected abstract ImageDto toImageDto(String image);
 
     @Mapping(target = "id", source = "attributeId")
-    AttributeDto toAttributeDto(OrderLineAttribute attr);
+    protected abstract AttributeDto toAttributeDto(OrderLineAttribute attr);
 
     @Mapping(target = "totalPrice", expression = "java(toMoneyDto(order.getPrice()))")
     @Mapping(target = "deliveryPrice", source = "delivery.price")
-    OrderTotalDto toOrderTotalDto(Order order);
+    protected abstract OrderTotalDto toOrderTotalDto(Order order);
 
-    MoneyDto toMoneyDto(Money money);
+    protected abstract MoneyDto toMoneyDto(Money money);
 }

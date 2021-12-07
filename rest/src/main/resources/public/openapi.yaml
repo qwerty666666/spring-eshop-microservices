@@ -760,6 +760,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/order-line'
+        status:
+          $ref: '#/components/schemas/order-status'
         address:
           $ref: '#/components/schemas/delivery-address'
         delivery:
@@ -768,6 +770,18 @@ components:
           $ref: '#/components/schemas/order-payment'
         total:
           $ref: '#/components/schemas/order-total'
+
+    order-status:
+      type: object
+      properties:
+        code:
+          type: string
+          enum: [PENDING]
+        name:
+          type: string
+      example:
+        code: PENDING
+        name: Ожидает
 
     order-line:
       type: object
