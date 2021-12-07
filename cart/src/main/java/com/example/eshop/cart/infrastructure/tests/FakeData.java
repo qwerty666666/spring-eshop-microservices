@@ -57,7 +57,7 @@ public class FakeData {
     public static Cart cart(String customerId) {
         var cart = new Cart(customerId);
 
-        cart.addItem(ean(), Money.USD(123), 10, "test");
+        cart.addItem(ean(), Money.USD(123), 10);
 
         return cart;
     }

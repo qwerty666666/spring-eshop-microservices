@@ -76,7 +76,7 @@ public class Cart extends AggregateRoot<Long> {
         items = cart.items.values().stream()
                 .collect(Collectors.toMap(
                         CartItem::getEan,
-                        item -> new CartItem(this, item.getEan(), item.getPrice(), item.getQuantity(), item.getProductName()),
+                        item -> new CartItem(this, item.getEan(), item.getPrice(), item.getQuantity()),
                         (e1, e2) -> e1,
                         LinkedHashMap::new
                 ));
@@ -92,14 +92,14 @@ public class Cart extends AggregateRoot<Long> {
      *
      * @throws CartItemAlreadyExistException if cart item with given EAN already exist in this cart
      */
-    public void addItem(Ean ean, Money price, int quantity, String productName) {
+    public void addItem(Ean ean, Money price, int quantity) {
         Assertions.notNull(ean, "EAN must be not null");
 
         if (containsItem(ean)) {
             throw new CartItemAlreadyExistException("Cart Item with ean " + ean + " already exist in cart");
         }
 
-        var item = new CartItem(this, ean, price, quantity, productName);
+        var item = new CartItem(this, ean, price, quantity);
         items.put(ean, item);
 
         log.info("New CartItem created " + item);
@@ -182,10 +182,13 @@ public class Cart extends AggregateRoot<Long> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
         Cart cart = (Cart) o;
-
         return Objects.equals(customerId, cart.customerId);
     }
 

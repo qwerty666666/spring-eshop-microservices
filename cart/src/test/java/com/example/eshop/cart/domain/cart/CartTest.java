@@ -16,17 +16,16 @@ class CartTest {
 
     private final Money price = Money.USD(10);
     private final int qty = 10;
-    private final String productName = "test";
 
     @Nested
     class AddItemTest {
         @Test
         void whenAddItem_thenNewCartItemShouldBeCreatedAndAddedToCart() {
             // Given
-            var expectedCartItem = new CartItem(cart, newEan, price, qty, productName);
+            var expectedCartItem = new CartItem(cart, newEan, price, qty);
 
             // When
-            cart.addItem(newEan, price, qty, productName);
+            cart.addItem(newEan, price, qty);
 
             // Then
             assertThat(cart.containsItem(newEan)).isTrue();
@@ -36,7 +35,7 @@ class CartTest {
 
         @Test
         void givenCartWithItem_whenAddTheSameItem_thenThrowCartItemAlreadyExistException() {
-            assertThatThrownBy(() -> cart.addItem(existedInCartEan, price, qty, productName))
+            assertThatThrownBy(() -> cart.addItem(existedInCartEan, price, qty))
                     .isInstanceOf(CartItemAlreadyExistException.class);
         }
     }

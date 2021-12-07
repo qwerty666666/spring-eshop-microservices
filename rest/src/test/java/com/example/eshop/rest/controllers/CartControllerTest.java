@@ -42,7 +42,6 @@ class CartControllerTest {
     private final static Ean EAN = FakeData.ean();
     private final static Money PRICE = Money.USD(12.34);
     private final static int QUANTITY = 7;
-    private final static String PRODUCT_NAME = "Test Product";
 
     @MockBean
     private CartQueryService cartQueryService;
@@ -62,7 +61,7 @@ class CartControllerTest {
     @BeforeEach
     void setUp() {
         cart = new Cart(customerId);
-        cart.addItem(EAN, PRICE, QUANTITY, PRODUCT_NAME);
+        cart.addItem(EAN, PRICE, QUANTITY);
 
         when(cartQueryService.getForCustomer(customerId)).thenReturn(cart);
     }

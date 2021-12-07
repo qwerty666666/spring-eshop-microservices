@@ -21,7 +21,7 @@ import org.springframework.lang.Nullable;
 public abstract class CartMapper {
     private ProductCrudService productCrudService;
 
-    // we can't use constructor injection in MapStruct for not "uses" dependencies
+    // we can't use constructor injection in MapStruct for not @Mapper::uses dependencies
     @Autowired
     public void setProductCrudService(ProductCrudService productCrudService) {
         this.productCrudService = productCrudService;
@@ -54,6 +54,7 @@ public abstract class CartMapper {
     }
 
     @Mapping(target = "images", source = "product.images", conditionExpression = "java(product != null)")
+    @Mapping(target = "productName", source = "product.name", conditionExpression = "java(product != null)")
     @Mapping(target = "attributes", source = "sku.attributes", conditionExpression = "java(sku != null)")
     @Mapping(target = "availableQuantity", source = "sku.availableQuantity", conditionExpression = "java(sku != null)")
     @Mapping(target = "ean", source = "cartItem.ean")

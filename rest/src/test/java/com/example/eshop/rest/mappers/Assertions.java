@@ -68,7 +68,7 @@ public class Assertions {
         // ean
         assertThat(dto.getEan()).isEqualTo(item.getEan().toString());
         // name
-        assertThat(dto.getProductName()).isEqualTo(item.getProductName());
+        assertThat(dto.getProductName()).isEqualTo(product.getName());
         // quantity
         assertThat(dto.getQuantity()).isEqualTo(item.getQuantity());
         // available quantity

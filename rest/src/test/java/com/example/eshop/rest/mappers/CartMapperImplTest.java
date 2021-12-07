@@ -67,8 +67,8 @@ class CartMapperImplTest {
         when(productCrudService.getByEan(anyList())).thenReturn(productInfo);
 
         cart = new Cart("1");
-        cart.addItem(sku1.getEan(), sku1.getPrice(), sku1.getAvailableQuantity(), product.getName());
-        cart.addItem(sku2.getEan(), sku2.getPrice(), sku2.getAvailableQuantity(), product.getName());
+        cart.addItem(sku1.getEan(), sku1.getPrice(), sku1.getAvailableQuantity());
+        cart.addItem(sku2.getEan(), sku2.getPrice(), sku2.getAvailableQuantity());
     }
 
     @Test

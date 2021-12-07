@@ -42,7 +42,7 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
         var product = getProduct(ean);
         var sku = product.getSku(ean);
 
-        cart.addItem(ean, sku.getPrice(), quantity, product.getName());
+        cart.addItem(ean, sku.getPrice(), quantity);
     }
 
     @Override

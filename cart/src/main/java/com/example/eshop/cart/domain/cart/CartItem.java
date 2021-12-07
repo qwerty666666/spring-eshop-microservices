@@ -65,10 +65,6 @@ public class CartItem implements Entity<Long> {
     @NotNull
     private Money price;
 
-    @Column(name = "product_name", nullable = false)
-    @NotEmpty
-    private String productName;
-
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
@@ -77,18 +73,16 @@ public class CartItem implements Entity<Long> {
     @CreationTimestamp
     private LocalDateTime creationTime;
 
-    CartItem(Cart cart, Ean ean, Money price, int quantity, String productName) {
+    CartItem(Cart cart, Ean ean, Money price, int quantity) {
         Assertions.notNull(cart, "cart must be positive number");
         Assertions.notNull(ean, "EAN must be not null");
         Assertions.notNull(price, "price must be not null");
         Assertions.positive(quantity, "quantity must be positive number");
-        Assertions.notEmpty(productName, "productName must be non empty");
 
         this.cart = cart;
         this.ean = ean;
         this.price = price;
         this.quantity = quantity;
-        this.productName = productName;
     }
 
     /**
@@ -111,10 +105,13 @@ public class CartItem implements Entity<Long> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
         CartItem other = (CartItem) o;
-
         return Objects.equals(cart, other.cart) && Objects.equals(ean, other.ean);
     }
 
