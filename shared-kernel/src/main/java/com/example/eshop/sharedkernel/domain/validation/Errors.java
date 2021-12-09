@@ -11,6 +11,13 @@ import java.util.Map;
 public class Errors implements Iterable<Error>, Serializable {
     private final Map<String, List<Error>> fieldsErrors = new LinkedHashMap<>();
 
+    /**
+     * @return new Errors instance with no errors
+     */
+    public static Errors empty() {
+        return new Errors();
+    }
+
     public Errors addError(String field, String message) {
         List<Error> list = fieldsErrors.computeIfAbsent(field, s -> new ArrayList<>());
 

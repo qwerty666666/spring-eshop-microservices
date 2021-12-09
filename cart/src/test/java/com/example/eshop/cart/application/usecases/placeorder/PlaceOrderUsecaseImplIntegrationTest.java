@@ -13,9 +13,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @IntegrationTest
-class PlaceOrderServiceImplIntegrationTest {
+class PlaceOrderUsecaseImplIntegrationTest {
     @Autowired
-    private PlaceOrderService placeOrderService;
+    private PlaceOrderUsecase placeOrderUsecase;
 
     @Test
     @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
@@ -24,7 +24,7 @@ class PlaceOrderServiceImplIntegrationTest {
                 .customerId("nonAuthorizedCustomerId")
                 .build();
 
-        assertThatThrownBy(() -> placeOrderService.place(createOrderDto))
+        assertThatThrownBy(() -> placeOrderUsecase.place(createOrderDto))
                 .isInstanceOf(AccessDeniedException.class);
     }
 }

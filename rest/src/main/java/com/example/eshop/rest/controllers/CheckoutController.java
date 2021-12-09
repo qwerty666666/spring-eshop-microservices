@@ -3,7 +3,7 @@ package com.example.eshop.rest.controllers;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
 import com.example.eshop.cart.application.usecases.checkout.CheckoutProcessService;
 import com.example.eshop.cart.application.usecases.clearcart.ClearCartService;
-import com.example.eshop.cart.application.usecases.placeorder.PlaceOrderService;
+import com.example.eshop.cart.application.usecases.placeorder.PlaceOrderUsecase;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.rest.api.CheckoutApi;
@@ -28,7 +28,7 @@ public class CheckoutController extends BaseController implements CheckoutApi {
     private final ClearCartService clearCartService;
 
     private final CheckoutProcessService checkoutProcessService;
-    private final PlaceOrderService placeOrderService;
+    private final PlaceOrderUsecase placeOrderUsecase;
     private final CheckoutMapper checkoutMapper;
 
     private final UriFactory uriFactory;
@@ -47,7 +47,7 @@ public class CheckoutController extends BaseController implements CheckoutApi {
         var createOrderDto = buildCreateOrderDto(checkoutRequestDto);
 
         // place order
-        var order = placeOrderService.place(createOrderDto);
+        var order = placeOrderUsecase.place(createOrderDto);
 
         // clear customer's cart
         clearCartService.clear(getAuthenticatedUserDetailsOrFail().getCustomerId());
