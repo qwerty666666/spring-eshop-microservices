@@ -7,6 +7,7 @@ import com.example.eshop.warehouse.domain.events.ProductStockChangedEvent;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.NaturalId;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -16,9 +17,10 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
- * Available Stock information
+ * Stock availability information
  */
 @Entity
 @Table(
@@ -74,22 +76,50 @@ public class StockItem extends AggregateRoot<Long> {
      *
      * @throws InsufficientStockQuantityException if {@code quantity} is greater than existed stock quantity
      */
-    public void decrease(StockQuantity quantity) {
-        stockQuantity = stockQuantity.subtract(quantity);
+    public void reserve(StockQuantity quantity) {
+        log.info("{}: Reserve {}", this, quantity);
 
-        registerDomainEvent(new ProductStockChangedEvent(ean, stockQuantity.toInt()));
-
-        log.info("Stock Quantity is decreased by {}. Remaining quantity is {}.", quantity, stockQuantity);
+        changeQuantity(stockQuantity.subtract(quantity));
     }
 
     /**
      * Increases stock quantity by given amount {@code quantity}
      */
-    public void increase(StockQuantity quantity) {
-        stockQuantity = stockQuantity.add(quantity);
+    public void supply(StockQuantity quantity) {
+        log.info("{}: Supply {}", this, quantity);
 
-        registerDomainEvent(new ProductStockChangedEvent(ean, stockQuantity.toInt()));
+        changeQuantity(stockQuantity.add(quantity));
+    }
 
-        log.info("Stock Quantity is increased by {}. New quantity is {}.", quantity, stockQuantity);
+    private void changeQuantity(StockQuantity newQuantity) {
+        var oldQuantity = stockQuantity;
+
+        stockQuantity = newQuantity;
+
+        registerDomainEvent(new ProductStockChangedEvent(ean, newQuantity.toInt()));
+
+        log.info("{}: Stock Quantity changed {} -> {}", this, oldQuantity, stockQuantity);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+        StockItem stockItem = (StockItem) o;
+        return ean != null && Objects.equals(ean, stockItem.ean);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ean);
+    }
+
+    @Override
+    public String toString() {
+        return "StockItem{" + ean + "}";
     }
 }

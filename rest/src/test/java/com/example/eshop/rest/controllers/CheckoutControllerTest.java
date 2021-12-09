@@ -5,7 +5,7 @@ import com.example.eshop.cart.application.usecases.checkout.CheckoutForm;
 import com.example.eshop.cart.application.usecases.checkout.CheckoutProcessService;
 import com.example.eshop.cart.application.usecases.checkout.Total;
 import com.example.eshop.cart.application.usecases.clearcart.ClearCartService;
-import com.example.eshop.cart.application.usecases.placeorder.PlaceOrderService;
+import com.example.eshop.cart.application.usecases.placeorder.PlaceOrderUsecase;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
@@ -50,7 +50,7 @@ class CheckoutControllerTest {
     @MockBean
     private ClearCartService clearCartService;
     @MockBean
-    private PlaceOrderService placeOrderService;
+    private PlaceOrderUsecase placeOrderUsecase;
     @MockBean
     private CheckoutProcessService checkoutProcessService;
 
@@ -148,7 +148,7 @@ class CheckoutControllerTest {
         @Test
         @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void givenInvalidRequest_whenPlaceOrder_thenReturn400() throws Exception {
-            when(placeOrderService.place(createOrderDto)).thenThrow(new ValidationException(new Errors()));
+            when(placeOrderUsecase.place(createOrderDto)).thenThrow(new ValidationException(new Errors()));
 
             performPlaceOrderRequest()
                     .andExpect(status().isBadRequest());
@@ -158,13 +158,13 @@ class CheckoutControllerTest {
         @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void whenPlaceOrder_thenCartIsClearedAndReturn200() throws Exception {
             var createdOrder = new Order(UUID.randomUUID(), customerId, cart, deliveryAddress, null, null);
-            when(placeOrderService.place(createOrderDto)).thenReturn(createdOrder);
+            when(placeOrderUsecase.place(createOrderDto)).thenReturn(createdOrder);
 
             performPlaceOrderRequest()
                     .andExpect(status().isCreated())
                     .andExpect(header().exists(HttpHeaders.LOCATION));
 
-            verify(placeOrderService).place(createOrderDto);
+            verify(placeOrderUsecase).place(createOrderDto);
             verify(clearCartService).clear(customerId);
         }
 

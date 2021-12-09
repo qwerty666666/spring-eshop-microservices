@@ -28,6 +28,11 @@
             <artifactId>customer</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>warehouse</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Database -->
         <dependency>

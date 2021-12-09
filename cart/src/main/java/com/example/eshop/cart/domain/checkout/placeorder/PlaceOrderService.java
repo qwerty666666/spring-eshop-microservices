@@ -1,27 +1,32 @@
 package com.example.eshop.cart.domain.checkout.placeorder;
 
 import com.example.eshop.cart.domain.checkout.order.Order;
-import com.example.eshop.sharedkernel.domain.validation.ValidationException;
+import com.example.eshop.sharedkernel.domain.base.DomainService;
+import com.example.eshop.sharedkernel.domain.validation.Errors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Domain Service for creating Order.
+ * Domain Service for place Order.
+ * <p>
+ * This service check that Order satisfies to all domain rules.
  */
 @Service
 @RequiredArgsConstructor
-public class PlaceOrderService {
+public class PlaceOrderService implements DomainService {
     private final PlaceOrderValidator placeOrderValidator;
 
-    public void place(Order order) {
-        checkOrder(order);
+    public PlaceOrderResult place(Order order) {
+        var validationErrors = checkOrder(order);
+
+        if (!validationErrors.isEmpty()) {
+            return PlaceOrderResult.failure(order, validationErrors);
+        }
+
+        return PlaceOrderResult.success(order);
     }
 
-    private void checkOrder(Order order) {
-        var errors = placeOrderValidator.validate(order);
-
-        if (!errors.isEmpty()) {
-            throw new ValidationException(errors);
-        }
+    private Errors checkOrder(Order order) {
+        return placeOrderValidator.validate(order);
     }
 }
