@@ -74,10 +74,13 @@ public class StockQuantity implements Comparable<StockQuantity> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
         StockQuantity stockQuantity1 = (StockQuantity) o;
-
         return Objects.equals(quantity, stockQuantity1.quantity);
     }
 

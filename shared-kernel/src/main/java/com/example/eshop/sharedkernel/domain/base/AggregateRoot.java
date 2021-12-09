@@ -15,13 +15,13 @@ import java.util.List;
  * near transaction boundaries (before or after transaction commit).
  * (We do not use Spring's {@link DomainEvents} because it is used only when
  * repositories save*() or delete*() methods are explicitly called and doesn't
- * used when changed Entities are implicitly flushed when transaction commits).
+ * used when changed Entities are implicitly flushed on transaction commits).
  */
 public abstract class AggregateRoot<ID extends Serializable> implements Entity<ID> {
     @Nullable
     private transient List<DomainEvent> domainEvents;
 
-    private void initDomainEvents() {
+    private void reinitDomainEvents() {
         domainEvents = new ArrayList<>();
     }
 
@@ -30,7 +30,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     protected void registerDomainEvent(DomainEvent event) {
         if (domainEvents == null) {
-            initDomainEvents();
+            reinitDomainEvents();
         }
 
         domainEvents.add(event);
@@ -42,7 +42,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     public List<DomainEvent> getDomainEventsAndClear() {
         var events = domainEvents;
 
-        initDomainEvents();
+        reinitDomainEvents();
 
         return events;
     }

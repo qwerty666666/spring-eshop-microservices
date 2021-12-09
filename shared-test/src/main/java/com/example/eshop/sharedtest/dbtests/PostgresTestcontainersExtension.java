@@ -32,8 +32,8 @@ class PostgresTestcontainersExtension implements Extension, TestInstancePostProc
      * datasource params will be initialized before Spring Context will be bootstrapped.
      *
      * It seems like JUnit is not guarantee that Extension will be initialized before
-     * it is accessed for the first time. But in current implementation Extension initialized
-     * when it is registered for a test class.
+     * it is accessed for the first time. But in current implementation Extensions are
+     * initialized when they are registered for a test class.
      * So, static initialization is a bit hacky, but it save us from keeping order of
      * Extensions registration (In JUnit Extensions registered in order they are declared on
      * class and Extensions from superclass are registered first), otherwise we must place

@@ -13,21 +13,21 @@ class StockItemTest {
     private final static StockQuantity SEVEN = StockQuantity.of(7);
 
     @Test
-    void whenDecrease_thenProductStockChangedEventIsRegistered() {
+    void whenReserve_thenProductStockChangedEventIsRegistered() {
         var stockItem = new StockItem(EAN, TEN);
         var expectedEvent = new ProductStockChangedEvent(EAN, SEVEN.toInt());
 
-        stockItem.decrease(THREE);
+        stockItem.reserve(THREE);
 
         assertThat(stockItem.getDomainEventsAndClear()).contains(expectedEvent);
     }
 
     @Test
-    void whenIncrease_thenProductStockChangedEventIsRegistered() {
+    void whenSupply_thenProductStockChangedEventIsRegistered() {
         var stockItem = new StockItem(EAN, SEVEN);
         var expectedEvent = new ProductStockChangedEvent(EAN, TEN.toInt());
 
-        stockItem.increase(THREE);
+        stockItem.supply(THREE);
 
         assertThat(stockItem.getDomainEventsAndClear()).contains(expectedEvent);
     }
