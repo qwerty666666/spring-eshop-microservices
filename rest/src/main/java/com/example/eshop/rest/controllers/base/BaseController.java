@@ -1,9 +1,7 @@
 package com.example.eshop.rest.controllers.base;
 
 import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import java.util.Optional;
+import com.example.eshop.rest.utils.AuthUtils;
 
 /**
  * Base class for all Controllers.
@@ -14,19 +12,11 @@ import java.util.Optional;
  */
 public class BaseController {
     /**
-     * @return currently authenticated principal
-     */
-    protected Optional<Authentication> getAuthentication() {
-        return Optional.of(SecurityContextHolder.getContext().getAuthentication());
-    }
-
-    /**
      * Returns currently authenticated {@link UserDetailsImpl} or
      * throws {@link NotAuthenticatedException} if user is not authenticated.
      */
     protected UserDetailsImpl getAuthenticatedUserDetailsOrFail() {
-        return getAuthentication()
-                .map(auth -> (UserDetailsImpl)auth.getPrincipal())
+        return AuthUtils.getCurrentUserDetails()
                 .orElseThrow(() -> new NotAuthenticatedException("User is not authenticated"));
     }
 }
