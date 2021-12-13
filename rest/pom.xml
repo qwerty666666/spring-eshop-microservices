@@ -50,11 +50,6 @@
             <artifactId>shared-test</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.example.eshop</groupId>
-            <artifactId>warehouse</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- Web -->
         <dependency>
@@ -128,6 +123,17 @@
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
             <version>${sentry.version}</version>
+        </dependency>
+
+        <!-- Database -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
         </dependency>
     </dependencies>
 
