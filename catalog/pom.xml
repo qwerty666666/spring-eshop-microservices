@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>warehouse</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Database -->

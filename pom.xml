@@ -21,7 +21,6 @@
         <module>shared-kernel</module>
         <module>catalog</module>
         <module>rest</module>
-        <module>warehouse</module>
         <module>customer</module>
         <module>cart</module>
         <module>sales</module>

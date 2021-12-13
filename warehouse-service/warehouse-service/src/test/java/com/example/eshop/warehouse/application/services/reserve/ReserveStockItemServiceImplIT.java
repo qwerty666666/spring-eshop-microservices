@@ -4,7 +4,6 @@ import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.example.eshop.warehouse.application.services.reserve.ReserveResult.InsufficientQuantityError;
 import com.example.eshop.warehouse.application.services.reserve.ReserveResult.StockItemNotFoundError;
-import com.example.eshop.warehouse.application.services.reserve.ReserveStockItemService;
 import com.example.eshop.warehouse.domain.StockQuantity;
 import com.example.eshop.warehouse.domain.events.ProductStockChangedEvent;
 import com.github.database.rider.core.api.dataset.DataSet;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @DbTest
-class ReserveStockItemServiceImplIntegrationTest {
+class ReserveStockItemServiceImplIT {
     private final static Ean STOCK_ITEM_1_EAN = Ean.fromString("0000000000001");
     private final static StockQuantity STOCK_ITEM_1_QUANTITY = StockQuantity.of(10);
 
