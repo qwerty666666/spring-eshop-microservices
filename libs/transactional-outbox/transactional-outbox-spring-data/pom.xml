@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example.eshop.transactionaloutbox</groupId>
+    <artifactId>transactional-outbox-spring-data</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>transactional-outbox-spring-data</name>
+    <description>TransactionalOutbox implementation based on Spring's JdbcTemplate</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+        <junit.version>5.8.2</junit.version>
+        <h2.version>1.4.194</h2.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.example.eshop.transactionaloutbox</groupId>
+            <artifactId>transactional-outbox-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Tests -->
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
