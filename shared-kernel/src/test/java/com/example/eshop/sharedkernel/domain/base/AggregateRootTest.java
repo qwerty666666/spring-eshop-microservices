@@ -31,6 +31,22 @@ class AggregateRootTest {
         assertThat(aggregateRoot.getDomainEventsAndClear()).isEmpty();
     }
 
+    @Test
+    void givenAggregateRootWithRegisteredDomainEvents_whenGetDomainEventsAndRemoveByType_thenReturnedOnlyTypeSubclassesEventsAndOtherEventsAreRemained() {
+        var event = new FakeDomainEvent();
+        var subclassEvent = new SubFakeDomainEvent();
+        var event2 = new FakeDomainEvent2();
+
+        var aggregateRoot = new FakeAggregateRoot();
+        aggregateRoot.addEvent(event);
+        aggregateRoot.addEvent(subclassEvent);
+        aggregateRoot.addEvent(event2);
+
+        assertThat(aggregateRoot.getDomainEventsAndRemove(FakeDomainEvent.class))
+                .containsOnly(event, subclassEvent);
+        assertThat(aggregateRoot.getDomainEventsAndClear()).containsOnly(event2);
+    }
+
     private static class FakeAggregateRoot extends AggregateRoot<Integer> {
         @Override
         public Integer getId() {
@@ -43,5 +59,11 @@ class AggregateRootTest {
     }
 
     private static class FakeDomainEvent implements DomainEvent {
+    }
+
+    private static class SubFakeDomainEvent extends FakeDomainEvent {
+    }
+
+    private static class FakeDomainEvent2 implements DomainEvent {
     }
 }

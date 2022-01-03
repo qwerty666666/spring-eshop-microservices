@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example.eshop.warehouse</groupId>
+    <artifactId>warehouse-client</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>warehouse-client</name>
+    <description>Shared DTO for warehouse service clients</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+        <shared-kernel.version>0.0.1-SNAPSHOT</shared-kernel.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-kernel</artifactId>
+            <version>${shared-kernel.version}</version>
+        </dependency>
+    </dependencies>
+</project>

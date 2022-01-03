@@ -2,6 +2,8 @@ package com.example.eshop.sharedkernel.domain.valueobject;
 
 import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.ValueObject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
@@ -38,11 +40,13 @@ public class Ean implements ValueObject, Serializable {
      *
      * @throws InvalidEanFormatException if ean has invalid format
      */
+    @JsonCreator
     public static Ean fromString(String ean) {
         return new Ean(ean);
     }
 
     @Override
+    @JsonValue
     public String toString() {
         return ean;
     }
