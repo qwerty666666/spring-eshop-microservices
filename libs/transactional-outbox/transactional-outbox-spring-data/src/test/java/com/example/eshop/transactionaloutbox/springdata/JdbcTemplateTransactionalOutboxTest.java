@@ -26,12 +26,13 @@ class JdbcTemplateTransactionalOutboxTest {
     private static final Integer ID = 1;
     private static final String TOPIC = "topic";
     private static final byte[] PAYLOAD = new byte[] {};
+    private static final String KEY = "key";
     private static final String AGGREGATE = "aggregate";
     private static final String AGGREGATE_ID = "aggregateId";
     private static final String REQUEST_ID = "requestId";
     private static final String TYPE = "type";
     private static final Instant CREATION_TIME = LocalDate.parse("2016-04-17").atStartOfDay().toInstant(ZoneOffset.UTC);
-    private static final OutboxMessage MESSAGE = new OutboxMessage(ID, AGGREGATE, AGGREGATE_ID, TYPE, TOPIC, PAYLOAD,
+    private static final OutboxMessage MESSAGE = new OutboxMessage(ID, AGGREGATE, AGGREGATE_ID, TYPE, TOPIC, KEY, PAYLOAD,
             REQUEST_ID, CREATION_TIME);
 
     private JdbcDataSource dataSource;
@@ -52,6 +53,7 @@ class JdbcTemplateTransactionalOutboxTest {
                     type          varchar(255),
                     topic         varchar(255) not null,
                     payload       bytea,
+                    key           bytea,
                     request_id    varchar(255),
                     creation_time timestamp not null
                 )"""

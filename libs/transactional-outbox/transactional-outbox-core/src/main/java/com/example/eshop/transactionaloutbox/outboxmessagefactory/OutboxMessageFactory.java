@@ -8,5 +8,9 @@ import com.example.eshop.transactionaloutbox.OutboxMessage;
  * {@link OutboxMessage} factory for DDD Domain Events
  */
 public interface OutboxMessageFactory {
-    OutboxMessage create(String topic, DomainEvent event, AggregateRoot<?> sourceAggregate);
+    default OutboxMessage create(String topic, DomainEvent event, AggregateRoot<?> sourceAggregate) {
+        return create(topic, event, sourceAggregate, null);
+    }
+
+    OutboxMessage create(String topic, DomainEvent event, AggregateRoot<?> sourceAggregate, String key);
 }

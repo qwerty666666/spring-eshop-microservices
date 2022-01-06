@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 /**
- * Serialize {@link DomainEvent} to UTD-8 JSON byte[]
+ * Serialize {@link DomainEvent} to JSON byte[]
  */
 @RequiredArgsConstructor
 public class JacksonEventSerializer implements EventSerializer {

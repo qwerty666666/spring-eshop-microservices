@@ -18,24 +18,27 @@ public class OutboxMessage {
     private final String type;
 
     private final String topic;
+    private final String key;
     private final byte[] payload;
 
     private final String requestId;
     private final Instant creationTime;
 
-    public OutboxMessage(Integer id, String aggregate, String aggregateId, String type, String topic, byte[] payload, String requestId, Instant creationTime) {
+    public OutboxMessage(Integer id, String aggregate, String aggregateId, String type, String topic, String key,
+            byte[] payload, String requestId, Instant creationTime) {
         this.id = id;
         this.aggregate = aggregate;
         this.aggregateId = aggregateId;
         this.type = type;
         this.topic = topic;
+        this.key = key;
         this.payload = payload;
         this.requestId = requestId;
         this.creationTime = creationTime;
     }
 
     private OutboxMessage(OutboxMessageBuilder builder) {
-        this(null, builder.aggregate, builder.aggregateId, builder.type, builder.topic, builder.payload, builder.requestId, Instant.now());
+        this(null, builder.aggregate, builder.aggregateId, builder.type, builder.topic, builder.key, builder.payload, builder.requestId, Instant.now());
     }
 
     public static TopicStep builder() {
@@ -54,6 +57,8 @@ public class OutboxMessage {
     public static class OutboxMessageBuilder implements TopicStep, PayloadStep {
         private String topic;
         private byte[] payload;
+        @Setter
+        private String key;
         @Setter
         private String aggregate;
         @Setter

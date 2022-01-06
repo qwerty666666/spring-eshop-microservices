@@ -14,6 +14,7 @@ CREATE TABLE transactional_outbox
     id            bigserial PRIMARY KEY,           
     topic         character varying(255) NOT NULL,  -- message topic
     payload       bytea,                            -- message body
+    key           character varying(255),           -- message key
     aggregate     character varying(255),           -- source Aggregate class FQN
     aggregate_id  character varying(255),           -- source Aggregate ID
     type          character varying(255),           -- message class FQN

@@ -11,10 +11,11 @@ public class DefaultOutboxMessageFactory implements OutboxMessageFactory {
     private final RequestIdSupplier requestIdSupplier;
 
     @Override
-    public OutboxMessage create(String topic, DomainEvent event, AggregateRoot<?> sourceAggregate) {
+    public OutboxMessage create(String topic, DomainEvent event, AggregateRoot<?> sourceAggregate, String key) {
         return OutboxMessage.builder()
                 .topic(topic)
                 .payload(eventSerializer.apply(event))
+                .key(key)
                 .type(event.getClass().getName())
                 .aggregate(sourceAggregate.getClass().getName())
                 .aggregateId(sourceAggregate.getId() == null ? null : sourceAggregate.getId().toString())

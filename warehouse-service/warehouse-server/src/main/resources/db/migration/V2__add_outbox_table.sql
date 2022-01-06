@@ -1,8 +1,9 @@
-CREATE TABLE transactional_outbox
+CREATE TABLE IF NOT EXISTS transactional_outbox
 (
     id            bigserial PRIMARY KEY,
     topic         character varying(255) NOT NULL,
     payload       bytea,
+    key           bytea,
     aggregate     character varying(255),
     aggregate_id  character varying(255),
     type          character varying(255),

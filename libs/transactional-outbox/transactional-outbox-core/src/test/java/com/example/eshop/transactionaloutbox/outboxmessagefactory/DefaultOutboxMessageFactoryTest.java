@@ -24,14 +24,16 @@ class DefaultOutboxMessageFactoryTest {
         var factory = new DefaultOutboxMessageFactory(eventSerializer, requestIdSupplier);
 
         var topic = "topic";
+        var key = "key";
         var aggregateId = "id";
 
         // When
-        var message = factory.create(topic, new Event(), new Aggregate(new Id(aggregateId)));
+        var message = factory.create(topic, new Event(), new Aggregate(new Id(aggregateId)), key);
 
         // Then
         Assertions.assertEquals(topic, message.getTopic());
         Assertions.assertArrayEquals(serializedEvent, message.getPayload());
+        Assertions.assertEquals(key, message.getKey());
         Assertions.assertEquals(requestId, message.getRequestId());
         Assertions.assertEquals(Aggregate.class.getName(), message.getAggregate());
         Assertions.assertEquals(aggregateId, message.getAggregateId());

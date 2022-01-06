@@ -59,6 +59,7 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
                         rs.getString("aggregate_id"),
                         rs.getString("type"),
                         rs.getString("topic"),
+                        rs.getString("key"),
                         rs.getBytes("payload"),
                         rs.getString("request_id"),
                         rs.getTimestamp("creation_time").toInstant()
