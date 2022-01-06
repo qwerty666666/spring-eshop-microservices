@@ -3,20 +3,16 @@ package com.example.eshop.transactionaloutbox.messagerelay;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.UnaryOperator;
 
 /**
  * Message Relay for {@link TransactionalOutbox} which periodically
  * poll outbox and produce messages to broker by using
  * {@code brokerProducer}.
  * <p>
- * {@code brokerProducer} should return List of successfully produced
- * messages synchronously. After returning produced messages they will
- * be removed from the outbox.
+ * After producing messages they will be removed from the outbox.
  * <p>
  * This class supports batch processing. It takes {@code pollBatchSize}
  * messages from outbox and publish them, until there is no more than
@@ -27,17 +23,18 @@ import java.util.function.UnaryOperator;
  * If you need to scale Message Relay, you should provide
  * {@code transactionalOutbox} with concurrent polling support.
  */
-public class SingleThreadedMessageRelay {
+public class SingleThreadedMessageRelay implements MessageRelay {
     private final TransactionalOutbox transactionalOutbox;
-    private final UnaryOperator<List<OutboxMessage>> brokerProducer;
+    private final BrokerProducer brokerProducer;
     private final int pollBatchSize;
     private final long pollPeriod;
     private final TimeUnit pollTimeUnit;
     private final ScheduledExecutorService executorService;
+    private boolean isRunning = false;
 
     public SingleThreadedMessageRelay(
             TransactionalOutbox transactionalOutbox,
-            UnaryOperator<List<OutboxMessage>> brokerProducer,
+            BrokerProducer brokerProducer,
             int pollBatchSize,
             long pollPeriod,
             TimeUnit pollTimeUnit) {
@@ -50,21 +47,24 @@ public class SingleThreadedMessageRelay {
         executorService = Executors.newSingleThreadScheduledExecutor();
     }
 
-    /**
-     * Starts polling outbox and producing messages
-     */
+    @Override
     public void start() {
+        if (isRunning) {
+            return;
+        }
+
         executorService.scheduleWithFixedDelay(this::publishMessages, 0, pollPeriod, pollTimeUnit);
+        isRunning = true;
     }
 
-    /**
-     * Stops message relay.
-     * <p>
-     * The guarantees of handling in-process messages are the same
-     * as {@link ExecutorService#shutdown()} has.
-     */
-    public void stop() {
+    @Override
+    public void shutdown() {
+        if (!isRunning) {
+            return;
+        }
+
         executorService.shutdown();
+        isRunning = false;
     }
 
     private void publishMessages() {

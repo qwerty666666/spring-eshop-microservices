@@ -68,6 +68,10 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
 
     @Override
     public void remove(List<OutboxMessage> messages) {
+        if (messages.isEmpty()) {
+            return;
+        }
+
         jdbcTemplate.update(
                 "DELETE FROM transactional_outbox WHERE id in (:ids)",
                 new MapSqlParameterSource("ids", messages.stream().map(OutboxMessage::getId).toList())
