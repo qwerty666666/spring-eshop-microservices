@@ -2,10 +2,10 @@ package com.example.eshop.messagerelay;
 
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.messagerelay.BrokerProducer;
-import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
@@ -23,9 +23,14 @@ import java.util.stream.IntStream;
  * outbox, or we should produce single messages without batching.
  */
 @Component
-@RequiredArgsConstructor
 public class DefaultKafkaProducer implements BrokerProducer {
     private final KafkaTemplate<String, byte[]> kafkaTemplate;
+
+    public DefaultKafkaProducer(KafkaTemplate<String, byte[]> kafkaTemplate) {
+        Objects.requireNonNull(kafkaTemplate, "kafkaTemplate is required");
+
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     @Override
     public List<OutboxMessage> apply(List<OutboxMessage> messages) {

@@ -30,7 +30,7 @@ public class MessageRelayServiceApplication {
                 var beanName = serviceName + "_MessageRelay";
 
                 context.registerBean(beanName, MessageRelay.class,
-                        () -> new DefaultMessageRelay(serviceName, dataSourceProperties, kafkaTemplate));
+                        () -> new DefaultMessageRelay(serviceName, dataSourceProperties.createDataSource(), kafkaTemplate));
 
                 // create bean and run it
                 context.getBean("warehouse_MessageRelay", MessageRelay.class).start();

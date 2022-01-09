@@ -12,6 +12,13 @@ import java.util.List;
  */
 public interface TransactionalOutbox {
     /**
+     * Enqueue new message
+     */
+    default void add(OutboxMessage message) {
+        add(List.of(message));
+    }
+
+    /**
      * Enqueue new messages
      */
     void add(List<OutboxMessage> messages);

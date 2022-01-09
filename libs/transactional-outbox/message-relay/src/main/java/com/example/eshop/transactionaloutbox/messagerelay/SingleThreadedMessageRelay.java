@@ -2,7 +2,9 @@ package com.example.eshop.transactionaloutbox.messagerelay;
 
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
+import lombok.extern.slf4j.Slf4j;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +25,9 @@ import java.util.concurrent.TimeUnit;
  * If you need to scale Message Relay, you should provide
  * {@code transactionalOutbox} with concurrent polling support.
  */
+@Slf4j
 public class SingleThreadedMessageRelay implements MessageRelay {
+    private final String name;
     private final TransactionalOutbox transactionalOutbox;
     private final BrokerProducer brokerProducer;
     private final int pollBatchSize;
@@ -33,18 +37,31 @@ public class SingleThreadedMessageRelay implements MessageRelay {
     private boolean isRunning = false;
 
     public SingleThreadedMessageRelay(
+            String name,
             TransactionalOutbox transactionalOutbox,
             BrokerProducer brokerProducer,
             int pollBatchSize,
             long pollPeriod,
             TimeUnit pollTimeUnit) {
+        Objects.requireNonNull(transactionalOutbox);
+        Objects.requireNonNull(brokerProducer);
+        if (pollBatchSize <= 0) {
+            throw new IllegalArgumentException("pollBatchSize should be positive");
+        }
+        if (pollPeriod <= 0) {
+            throw new IllegalArgumentException("pollPeriod should be positive");
+        }
+
+        this.name = name;
         this.transactionalOutbox = transactionalOutbox;
         this.pollBatchSize = pollBatchSize;
         this.brokerProducer = brokerProducer;
         this.pollPeriod = pollPeriod;
         this.pollTimeUnit = pollTimeUnit;
 
-        executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService = Executors.newSingleThreadScheduledExecutor(r ->
+                new Thread(r, "SingleThreadedMessageRelay-" + name)
+        );
     }
 
     @Override
@@ -52,6 +69,8 @@ public class SingleThreadedMessageRelay implements MessageRelay {
         if (isRunning) {
             return;
         }
+
+        log.info("start Message Relay '%s'".formatted(name));
 
         executorService.scheduleWithFixedDelay(this::publishMessages, 0, pollPeriod, pollTimeUnit);
         isRunning = true;
@@ -63,19 +82,28 @@ public class SingleThreadedMessageRelay implements MessageRelay {
             return;
         }
 
+        log.info("stop Message Relay '%s'".formatted(name));
+
         executorService.shutdown();
         isRunning = false;
+
+        log.info("Message Relay '%s' stopped".formatted(name));
     }
 
     private void publishMessages() {
-        List<OutboxMessage> newMessages;
+        try {
+            List<OutboxMessage> newMessages;
 
-        do {
-            newMessages = transactionalOutbox.getMessages(pollBatchSize);
+            do {
+                newMessages = transactionalOutbox.getMessages(pollBatchSize);
 
-            var publishedMessages = brokerProducer.apply(newMessages);
+                var publishedMessages = brokerProducer.apply(newMessages);
 
-            transactionalOutbox.remove(publishedMessages);
-        } while (newMessages.size() >= pollBatchSize);
+                transactionalOutbox.remove(publishedMessages);
+            } while (newMessages.size() >= pollBatchSize);
+        } catch (Exception e) {
+            // if exception occurs while scheduled executor service is running, it fails silently
+            log.error("publishMessages failed with exception", e);
+        }
     }
 }

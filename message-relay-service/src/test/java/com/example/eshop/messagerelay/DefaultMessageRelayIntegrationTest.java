@@ -1,0 +1,150 @@
+package com.example.eshop.messagerelay;
+
+import com.example.eshop.transactionaloutbox.OutboxMessage;
+import com.example.eshop.transactionaloutbox.TransactionalOutbox;
+import com.example.eshop.transactionaloutbox.messagerelay.MessageRelay;
+import com.example.eshop.transactionaloutbox.springdata.JdbcTemplateTransactionalOutbox;
+import lombok.SneakyThrows;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.DefaultKafkaConsumerFactoryCustomizer;
+import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.test.context.ActiveProfiles;
+import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+@TestInstance(Lifecycle.PER_CLASS)
+@SpringBootTest(properties = "logging.level.org.apache.kafka=info")
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase
+@EmbeddedKafka(
+        partitions = 1,
+        topics = DefaultMessageRelayIntegrationTest.TOPIC
+)
+class DefaultMessageRelayIntegrationTest {
+    public static final String TOPIC = "test_topic1";
+
+    @Configuration
+    @Import(KafkaAutoConfiguration.class)
+    public static class C {
+        @Bean
+        public DefaultKafkaProducerFactoryCustomizer addEmbeddedKafkaConfigsProducerCustomizer(EmbeddedKafkaBroker broker) {
+            return producerFactory -> {
+                producerFactory.setBootstrapServersSupplier(broker::getBrokersAsString);
+            };
+        }
+
+        @Bean
+        public DefaultKafkaConsumerFactoryCustomizer addEmbeddedKafkaConfigsConsumerCustomizer(EmbeddedKafkaBroker broker) {
+            return consumerFactory -> {
+                consumerFactory.setBootstrapServersSupplier(broker::getBrokersAsString);
+            };
+        }
+
+        @Bean
+        public Consumer<String, byte[]> kafkaConsumer(ConsumerFactory<String, byte[]> consumerFactory) {
+            var consumer = consumerFactory.createConsumer("testGroup");
+            consumer.subscribe(List.of(TOPIC));
+
+            return consumer;
+        }
+
+        @Bean
+        public TransactionalOutbox transactionalOutbox(DataSource dataSource) {
+            return new JdbcTemplateTransactionalOutbox(dataSource);
+        }
+
+        @Bean
+        public MessageRelay messageRelay(DataSource dataSource, KafkaTemplate<String, byte[]> kafkaTemplate) {
+            return new DefaultMessageRelay("test", dataSource, kafkaTemplate, 1, 1, TimeUnit.SECONDS);
+        }
+    }
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Autowired
+    private TransactionalOutbox transactionalOutbox;
+
+    @Autowired
+    private MessageRelay messageRelay;
+
+    @Autowired
+    private Consumer<String, byte[]> consumer;
+
+    @BeforeAll
+    void setUp() {
+        createOutboxTable();
+        startMessageRelay();
+    }
+
+    @SneakyThrows
+    private void createOutboxTable() {
+        dataSource.getConnection().createStatement().execute("""
+                create table transactional_outbox(
+                    id            bigint auto_increment,
+                    aggregate     varchar(255),
+                    aggregate_id  varchar(255),
+                    type          varchar(255),
+                    topic         varchar(255) not null,
+                    payload       bytea,
+                    key           bytea,
+                    request_id    varchar(255),
+                    creation_time timestamp not null
+                )"""
+        );
+    }
+
+    private void startMessageRelay() {
+        messageRelay.start();
+    }
+
+    @Test
+    void whenThereAreNewMessagesInOutbox_thenMessagesArePublishedToBroker() {
+        saveNewMessageToOutboxAndAssertMessageIsPublishedToBroker("testMessage_1");
+        saveNewMessageToOutboxAndAssertMessageIsPublishedToBroker("testMessage_2");
+    }
+
+    private void saveNewMessageToOutboxAndAssertMessageIsPublishedToBroker(String message) {
+        writeMessageToDatabase(message);
+        awaitNextMessageAndAssertEquals(message);
+    }
+
+    @SneakyThrows
+    private void writeMessageToDatabase(String message) {
+        transactionalOutbox.add(OutboxMessage.builder()
+                .topic(TOPIC)
+                .payload(message.getBytes(StandardCharsets.UTF_8))
+                .build()
+        );
+    }
+
+    @SneakyThrows
+    private void awaitNextMessageAndAssertEquals(String message) {
+        // wait for next message
+        var record = KafkaTestUtils.getSingleRecord(consumer, TOPIC);
+
+        assertNotEquals(null, record);
+        assertArrayEquals(message.getBytes(StandardCharsets.UTF_8), record.value());
+    }
+}

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * {@link TransactionalOutbox} implementation build on top of Spring's
@@ -25,6 +26,8 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public JdbcTemplateTransactionalOutbox(DataSource dataSource) {
+        Objects.requireNonNull(dataSource, "dataSource is required");
+
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
