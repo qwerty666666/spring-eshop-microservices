@@ -1,5 +1,6 @@
 package com.example.eshop.transactionaloutbox.springdata;
 
+import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
 import org.h2.jdbcx.JdbcDataSource;
@@ -27,10 +28,10 @@ class JdbcTemplateTransactionalOutboxTest {
     private static final String TOPIC = "topic";
     private static final byte[] PAYLOAD = new byte[] {};
     private static final String KEY = "key";
-    private static final String AGGREGATE = "aggregate";
+    private static final Class<?> AGGREGATE = Object.class;
     private static final String AGGREGATE_ID = "aggregateId";
     private static final String REQUEST_ID = "requestId";
-    private static final String TYPE = "type";
+    private static final Class<?> TYPE = Object.class;
     private static final Instant CREATION_TIME = LocalDate.parse("2016-04-17").atStartOfDay().toInstant(ZoneOffset.UTC);
     private static final OutboxMessage MESSAGE = new OutboxMessage(ID, AGGREGATE, AGGREGATE_ID, TYPE, TOPIC, KEY, PAYLOAD,
             REQUEST_ID, CREATION_TIME);
@@ -80,10 +81,10 @@ class JdbcTemplateTransactionalOutboxTest {
         assertEquals(ID, rs.getInt("id"));
         assertEquals(TOPIC, rs.getString("topic"));
         assertArrayEquals(PAYLOAD, rs.getBytes("payload"));
-        assertEquals(AGGREGATE, rs.getString("aggregate"));
+        assertEquals(AGGREGATE.getName(), rs.getString("aggregate"));
         assertEquals(AGGREGATE_ID, rs.getString("aggregate_id"));
         assertEquals(REQUEST_ID, rs.getString("request_id"));
-        assertEquals(TYPE, rs.getString("type"));
+        assertEquals(TYPE.getName(), rs.getString("type"));
         assertEquals(CREATION_TIME, rs.getTimestamp("creation_time").toInstant());
 
         assertFalse(rs.next());
@@ -123,9 +124,9 @@ class JdbcTemplateTransactionalOutboxTest {
                  insert into transactional_outbox(id, aggregate, aggregate_id, type, topic, payload, request_id, creation_time)
                  values (?, ?, ?, ?, ?, ?, ?, ?)""");
         ps.setInt(1, ID);
-        ps.setString(2, AGGREGATE);
+        ps.setString(2, AGGREGATE.getName());
         ps.setString(3, AGGREGATE_ID);
-        ps.setString(4, TYPE);
+        ps.setString(4, TYPE.getName());
         ps.setString(5, TOPIC);
         ps.setObject(6, PAYLOAD);
         ps.setString(7, REQUEST_ID);

@@ -2,15 +2,18 @@ package com.example.eshop.transactionaloutbox.springdata;
 
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
+import lombok.SneakyThrows;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * {@link TransactionalOutbox} implementation build on top of Spring's
@@ -39,9 +42,9 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
                 VALUES (:aggregate, :aggregate_id, :type, :topic, :payload, :request_id, :creation_time)""",
                 messages.stream()
                         .map(message -> new MapSqlParameterSource()
-                                .addValue("aggregate", message.getAggregate())
+                                .addValue("aggregate", Optional.ofNullable(message.getAggregate()).map(Class::getName).orElse(null))
                                 .addValue("aggregate_id", message.getAggregateId())
-                                .addValue("type", message.getType())
+                                .addValue("type", Optional.ofNullable(message.getType()).map(Class::getName).orElse(null))
                                 .addValue("topic", message.getTopic())
                                 .addValue("payload", message.getPayload())
                                 .addValue("request_id", message.getRequestId())
@@ -56,17 +59,22 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
         return jdbcTemplate.query(
                 "SELECT * FROM transactional_outbox ORDER BY id LIMIT :limit",
                 new MapSqlParameterSource("limit", limit),
-                (rs, rowNum) -> new OutboxMessage(
-                        rs.getInt("id"),
-                        rs.getString("aggregate"),
-                        rs.getString("aggregate_id"),
-                        rs.getString("type"),
-                        rs.getString("topic"),
-                        rs.getString("key"),
-                        rs.getBytes("payload"),
-                        rs.getString("request_id"),
-                        rs.getTimestamp("creation_time").toInstant()
-                )
+                (rs, rowNum) -> createOutboxMessage(rs)
+        );
+    }
+
+    @SneakyThrows
+    private OutboxMessage createOutboxMessage(ResultSet rs) {
+        return new OutboxMessage(
+                rs.getInt("id"),
+                rs.getString("aggregate") == null ? null : Class.forName(rs.getString("aggregate")),
+                rs.getString("aggregate_id"),
+                rs.getString("type") == null ? null : Class.forName(rs.getString("type")),
+                rs.getString("topic"),
+                rs.getString("key"),
+                rs.getBytes("payload"),
+                rs.getString("request_id"),
+                rs.getTimestamp("creation_time").toInstant()
         );
     }
 

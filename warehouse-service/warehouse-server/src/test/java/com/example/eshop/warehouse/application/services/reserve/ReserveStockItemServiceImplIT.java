@@ -104,7 +104,7 @@ class ReserveStockItemServiceImplIT {
 
     @SneakyThrows
     private void assertOutboxMessageEqualsTo(OutboxMessage message, Object expectedPayloadObject) {
-        assertThat(message.getType()).isEqualTo(expectedPayloadObject.getClass().getName());
+        assertThat(message.getType()).isEqualTo(expectedPayloadObject.getClass());
 
         var event = objectMapper.readValue(message.getPayload(), expectedPayloadObject.getClass());
         assertThat(event).isEqualTo(expectedPayloadObject);

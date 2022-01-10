@@ -4,6 +4,7 @@ import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.base.DomainEvent;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import lombok.RequiredArgsConstructor;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class DefaultOutboxMessageFactory implements OutboxMessageFactory {
@@ -16,9 +17,9 @@ public class DefaultOutboxMessageFactory implements OutboxMessageFactory {
                 .topic(topic)
                 .payload(eventSerializer.apply(event))
                 .key(key)
-                .type(event.getClass().getName())
-                .aggregate(sourceAggregate.getClass().getName())
-                .aggregateId(sourceAggregate.getId() == null ? null : sourceAggregate.getId().toString())
+                .type(event.getClass())
+                .aggregate(sourceAggregate.getClass())
+                .aggregateId(Optional.ofNullable(sourceAggregate.getId()).map(Object::toString).orElse(null))
                 .requestId(requestIdSupplier.get())
                 .build();
     }

@@ -35,9 +35,9 @@ class DefaultOutboxMessageFactoryTest {
         Assertions.assertArrayEquals(serializedEvent, message.getPayload());
         Assertions.assertEquals(key, message.getKey());
         Assertions.assertEquals(requestId, message.getRequestId());
-        Assertions.assertEquals(Aggregate.class.getName(), message.getAggregate());
+        Assertions.assertEquals(Aggregate.class, message.getAggregate());
         Assertions.assertEquals(aggregateId, message.getAggregateId());
-        Assertions.assertEquals(Event.class.getName(), message.getType());
+        Assertions.assertEquals(Event.class, message.getType());
     }
 
     private static class Event implements DomainEvent {}
