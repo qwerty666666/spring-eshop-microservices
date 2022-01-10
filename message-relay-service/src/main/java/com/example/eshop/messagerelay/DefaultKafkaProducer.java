@@ -2,10 +2,14 @@ package com.example.eshop.messagerelay;
 
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.messagerelay.BrokerProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.converter.AbstractJavaTypeMapper;
 import org.springframework.stereotype.Component;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
@@ -35,7 +39,7 @@ public class DefaultKafkaProducer implements BrokerProducer {
     @Override
     public List<OutboxMessage> apply(List<OutboxMessage> messages) {
         var futures = messages.stream()
-                .map(message -> kafkaTemplate.send(message.getTopic(), message.getPayload()).completable())
+                .map(message -> kafkaTemplate.send(createRecord(message)).completable())
                 .toList();
 
         try {
@@ -48,5 +52,16 @@ public class DefaultKafkaProducer implements BrokerProducer {
                 .filter(i -> !futures.get(i).isCompletedExceptionally())
                 .mapToObj(messages::get)
                 .toList();
+    }
+
+    private ProducerRecord<String, byte[]> createRecord(OutboxMessage message) {
+        var record = new ProducerRecord<String, byte[]>(message.getTopic(), message.getPayload());
+
+        var contentClass = Optional.ofNullable(message.getType())
+                .map(type -> type.getName().getBytes(StandardCharsets.UTF_8))
+                .orElse(null);
+        record.headers().add(AbstractJavaTypeMapper.DEFAULT_CLASSID_FIELD_NAME, contentClass);
+
+        return record;
     }
 }

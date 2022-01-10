@@ -4,6 +4,7 @@ import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
 import com.example.eshop.transactionaloutbox.messagerelay.MessageRelay;
 import com.example.eshop.transactionaloutbox.springdata.JdbcTemplateTransactionalOutbox;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaConsumerFactoryCustomizer;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
@@ -26,15 +28,16 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
 import javax.sql.DataSource;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @TestInstance(Lifecycle.PER_CLASS)
-@SpringBootTest(properties = "logging.level.org.apache.kafka=info")
+@SpringBootTest(properties = {
+        "logging.level.org.apache.kafka=info"  // hide listener log noise
+})
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
 @EmbeddedKafka(
@@ -42,10 +45,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
         topics = DefaultMessageRelayIntegrationTest.TOPIC
 )
 class DefaultMessageRelayIntegrationTest {
-    public static final String TOPIC = "test_topic1";
+    public static final String TOPIC = "test_topic";
 
     @Configuration
-    @Import(KafkaAutoConfiguration.class)
+    @Import({ KafkaAutoConfiguration.class, JacksonAutoConfiguration.class })
     public static class C {
         @Bean
         public DefaultKafkaProducerFactoryCustomizer addEmbeddedKafkaConfigsProducerCustomizer(EmbeddedKafkaBroker broker) {
@@ -62,10 +65,9 @@ class DefaultMessageRelayIntegrationTest {
         }
 
         @Bean
-        public Consumer<String, byte[]> kafkaConsumer(ConsumerFactory<String, byte[]> consumerFactory) {
+        public Consumer<String, Message> kafkaConsumer(ConsumerFactory<String, Message> consumerFactory) {
             var consumer = consumerFactory.createConsumer("testGroup");
             consumer.subscribe(List.of(TOPIC));
-
             return consumer;
         }
 
@@ -90,7 +92,10 @@ class DefaultMessageRelayIntegrationTest {
     private MessageRelay messageRelay;
 
     @Autowired
-    private Consumer<String, byte[]> consumer;
+    private Consumer<String, Message> consumer;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     void setUp() {
@@ -121,30 +126,34 @@ class DefaultMessageRelayIntegrationTest {
 
     @Test
     void whenThereAreNewMessagesInOutbox_thenMessagesArePublishedToBroker() {
-        saveNewMessageToOutboxAndAssertMessageIsPublishedToBroker("testMessage_1");
-        saveNewMessageToOutboxAndAssertMessageIsPublishedToBroker("testMessage_2");
+        saveNewMessageToOutboxAndAssertMessageIsPublishedToBroker(new Message("testMessage_1"));
+        saveNewMessageToOutboxAndAssertMessageIsPublishedToBroker(new Message("testMessage_2"));
     }
 
-    private void saveNewMessageToOutboxAndAssertMessageIsPublishedToBroker(String message) {
+    private void saveNewMessageToOutboxAndAssertMessageIsPublishedToBroker(Message message) {
         writeMessageToDatabase(message);
         awaitNextMessageAndAssertEquals(message);
     }
 
     @SneakyThrows
-    private void writeMessageToDatabase(String message) {
+    private void writeMessageToDatabase(Message message) {
         transactionalOutbox.add(OutboxMessage.builder()
                 .topic(TOPIC)
-                .payload(message.getBytes(StandardCharsets.UTF_8))
+                .payload(objectMapper.writeValueAsBytes(message))
+                .type(message.getClass())
                 .build()
         );
     }
 
     @SneakyThrows
-    private void awaitNextMessageAndAssertEquals(String message) {
+    private void awaitNextMessageAndAssertEquals(Message message) {
         // wait for next message
         var record = KafkaTestUtils.getSingleRecord(consumer, TOPIC);
 
         assertNotEquals(null, record);
-        assertArrayEquals(message.getBytes(StandardCharsets.UTF_8), record.value());
+        assertEquals(message, record.value());
+    }
+
+    private record Message(String message) {
     }
 }
