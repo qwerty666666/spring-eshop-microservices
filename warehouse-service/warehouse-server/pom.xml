@@ -23,9 +23,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.example.eshop.warehouse</groupId>
+            <groupId>com.example.eshop</groupId>
             <artifactId>warehouse-client</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>transactional-outbox-spring-data</artifactId>
+            <version>${transactional-outbox.version}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -68,11 +73,6 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.example.eshop</groupId>
-            <artifactId>transactional-outbox-spring-data</artifactId>
-            <version>${transactional-outbox.version}</version>
         </dependency>
 
         <!-- Kafka -->
