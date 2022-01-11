@@ -3,7 +3,7 @@ package com.example.eshop.warehouse.application.services.reserve;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
-import com.example.eshop.transactionaloutbox.outboxmessagefactory.OutboxMessageFactory;
+import com.example.eshop.transactionaloutbox.outboxmessagefactory.DomainEventOutboxMessageFactory;
 import com.example.eshop.warehouse.client.WarehouseApi;
 import com.example.eshop.warehouse.application.services.reserve.ReserveResult.InsufficientQuantityError;
 import com.example.eshop.warehouse.application.services.reserve.ReserveResult.ReservingError;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class ReserveStockItemServiceImpl implements ReserveStockItemService {
     private final StockItemRepository stockItemRepository;
     private final TransactionalOutbox transactionalOutbox;
-    private final OutboxMessageFactory outboxMessageFactory;
+    private final DomainEventOutboxMessageFactory outboxMessageFactory;
     private final PlatformTransactionManager txManager;
 
     @Override

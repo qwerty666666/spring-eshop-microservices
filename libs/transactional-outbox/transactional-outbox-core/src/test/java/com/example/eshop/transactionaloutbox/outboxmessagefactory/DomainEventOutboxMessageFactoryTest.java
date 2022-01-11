@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DefaultOutboxMessageFactoryTest {
+class DomainEventOutboxMessageFactoryTest {
     @Test
     void testMessageIsCreated() {
         // Given
@@ -21,7 +21,7 @@ class DefaultOutboxMessageFactoryTest {
         var requestId = "requestId";
         RequestIdSupplier requestIdSupplier = () -> requestId;
 
-        var factory = new DefaultOutboxMessageFactory(eventSerializer, requestIdSupplier);
+        var factory = new DomainEventOutboxMessageFactory(eventSerializer, requestIdSupplier);
 
         var topic = "topic";
         var key = "key";

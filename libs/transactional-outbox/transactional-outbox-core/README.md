@@ -61,7 +61,7 @@ which will fill aggregate source fields by itself.
 AggregateRoot sourceAggregate = ...;
 DomainEvent event = ...;
 
-OutboxMessagefactory messageFactory = new DefaultOutboxMessageFactory(
+var messageFactory = new DomainEventOutboxMessageFactory(
         event -> toJson(event),        // DomainEvent serializer
         () -> getCurrentRequestId()    // Request ID Supplier
 );

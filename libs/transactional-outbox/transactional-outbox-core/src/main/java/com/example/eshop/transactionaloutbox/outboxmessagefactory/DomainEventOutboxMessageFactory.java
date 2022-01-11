@@ -4,15 +4,26 @@ import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.base.DomainEvent;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import lombok.RequiredArgsConstructor;
+import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * {@link OutboxMessage} factory for DDD {@link DomainEvent}
+ */
 @RequiredArgsConstructor
-public class DefaultOutboxMessageFactory implements OutboxMessageFactory {
+public class DomainEventOutboxMessageFactory {
     private final EventSerializer eventSerializer;
     private final RequestIdSupplier requestIdSupplier;
 
-    @Override
+    public OutboxMessage create(String topic, DomainEvent event, AggregateRoot<?> sourceAggregate) {
+        return create(topic, event, sourceAggregate, null);
+    }
+
     public OutboxMessage create(String topic, DomainEvent event, AggregateRoot<?> sourceAggregate, String key) {
+        Objects.requireNonNull(topic, "topic is required");
+        Objects.requireNonNull(event, "event is required");
+        Objects.requireNonNull(sourceAggregate, "sourceAggregate is required");
+
         return OutboxMessage.builder()
                 .topic(topic)
                 .payload(eventSerializer.apply(event))
