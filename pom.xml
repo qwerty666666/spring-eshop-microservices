@@ -25,9 +25,7 @@
         <module>cart</module>
         <module>sales</module>
         <module>shared-test</module>
-        <module>libs/transactional-outbox/message-relay</module>
-        <module>libs/transactional-outbox/transactional-outbox-core</module>
-        <module>libs/transactional-outbox/transactional-outbox-spring-data</module>
+        <module>libs/transactional-outbox</module>
         <module>warehouse-service</module>
         <module>message-relay-service</module>
     </modules>

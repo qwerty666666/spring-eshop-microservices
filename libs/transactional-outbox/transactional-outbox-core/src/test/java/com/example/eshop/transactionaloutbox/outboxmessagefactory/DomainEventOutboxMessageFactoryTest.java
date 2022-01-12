@@ -3,13 +3,10 @@ package com.example.eshop.transactionaloutbox.outboxmessagefactory;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.base.DomainEvent;
 import com.example.eshop.sharedkernel.domain.base.DomainObjectId;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.lang.Nullable;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DomainEventOutboxMessageFactoryTest {
     @Test
@@ -31,13 +28,13 @@ class DomainEventOutboxMessageFactoryTest {
         var message = factory.create(topic, new Event(), new Aggregate(new Id(aggregateId)), key);
 
         // Then
-        Assertions.assertEquals(topic, message.getTopic());
-        Assertions.assertArrayEquals(serializedEvent, message.getPayload());
-        Assertions.assertEquals(key, message.getKey());
-        Assertions.assertEquals(requestId, message.getRequestId());
-        Assertions.assertEquals(Aggregate.class, message.getAggregate());
-        Assertions.assertEquals(aggregateId, message.getAggregateId());
-        Assertions.assertEquals(Event.class, message.getType());
+        assertEquals(topic, message.getTopic());
+        assertArrayEquals(serializedEvent, message.getPayload());
+        assertEquals(key, message.getKey());
+        assertEquals(requestId, message.getRequestId());
+        assertEquals(Aggregate.class.getName(), message.getAggregate());
+        assertEquals(aggregateId, message.getAggregateId());
+        assertEquals(Event.class.getName(), message.getType());
     }
 
     private static class Event implements DomainEvent {}
@@ -55,7 +52,6 @@ class DomainEventOutboxMessageFactoryTest {
             this.id = id;
         }
 
-        @Nullable
         @Override
         public Id getId() {
             return id;

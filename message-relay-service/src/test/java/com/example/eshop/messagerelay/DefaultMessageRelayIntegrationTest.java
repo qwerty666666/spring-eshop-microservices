@@ -140,7 +140,7 @@ class DefaultMessageRelayIntegrationTest {
         transactionalOutbox.add(OutboxMessage.builder()
                 .topic(TOPIC)
                 .payload(objectMapper.writeValueAsBytes(message))
-                .type(message.getClass())
+                .type(message.getClass().getName())
                 .build()
         );
     }

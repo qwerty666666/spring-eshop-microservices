@@ -12,10 +12,10 @@ import java.time.Instant;
 public class OutboxMessage {
     private final Integer id;
 
-    private final Class<?> aggregate;
+    private final String aggregate;
     private final String aggregateId;
 
-    private final Class<?> type;
+    private final String type;
 
     private final String topic;
     private final String key;
@@ -24,7 +24,7 @@ public class OutboxMessage {
     private final String requestId;
     private final Instant creationTime;
 
-    public OutboxMessage(Integer id, Class<?> aggregate, String aggregateId, Class<?> type, String topic, String key,
+    public OutboxMessage(Integer id, String aggregate, String aggregateId, String type, String topic, String key,
             byte[] payload, String requestId, Instant creationTime) {
         this.id = id;
         this.aggregate = aggregate;
@@ -60,11 +60,11 @@ public class OutboxMessage {
         @Setter
         private String key;
         @Setter
-        private Class<?> aggregate;
+        private String aggregate;
         @Setter
         private String aggregateId;
         @Setter
-        private Class<?> type;
+        private String type;
         @Setter
         private String requestId;
 

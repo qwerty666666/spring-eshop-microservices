@@ -58,7 +58,7 @@ public class DefaultKafkaProducer implements BrokerProducer {
         var record = new ProducerRecord<String, byte[]>(message.getTopic(), message.getPayload());
 
         var contentClass = Optional.ofNullable(message.getType())
-                .map(type -> type.getName().getBytes(StandardCharsets.UTF_8))
+                .map(type -> type.getBytes(StandardCharsets.UTF_8))
                 .orElse(null);
         record.headers().add(AbstractJavaTypeMapper.DEFAULT_CLASSID_FIELD_NAME, contentClass);
 

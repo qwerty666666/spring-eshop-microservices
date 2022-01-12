@@ -28,8 +28,8 @@ public class DomainEventOutboxMessageFactory {
                 .topic(topic)
                 .payload(eventSerializer.apply(event))
                 .key(key)
-                .type(event.getClass())
-                .aggregate(sourceAggregate.getClass())
+                .type(event.getClass().getName())
+                .aggregate(sourceAggregate.getClass().getName())
                 .aggregateId(Optional.ofNullable(sourceAggregate.getId()).map(Object::toString).orElse(null))
                 .requestId(requestIdSupplier.get())
                 .build();

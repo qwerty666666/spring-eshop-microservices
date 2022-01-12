@@ -17,6 +17,7 @@
 
         <junit.version>5.8.2</junit.version>
         <h2.version>1.4.194</h2.version>
+        <spring-jdbc.version>5.3.13</spring-jdbc.version>
     </properties>
 
     <dependencies>
@@ -26,8 +27,13 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Tests -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring-jdbc.version}</version>
+        </dependency>
 
+        <!-- Tests -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

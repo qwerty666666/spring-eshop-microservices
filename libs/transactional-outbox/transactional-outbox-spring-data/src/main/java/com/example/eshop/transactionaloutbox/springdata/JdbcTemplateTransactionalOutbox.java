@@ -13,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * {@link TransactionalOutbox} implementation build on top of Spring's
@@ -42,9 +41,9 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
                 VALUES (:aggregate, :aggregate_id, :type, :topic, :payload, :request_id, :creation_time)""",
                 messages.stream()
                         .map(message -> new MapSqlParameterSource()
-                                .addValue("aggregate", Optional.ofNullable(message.getAggregate()).map(Class::getName).orElse(null))
+                                .addValue("aggregate", message.getAggregate())
                                 .addValue("aggregate_id", message.getAggregateId())
-                                .addValue("type", Optional.ofNullable(message.getType()).map(Class::getName).orElse(null))
+                                .addValue("type", message.getType())
                                 .addValue("topic", message.getTopic())
                                 .addValue("payload", message.getPayload())
                                 .addValue("request_id", message.getRequestId())
@@ -67,9 +66,9 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
     private OutboxMessage createOutboxMessage(ResultSet rs) {
         return new OutboxMessage(
                 rs.getInt("id"),
-                rs.getString("aggregate") == null ? null : Class.forName(rs.getString("aggregate")),
+                rs.getString("aggregate"),
                 rs.getString("aggregate_id"),
-                rs.getString("type") == null ? null : Class.forName(rs.getString("type")),
+                rs.getString("type"),
                 rs.getString("topic"),
                 rs.getString("key"),
                 rs.getBytes("payload"),
