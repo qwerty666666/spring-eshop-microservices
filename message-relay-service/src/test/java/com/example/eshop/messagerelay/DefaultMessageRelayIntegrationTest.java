@@ -42,7 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @AutoConfigureTestDatabase
 @EmbeddedKafka(
         partitions = 1,
-        topics = DefaultMessageRelayIntegrationTest.TOPIC
+        topics = DefaultMessageRelayIntegrationTest.TOPIC,
+        bootstrapServersProperty = "spring.kafka.bootstrap-servers"
 )
 class DefaultMessageRelayIntegrationTest {
     public static final String TOPIC = "test_topic";
@@ -50,20 +51,6 @@ class DefaultMessageRelayIntegrationTest {
     @Configuration
     @Import({ KafkaAutoConfiguration.class, JacksonAutoConfiguration.class })
     public static class C {
-        @Bean
-        public DefaultKafkaProducerFactoryCustomizer addEmbeddedKafkaConfigsProducerCustomizer(EmbeddedKafkaBroker broker) {
-            return producerFactory -> {
-                producerFactory.setBootstrapServersSupplier(broker::getBrokersAsString);
-            };
-        }
-
-        @Bean
-        public DefaultKafkaConsumerFactoryCustomizer addEmbeddedKafkaConfigsConsumerCustomizer(EmbeddedKafkaBroker broker) {
-            return consumerFactory -> {
-                consumerFactory.setBootstrapServersSupplier(broker::getBrokersAsString);
-            };
-        }
-
         @Bean
         public Consumer<String, Message> kafkaConsumer(ConsumerFactory<String, Message> consumerFactory) {
             var consumer = consumerFactory.createConsumer("testGroup");
