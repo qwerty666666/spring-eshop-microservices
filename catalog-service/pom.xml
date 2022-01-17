@@ -17,6 +17,7 @@
 
     <modules>
         <module>catalog-client</module>
+        <module>catalog-server</module>
     </modules>
 
     <properties>

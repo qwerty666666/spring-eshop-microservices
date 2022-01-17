@@ -3,24 +3,32 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>catalog</artifactId>
-
     <parent>
         <groupId>com.example.eshop</groupId>
-        <artifactId>eshop</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <artifactId>catalog-service</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
+
+    <artifactId>catalog-server</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <description>Catalog service</description>
+
+    <properties>
+        <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
+        <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
+        <warehouse-service.version>1.0.0-SNAPSHOT</warehouse-service.version>
+        <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>warehouse-client</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${warehouse-service.version}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -81,7 +89,7 @@
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-test</artifactId>
-            <version>${project.version}</version>
+            <version>${shared-test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -20,11 +20,6 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>catalog</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.example.eshop</groupId>
             <artifactId>customer</artifactId>
             <version>${project.version}</version>
         </dependency>

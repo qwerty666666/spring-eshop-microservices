@@ -15,6 +15,7 @@
     <properties>
         <checkout-service.verison>1.0.0-SNAPSHOT</checkout-service.verison>
         <warehouse-service.verison>1.0.0-SNAPSHOT</warehouse-service.verison>
+        <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
     </properties>
 
     <dependencies>
@@ -25,8 +26,8 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>catalog</artifactId>
-            <version>${project.version}</version>
+            <artifactId>catalog-server</artifactId>
+            <version>${catalog-service.verison}</version>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>

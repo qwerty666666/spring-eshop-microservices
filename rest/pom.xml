@@ -17,6 +17,7 @@
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <springdoc.version>1.5.12</springdoc.version>
         <sentry.version>5.4.3</sentry.version>
+        <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
     </properties>
 
     <dependencies>
@@ -27,8 +28,8 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>catalog</artifactId>
-            <version>${project.version}</version>
+            <artifactId>catalog-server</artifactId>
+            <version>${catalog-service.verison}</version>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
@@ -163,7 +164,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
             </plugin>
 
             <plugin>
