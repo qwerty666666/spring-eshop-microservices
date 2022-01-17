@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS stock_items_ean_idx ON stock_items (ean);
