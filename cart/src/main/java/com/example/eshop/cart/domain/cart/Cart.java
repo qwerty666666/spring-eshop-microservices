@@ -76,7 +76,7 @@ public class Cart extends AggregateRoot<Long> {
         items = cart.items.values().stream()
                 .collect(Collectors.toMap(
                         CartItem::getEan,
-                        item -> new CartItem(this, item.getEan(), item.getPrice(), item.getQuantity()),
+                        item -> new CartItem(this, item.getEan(), item.getItemPrice(), item.getQuantity()),
                         (e1, e2) -> e1,
                         LinkedHashMap::new
                 ));
@@ -178,6 +178,15 @@ public class Cart extends AggregateRoot<Long> {
         this.items.clear();
 
         log.info("Clear cart");
+    }
+
+    /**
+     * @return price of all {@link Cart#items}
+     */
+    public Money getTotalPrice() {
+        return getItems().stream()
+                .map(CartItem::getTotalPrice)
+                .reduce(Money.ZERO, Money::add);
     }
 
     @Override

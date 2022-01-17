@@ -74,7 +74,7 @@ public class Assertions {
         // available quantity
         assertThat(dto.getAvailableQuantity()).isEqualTo(sku.getAvailableQuantity());
         // price
-        Assertions.assertPriceEquals(item.getPrice(), dto.getPrice());
+        Assertions.assertPriceEquals(item.getItemPrice(), dto.getPrice());
         // images
         Assertions.assertImageEquals(product.getImages(), dto.getImages());
         // attributes

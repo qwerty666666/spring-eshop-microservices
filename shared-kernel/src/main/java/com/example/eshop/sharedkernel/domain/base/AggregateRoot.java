@@ -1,7 +1,6 @@
 package com.example.eshop.sharedkernel.domain.base;
 
 import org.springframework.data.domain.DomainEvents;
-import org.springframework.lang.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,21 +17,12 @@ import java.util.List;
  * used when changed Entities are implicitly flushed on transaction commits).
  */
 public abstract class AggregateRoot<ID extends Serializable> implements Entity<ID> {
-    @Nullable
-    private transient List<DomainEvent> domainEvents;
-
-    private void reinitDomainEvents() {
-        domainEvents = new ArrayList<>();
-    }
+    private transient List<DomainEvent> domainEvents = new ArrayList<>();
 
     /**
      * Add {@code event} to list.
      */
     protected void registerDomainEvent(DomainEvent event) {
-        if (domainEvents == null) {
-            reinitDomainEvents();
-        }
-
         domainEvents.add(event);
     }
 
@@ -40,10 +30,34 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * @return domain events, that were registered in this Aggregate
      */
     public List<DomainEvent> getDomainEventsAndClear() {
-        var events = domainEvents;
+        var events = new ArrayList<>(domainEvents);
 
-        reinitDomainEvents();
+        clearDomainEvents();
 
         return events;
+    }
+
+    /**
+     * Returns domain events for the given type and removes them from list
+     */
+    public <T extends DomainEvent> List<T> getDomainEventsAndRemove(Class<T> type) {
+        var foundEvents = new ArrayList<T>();
+        var remainingEvents = new ArrayList<DomainEvent>();
+
+        for (var event: domainEvents) {
+            if (type.isAssignableFrom(event.getClass())) {
+                foundEvents.add((T) event);
+            } else {
+                remainingEvents.add(event);
+            }
+        }
+
+        domainEvents = remainingEvents;
+
+        return foundEvents;
+    }
+
+    private void clearDomainEvents() {
+        domainEvents.clear();
     }
 }

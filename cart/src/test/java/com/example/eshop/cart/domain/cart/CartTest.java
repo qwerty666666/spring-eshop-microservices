@@ -87,4 +87,18 @@ class CartTest {
         // Then
         assertThat(cart.getItems()).isEmpty();
     }
+
+    @Test
+    void whenGetTotalPrice_thenReturnPriceOfAllCartItems() {
+        // Given
+        var cart = new Cart("customerId");
+        cart.addItem(Ean.fromString("1111111111111"), Money.USD(5), 2);
+        cart.addItem(Ean.fromString("2222222222222"), Money.USD(3), 1);
+
+        // When
+        var totalPrice = cart.getTotalPrice();
+
+        // Then
+        assertThat(totalPrice).isEqualTo(Money.USD(13));
+    }
 }

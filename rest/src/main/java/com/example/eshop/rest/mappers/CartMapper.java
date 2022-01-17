@@ -58,6 +58,6 @@ public abstract class CartMapper {
     @Mapping(target = "attributes", source = "sku.attributes", conditionExpression = "java(sku != null)")
     @Mapping(target = "availableQuantity", source = "sku.availableQuantity", conditionExpression = "java(sku != null)")
     @Mapping(target = "ean", source = "cartItem.ean")
-    @Mapping(target = "price", source = "cartItem.price")
+    @Mapping(target = "price", source = "cartItem.itemPrice")
     public abstract CartItemDto toCartItemDto(CartItem cartItem, @Nullable Product product, @Nullable Sku sku);
 }

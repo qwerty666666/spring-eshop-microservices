@@ -61,7 +61,7 @@ public interface OrderPlacedEventMapper {
 
     Address toAddress(DeliveryAddress address);
 
-    @Mapping(target = "itemPrice", source = "item.price")
+    @Mapping(target = "itemPrice", source = "item.itemPrice")
     OrderLine toOrderLine(CartItem item, ProductInfo productInfo);
 
     default OrderLineAttribute toOrderLineAttribute(ProductAttribute attr) {

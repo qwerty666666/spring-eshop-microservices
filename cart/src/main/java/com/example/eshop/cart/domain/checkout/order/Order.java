@@ -5,9 +5,11 @@ import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.sharedkernel.domain.base.ValueObject;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -45,5 +47,17 @@ public final class Order implements ValueObject {
         } else {
             this.shipmentInfo = null;
         }
+    }
+
+    /**
+     * @return total price of the Order
+     */
+    public Money getTotalPrice() {
+        var cartPrice = cart.getTotalPrice();
+        var deliveryPrice = Optional.ofNullable(shipmentInfo)
+                .map(ShipmentInfo::price)
+                .orElse(Money.ZERO);
+
+        return cartPrice.add(deliveryPrice);
     }
 }

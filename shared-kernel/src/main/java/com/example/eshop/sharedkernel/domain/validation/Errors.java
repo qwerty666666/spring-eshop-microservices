@@ -1,5 +1,6 @@
 package com.example.eshop.sharedkernel.domain.validation;
 
+import lombok.EqualsAndHashCode;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@EqualsAndHashCode
 public class Errors implements Iterable<Error>, Serializable {
     private final Map<String, List<Error>> fieldsErrors = new LinkedHashMap<>();
 

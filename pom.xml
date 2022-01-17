@@ -21,11 +21,14 @@
         <module>shared-kernel</module>
         <module>catalog</module>
         <module>rest</module>
-        <module>warehouse</module>
         <module>customer</module>
         <module>cart</module>
         <module>sales</module>
         <module>shared-test</module>
+        <module>libs/transactional-outbox</module>
+        <module>warehouse-service</module>
+        <module>message-relay-service</module>
+        <module>checkout-service</module>
     </modules>
 
     <properties>
@@ -37,53 +40,11 @@
         <p6spy-spring-boot-starter.version>1.7.1</p6spy-spring-boot-starter.version>
         <spring-data-jpa-entity-graph.version>2.5.0</spring-data-jpa-entity-graph.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <passay.version>1.6.1</passay.version>
-        <rider-spring.version>1.25.0</rider-spring.version>
         <hibernate-types-52.version>2.14.0</hibernate-types-52.version>
-        <testcontainers.version>1.16.2</testcontainers.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 
         <integration.tests.tag>IntegrationTest</integration.tests.tag>
     </properties>
-
-    <dependencies>
-        <!-- Devtools -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Third party -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Tests -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-    </dependencies>
 
     <dependencyManagement>
         <dependencies>
@@ -116,22 +77,15 @@
                 <version>${mapstruct.version}</version>
             </dependency>
 
-            <!-- Security -->
+            <!-- Tests -->
             <dependency>
-                <groupId>org.passay</groupId>
-                <artifactId>passay</artifactId>
-                <version>${passay.version}</version>
-            </dependency>
-
-            <!-- Test -->
-            <dependency>
-                <groupId>com.github.database-rider</groupId>
-                <artifactId>rider-spring</artifactId>
-                <version>${rider-spring.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-collections4</artifactId>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

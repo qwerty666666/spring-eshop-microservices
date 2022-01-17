@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PlaceOrderValidator {
     public static final String CART_FIELD = "cart";
+    public static final String CART_ITEMS_FIELD = CART_FIELD + ".items";
     public static final String ADDRESS_FIELD = "address";
     public static final String ADDRESS_FULLNAME_FIELD = ADDRESS_FIELD + ".fullname";
     public static final String ADDRESS_PHONE_FIELD = ADDRESS_FIELD + ".phone";
