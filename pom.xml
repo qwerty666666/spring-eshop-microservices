@@ -28,6 +28,7 @@
         <module>libs/transactional-outbox</module>
         <module>warehouse-service</module>
         <module>message-relay-service</module>
+        <module>checkout-service</module>
     </modules>
 
     <properties>

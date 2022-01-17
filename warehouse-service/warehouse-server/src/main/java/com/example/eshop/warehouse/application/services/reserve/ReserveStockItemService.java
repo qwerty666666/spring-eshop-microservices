@@ -1,6 +1,7 @@
 package com.example.eshop.warehouse.application.services.reserve;
 
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import com.example.eshop.warehouse.domain.StockItem;
 import com.example.eshop.warehouse.domain.StockQuantity;
 import java.util.Map;
@@ -12,5 +13,5 @@ public interface ReserveStockItemService {
     /**
      * Reserve quantity for the given {@link StockItem}s
      */
-    ReserveResult reserve(Map<Ean, StockQuantity> reserveQuantity);
+    ReservationResult reserve(Map<Ean, StockQuantity> reserveQuantity);
 }

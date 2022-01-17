@@ -4,10 +4,11 @@ import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
 import com.example.eshop.transactionaloutbox.outboxmessagefactory.DomainEventOutboxMessageFactory;
+import com.example.eshop.warehouse.client.reservationresult.InsufficientQuantityError;
+import com.example.eshop.warehouse.client.reservationresult.ReservationError;
+import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
+import com.example.eshop.warehouse.client.reservationresult.StockItemNotFoundError;
 import com.example.eshop.warehouse.client.WarehouseApi;
-import com.example.eshop.warehouse.application.services.reserve.ReserveResult.InsufficientQuantityError;
-import com.example.eshop.warehouse.application.services.reserve.ReserveResult.ReservingError;
-import com.example.eshop.warehouse.application.services.reserve.ReserveResult.StockItemNotFoundError;
 import com.example.eshop.warehouse.domain.InsufficientStockQuantityException;
 import com.example.eshop.warehouse.domain.StockItem;
 import com.example.eshop.warehouse.domain.StockItemRepository;
@@ -33,7 +34,7 @@ public class ReserveStockItemServiceImpl implements ReserveStockItemService {
     private final PlatformTransactionManager txManager;
 
     @Override
-    public ReserveResult reserve(Map<Ean, StockQuantity> reserveQuantity) {
+    public ReservationResult reserve(Map<Ean, StockQuantity> reserveQuantity) {
         return new TransactionTemplate(txManager).execute(status -> {
             // find required StockItems
             var stockItems = getStockItems(reserveQuantity.keySet());
@@ -44,14 +45,14 @@ public class ReserveStockItemServiceImpl implements ReserveStockItemService {
             // rollback if there are any failed reservation
             if (!errors.isEmpty()) {
                 status.setRollbackOnly();
-                return ReserveResult.failure(errors);
+                return ReservationResult.failure(errors);
             }
 
             // publish StockItem Domain Events
-            publishDomainEvents(stockItems.values());
+            saveDomainEventsToOutbox(stockItems.values());
 
             // and return Success
-            return ReserveResult.success();
+            return ReservationResult.success();
         });
     }
 
@@ -60,8 +61,8 @@ public class ReserveStockItemServiceImpl implements ReserveStockItemService {
                 .collect(Collectors.toMap(StockItem::getEan, Function.identity()));
     }
 
-    private List<ReservingError> reserve(Map<Ean, StockQuantity> reserveQuantity, Map<Ean, StockItem> stockItems) {
-        var errors = new ArrayList<ReservingError>();
+    private List<ReservationError> reserve(Map<Ean, StockQuantity> reserveQuantity, Map<Ean, StockItem> stockItems) {
+        var errors = new ArrayList<ReservationError>();
 
         reserveQuantity.forEach((ean, qty) -> {
             if (!stockItems.containsKey(ean)) {
@@ -74,14 +75,22 @@ public class ReserveStockItemServiceImpl implements ReserveStockItemService {
             try {
                 item.reserve(qty);
             } catch (InsufficientStockQuantityException e) {
-                errors.add(new InsufficientQuantityError(item, qty, "Can't reserve " + qty + " for " + item));
+                var error = new InsufficientQuantityError(
+                        ean,
+                        qty.toInt(),
+                        item.getStockQuantity().toInt(),
+                        "There is no enough quantity to reserve %s. Required quantity - %s, but only %s items available."
+                                .formatted(item.getEan(), qty.toInt(), item.getStockQuantity().toInt())
+                );
+
+                errors.add(error);
             }
         });
 
         return errors;
     }
 
-    private void publishDomainEvents(Collection<StockItem> stockItems) {
+    private void saveDomainEventsToOutbox(Collection<StockItem> stockItems) {
         var stockChangedMessages = new ArrayList<OutboxMessage>();
 
         for (var item: stockItems) {

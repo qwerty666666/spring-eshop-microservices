@@ -32,7 +32,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     public List<DomainEvent> getDomainEventsAndClear() {
         var events = new ArrayList<>(domainEvents);
 
-        clear();
+        clearDomainEvents();
 
         return events;
     }
@@ -57,7 +57,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         return foundEvents;
     }
 
-    private void clear() {
+    private void clearDomainEvents() {
         domainEvents.clear();
     }
 }

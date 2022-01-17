@@ -62,7 +62,7 @@ class CheckoutProcessServiceImplTest {
         // Cart
 
         cart = FakeData.cart(customerId);
-        cartItemsPrice = cart.getItems().stream().map(CartItem::getPrice).reduce(Money.ZERO, Money::add);
+        cartItemsPrice = cart.getItems().stream().map(CartItem::getItemPrice).reduce(Money.ZERO, Money::add);
 
         var cartRepository = mock(CartRepository.class);
         when(cartRepository.findByNaturalId(customerId)).thenReturn(Optional.of(cart));

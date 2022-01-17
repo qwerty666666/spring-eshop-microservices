@@ -21,7 +21,7 @@ public class Total {
 
     public Total(Cart cart, @Nullable ShipmentInfo shipmentInfo) {
         cartPrice = cart.getItems().stream()
-                .map(CartItem::getPrice)
+                .map(CartItem::getItemPrice)
                 .reduce(Money.ZERO, Money::add);
         deliveryPrice = shipmentInfo == null ? Money.ZERO : shipmentInfo.price();
         totalPrice = cartPrice.add(deliveryPrice);

@@ -14,7 +14,7 @@ public record CreateOrderDto(
         String deliveryId,
         AddressDto address,
         List<OrderLineDto> lines) {
-    public static record AddressDto(
+    public record AddressDto(
             String fullname,
             Phone phone,
             String country,
@@ -24,7 +24,7 @@ public record CreateOrderDto(
             @Nullable String flat) {
     }
 
-    public static record OrderLineDto(
+    public record OrderLineDto(
             Ean ean,
             int quantity,
             Money price) {

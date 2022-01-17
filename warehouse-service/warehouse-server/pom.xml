@@ -18,6 +18,7 @@
 
     <properties>
         <transactional-outbox.version>1.0.0-SNAPSHOT</transactional-outbox.version>
+        <checkout-service.version>1.0.0-SNAPSHOT</checkout-service.version>
         <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
     </properties>
 
@@ -31,6 +32,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>transactional-outbox-spring-data</artifactId>
             <version>${transactional-outbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>checkout-client</artifactId>
+            <version>${checkout-service.version}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -87,6 +93,10 @@
             <artifactId>shared-test</artifactId>
             <version>${shared-test.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
         </dependency>
     </dependencies>
 

@@ -4,8 +4,9 @@ import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
-import com.example.eshop.warehouse.application.services.reserve.ReserveResult.InsufficientQuantityError;
-import com.example.eshop.warehouse.application.services.reserve.ReserveResult.StockItemNotFoundError;
+import com.example.eshop.warehouse.ExcludeKafkaConfig;
+import com.example.eshop.warehouse.client.reservationresult.InsufficientQuantityError;
+import com.example.eshop.warehouse.client.reservationresult.StockItemNotFoundError;
 import com.example.eshop.warehouse.domain.StockQuantity;
 import com.example.eshop.warehouse.client.events.ProductStockChangedEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
+@ExcludeKafkaConfig
 @DbTest
 class ReserveStockItemServiceImplIT {
     private final static Ean STOCK_ITEM_1_EAN = Ean.fromString("0000000000001");
@@ -104,7 +106,7 @@ class ReserveStockItemServiceImplIT {
 
     @SneakyThrows
     private void assertOutboxMessageEqualsTo(OutboxMessage message, Object expectedPayloadObject) {
-        assertThat(message.getType()).isEqualTo(expectedPayloadObject.getClass());
+        assertThat(message.getType()).isEqualTo(expectedPayloadObject.getClass().getName());
 
         var event = objectMapper.readValue(message.getPayload(), expectedPayloadObject.getClass());
         assertThat(event).isEqualTo(expectedPayloadObject);

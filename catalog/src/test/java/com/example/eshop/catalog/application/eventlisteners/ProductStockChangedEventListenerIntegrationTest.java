@@ -7,6 +7,7 @@ import com.example.eshop.warehouse.client.WarehouseApi;
 import com.example.eshop.warehouse.client.events.ProductStockChangedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,11 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.kafka.test.utils.ContainerTestUtils;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -36,7 +40,6 @@ import static org.mockito.Mockito.when;
         topics = WarehouseApi.STOCK_CHANGED_TOPIC,
         bootstrapServersProperty = "spring.kafka.bootstrap-servers"
 )
-@ActiveProfiles("catalog-dev")
 class ProductStockChangedEventListenerIntegrationTest {
     @TestConfiguration
     public static class Config {
@@ -54,10 +57,24 @@ class ProductStockChangedEventListenerIntegrationTest {
     }
 
     @Autowired
+    private EmbeddedKafkaBroker broker;
+
+    @Autowired
+    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+
+    @Autowired
     private KafkaTemplate<String, ProductStockChangedEvent> kafkaTemplate;
 
     @MockBean
     private ProductRepository productRepository;
+
+    @BeforeEach
+    public void setUp() {
+        // we should wait because listener container can start after the first message was published
+        for (MessageListenerContainer messageListenerContainer : kafkaListenerEndpointRegistry.getListenerContainers()) {
+            ContainerTestUtils.waitForAssignment(messageListenerContainer, broker.getPartitionsPerTopic());
+        }
+    }
 
     @Test
     void givenProductStockChangedEvent_whenEventIsPublished_thenSkuQuantityIsUpdated() throws ExecutionException, InterruptedException {

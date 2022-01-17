@@ -20,7 +20,6 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
@@ -63,6 +62,7 @@ public class CartItem implements Entity<Long> {
     @AttributeOverride(name = "amount", column = @Column(name = "price", nullable = false))
     @AttributeOverride(name = "currency", column = @Column(name = "currency", nullable = false))
     @NotNull
+    @Getter(AccessLevel.NONE)
     private Money price;
 
     @ManyToOne
@@ -96,6 +96,20 @@ public class CartItem implements Entity<Long> {
         this.quantity = quantity;
 
         log.info("CartItem quantity changed" + this);
+    }
+
+    /**
+     * @return price for single item
+     */
+    public Money getItemPrice() {
+        return price;
+    }
+
+    /**
+     * @return full price, e.g. {@code itemPrice * quantity}
+     */
+    public Money getTotalPrice() {
+        return price.multiply(getQuantity());
     }
 
     @Override
