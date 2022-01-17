@@ -23,6 +23,11 @@
     <dependencies>
         <dependency>
             <groupId>com.example.eshop</groupId>
+            <artifactId>catalog-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
         </dependency>
         <dependency>
@@ -100,6 +105,14 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
         </dependency>
+
+        <!-- Swagger -->
+        <!-- required for openapi-generator-maven-plugin controller interfaces code-generation -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-swagger2.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -107,6 +120,57 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>${spring-boot.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <!-- TODO: is it better to move spec yml to catalog-service root ?
+                            We can't use jar resources in inputSpec (https://github.com/OpenAPITools/openapi-generator/pull/10037).
+                            And this workaround is bit ugly -->
+                            <inputSpec>${project.parent.basedir}/catalog-client/src/main/resources/openapi.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+                            <generateModels>false</generateModels>
+                            <apiPackage>com.example.eshop.catalog.client.api</apiPackage>
+                            <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
+                            <configOptions>
+                                <dateLibrary>java8</dateLibrary>
+                                <openApiNullable>false</openApiNullable>
+                                <!-- skip generation of Api Controller -->
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useTags>true</useTags>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
