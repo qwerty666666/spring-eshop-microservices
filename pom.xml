@@ -29,6 +29,7 @@
         <module>warehouse-service</module>
         <module>message-relay-service</module>
         <module>checkout-service</module>
+        <module>catalog-service</module>
     </modules>
 
     <properties>
