@@ -2,7 +2,7 @@ package com.example.eshop.rest.mappers;
 
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
-import com.example.eshop.catalog.application.product.ProductCrudService;
+import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.rest.dto.CartDto;

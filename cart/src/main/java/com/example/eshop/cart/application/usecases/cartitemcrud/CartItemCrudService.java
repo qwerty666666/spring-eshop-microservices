@@ -3,7 +3,7 @@ package com.example.eshop.cart.application.usecases.cartitemcrud;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
-import com.example.eshop.catalog.application.product.ProductNotFoundException;
+import com.example.eshop.catalog.application.services.productcrudservice.ProductNotFoundException;
 
 public interface CartItemCrudService {
     /**

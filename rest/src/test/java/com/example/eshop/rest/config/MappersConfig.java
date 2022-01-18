@@ -1,6 +1,6 @@
 package com.example.eshop.rest.config;
 
-import com.example.eshop.catalog.application.product.ProductCrudService;
+import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.rest.AppProperties;
 import com.example.eshop.rest.utils.UriFactory;
 import org.springframework.boot.test.context.TestConfiguration;

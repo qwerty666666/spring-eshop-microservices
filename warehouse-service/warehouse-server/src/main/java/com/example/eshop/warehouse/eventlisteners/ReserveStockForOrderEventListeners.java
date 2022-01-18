@@ -1,4 +1,4 @@
-package com.example.eshop.warehouse.application.eventlisteners;
+package com.example.eshop.warehouse.eventlisteners;
 
 import com.example.eshop.checkout.client.CheckoutApi;
 import com.example.eshop.checkout.client.order.CartItemDto;

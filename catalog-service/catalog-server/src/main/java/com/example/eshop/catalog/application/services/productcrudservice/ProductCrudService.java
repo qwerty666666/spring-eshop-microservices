@@ -1,6 +1,6 @@
-package com.example.eshop.catalog.application.product;
+package com.example.eshop.catalog.application.services.productcrudservice;
 
-import com.example.eshop.catalog.application.category.CategoryNotFoundException;
+import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.product.Product;

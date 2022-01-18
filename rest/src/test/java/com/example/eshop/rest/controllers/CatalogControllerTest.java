@@ -1,9 +1,9 @@
 package com.example.eshop.rest.controllers;
 
-import com.example.eshop.catalog.application.category.CategoryCrudService;
-import com.example.eshop.catalog.application.category.CategoryNotFoundException;
-import com.example.eshop.catalog.application.product.ProductCrudService;
-import com.example.eshop.catalog.application.product.ProductNotFoundException;
+import com.example.eshop.catalog.application.services.categorycrudservice.CategoryCrudService;
+import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
+import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
+import com.example.eshop.catalog.application.services.productcrudservice.ProductNotFoundException;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.product.Product;

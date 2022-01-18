@@ -11,7 +11,7 @@ import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
-import com.example.eshop.catalog.application.product.ProductCrudService;
+import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.domain.product.Attribute;
 import com.example.eshop.catalog.domain.product.AttributeValue;

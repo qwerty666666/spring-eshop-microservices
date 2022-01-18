@@ -1,11 +1,10 @@
-package com.example.eshop.catalog.application.category;
+package com.example.eshop.catalog.application.services.categorycrudservice;
 
 import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -19,7 +18,7 @@ class CategoryCrudServiceImpl implements CategoryCrudService {
     @Override
     @Transactional
     public Category getCategory(CategoryId categoryId) {
-        return categoryRepository.findById(categoryId)
+        return categoryRepository.findById(categoryId, EntityGraphs.named("Category.parent"))
                 .orElseThrow(() -> new CategoryNotFoundException(categoryId, "Category " + categoryId + " not found"));
     }
 
@@ -27,7 +26,7 @@ class CategoryCrudServiceImpl implements CategoryCrudService {
     @Transactional
     public List<Category> getAll() {
         var categories = categoryRepository.findAll(EntityGraphs.named("Category.parent"));
-        return IterableUtils.toList(categories);
+        return StreamSupport.stream(categories.spliterator(), false).toList();
     }
 
     @Override

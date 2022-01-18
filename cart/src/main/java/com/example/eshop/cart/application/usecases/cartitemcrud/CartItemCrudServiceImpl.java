@@ -2,7 +2,7 @@ package com.example.eshop.cart.application.usecases.cartitemcrud;
 
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
-import com.example.eshop.catalog.application.product.ProductCrudService;
+import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.RequiredArgsConstructor;
