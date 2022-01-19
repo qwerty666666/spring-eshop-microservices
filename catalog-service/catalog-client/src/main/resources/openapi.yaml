@@ -36,6 +36,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/paged_product_list'
+        400:
+          $ref: '#/components/responses/validation_error'
 
   /products/{id}:
     get:
@@ -103,6 +105,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/paged_product_list'
+        400:
+          $ref: '#/components/responses/validation_error'
         404:
           $ref: '#/components/responses/not_found'
 
@@ -204,20 +208,6 @@ components:
         - amount
         - currency
 
-    basic-error:
-      type: object
-      properties:
-        status:
-          type: integer
-          minimum: 100
-          maximum: 600
-          exclusiveMaximum: true
-        detail:
-          type: string
-      required:
-        - status
-        - detail
-
     pageable:
       type: object
       properties:
@@ -286,6 +276,44 @@ components:
           items:
             $ref: '#/components/schemas/product'
 
+    basic-error:
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+        detail:
+          type: string
+      required:
+        - status
+        - detail
+
+    validation-error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-error'
+      required:
+        - errors
+
+    field-error:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - field
+        - message
+      example:
+        field: pageSize
+        message: Invalid page size
+
   responses:
     not_found:
       description: Resource not found
@@ -296,6 +324,13 @@ components:
           examples:
             default:
               $ref: '#/components/examples/not_found'
+
+    validation_error:
+      description: Request parameters validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validation-error'
 
     product:
       description: Product
