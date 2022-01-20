@@ -11,7 +11,6 @@ import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServ
 import com.example.eshop.cart.domain.checkout.payment.PaymentServiceRepository;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
-import com.example.eshop.sharedkernel.domain.Localizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,7 @@ class OrderFactoryImplTest {
         PaymentServiceRepository paymentServiceRepository = mock(PaymentServiceRepository.class);
         when(paymentServiceRepository.findById(notExistedPaymentId)).thenReturn(Optional.empty());
 
-        orderFactory = new OrderFactoryImpl(deliveryServiceRepository, paymentServiceRepository, mock(Localizer.class));
+        orderFactory = new OrderFactoryImpl(deliveryServiceRepository, paymentServiceRepository);
     }
 
     @Nested

@@ -13,7 +13,7 @@ import com.example.eshop.sales.domain.Order;
 import com.example.eshop.sales.domain.OrderLine;
 import com.example.eshop.sales.domain.OrderLineAttribute;
 import com.example.eshop.sales.domain.OrderStatus;
-import com.example.eshop.sharedkernel.domain.Localizer;
+import com.example.eshop.localizer.Localizer;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

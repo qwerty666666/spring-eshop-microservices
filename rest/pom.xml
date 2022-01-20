@@ -18,6 +18,7 @@
         <springdoc.version>1.5.12</springdoc.version>
         <sentry.version>5.4.3</sentry.version>
         <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
+        <localizer.version>1.0.0-SNAPSHOT</localizer.version>
     </properties>
 
     <dependencies>
@@ -48,8 +49,8 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>shared-test</artifactId>
-            <version>${project.version}</version>
+            <artifactId>localizer</artifactId>
+            <version>${localizer.version}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -103,13 +104,13 @@
 
         <!-- Tests -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-test</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- OpenAPI -->

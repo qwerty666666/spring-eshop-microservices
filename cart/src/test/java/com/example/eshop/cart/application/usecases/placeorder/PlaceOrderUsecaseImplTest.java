@@ -11,7 +11,6 @@ import com.example.eshop.cart.domain.checkout.placeorder.PlaceOrderService;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
-import com.example.eshop.sharedkernel.domain.Localizer;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -34,7 +33,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -51,7 +49,6 @@ class PlaceOrderUsecaseImplTest {
     private Map<Ean, ProductInfo> productsInfo;
     private ProductInfoProvider productInfoProvider;
     private StockReservationService stockReservationService;
-    private Localizer localizer;
 
     private final Ean cartItemEan = FakeData.ean();
     private final Money cartItemPrice = Money.USD(3);
@@ -94,8 +91,6 @@ class PlaceOrderUsecaseImplTest {
 
         // reserveStockItemService
         stockReservationService = mock(StockReservationService.class);
-
-        localizer = mock(Localizer.class);
     }
 
     @Test
@@ -104,8 +99,10 @@ class PlaceOrderUsecaseImplTest {
         var domainService = mock(PlaceOrderService.class);
         when(domainService.place(order)).thenReturn(PlaceOrderResult.success(order));
 
+        when(stockReservationService.reserve(order)).thenReturn(ReservationResult.success());
+
         var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock,
-                productInfoProvider, stockReservationService, localizer);
+                productInfoProvider, stockReservationService);
 
         var expectedEvent = new OrderPlacedEvent(order, CREATION_DATE, productsInfo);
 
@@ -126,7 +123,7 @@ class PlaceOrderUsecaseImplTest {
         when(domainService.place(order)).thenReturn(PlaceOrderResult.failure(order, errors));
 
         var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock,
-                productInfoProvider, stockReservationService, localizer);
+                productInfoProvider, stockReservationService);
 
         // When
         var exception = catchThrowableOfType(() -> service.place(createOrderDto), ValidationException.class);
@@ -149,7 +146,7 @@ class PlaceOrderUsecaseImplTest {
         when(stockReservationService.reserve(order)).thenReturn(ReservationResult.failure(reservationErrors));
 
         var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock,
-                productInfoProvider, stockReservationService, localizer);
+                productInfoProvider, stockReservationService);
 
         // When
         var exception = catchThrowableOfType(() -> service.place(createOrderDto), ValidationException.class);

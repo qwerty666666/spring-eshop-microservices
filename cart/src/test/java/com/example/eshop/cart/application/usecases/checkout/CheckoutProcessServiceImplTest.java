@@ -3,20 +3,19 @@ package com.example.eshop.cart.application.usecases.checkout;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.cart.CartRepository;
-import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
-import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
-import com.example.eshop.cart.domain.checkout.order.OrderFactoryImpl;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryServiceRepository;
+import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
+import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
+import com.example.eshop.cart.domain.checkout.order.OrderFactoryImpl;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
 import com.example.eshop.cart.domain.checkout.payment.PaymentServiceRepository;
+import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
-import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
-import com.example.eshop.sharedkernel.domain.Localizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -55,7 +54,7 @@ class CheckoutProcessServiceImplTest {
         when(paymentServiceRepository.findById(SUPPORTED_PAYMENT_ID)).thenReturn(Optional.of(SUPPORTED_PAYMENT_SERVICE));
         when(paymentServiceRepository.findAll()).thenReturn(List.of(SUPPORTED_PAYMENT_SERVICE, NOT_SUPPORTED_PAYMENT_SERVICE));
 
-        var orderFactory = new OrderFactoryImpl(deliveryServiceRepository, paymentServiceRepository, mock(Localizer.class));
+        var orderFactory = new OrderFactoryImpl(deliveryServiceRepository, paymentServiceRepository);
 
         checkoutProcessService = new CheckoutProcessServiceImpl(deliveryServiceRepository, paymentServiceRepository, orderFactory);
 

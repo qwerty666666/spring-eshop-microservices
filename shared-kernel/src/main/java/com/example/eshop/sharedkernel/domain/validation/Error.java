@@ -3,12 +3,15 @@ package com.example.eshop.sharedkernel.domain.validation;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import java.io.Serializable;
 
+/**
+ * Single field validation error
+ */
 @RequiredArgsConstructor
 @Getter
 @EqualsAndHashCode
-public class Error implements Serializable {
+public class Error {
     private final String field;
-    private final String message;
+    private final String messageCode;
+    private final Object[] messageParams;
 }

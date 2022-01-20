@@ -17,6 +17,7 @@
         <checkout-service.verison>1.0.0-SNAPSHOT</checkout-service.verison>
         <warehouse-service.verison>1.0.0-SNAPSHOT</warehouse-service.verison>
         <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
+        <localizer.verison>1.0.0-SNAPSHOT</localizer.verison>
     </properties>
 
     <dependencies>
@@ -44,6 +45,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>warehouse-client</artifactId>
             <version>${warehouse-service.verison}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>localizer</artifactId>
+            <version>${localizer.verison}</version>
         </dependency>
 
         <!-- Devtools -->
