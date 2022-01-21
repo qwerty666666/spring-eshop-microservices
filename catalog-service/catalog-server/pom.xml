@@ -17,6 +17,7 @@
         <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <warehouse-service.version>1.0.0-SNAPSHOT</warehouse-service.version>
+        <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
     </properties>
 
@@ -34,6 +35,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>warehouse-client</artifactId>
             <version>${warehouse-service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>localizer</artifactId>
+            <version>${localizer.version}</version>
         </dependency>
 
         <!-- Devtools -->

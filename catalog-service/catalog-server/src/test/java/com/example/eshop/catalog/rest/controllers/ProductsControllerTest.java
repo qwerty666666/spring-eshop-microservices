@@ -1,5 +1,6 @@
 package com.example.eshop.catalog.rest.controllers;
 
+import com.example.eshop.catalog.ExcludeKafkaConfig;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product;
@@ -31,9 +32,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductsController.class)
+@ExcludeKafkaConfig
 @ControllerTest
 class ProductsControllerTest {
     @Autowired
@@ -128,12 +131,38 @@ class ProductsControllerTest {
 
         @Test
         void givenInvalidPageSize_whenGetListRequest_thenReturn400() throws Exception {
-            Page<Product> page = new PageImpl<>(Collections.emptyList());
-            when(productCrudService.getList(any())).thenReturn(page);
-
             mockMvc.perform(get("/api/products/?per_page=0"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errors[?(@.field == 'perPage')]").exists());
+        }
+
+        @Test
+        void givenEanQueryParameter_whenGetListRequest_thenReturnProductsFilteredByGivenEan() throws Exception {
+            var productList = createProductList();
+            var pageable = Pageable.ofSize(2).withPage(0);
+            var ean = List.of(Ean.fromString("1111111111111"), Ean.fromString("2222222222222"));
+
+            var resultPage = new PageImpl<>(productList.subList(0, 2), pageable, 3);
+            when(productCrudService.getByEan(ean, pageable)).thenReturn(resultPage);
+
+            var expectedDto = productMapper.toPagedProductListDto(resultPage);
+            var expectedJson = objectMapper.writeValueAsString(expectedDto);
+
+            mockMvc.perform(get("/api/products/?page=1&per_page=2&ean=1111111111111,2222222222222"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(expectedJson));
+
+            verify(productCrudService).getByEan(ean, pageable);
+        }
+
+        @Test
+        void givenInvalidEanQueryParameter_whenGetListRequest_thenReturn400() throws Exception {
+            mockMvc.perform(get("/api/products/?page=1&per_page=2&ean=invalidEan"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errors[?(@.field == 'ean')]").exists());
         }
 
         private List<Product> createProductList() {

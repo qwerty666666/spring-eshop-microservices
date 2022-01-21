@@ -1,12 +1,11 @@
 package com.example.eshop.catalog;
 
-import com.example.eshop.catalog.config.AppProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
-@EnableConfigurationProperties({ AppProperties.class })
+@ConfigurationPropertiesScan
 public class CatalogApplication {
     public static void main(String[] args) {
         SpringApplication.run(CatalogApplication.class, args);

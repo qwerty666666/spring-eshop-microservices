@@ -1,7 +1,9 @@
 package com.example.eshop.catalog.application.services.categorycrudservice;
 
+import com.example.eshop.catalog.ExcludeKafkaConfig;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
+import com.example.eshop.sharedtest.IntegrationTest;
 import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.Test;
@@ -13,8 +15,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
+@IntegrationTest
+@ExcludeKafkaConfig
 @DbTest
 class CategoryCrudServiceIntegrationTest {
+
+    // These constants taken from DB datasets
+
     private static final CategoryId PARENT_CATEGORY_ID = new CategoryId("1");
     private static final CategoryId CHILD_1_CATEGORY_ID = new CategoryId("2");
     private static final CategoryId CHILD_2_CATEGORY_ID = new CategoryId("3");

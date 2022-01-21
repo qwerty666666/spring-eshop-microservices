@@ -1,5 +1,6 @@
 package com.example.eshop.catalog.rest.controllers;
 
+import com.example.eshop.catalog.ExcludeKafkaConfig;
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryCrudService;
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CategoriesController.class)
+@ExcludeKafkaConfig
 @ControllerTest
 class CategoriesControllerTest {
     @Autowired

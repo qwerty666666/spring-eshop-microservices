@@ -3,6 +3,7 @@ package com.example.eshop.catalog.eventlisteners;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.ProductRepository;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedtest.IntegrationTest;
 import com.example.eshop.warehouse.client.WarehouseApi;
 import com.example.eshop.warehouse.client.events.ProductStockChangedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@IntegrationTest
 @AutoConfigureTestDatabase
 @EmbeddedKafka(
         partitions = 1,

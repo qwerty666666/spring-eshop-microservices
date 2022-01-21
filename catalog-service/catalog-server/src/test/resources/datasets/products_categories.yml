@@ -1,10 +1,13 @@
 products:
   - id: 1
     name: "sneakers"
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   - id: 2
     name: "shirt"
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   - id: 3
     name: "jacket"
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 
 categories:
   - id: 1

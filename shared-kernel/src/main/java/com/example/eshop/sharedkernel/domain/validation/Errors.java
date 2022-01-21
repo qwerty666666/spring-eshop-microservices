@@ -11,11 +11,11 @@ import java.util.Map;
 /**
  * Represents validation result.
  * <p>
- * Used as container of field errors {@link Error}.
+ * Used as container of field errors {@link FieldError}.
  */
 @EqualsAndHashCode
-public class Errors implements Iterable<Error> {
-    private final Map<String, List<Error>> fieldsErrors = new LinkedHashMap<>();
+public class Errors implements Iterable<FieldError> {
+    private final Map<String, List<FieldError>> fieldsErrors = new LinkedHashMap<>();
 
     /**
      * @return new Errors instance with no errors
@@ -25,36 +25,36 @@ public class Errors implements Iterable<Error> {
     }
 
     /**
-     * Adds new {@link Error}
+     * Adds new {@link FieldError}
      */
     public Errors addError(String field, String messageCode) {
         return addError(field, messageCode, new Object[0]);
     }
 
     /**
-     * Adds new {@link Error}
+     * Adds new {@link FieldError}
      */
     public Errors addError(String field, String messageCode, Object... messageParams) {
-        List<Error> list = fieldsErrors.computeIfAbsent(field, s -> new ArrayList<>());
+        List<FieldError> list = fieldsErrors.computeIfAbsent(field, s -> new ArrayList<>());
 
-        list.add(new Error(field, messageCode, messageParams));
+        list.add(new FieldError(field, messageCode, messageParams));
 
         return this;
     }
 
     /**
-     * Adds {@link Error}s from the given list
+     * Adds {@link FieldError}s from the given list
      */
-    public Errors addErrors(String field, List<Error> errors) {
-        List<Error> list = this.fieldsErrors.computeIfAbsent(field, s -> new ArrayList<>());
+    public Errors addErrors(String field, List<FieldError> fieldErrors) {
+        List<FieldError> list = this.fieldsErrors.computeIfAbsent(field, s -> new ArrayList<>());
 
-        list.addAll(errors);
+        list.addAll(fieldErrors);
 
         return this;
     }
 
     /**
-     * Copy {@link Error}s from given {@code Errors}
+     * Copy {@link FieldError}s from given {@code Errors}
      */
     public Errors addErrors(Errors errors) {
         errors.fieldsErrors.forEach(this::addErrors);
@@ -63,28 +63,28 @@ public class Errors implements Iterable<Error> {
     }
 
     /**
-     * @return if there are {@link Error}s for given {@code field}
+     * @return if there are {@link FieldError}s for given {@code field}
      */
     public boolean hasErrors(String field) {
         return fieldsErrors.containsKey(field);
     }
 
     /**
-     * @return {@link Error}s for given {@code field}
+     * @return {@link FieldError}s for given {@code field}
      */
-    public List<Error> getErrors(String field) {
+    public List<FieldError> getErrors(String field) {
         return fieldsErrors.get(field);
     }
 
     /**
-     * @return if there are no {@link Error}s at all
+     * @return if there are no {@link FieldError}s at all
      */
     public boolean isEmpty() {
         return fieldsErrors.isEmpty();
     }
 
     @Override
-    public Iterator<Error> iterator() {
+    public Iterator<FieldError> iterator() {
         return fieldsErrors.values().stream()
                 .flatMap(Collection::stream)
                 .iterator();

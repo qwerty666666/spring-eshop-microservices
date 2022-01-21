@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,13 +65,7 @@ class ProductCrudServiceImpl implements ProductCrudService {
     @Override
     @Transactional
     public Map<Ean, Product> getByEan(List<Ean> ean) {
-        if (ean.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        var products = productRepository.findByEan(ean);
-
-        fetchAssociations(products);
+        var products = getByEan(ean, Pageable.unpaged()).getContent();
 
         var eanProductMap = products.stream()
                 .flatMap(product -> product.getSku().stream())
@@ -80,6 +73,19 @@ class ProductCrudServiceImpl implements ProductCrudService {
 
         return ean.stream()
                 .collect(HashMap::new, (map, e) -> map.put(e, eanProductMap.get(e)), HashMap::putAll);
+    }
+
+    @Override
+    public Page<Product> getByEan(List<Ean> ean, Pageable pageable) {
+        if (ean.isEmpty()) {
+            return Page.empty();
+        }
+
+        var productPage = productRepository.findByEan(ean, pageable);
+
+        fetchAssociations(productPage.getContent());
+
+        return productPage;
     }
 
     private void fetchAssociations(List<Product> products) {

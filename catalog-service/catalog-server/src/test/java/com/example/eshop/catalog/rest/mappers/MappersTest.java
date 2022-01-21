@@ -1,8 +1,8 @@
 package com.example.eshop.catalog.rest.mappers;
 
 import com.example.eshop.catalog.rest.MappersConfig;
+import com.example.eshop.sharedtest.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -19,6 +19,6 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 @SpringBootTest(classes = MappersConfig.class)
-@ActiveProfiles("test")
+@IntegrationTest
 public @interface MappersTest {
 }

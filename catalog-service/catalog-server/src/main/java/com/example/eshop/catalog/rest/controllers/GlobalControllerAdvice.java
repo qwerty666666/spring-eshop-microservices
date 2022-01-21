@@ -2,35 +2,50 @@ package com.example.eshop.catalog.rest.controllers;
 
 import com.example.eshop.catalog.client.api.model.ValidationError;
 import com.example.eshop.catalog.rest.utils.ValidationErrorBuilder;
-import org.springframework.http.HttpStatus;
+import com.example.eshop.localizer.Localizer;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path.Node;
 import java.util.stream.StreamSupport;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalControllerAdvice {
+    private final Localizer localizer;
+
+    /**
+     * Handle exception if method parameter is invalid
+     */
+    @ExceptionHandler
+    private ResponseEntity<ValidationError> handleInvalidMethodParameterException(InvalidMethodParameterException e) {
+        var error = e.getFieldError();
+
+        var validationError = ValidationErrorBuilder.newInstance()
+                .addError(error.getField(), localizer.getMessage(error.getMessageCode(), error.getMessageParams()))
+                .build();
+
+        return getValidationErrorResponse(validationError);
+    }
+
     /**
      * Handle exception from validating Controller's parameters
      */
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    private ValidationError onConstraintViolationException(ConstraintViolationException e) {
-        var error = ValidationErrorBuilder.newInstance();
+    private ResponseEntity<ValidationError> onConstraintViolationException(ConstraintViolationException e) {
+        var errorBuilder = ValidationErrorBuilder.newInstance();
 
         e.getConstraintViolations().forEach(violation -> {
             var field = getFieldName(violation);
             var message = violation.getMessage();
 
-            error.addError(field, message);
+            errorBuilder.addError(field, message);
         });
 
-        return error.build();
+        return getValidationErrorResponse(errorBuilder.build());
     }
 
     private String getFieldName(ConstraintViolation<?> violation) {
@@ -39,5 +54,9 @@ public class GlobalControllerAdvice {
                 .reduce((prev, next) -> next)
                 .map(Node::getName)
                 .orElse(null);
+    }
+
+    private ResponseEntity<ValidationError> getValidationErrorResponse(ValidationError err) {
+        return ResponseEntity.badRequest().body(err);
     }
 }

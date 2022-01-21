@@ -6,9 +6,9 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -26,8 +26,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Configuration("catalog-kafkaConfig")
-@EnableKafka
+@ConditionalOnProperty(value = KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY, havingValue = "false", matchIfMissing = true)
 public class KafkaConfig {
+    public static final String DISABLE_KAFKA_CONFIG_PROPERTY = "kafka.disable";
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 

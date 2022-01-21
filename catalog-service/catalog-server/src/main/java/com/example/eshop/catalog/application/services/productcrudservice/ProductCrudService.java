@@ -47,4 +47,9 @@ public interface ProductCrudService {
      * If there is no Sku for some ean, then this ean will be mapped to null.
      */
     Map<Ean, Product> getByEan(List<Ean> ean);
+
+    /**
+     * Find {@link Product} which has {@link Sku} with given {@code ean}.
+     */
+    Page<Product> getByEan(List<Ean> ean, Pageable pageable);
 }

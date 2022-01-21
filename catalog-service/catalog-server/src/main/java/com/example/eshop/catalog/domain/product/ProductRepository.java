@@ -30,7 +30,14 @@ public interface ProductRepository extends EntityGraphJpaRepository<Product, Pro
      */
     @Query("select distinct p from Product p join p.sku s where s.ean in :ean")
     @QueryHints(@QueryHint(name = org.hibernate.jpa.QueryHints.HINT_PASS_DISTINCT_THROUGH, value = "false"))
-    List<Product> findByEan(@Param("ean") List<Ean> ean);
+    Page<Product> findByEan(@Param("ean") List<Ean> ean, Pageable pageable);
+
+    /**
+     * Finds {@link Product}s which have {@link Sku} with given {@code ean}
+     */
+    default List<Product> findByEan(@Param("ean") List<Ean> ean) {
+        return findByEan(ean, Pageable.unpaged()).getContent();
+    }
 
     /**
      * Finds {@link Product} which has {@link Sku} with given {@code ean}

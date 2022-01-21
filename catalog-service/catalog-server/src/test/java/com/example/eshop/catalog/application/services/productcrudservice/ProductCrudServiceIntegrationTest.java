@@ -1,9 +1,12 @@
 package com.example.eshop.catalog.application.services.productcrudservice;
 
+import com.example.eshop.catalog.ExcludeKafkaConfig;
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
+import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedtest.IntegrationTest;
 import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.Nested;
@@ -11,20 +14,32 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
+@IntegrationTest
+@ExcludeKafkaConfig
 @DbTest
 class ProductCrudServiceIntegrationTest {
+
+    // These constants taken from DB datasets
+
     private static final ProductId SNEAKERS_PRODUCT_ID = new ProductId("1");
     private static final ProductId SHIRT_PRODUCT_ID = new ProductId("2");
     private static final ProductId JACKET_PRODUCT_ID = new ProductId("3");
     private static final ProductId NON_EXISTENT_PRODUCT_ID = new ProductId("non_existed");
+
+    private static final Ean SNEAKERS_40_EAN = Ean.fromString("1111111111111");
+    private static final Ean SHIRT_40_EAN = Ean.fromString("2222222222222");
+    private static final Ean NON_EXISTED_EAN = Ean.fromString("9342586345896");
 
     private static final CategoryId CLOTHES_CATEGORY_ID = new CategoryId("1");
     private static final CategoryId NON_EXISTENT_CATEGORY_ID = new CategoryId("non_existed");
@@ -33,7 +48,7 @@ class ProductCrudServiceIntegrationTest {
     private ProductCrudService productCrudService;
 
     @Nested
-    class getById {
+    class getByIdTest {
         @Test
         @DataSet(value = "products.yml", cleanAfter = true)
         void givenProductId_whenGetProduct_thenReturnProductById() {
@@ -51,7 +66,7 @@ class ProductCrudServiceIntegrationTest {
     }
 
     @Nested
-    class GetList {
+    class GetListTest {
         @Test
         @DataSet(value = "products.yml", cleanAfter = true)
         void givenPageable_whenGetList_thenReturnOnlyProductsForTheGivenPage() {
@@ -73,7 +88,7 @@ class ProductCrudServiceIntegrationTest {
     }
 
     @Nested
-    class GetByCategory {
+    class GetByCategoryTest {
         @Test
         @DataSet(value = "products_categories.yml", cleanAfter = true)
         void givenCategoryId_whenGetForCategory_thenReturnProductsOnlyFromTheGivenCategory() {
@@ -111,6 +126,23 @@ class ProductCrudServiceIntegrationTest {
 
             assertThatThrownBy(() -> productCrudService.getByCategory(NON_EXISTENT_CATEGORY_ID, pageable))
                     .isInstanceOf(CategoryNotFoundException.class);
+        }
+    }
+
+    @Nested
+    class GetByEanTest {
+        @Test
+        @DataSet(value = "products.yml", cleanAfter = true)
+        void whenGetByEan_thenReturnProductsWhichHaveSkuWithGivenEan() {
+            // Given
+            var ean = List.of(SNEAKERS_40_EAN, SHIRT_40_EAN, NON_EXISTED_EAN);
+            var pageable = Pageable.unpaged();
+
+            // When
+            var products = productCrudService.getByEan(ean, pageable).getContent();
+
+            // Then
+            assertThat(products).extracting(Product::getId).containsOnly(SNEAKERS_PRODUCT_ID, SHIRT_PRODUCT_ID);
         }
     }
 }
