@@ -8,12 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @IntegrationTest
 class CustomerCreatedEventListenerIntegrationTest {
+    @Configuration
+    @Import(CustomerCreatedEventListener.class)
+    public static class Config {
+    }
+
     @MockBean
     CreateCartService createCartService;
 

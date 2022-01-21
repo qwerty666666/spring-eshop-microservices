@@ -2,6 +2,7 @@ package com.example.eshop.rest.controllers;
 
 import com.example.eshop.cart.application.usecases.cartitemcrud.AddCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
+import com.example.eshop.cart.application.usecases.cartitemcrud.NotEnoughQuantityException;
 import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.cart.Cart;
@@ -93,23 +94,35 @@ class CartControllerTest {
 
     @Nested
     class PutItemTest {
+        private final AddCartItemCommand addCartItemCommand = new AddCartItemCommand(AuthConfig.CUSTOMER_ID, EAN, QUANTITY);
+
         @Test
         @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void whenPutCartItem_thenCartItemServiceUpsertIsCalledAndCartIsReturned() throws Exception {
             var expectedJson = objectMapper.writeValueAsString(cartMapper.toCartDto(cart));
-            var expectedCommand = new AddCartItemCommand(AuthConfig.CUSTOMER_ID, EAN, QUANTITY);
 
             performPutCartItemRequest()
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(cartItemCrudService).add(expectedCommand);
+            verify(cartItemCrudService).add(addCartItemCommand);
         }
 
         @Test
         void givenUnauthorizedRequest_whenPutCartItem_thenReturn401() throws Exception {
             performPutCartItemRequest()
                     .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        void whenPutItemWithExceededQuantity_thenReturn400() throws Exception {
+            doThrow(new NotEnoughQuantityException("", 0, QUANTITY)).when(cartItemCrudService).add(addCartItemCommand);
+
+            performPutCartItemRequest()
+                    .andExpect(status().isBadRequest());
+
+            verify(cartItemCrudService).add(addCartItemCommand);
         }
 
         private ResultActions performPutCartItemRequest() throws Exception {

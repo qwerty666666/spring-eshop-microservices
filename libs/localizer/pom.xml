@@ -13,7 +13,7 @@
     <groupId>com.example.eshop</groupId>
     <artifactId>localizer</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <description>Localizer implementation with Spring Boot autoconfiguration</description>
+    <description>Localization helper with Spring Boot autoconfiguration</description>
 
     <properties>
         <java.version>17</java.version>
