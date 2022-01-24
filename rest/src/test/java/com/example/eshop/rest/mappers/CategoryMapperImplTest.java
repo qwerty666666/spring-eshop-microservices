@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = MappersConfig.class)
 class CategoryMapperImplTest {
     @Autowired
-    CategoryMapper mapper;
+    RestCategoryMapper mapper;
 
     @Test
     void testToCategoryDto() {

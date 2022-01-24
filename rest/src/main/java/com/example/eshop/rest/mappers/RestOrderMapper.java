@@ -24,9 +24,9 @@ import java.util.stream.Stream;
 
 @Mapper(
         componentModel = "spring",
-        uses = { PageableMapper.class, PhoneMapper.class, EanMapper.class }
+        uses = { RestPageableMapper.class, PhoneMapper.class, RestEanMapper.class }
 )
-public abstract class OrderMapper {
+public abstract class RestOrderMapper {
     private Localizer localizer;
 
     // we can't use constructor injection in MapStruct for not @Mapper::uses dependencies

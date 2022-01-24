@@ -5,6 +5,7 @@ import com.example.eshop.catalog.rest.utils.ValidationErrorBuilder;
 import com.example.eshop.localizer.Localizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.validation.ConstraintViolation;
@@ -12,6 +13,8 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Path.Node;
 import java.util.stream.StreamSupport;
 
+// TODO remove bean name
+@Component("catalog-globalControllerAdvice")
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalControllerAdvice {

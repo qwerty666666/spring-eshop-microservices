@@ -3,7 +3,7 @@ package com.example.eshop.catalog.rest.controllers;
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryCrudService;
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
-import com.example.eshop.catalog.client.api.CategoriesApi;
+import com.example.eshop.catalog.rest.api.CategoriesApi;
 import com.example.eshop.catalog.client.api.model.BasicError;
 import com.example.eshop.catalog.client.api.model.Category;
 import com.example.eshop.catalog.client.api.model.CategoryTreeItem;

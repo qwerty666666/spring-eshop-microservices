@@ -13,8 +13,8 @@ import com.example.eshop.rest.dto.CategoryDto;
 import com.example.eshop.rest.dto.CategoryTreeItemDto;
 import com.example.eshop.rest.dto.PagedProductListDto;
 import com.example.eshop.rest.dto.ProductDto;
-import com.example.eshop.rest.mappers.CategoryMapper;
-import com.example.eshop.rest.mappers.ProductMapper;
+import com.example.eshop.rest.mappers.RestCategoryMapper;
+import com.example.eshop.rest.mappers.RestProductMapper;
 import com.example.eshop.rest.utils.UriFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,16 +30,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Locale;
 
-@RestController
-@RequestMapping(UriFactory.API_BASE_PATH_PROPERTY)
+//@RestController
+//@RequestMapping(UriFactory.API_BASE_PATH_PROPERTY)
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CatalogController implements CatalogApi {
     private final ProductCrudService productCrudService;
     private final CategoryCrudService categoryCrudService;
 
-    private final ProductMapper productMapper;
-    private final CategoryMapper categoryMapper;
+    private final RestProductMapper restProductMapper;
+    private final RestCategoryMapper categoryMapper;
 
     private final MessageSource messageSource;
 
@@ -71,7 +71,7 @@ public class CatalogController implements CatalogApi {
     public ResponseEntity<ProductDto> getProductById(String id) {
         var product = productCrudService.getById(new ProductId(id));
 
-        return ResponseEntity.ok(productMapper.toProductDto(product));
+        return ResponseEntity.ok(restProductMapper.toProductDto(product));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CatalogController implements CatalogApi {
         var pageable = PageRequest.of(page - 1, perPage);
         var products = productCrudService.getList(pageable);
 
-        return ResponseEntity.ok(productMapper.toPagedProductListDto(products));
+        return ResponseEntity.ok(restProductMapper.toPagedProductListDto(products));
     }
 
     @Override
@@ -108,6 +108,6 @@ public class CatalogController implements CatalogApi {
         var pageable = PageRequest.of(page - 1, perPage);
         var products = productCrudService.getByCategory(new CategoryId(id), pageable);
 
-        return ResponseEntity.ok(productMapper.toPagedProductListDto(products));
+        return ResponseEntity.ok(restProductMapper.toPagedProductListDto(products));
     }
 }

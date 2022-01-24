@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface CategoryMapper {
+public interface RestCategoryMapper {
     @Mapping(target = "parentId", source = "parent.id")
     CategoryDto toCategoryDto(Category category);
 

@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = MappersConfig.class)
 class OrderPlacedEventMapperTest {
     @Autowired
-    OrderMapper orderMapper;
+    RestOrderMapper orderMapper;
 
     @Test
     void testToPagedOrderListDto() {

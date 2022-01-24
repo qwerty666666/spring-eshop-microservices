@@ -162,7 +162,7 @@
                             <generatorName>spring</generatorName>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateModels>false</generateModels>
-                            <apiPackage>com.example.eshop.catalog.client.api</apiPackage>
+                            <apiPackage>com.example.eshop.catalog.rest.api</apiPackage>
                             <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>

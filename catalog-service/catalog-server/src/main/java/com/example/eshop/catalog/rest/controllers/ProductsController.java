@@ -2,7 +2,7 @@ package com.example.eshop.catalog.rest.controllers;
 
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductNotFoundException;
-import com.example.eshop.catalog.client.api.ProductsApi;
+import com.example.eshop.catalog.rest.api.ProductsApi;
 import com.example.eshop.catalog.client.api.model.BasicError;
 import com.example.eshop.catalog.client.api.model.PagedProductList;
 import com.example.eshop.catalog.config.AppProperties;

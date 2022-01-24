@@ -10,8 +10,8 @@ import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.rest.config.ControllerTestConfig;
-import com.example.eshop.rest.mappers.CategoryMapper;
-import com.example.eshop.rest.mappers.ProductMapper;
+import com.example.eshop.rest.mappers.RestCategoryMapper;
+import com.example.eshop.rest.mappers.RestProductMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,9 +51,9 @@ class CatalogControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private ProductMapper productMapper;
+    private RestProductMapper restProductMapper;
     @Autowired
-    private CategoryMapper categoryMapper;
+    private RestCategoryMapper categoryMapper;
 
     @MockBean
     private CategoryCrudService categoryCrudService;
@@ -69,7 +69,7 @@ class CatalogControllerTest {
                 var product = createProduct();
                 when(productCrudService.getById(product.getId())).thenReturn(product);
 
-                var expectedJson = objectMapper.writeValueAsString(productMapper.toProductDto(product));
+                var expectedJson = objectMapper.writeValueAsString(restProductMapper.toProductDto(product));
 
                 mockMvc.perform(get("/api/products/" + product.getId()))
                         .andDo(print())
@@ -121,7 +121,7 @@ class CatalogControllerTest {
                 var resultPage = new PageImpl<>(productList.subList(0, 2), pageable, 3);
                 when(productCrudService.getList(pageable)).thenReturn(resultPage);
 
-                var expectedDto = productMapper.toPagedProductListDto(resultPage);
+                var expectedDto = restProductMapper.toPagedProductListDto(resultPage);
                 var expectedJson = objectMapper.writeValueAsString(expectedDto);
 
                 mockMvc.perform(get("/api/products/?page=1&per_page=2"))

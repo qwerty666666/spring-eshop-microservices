@@ -4,7 +4,7 @@ import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface EanMapper {
+public interface RestEanMapper {
     default String toString(Ean ean) {
         return ean.toString();
     }

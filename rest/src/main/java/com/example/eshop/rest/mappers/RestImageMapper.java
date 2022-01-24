@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring")
-public abstract class ImageMapper {
+public abstract class RestImageMapper {
     @Autowired
     private UriFactory uriFactory;
 

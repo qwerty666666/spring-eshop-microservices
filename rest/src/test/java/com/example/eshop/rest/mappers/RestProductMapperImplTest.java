@@ -24,9 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = MappersConfig.class)
-class ProductMapperImplTest {
+class RestProductMapperImplTest {
     @Autowired
-    ProductMapper mapper;
+    RestProductMapper mapper;
 
     @Test
     void testToProductDto() {

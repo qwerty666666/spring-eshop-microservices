@@ -5,7 +5,7 @@ import org.mapstruct.Mapper;
 import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring")
-public interface PageableMapper {
+public interface RestPageableMapper {
     default <T> PageableDto toPageableDto(Page<T> page) {
         var pageable = new PageableDto();
 

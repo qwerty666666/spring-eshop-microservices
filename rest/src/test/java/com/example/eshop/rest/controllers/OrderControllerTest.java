@@ -2,7 +2,7 @@ package com.example.eshop.rest.controllers;
 
 import com.example.eshop.rest.config.AuthConfig;
 import com.example.eshop.rest.config.ControllerTestConfig;
-import com.example.eshop.rest.mappers.OrderMapper;
+import com.example.eshop.rest.mappers.RestOrderMapper;
 import com.example.eshop.sales.application.services.queryorder.OrderNotFoundException;
 import com.example.eshop.sales.application.services.queryorder.QueryOrderService;
 import com.example.eshop.sales.domain.Order;
@@ -44,7 +44,7 @@ class OrderControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private OrderMapper orderMapper;
+    private RestOrderMapper orderMapper;
 
     @MockBean
     private QueryOrderService queryOrderService;

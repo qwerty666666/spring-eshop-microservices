@@ -15,7 +15,7 @@ import org.springframework.lang.Nullable;
 
 @Mapper(
         componentModel = "spring",
-        uses = { EanMapper.class, ImageMapper.class, AttributeMapper.class },
+        uses = { RestEanMapper.class, RestImageMapper.class, RestAttributeMapper.class },
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public abstract class CartMapper {

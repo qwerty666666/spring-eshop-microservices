@@ -15,9 +15,9 @@ import java.util.stream.Stream;
 
 @Mapper(
         componentModel = "spring",
-        uses = { EanMapper.class, PageableMapper.class, ImageMapper.class, AttributeMapper.class }
+        uses = { RestEanMapper.class, RestPageableMapper.class, RestImageMapper.class, RestAttributeMapper.class }
 )
-public interface ProductMapper {
+public interface RestProductMapper {
     ProductDto toProductDto(Product product);
 
     @Nullable

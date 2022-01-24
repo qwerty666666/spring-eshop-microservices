@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface AttributeMapper {
+public interface RestAttributeMapper {
     @Mapping(target = "name", source = "attribute.name")
     AttributeDto toAttributeDto(AttributeValue attributeValue);
 }
