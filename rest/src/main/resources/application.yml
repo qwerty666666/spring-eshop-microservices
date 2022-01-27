@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: monolith
   jpa:
     open-in-view: false
   datasource:
@@ -25,9 +27,17 @@ management:
         include: '*'
 
 server:
+  port: 0
   error:
     whitelabel:
       enabled: false
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    preferIpAddress: true
 
 app:
   schema: ${APP_SCHEMA}

@@ -31,6 +31,7 @@
         <module>checkout-service</module>
         <module>catalog-service</module>
         <module>api-gateway</module>
+        <module>eureka-server</module>
     </modules>
 
     <properties>
