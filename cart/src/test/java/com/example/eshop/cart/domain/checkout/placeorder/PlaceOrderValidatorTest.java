@@ -1,16 +1,14 @@
 package com.example.eshop.cart.domain.checkout.placeorder;
 
 import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
-import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
+import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
-import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
-import com.example.eshop.sharedkernel.domain.Localizer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.lang.Nullable;
@@ -18,7 +16,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SameParameterValue")
 class PlaceOrderValidatorTest {
@@ -37,12 +34,7 @@ class PlaceOrderValidatorTest {
     private final DeliveryAddress address = FakeData.deliveryAddress();
     private final Cart cart = FakeData.cart();
 
-    private PlaceOrderValidator validator;
-
-    @BeforeEach
-    void setUp() {
-        validator = new PlaceOrderValidator(mock(Localizer.class));
-    }
+    private final PlaceOrderValidator validator = new PlaceOrderValidator();
 
     @Test
     void validOrder() {

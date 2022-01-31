@@ -1,8 +1,9 @@
 package com.example.eshop.rest.controllers;
 
 import com.example.eshop.rest.config.AuthConfig;
-import com.example.eshop.rest.config.ControllerTestConfig;
-import com.example.eshop.rest.mappers.OrderMapper;
+import com.example.eshop.rest.config.ControllerTest;
+import com.example.eshop.rest.config.MapperTestsConfig;
+import com.example.eshop.rest.mappers.RestOrderMapper;
 import com.example.eshop.sales.application.services.queryorder.OrderNotFoundException;
 import com.example.eshop.sales.application.services.queryorder.QueryOrderService;
 import com.example.eshop.sales.domain.Order;
@@ -13,14 +14,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
@@ -35,8 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(OrderController.class)
-@ActiveProfiles("test")
-@Import(ControllerTestConfig.class)
+@ControllerTest
+@Import(MapperTestsConfig.class)
 class OrderControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -44,7 +46,7 @@ class OrderControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private OrderMapper orderMapper;
+    private RestOrderMapper orderMapper;
 
     @MockBean
     private QueryOrderService queryOrderService;

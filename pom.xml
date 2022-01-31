@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.2</version>
+        <version>2.6.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -19,16 +19,18 @@
 
     <modules>
         <module>shared-kernel</module>
-        <module>catalog</module>
         <module>rest</module>
         <module>customer</module>
         <module>cart</module>
         <module>sales</module>
         <module>shared-test</module>
-        <module>libs/transactional-outbox</module>
-        <module>warehouse-service</module>
+        <module>libs</module>
         <module>message-relay-service</module>
+        <module>warehouse-service</module>
         <module>checkout-service</module>
+        <module>catalog-service</module>
+        <module>api-gateway</module>
+        <module>eureka-server</module>
     </modules>
 
     <properties>
@@ -48,6 +50,15 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2021.0.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Database -->
             <dependency>
                 <groupId>com.github.gavlyukovskiy</groupId>

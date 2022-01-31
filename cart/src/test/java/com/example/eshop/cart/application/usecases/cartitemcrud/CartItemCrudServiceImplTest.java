@@ -1,29 +1,37 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
+import com.example.eshop.cart.application.usecases.placeorder.ProductNotFoundException;
 import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
-import com.example.eshop.catalog.application.product.ProductCrudService;
-import com.example.eshop.catalog.application.product.ProductNotFoundException;
-import com.example.eshop.catalog.domain.product.Product;
-import com.example.eshop.catalog.domain.product.Sku;
+import com.example.eshop.catalog.client.api.model.Money;
+import com.example.eshop.catalog.client.api.model.Product;
+import com.example.eshop.catalog.client.api.model.Sku;
+import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class CartItemCrudServiceImplTest {
     private final String customerId = FakeData.customerId();
+    private final Cart cart = FakeData.cart(customerId);
+    private final CartItem existedInCartCartItem = cart.getItems().get(0);
+    private final Ean existedInCartEan = existedInCartCartItem.getEan();
     private final Ean newEan = Ean.fromString("7239429347811");
     private final Ean nonExistedInCatalogEan = Ean.fromString("1237569802342");
-    private final Cart cart = FakeData.cart(customerId);
-    private final Ean existedInCartEan = cart.getItems().get(0).getEan();
+    private final int availableQuantity = 10;
 
     private CartItemCrudService cartItemCrudService;
 
@@ -34,64 +42,95 @@ class CartItemCrudServiceImplTest {
         var cartRepository = mock(CartRepository.class);
         when(cartRepository.findByNaturalId(customerId)).thenReturn(Optional.of(cart));
 
-        // ProductCrudService
+        // CatalogGateway
 
-        var product = Product.builder()
-                .name("Test Product")
-                .addSku(Sku.builder()
-                        .ean(existedInCartEan)
-                        .price(Money.USD(10))
-                        .availableQuantity(10)
-                        .build()
-                )
-                .addSku(Sku.builder()
-                        .ean(newEan)
-                        .price(Money.USD(10))
-                        .availableQuantity(10)
-                        .build()
-                )
+        var existedInCartProduct = Product.builder()
+                .name("test")
+                .sku(List.of(
+                        Sku.builder()
+                                .ean(existedInCartCartItem.getEan().toString())
+                                .quantity(existedInCartCartItem.getQuantity())
+                                .build()
+                ))
                 .build();
 
-        var productCrudService = mock(ProductCrudService.class);
-        when(productCrudService.getByEan(newEan)).thenReturn(product);
-        when(productCrudService.getByEan(nonExistedInCatalogEan)).thenThrow(new ProductNotFoundException(null, ""));
+        var newProduct = Product.builder()
+                .name("Test Product")
+                .sku(List.of(
+                        Sku.builder()
+                                .ean(existedInCartEan.toString())
+                                .price(new Money(BigDecimal.valueOf(10), "USD"))
+                                .quantity(availableQuantity)
+                                .build(),
+                        Sku.builder()
+                                .ean(newEan.toString())
+                                .price(new Money(BigDecimal.valueOf(10), "USD"))
+                                .quantity(availableQuantity)
+                                .build()
+                ))
+                .build();
+
+        var catalogGateway = mock(CatalogGateway.class);
+        when(catalogGateway.getProductByEan(newEan)).thenReturn(Mono.just(newProduct));
+        when(catalogGateway.getProductByEan(existedInCartEan)).thenReturn(Mono.just(existedInCartProduct));
+        when(catalogGateway.getProductByEan(nonExistedInCatalogEan)).thenReturn(Mono.empty());
 
         // CartItemService
 
-        cartItemCrudService = new CartItemCrudServiceImpl(cartRepository, productCrudService);
+        cartItemCrudService = new CartItemCrudServiceImpl(cartRepository, catalogGateway);
     }
 
-    @Test
-    void givenNonExistingInCartEan_whenAdd_thenNewCartItemShouldBeCreatedAndSavedToCart() {
-        // Given
-        int quantity = 1;
+    @Nested
+    class AddTest {
+        @Test
+        void givenNonExistingInCartEan_whenAdd_thenNewCartItemShouldBeCreatedAndSavedToCart() {
+            // Given
+            int quantity = 1;
 
-        // When
-        cartItemCrudService.add(new AddCartItemCommand(customerId, newEan, quantity));
+            // When
+            cartItemCrudService.add(new AddCartItemCommand(customerId, newEan, quantity));
 
-        // Then
-        assertThat(cart.containsItem(newEan)).isTrue();
-        assertThat(cart.getItem(newEan).getQuantity()).isEqualTo(quantity);
-    }
+            // Then
+            assertThat(cart.containsItem(newEan)).isTrue();
+            assertThat(cart.getItem(newEan).getQuantity()).isEqualTo(quantity);
+        }
 
-    @Test
-    void givenExistingInCartEan_whenAdd_thenCartItemQuantityShouldBeChanged() {
-        // Given
-        int quantity = 1;
+        @Test
+        void givenExistingInCartEan_whenAdd_thenCartItemQuantityShouldBeChanged() {
+            // Given
+            int quantity = 1;
 
-        // When
-        cartItemCrudService.add(new AddCartItemCommand(customerId, existedInCartEan, quantity));
+            // When
+            cartItemCrudService.add(new AddCartItemCommand(customerId, existedInCartEan, quantity));
 
-        // Then
-        assertThat(cart.containsItem(existedInCartEan)).isTrue();
-        assertThat(cart.getItem(existedInCartEan).getQuantity()).isEqualTo(quantity);
-    }
+            // Then
+            assertThat(cart.containsItem(existedInCartEan)).isTrue();
+            assertThat(cart.getItem(existedInCartEan).getQuantity()).isEqualTo(quantity);
+        }
 
-    @Test
-    void givenNonExistedInCatalogEan_whenAdd_thenThrowProductNotFoundException() {
-        var command = new AddCartItemCommand(customerId, nonExistedInCatalogEan, 1);
+        @Test
+        void givenExceededQuantity_whenAddNewItem_thenNotEnoughQuantityIsThrownAndCartItemNotAdded() {
+            // Given
+            int quantity = availableQuantity + 1;
+            var addCommand = new AddCartItemCommand(customerId, newEan, quantity);
 
-        assertThatExceptionOfType(ProductNotFoundException.class)
-                .isThrownBy(() -> cartItemCrudService.add(command));
+            // When
+            var exception = catchThrowableOfType(() -> cartItemCrudService.add(addCommand),
+                    NotEnoughQuantityException.class);
+
+            // Then
+            assertThat(exception.getAvailableQuantity()).isEqualTo(availableQuantity);
+            assertThat(exception.getRequiredQuantity()).isEqualTo(quantity);
+
+            assertThat(cart.containsItem(newEan)).isFalse();
+        }
+
+        @Test
+        void givenNonExistedInCatalogEan_whenAdd_thenThrowProductNotFoundException() {
+            var command = new AddCartItemCommand(customerId, nonExistedInCatalogEan, 1);
+
+            assertThatExceptionOfType(ProductNotFoundException.class)
+                    .isThrownBy(() -> cartItemCrudService.add(command));
+        }
     }
 }

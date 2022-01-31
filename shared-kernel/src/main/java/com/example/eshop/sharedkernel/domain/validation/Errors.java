@@ -1,7 +1,6 @@
 package com.example.eshop.sharedkernel.domain.validation;
 
 import lombok.EqualsAndHashCode;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -9,9 +8,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents validation result.
+ * <p>
+ * Used as container of field errors {@link FieldError}.
+ */
 @EqualsAndHashCode
-public class Errors implements Iterable<Error>, Serializable {
-    private final Map<String, List<Error>> fieldsErrors = new LinkedHashMap<>();
+public class Errors implements Iterable<FieldError> {
+    private final Map<String, List<FieldError>> fieldsErrors = new LinkedHashMap<>();
 
     /**
      * @return new Errors instance with no errors
@@ -20,42 +24,67 @@ public class Errors implements Iterable<Error>, Serializable {
         return new Errors();
     }
 
-    public Errors addError(String field, String message) {
-        List<Error> list = fieldsErrors.computeIfAbsent(field, s -> new ArrayList<>());
+    /**
+     * Adds new {@link FieldError}
+     */
+    public Errors addError(String field, String messageCode) {
+        return addError(field, messageCode, new Object[0]);
+    }
 
-        list.add(new Error(field, message));
+    /**
+     * Adds new {@link FieldError}
+     */
+    public Errors addError(String field, String messageCode, Object... messageParams) {
+        List<FieldError> list = fieldsErrors.computeIfAbsent(field, s -> new ArrayList<>());
+
+        list.add(new FieldError(field, messageCode, messageParams));
 
         return this;
     }
 
-    public Errors addErrors(String field, List<Error> errors) {
-        List<Error> list = this.fieldsErrors.computeIfAbsent(field, s -> new ArrayList<>());
+    /**
+     * Adds {@link FieldError}s from the given list
+     */
+    public Errors addErrors(String field, List<FieldError> fieldErrors) {
+        List<FieldError> list = this.fieldsErrors.computeIfAbsent(field, s -> new ArrayList<>());
 
-        list.addAll(errors);
+        list.addAll(fieldErrors);
 
         return this;
     }
 
+    /**
+     * Copy {@link FieldError}s from given {@code Errors}
+     */
     public Errors addErrors(Errors errors) {
         errors.fieldsErrors.forEach(this::addErrors);
 
         return this;
     }
 
+    /**
+     * @return if there are {@link FieldError}s for given {@code field}
+     */
     public boolean hasErrors(String field) {
         return fieldsErrors.containsKey(field);
     }
 
-    public List<Error> getErrors(String field) {
+    /**
+     * @return {@link FieldError}s for given {@code field}
+     */
+    public List<FieldError> getErrors(String field) {
         return fieldsErrors.get(field);
     }
 
+    /**
+     * @return if there are no {@link FieldError}s at all
+     */
     public boolean isEmpty() {
         return fieldsErrors.isEmpty();
     }
 
     @Override
-    public Iterator<Error> iterator() {
+    public Iterator<FieldError> iterator() {
         return fieldsErrors.values().stream()
                 .flatMap(Collection::stream)
                 .iterator();

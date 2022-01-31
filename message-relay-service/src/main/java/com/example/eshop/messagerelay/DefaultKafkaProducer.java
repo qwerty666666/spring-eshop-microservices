@@ -4,7 +4,7 @@ import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.messagerelay.BrokerProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.converter.AbstractJavaTypeMapper;
+import org.springframework.kafka.support.mapping.AbstractJavaTypeMapper;
 import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.util.List;

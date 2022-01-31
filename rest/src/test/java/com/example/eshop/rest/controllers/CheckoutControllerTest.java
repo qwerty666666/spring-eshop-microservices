@@ -12,8 +12,10 @@ import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.rest.config.AuthConfig;
-import com.example.eshop.rest.config.ControllerTestConfig;
+import com.example.eshop.rest.config.ControllerTest;
+import com.example.eshop.rest.dto.CheckoutFormDto;
 import com.example.eshop.rest.dto.CheckoutRequestDto;
+import com.example.eshop.rest.dto.DeliveryAddressDto;
 import com.example.eshop.rest.mappers.CheckoutMapper;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
@@ -24,11 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import java.util.Collections;
@@ -42,8 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CheckoutController.class)
-@ActiveProfiles("test")
-@Import(ControllerTestConfig.class)
+@ControllerTest
 class CheckoutControllerTest {
     @MockBean
     private CartQueryService cartQueryService;
@@ -53,43 +52,53 @@ class CheckoutControllerTest {
     private PlaceOrderUsecase placeOrderUsecase;
     @MockBean
     private CheckoutProcessService checkoutProcessService;
+    @MockBean
+    private CheckoutMapper checkoutMapper;
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private CheckoutMapper checkoutMapper;
 
     private final String customerId = AuthConfig.CUSTOMER_ID;
     private final Cart cart = FakeData.cart(customerId);
 
     private final DeliveryAddress deliveryAddress = FakeData.deliveryAddress();
-    private CreateOrderDto createOrderDto;
+    private final CheckoutRequestDto checkoutRequestDto = new CheckoutRequestDto()
+            .address(new DeliveryAddressDto()
+                    .country(deliveryAddress.country())
+                    .city(deliveryAddress.city())
+                    .street(deliveryAddress.street())
+                    .building(deliveryAddress.building())
+                    .flat(deliveryAddress.flat())
+                    .fullname(deliveryAddress.fullname())
+                    .phone(deliveryAddress.phone().toString())
+            );
+    private final CreateOrderDto createOrderDto = CreateOrderDto.builder()
+            .customerId(customerId)
+            .cart(cart)
+            .address(deliveryAddress)
+            .build();
 
     @BeforeEach
     void setUp() {
         when(cartQueryService.getForCustomer(customerId)).thenReturn(cart);
-
-        createOrderDto = CreateOrderDto.builder()
-                .customerId(customerId)
-                .cart(cart)
-                .address(deliveryAddress)
-                .build();
+        when(checkoutMapper.toCreateOrderDto(checkoutRequestDto, customerId, cart)).thenReturn(createOrderDto);
     }
 
     @Nested
     class CheckoutProcessTest {
-        private CheckoutForm checkoutForm;
+        private final CheckoutForm checkoutForm = CheckoutForm.builder()
+                .order(new Order(UUID.randomUUID(), customerId, cart, deliveryAddress, null, null))
+                .availableDeliveries(Collections.emptyList())
+                .availablePayments(Collections.emptyList())
+                .total(new Total(cart, null))
+                .build();
+        private final CheckoutFormDto checkoutFormDto = new CheckoutFormDto();
 
         @BeforeEach
         void setUp() {
-            checkoutForm = CheckoutForm.builder()
-                    .order(new Order(UUID.randomUUID(), customerId, cart, deliveryAddress, null, null))
-                    .availableDeliveries(Collections.emptyList())
-                    .availablePayments(Collections.emptyList())
-                    .total(new Total(cart, null))
-                    .build();
+            when(checkoutMapper.toCheckoutFormDto(checkoutForm)).thenReturn(checkoutFormDto);
         }
 
         @Test
@@ -114,7 +123,7 @@ class CheckoutControllerTest {
             // Given
             when(checkoutProcessService.process(createOrderDto)).thenReturn(checkoutForm);
 
-            var expectedJson = objectMapper.writeValueAsString(checkoutMapper.toCheckoutFormDto(checkoutForm));
+            var expectedJson = objectMapper.writeValueAsString(checkoutFormDto);
 
             // When + then
             performCheckoutRequest()
@@ -122,12 +131,10 @@ class CheckoutControllerTest {
                     .andExpect(content().json(expectedJson));
 
             verify(checkoutProcessService).process(createOrderDto);
+            verify(checkoutMapper).toCheckoutFormDto(checkoutForm);
         }
 
         private ResultActions performCheckoutRequest() throws Exception {
-            var checkoutRequestDto = new CheckoutRequestDto();
-            checkoutRequestDto.setAddress(checkoutMapper.toDeliveryAddressDto(deliveryAddress));
-
             var json = objectMapper.writeValueAsString(checkoutRequestDto);
 
             return mockMvc.perform(post("/api/cart/checkout/")
@@ -169,9 +176,6 @@ class CheckoutControllerTest {
         }
 
         private ResultActions performPlaceOrderRequest() throws Exception {
-            var checkoutRequestDto = new CheckoutRequestDto();
-            checkoutRequestDto.setAddress(checkoutMapper.toDeliveryAddressDto(deliveryAddress));
-
             var json = objectMapper.writeValueAsString(checkoutRequestDto);
 
             return mockMvc.perform(post("/api/cart/checkout/confirm/")

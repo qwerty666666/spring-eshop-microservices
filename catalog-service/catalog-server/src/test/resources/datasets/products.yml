@@ -1,0 +1,79 @@
+products:
+  - id: 1
+    name: "sneakers"
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  - id: 2
+    name: "shirt"
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  - id: 3
+    name: "jacket"
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+
+sku:
+  # sneakers
+  - id: 1
+    ean: "1111111111111"
+    price: 100
+    currency: "USD"
+    product_id: 1
+    available_quantity: 10
+  - id: 2
+    ean: '1111111111112'
+    price: 150
+    currency: "USD"
+    product_id: 1
+    available_quantity: 10
+
+  # shirt
+  - id: 3
+    ean: "2222222222222"
+    price: 100
+    currency: "USD"
+    product_id: 2
+    available_quantity: 10
+    
+  # jacket
+  - id: 4
+    ean: "3333333333333"
+    price: 100
+    currency: "USD"
+    product_id: 3
+    available_quantity: 10
+
+attributes:
+  - id: 1
+    name: size
+
+attribute_values:
+  - id: 1
+    attribute_id: 1
+    value: 40
+    sort: 40
+  - id: 2
+    attribute_id: 1
+    value: 41
+    sort: 41
+
+sku_attributes:
+  - sku_id: 1
+    attribute_value_id: 1
+  - sku_id: 2
+    attribute_value_id: 2
+  - sku_id: 3
+    attribute_value_id: 1
+  - sku_id: 4
+    attribute_value_id: 1
+
+files:
+  - id: 1
+    location: file_1.png
+  - id: 2
+    location: file_2.png
+
+product_images:
+  - product_id: 1
+    file_id: 1
+    sort: 0
+  - product_id: 1
+    file_id: 2
+    sort: 1

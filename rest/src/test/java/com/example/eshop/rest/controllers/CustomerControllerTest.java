@@ -11,7 +11,9 @@ import com.example.eshop.customer.domain.customer.EmailAlreadyExistException;
 import com.example.eshop.customer.domain.customer.HashedPassword;
 import com.example.eshop.customer.domain.customer.PasswordPolicyException;
 import com.example.eshop.rest.config.AuthConfig;
-import com.example.eshop.rest.config.ControllerTestConfig;
+import com.example.eshop.rest.config.ControllerTest;
+import com.example.eshop.rest.dto.CustomerDto;
+import com.example.eshop.rest.dto.NewCustomerDto;
 import com.example.eshop.rest.mappers.CustomerMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Email;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,10 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDate;
@@ -46,8 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CustomerController.class)
-@ActiveProfiles("test")
-@Import(ControllerTestConfig.class)
+@ControllerTest
 class CustomerControllerTest {
     private final static CustomerId CUSTOMER_ID = new CustomerId(AuthConfig.CUSTOMER_ID);
     private final static String CUSTOMER_EMAIL = AuthConfig.CUSTOMER_EMAIL;
@@ -59,14 +58,10 @@ class CustomerControllerTest {
     private final static LocalDate NEW_BIRTHDAY = LocalDate.of(1999, 9, 19);
     private final static String NEW_PASSWORD = "pass123";
 
-    private Customer customer;
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private CustomerMapper customerMapper;
 
     @MockBean
     private QueryCustomerService queryCustomerService;
@@ -74,6 +69,11 @@ class CustomerControllerTest {
     private UpdateCustomerService updateCustomerService;
     @MockBean
     private SignUpService signUpService;
+    @MockBean
+    private CustomerMapper customerMapper;
+
+    private Customer customer;
+    private final CustomerDto customerDto = new CustomerDto();
 
     @BeforeEach
     void setUp() {
@@ -87,14 +87,15 @@ class CustomerControllerTest {
                 .build();
 
         when(queryCustomerService.getByEmail(CUSTOMER_EMAIL)).thenReturn(customer);
+        when(customerMapper.toCustomerDto(customer)).thenReturn(customerDto);
     }
 
     @Nested
-    class GetAuthenticated {
+    class GetAuthenticatedTests {
         @Test
         @WithUserDetails(CUSTOMER_EMAIL)
         void givenAuthenticatedUser_whenGetAuthenticated_thenReturnThatUser() throws Exception {
-            var expectedJson = objectMapper.writeValueAsString(customerMapper.toCustomerDto(customer));
+            var expectedJson = objectMapper.writeValueAsString(customerDto);
 
             performGetAuthenticatedRequest()
                     .andDo(print())
@@ -116,7 +117,7 @@ class CustomerControllerTest {
     }
 
     @Nested
-    class UpdateCurrent {
+    class UpdateCurrentTests {
         @Test
         @WithUserDetails(CUSTOMER_EMAIL)
         void givenAuthenticatedCustomer_whenUpdateCustomer_thenReturnOk() throws Exception {
@@ -168,22 +169,36 @@ class CustomerControllerTest {
     }
 
     @Nested
-    class CreateCustomer {
+    class CreateCustomerTests {
+        private final NewCustomerDto newCustomerDto = new NewCustomerDto()
+                .firstname(NEW_FIRSTNAME)
+                .lastname(NEW_LASTNAME)
+                .email(NEW_EMAIL)
+                .birthday(NEW_BIRTHDAY)
+                .password(NEW_PASSWORD);
+        private final SignUpCommand signUpCommand = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
+        private final Customer newCustomer = Customer.builder()
+                .firstname(NEW_FIRSTNAME)
+                .lastname(NEW_LASTNAME)
+                .email(Email.fromString(NEW_EMAIL))
+                .birthday(NEW_BIRTHDAY)
+                .password(HashedPassword.fromHash(NEW_PASSWORD))
+                .build();
+
+        @BeforeEach
+        void setUp() {
+            when(customerMapper.toSignUpCommand(newCustomerDto)).thenReturn(signUpCommand);
+        }
+
         @Test
         void whenCreateCustomer_thenReturnNewCustomer() throws Exception {
             // Given
-            var newCustomer = Customer.builder()
-                    .firstname(NEW_FIRSTNAME)
-                    .lastname(NEW_LASTNAME)
-                    .email(Email.fromString(NEW_EMAIL))
-                    .birthday(NEW_BIRTHDAY)
-                    .password(HashedPassword.fromHash("pass"))
-                    .build();
-            var command = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
+            when(signUpService.signUp(signUpCommand)).thenReturn(newCustomer);
 
-            when(signUpService.signUp(command)).thenReturn(newCustomer);
+            var expectedCustomerDto = new CustomerDto();
+            when(customerMapper.toCustomerDto(newCustomer)).thenReturn(expectedCustomerDto);
 
-            var expectedJson = objectMapper.writeValueAsString(customerMapper.toCustomerDto(newCustomer));
+            var expectedJson = objectMapper.writeValueAsString(expectedCustomerDto);
 
             // When + Then
             performSignUpRequest()
@@ -191,36 +206,32 @@ class CustomerControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(signUpService).signUp(command);
+            verify(signUpService).signUp(signUpCommand);
         }
 
         @Test
         void givenAlreadyUsedEmail_whenCreateCustomer_thenReturn400() throws Exception {
             // Given
-            var command = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
-
-            when(signUpService.signUp(command)).thenThrow(EmailAlreadyExistException.class);
+            when(signUpService.signUp(signUpCommand)).thenThrow(EmailAlreadyExistException.class);
 
             // When + Then
             var response = performSignUpRequest();
             assertEmailAlreadyUsedResponse(response);
 
-            verify(signUpService).signUp(command);
+            verify(signUpService).signUp(signUpCommand);
         }
 
         @Test
         void givenInvalidPassword_whenCreateCustomer_thenReturn400() throws Exception {
             // Given
-            var command = new SignUpCommand(NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY, NEW_PASSWORD);
-
             var policyViolationMessage = "Test policy violation message";
-            when(signUpService.signUp(command)).thenThrow(new PasswordPolicyException(List.of(policyViolationMessage)));
+            when(signUpService.signUp(signUpCommand)).thenThrow(new PasswordPolicyException(List.of(policyViolationMessage)));
 
             // When + Then
             var response = performSignUpRequest();
             assertPasswordPolicyViolationResponse(response, policyViolationMessage);
 
-            verify(signUpService).signUp(command);
+            verify(signUpService).signUp(signUpCommand);
         }
 
         private ResultActions performSignUpRequest() throws Exception {

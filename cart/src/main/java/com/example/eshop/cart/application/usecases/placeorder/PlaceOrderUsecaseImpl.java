@@ -5,7 +5,6 @@ import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.order.OrderFactory;
 import com.example.eshop.cart.domain.checkout.placeorder.PlaceOrderService;
 import com.example.eshop.cart.domain.checkout.placeorder.PlaceOrderValidator;
-import com.example.eshop.sharedkernel.domain.Localizer;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import com.example.eshop.warehouse.client.reservationresult.InsufficientQuantityError;
@@ -30,7 +29,6 @@ public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
     private final Clock clock;
     private final ProductInfoProvider productInfoProvider;
     private final StockReservationService stockReservationService;
-    private final Localizer localizer;
 
     @Override
     @PreAuthorize("#createOrderDto.customerId() == principal.getCustomerId()")
@@ -70,19 +68,15 @@ public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
         var errors = new Errors();
 
         reservationResult.getErrors().forEach((ean, reservationError) -> {
-            String message;
-
             if (reservationError instanceof InsufficientQuantityError err) {
-                message = localizer.getMessage("cart.item.insufficient_quantity", ean,
-                        err.getReservingQuantity(), err.getAvailableQuantity());
+                errors.addError(PlaceOrderValidator.CART_ITEMS_FIELD, "cart.item.insufficient_quantity",
+                        ean, err.getReservingQuantity(), err.getAvailableQuantity());
             } else if (reservationError instanceof StockItemNotFoundError) {
-                message = localizer.getMessage("cart.item.not_found", ean);
+                errors.addError(PlaceOrderValidator.CART_ITEMS_FIELD, "cart.item.not_found", ean);
             } else {
                 log.error("Unknown ReservationError type " + reservationResult.getClass());
                 throw new StockReservationException("Unknown ReservationError type " + reservationResult.getClass());
             }
-
-            errors.addError(PlaceOrderValidator.CART_ITEMS_FIELD, message);
         });
 
         return errors;

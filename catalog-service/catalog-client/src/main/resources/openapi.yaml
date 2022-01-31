@@ -1,0 +1,449 @@
+openapi: 3.0.3
+
+info:
+  version: 1.0.0
+  title: Catalog Service API
+  description: |
+    `Products` in catalog are grouped together in `Categories`.
+
+    `Categories` are hierarchical and form a `Category Tree`.
+
+    Every `Product` contains list of `SKU`, where each `SKU` is a distinct
+    product variant with unique attributes like size. Every `SKU` is unique
+    identified by `EAN` code.
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+
+servers:
+  - url: '/api'
+
+tags:
+  - name: products
+  - name: categories
+
+paths:
+  /products:
+    get:
+      tags:
+        - products
+      summary: Get product list
+      operationId: getProductList
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/product_list_per_page'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/ean_filter'
+
+      responses:
+        200:
+          $ref: '#/components/responses/paged_product_list'
+        400:
+          $ref: '#/components/responses/validation_error'
+
+  /products/{id}:
+    get:
+      tags:
+        - products
+      summary: Get Product information
+      operationId: getProductById
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          $ref: '#/components/responses/product'
+        404:
+          $ref: '#/components/responses/not_found'
+
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: Get Category list
+      operationId: getCategoryList
+      security: []
+      responses:
+        200:
+          $ref: '#/components/responses/category_list'
+
+  /categories/tree:
+    get:
+      tags:
+        - categories
+      summary: Get Category hierarchy
+      operationId: getCategoryTree
+      security: []
+      responses:
+        200:
+          $ref: '#/components/responses/category_tree'
+
+  /categories/{id}:
+    get:
+      tags:
+        - categories
+      summary: Get Category information
+      operationId: getCategoryById
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          $ref: '#/components/responses/category'
+        404:
+          $ref: '#/components/responses/not_found'
+
+  /categories/{id}/products:
+    get:
+      tags:
+        - categories
+      summary: Get Product list for given Category
+      operationId: getProductsByCategory
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/product_list_per_page'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          $ref: '#/components/responses/paged_product_list'
+        400:
+          $ref: '#/components/responses/validation_error'
+        404:
+          $ref: '#/components/responses/not_found'
+
+components:
+  schemas:
+    product:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        name:
+          type: string
+          example: Sneakers
+        description:
+          type: string
+          example: Very cool Sneakers, omg!!
+        sku:
+          type: array
+          items:
+            $ref: '#/components/schemas/sku'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+      required:
+        - id
+        - name
+        - description
+        - sku
+        - images
+
+    image:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://example.com/images/photo.png
+
+    sku:
+      description: Stock Keeping Unit
+      type: object
+      properties:
+        price:
+          $ref: '#/components/schemas/money'
+        ean:
+          $ref: '#/components/schemas/ean'
+        quantity:
+          $ref: '#/components/schemas/available-quantity'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
+      required:
+        - price
+        - ean
+        - quantity
+        - attributes
+
+    available-quantity:
+      type: integer
+      minimum: 0
+      description: Available quantity for purchase
+      example: 12
+
+    attribute:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        value:
+          type: string
+      example:
+        id: 1
+        name: size
+        value: XXL
+
+    ean:
+      type: string
+      format: gtin13
+      description: Global Trade Item Number (GTIN-13)
+      example: '5901234123457'
+
+    money:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: 0
+          example: 100.1
+        currency:
+          type: string
+          description: 3 letter currency code as defined by ISO-4217
+          format: iso-4217
+          example: EUR
+      required:
+        - amount
+        - currency
+
+    pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          example: 2
+        perPage:
+          type: integer
+          minimum: 1
+          example: 30
+        totalItems:
+          type: integer
+          minimum: 0
+          example: 63
+        totalPages:
+          type: integer
+          minimum: 0
+          example: 3
+
+    category:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        name:
+          type: string
+          example: Sneakers
+        parentId:
+          type: string
+          example: 1
+          nullable: true
+      required:
+        - id
+        - name
+      example:
+        id: 1
+        name: 'Clothes'
+        parentId: 2
+
+    category-tree-item:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        name:
+          type: string
+          example: Sneakers
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/category-tree-item'
+      required:
+        - id
+        - name
+
+    paged-product-list:
+      type: object
+      properties:
+        pageable:
+          $ref: '#/components/schemas/pageable'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/product'
+
+    basic-error:
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+        detail:
+          type: string
+      required:
+        - status
+        - detail
+
+    validation-error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-error'
+      required:
+        - errors
+
+    field-error:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - field
+        - message
+      example:
+        field: pageSize
+        message: Invalid page size
+
+  responses:
+    not_found:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/basic-error'
+          examples:
+            default:
+              $ref: '#/components/examples/not_found'
+
+    validation_error:
+      description: Request parameters validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validation-error'
+
+    product:
+      description: Product
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/product'
+
+    paged_product_list:
+      description: Product List
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/paged-product-list'
+
+    category:
+      description: Category Information
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/category'
+
+    category_list:
+      description: Category List
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/category'
+          examples:
+            default:
+              $ref: '#/components/examples/categories'
+
+    category_tree:
+      description: Category hierarchy
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/category-tree-item'
+          examples:
+            default:
+              $ref: '#/components/examples/category_tree'
+
+  parameters:
+    product_list_per_page:
+      name: per_page
+      description: Results per page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 30
+
+    page:
+      name: page
+      description: Page number of the results to fetch
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 1
+
+    ean_filter:
+      name: ean
+      in: query
+      description: Filter products by given EANs
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ean'
+
+  examples:
+    categories:
+      value:
+        - id: 1
+          name: 'Clothes'
+          parentId: null
+        - id: 2
+          name: 'Sneakers'
+          parentId: 1
+
+    category_tree:
+      value:
+        - id: 1
+          name: 'Clothes'
+          children:
+            - id: 2
+              name: 'Sneakers'
+              children:
+                - id: 3
+                  name: 'Running'
+                  children: []
+            - id: 4
+              name: 'Shorts'
+              children: []
+        - id: 5
+          name: 'Accessories'
+          children: []
+
+    not_found:
+      value:
+        status: 404
+        detail: Resource not found

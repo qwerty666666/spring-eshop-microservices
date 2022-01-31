@@ -3,10 +3,11 @@ package com.example.eshop.rest.controllers.base;
 import com.example.eshop.rest.dto.ValidationErrorDto;
 import com.example.eshop.rest.infrastructure.converters.EanParameterFormatter;
 import com.example.eshop.rest.infrastructure.converters.EanParameterInvalidFormatException;
+import com.example.eshop.localizer.Localizer;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
@@ -22,9 +23,10 @@ import java.util.Locale;
 import java.util.stream.StreamSupport;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalControllerAdvice {
     @Autowired
-    private MessageSource messageSource;
+    private final Localizer localizer;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -58,7 +60,7 @@ public class GlobalControllerAdvice {
     @ResponseBody
     private ValidationErrorDto onMethodArgumentNotValidException(EanParameterInvalidFormatException e, Locale locale) {
         return ValidationErrorBuilder.newInstance()
-                .addError("ean", messageSource.getMessage("invalidEanFormat", new Object[]{ e.getEan() }, locale))
+                .addError("ean", localizer.getMessage("invalidEanFormat", e.getEan()))
                 .build();
     }
 
@@ -96,10 +98,12 @@ public class GlobalControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     private ValidationErrorDto onValidationException(ValidationException e) {
-        var error = ValidationErrorBuilder.newInstance();
+        var errorBuilder = ValidationErrorBuilder.newInstance();
 
-        e.getErrors().forEach(err -> error.addError(err.getField(), err.getMessage()));
+        for (var err: e.getErrors()) {
+            errorBuilder.addError(err.getField(), localizer.getMessage(err.getMessageCode(), err.getMessageParams()));
+        }
 
-        return error.build();
+        return errorBuilder.build();
     }
 }

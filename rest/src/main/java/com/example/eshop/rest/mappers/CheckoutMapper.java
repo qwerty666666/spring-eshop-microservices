@@ -18,7 +18,7 @@ import org.springframework.lang.Nullable;
         uses = { CartMapper.class, PhoneMapper.class }
 )
 public interface CheckoutMapper {
-    CreateOrderDto toOrderDto(CheckoutRequestDto checkoutRequest, String customerId, Cart cart);
+    CreateOrderDto toCreateOrderDto(CheckoutRequestDto checkoutRequest, String customerId, Cart cart);
 
     DeliveryAddress toDeliveryAddress(DeliveryAddressDto dto);
 

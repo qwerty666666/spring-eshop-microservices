@@ -1,5 +1,6 @@
 package com.example.eshop.cart.application.usecases.clearcart;
 
+import com.example.eshop.cart.ExcludeKafkaConfig;
 import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@ExcludeKafkaConfig
 @IntegrationTest
 class ClearCartServiceImplIntegrationTest {
     @Autowired

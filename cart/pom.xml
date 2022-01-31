@@ -5,6 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>cart</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
     <parent>
         <artifactId>eshop</artifactId>
@@ -15,6 +16,8 @@
     <properties>
         <checkout-service.verison>1.0.0-SNAPSHOT</checkout-service.verison>
         <warehouse-service.verison>1.0.0-SNAPSHOT</warehouse-service.verison>
+        <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
+        <localizer.verison>1.0.0-SNAPSHOT</localizer.verison>
     </properties>
 
     <dependencies>
@@ -25,8 +28,8 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>catalog</artifactId>
-            <version>${project.version}</version>
+            <artifactId>catalog-client</artifactId>
+            <version>${catalog-service.verison}</version>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
@@ -42,6 +45,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>warehouse-client</artifactId>
             <version>${warehouse-service.verison}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>localizer</artifactId>
+            <version>${localizer.verison}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -70,6 +78,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
         <!-- Kafka -->
@@ -109,12 +125,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
@@ -131,11 +141,6 @@
                             <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
-                    <compilerArgs>
-                        <compilerArg>
-                            -Amapstruct.defaultComponentModel=spring
-                        </compilerArg>
-                    </compilerArgs>
                 </configuration>
             </plugin>
         </plugins>

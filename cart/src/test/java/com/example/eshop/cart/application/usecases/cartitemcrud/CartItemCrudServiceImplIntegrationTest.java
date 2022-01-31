@@ -1,5 +1,6 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
+import com.example.eshop.cart.ExcludeKafkaConfig;
 import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
@@ -15,11 +16,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithUserDetails;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@ExcludeKafkaConfig
 @IntegrationTest
 class CartItemCrudServiceImplIntegrationTest {
     private final static String OWNER_CUSTOMER_ID = AuthConfig.CUSTOMER_ID;
@@ -49,26 +50,10 @@ class CartItemCrudServiceImplIntegrationTest {
 
     @Test
     @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
-    void whenAddCalledByCartOwner_thenNoExceptionIsThrown() {
-        var command = new AddCartItemCommand(OWNER_CUSTOMER_ID, FakeData.ean(), 10);
-
-        assertThatNoException().isThrownBy(() -> cartItemCrudService.add(command));
-    }
-
-    @Test
-    @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
     void whenRemoveCalledByNonCartOwner_thenThrowAccessDeniedException() {
         var command = new RemoveCartItemCommand(NON_OWNER_CUSTOMER_ID, existedInCartEan);
 
         assertThatThrownBy(() -> cartItemCrudService.remove(command))
                 .isInstanceOf(AccessDeniedException.class);
-    }
-
-    @Test
-    @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
-    void whenRemoveCalledByCartOwner_thenNoExceptionIsThrown() {
-        var command = new RemoveCartItemCommand(OWNER_CUSTOMER_ID, existedInCartEan);
-
-        assertThatNoException().isThrownBy(() -> cartItemCrudService.remove(command));
     }
 }

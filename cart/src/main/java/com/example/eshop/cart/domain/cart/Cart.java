@@ -113,8 +113,8 @@ public class Cart extends AggregateRoot<Long> {
     public void changeItemQuantity(Ean ean, int quantity) {
         Assertions.notNull(ean, "EAN must be not null");
 
-        var existedItem = getItem(ean);
-        existedItem.setQuantity(quantity);
+        var cartItem = getItem(ean);
+        cartItem.setQuantity(quantity);
     }
 
     /**

@@ -5,6 +5,8 @@ import com.example.eshop.cart.domain.cart.Cart;
 public interface CartQueryService {
     /**
      * @return {@link Cart} for the given customer
+     *
+     * @throws CartNotFoundException
      */
     Cart getForCustomer(String customerId);
 }

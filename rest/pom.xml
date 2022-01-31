@@ -17,6 +17,8 @@
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <springdoc.version>1.5.12</springdoc.version>
         <sentry.version>5.4.3</sentry.version>
+        <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
+        <localizer.version>1.0.0-SNAPSHOT</localizer.version>
     </properties>
 
     <dependencies>
@@ -27,8 +29,8 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>catalog</artifactId>
-            <version>${project.version}</version>
+            <artifactId>catalog-client</artifactId>
+            <version>${catalog-service.verison}</version>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
@@ -47,8 +49,8 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>shared-test</artifactId>
-            <version>${project.version}</version>
+            <artifactId>localizer</artifactId>
+            <version>${localizer.version}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -100,15 +102,21 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- Tests -->
+        <!-- Eureka -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+
+        <!-- Tests -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-test</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- OpenAPI -->
@@ -163,7 +171,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
             </plugin>
 
             <plugin>

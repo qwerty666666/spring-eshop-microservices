@@ -29,14 +29,14 @@ public class Money implements ValueObject {
         this.currency = currency;
     }
 
-    public static Money USD(double amount) {
+    public static Money USD(double amount) {  // NOSONAR
         return of(amount, "USD");
     }
 
     /**
      * Creates {@code Money} instance.
      *
-     * @param amount amount of money in minor unit of the currency. For example, 2 for Euro, 0 for Yen
+     * @param amount amount of money in minor unit of the currency
      * @param currencyCode ISO-4217 currency code
      *
      * @throws IllegalArgumentException if currencyCode is not a supported ISO-4217 code or null, or amount scale
@@ -44,6 +44,19 @@ public class Money implements ValueObject {
      */
     public static Money of(double amount, String currencyCode) {
         return new Money(BigDecimal.valueOf(amount), createCurrency(currencyCode));
+    }
+
+    /**
+     * Creates {@code Money} instance.
+     *
+     * @param amount amount of money in minor unit of the currency
+     * @param currencyCode ISO-4217 currency code
+     *
+     * @throws IllegalArgumentException if currencyCode is not a supported ISO-4217 code or null, or amount scale
+     * @throws IllegalArgumentException if amount scale exceeds currency scale
+     */
+    public static Money of(BigDecimal amount, String currencyCode) {
+        return new Money(amount, createCurrency(currencyCode));
     }
 
     /**

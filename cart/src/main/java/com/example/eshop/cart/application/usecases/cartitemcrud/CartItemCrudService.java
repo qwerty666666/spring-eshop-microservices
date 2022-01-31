@@ -1,9 +1,9 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
+import com.example.eshop.cart.application.usecases.placeorder.ProductNotFoundException;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
-import com.example.eshop.catalog.application.product.ProductNotFoundException;
 
 public interface CartItemCrudService {
     /**
@@ -11,6 +11,8 @@ public interface CartItemCrudService {
      * contains given CartItem, then quantity will be changed.
      *
      * @throws ProductNotFoundException if product with given EAN does not exist
+     * @throws NotEnoughQuantityException if there are no enough available quantity
+     *          to add to the cart
      */
     void add(AddCartItemCommand command);
 
