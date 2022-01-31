@@ -24,8 +24,7 @@
         <module>cart</module>
         <module>sales</module>
         <module>shared-test</module>
-        <module>libs/localizer</module>
-        <module>libs/transactional-outbox</module>
+        <module>libs</module>
         <module>message-relay-service</module>
         <module>warehouse-service</module>
         <module>checkout-service</module>

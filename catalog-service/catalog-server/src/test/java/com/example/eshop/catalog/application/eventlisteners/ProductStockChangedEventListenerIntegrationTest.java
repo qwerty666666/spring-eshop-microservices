@@ -1,4 +1,4 @@
-package com.example.eshop.catalog.eventlisteners;
+package com.example.eshop.catalog.application.eventlisteners;
 
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.ProductRepository;

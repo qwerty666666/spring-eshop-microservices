@@ -11,11 +11,11 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class MessageSourceLocalizer implements Localizer {
     private final MessageSource messageSource;
-    private final Supplier<Locale> defaultLocaleProducer;
+    private final Supplier<Locale> defaultLocaleSupplier;
 
     @Override
     public String getMessage(String code, Object... params) {
-        return getMessage(code, defaultLocaleProducer.get(), params);
+        return getMessage(code, defaultLocaleSupplier.get(), params);
     }
 
     @Override

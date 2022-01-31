@@ -2,6 +2,7 @@ package com.example.eshop.localizer;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ public class LocalizerAutoConfiguration {
      */
     @Bean
     @ConditionalOnBean(MessageSource.class)
+    @ConditionalOnMissingBean(Localizer.class)
     public Localizer localizer(MessageSource messageSource) {
         return new MessageSourceLocalizer(messageSource, LocaleContextHolder::getLocale);
     }

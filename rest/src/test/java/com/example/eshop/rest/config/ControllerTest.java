@@ -1,8 +1,9 @@
-package com.example.eshop.catalog.rest;
+package com.example.eshop.rest.config;
 
 import com.example.eshop.sharedtest.IntegrationTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -21,5 +22,6 @@ import java.lang.annotation.Target;
 @Inherited
 @IntegrationTest
 @Import(ControllerTestsConfig.class)
+@ActiveProfiles("test")
 public @interface ControllerTest {
 }

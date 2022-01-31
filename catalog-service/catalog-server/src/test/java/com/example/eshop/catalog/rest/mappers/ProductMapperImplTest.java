@@ -1,6 +1,7 @@
 package com.example.eshop.catalog.rest.mappers;
 
 import com.example.eshop.catalog.client.api.model.Image;
+import com.example.eshop.catalog.configs.MappersTest;
 import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.domain.product.Attribute;
 import com.example.eshop.catalog.domain.product.AttributeValue;

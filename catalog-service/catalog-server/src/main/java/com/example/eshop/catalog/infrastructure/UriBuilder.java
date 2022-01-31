@@ -1,4 +1,4 @@
-package com.example.eshop.catalog.utils;
+package com.example.eshop.catalog.infrastructure;
 
 import com.example.eshop.catalog.config.AppProperties;
 import lombok.RequiredArgsConstructor;

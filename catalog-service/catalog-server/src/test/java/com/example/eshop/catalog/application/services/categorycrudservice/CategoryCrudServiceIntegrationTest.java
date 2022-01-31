@@ -1,6 +1,6 @@
 package com.example.eshop.catalog.application.services.categorycrudservice;
 
-import com.example.eshop.catalog.ExcludeKafkaConfig;
+import com.example.eshop.catalog.configs.ExcludeKafkaConfig;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.sharedtest.IntegrationTest;

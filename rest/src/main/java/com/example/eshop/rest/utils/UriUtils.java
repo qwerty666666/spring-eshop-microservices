@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class UriFactory {
+public class UriUtils {
     /**
      * Base path to REST Endpoints
      */

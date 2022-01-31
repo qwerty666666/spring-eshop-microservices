@@ -1,12 +1,12 @@
 package com.example.eshop.catalog.rest.controllers;
 
-import com.example.eshop.catalog.ExcludeKafkaConfig;
+import com.example.eshop.catalog.configs.ExcludeKafkaConfig;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.Sku;
-import com.example.eshop.catalog.rest.ControllerTest;
+import com.example.eshop.catalog.configs.ControllerTest;
 import com.example.eshop.catalog.rest.mappers.ProductMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;

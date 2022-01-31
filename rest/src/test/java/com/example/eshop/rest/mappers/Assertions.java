@@ -2,9 +2,9 @@ package com.example.eshop.rest.mappers;
 
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
-import com.example.eshop.catalog.domain.file.File;
-import com.example.eshop.catalog.domain.product.AttributeValue;
-import com.example.eshop.catalog.domain.product.Product;
+import com.example.eshop.catalog.client.api.model.Attribute;
+import com.example.eshop.catalog.client.api.model.Image;
+import com.example.eshop.catalog.client.api.model.Product;
 import com.example.eshop.rest.dto.AttributeDto;
 import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.dto.CartItemDto;
@@ -41,14 +41,14 @@ public class Assertions {
         assertThat(moneyDto.getCurrency()).as("price currency").isEqualTo(money.getCurrency().getCurrencyCode());
     }
 
-    public static void assertAttributeEquals(AttributeValue attributeValue, AttributeDto attributeDto) {
+    public static void assertAttributeEquals(AttributeDto attributeDto, Attribute attributeValue) {
         assertThat(attributeDto.getId()).as("Attribute ID")
-                .isEqualTo(attributeValue.getId() == null ? null : attributeValue.getId().toString());
-        assertThat(attributeDto.getName()).as("Attribute Name").isEqualTo(attributeValue.getAttribute().getName());
+                .isEqualTo(attributeValue.getId() == null ? null : attributeValue.getId());
+        assertThat(attributeDto.getName()).as("Attribute Name").isEqualTo(attributeValue.getName());
         assertThat(attributeDto.getValue()).as("Attribute Value").isEqualTo(attributeValue.getValue());
     }
 
-    public static void assertImageEquals(List<File> images, List<ImageDto> imageDtos) {
+    public static void assertImageEquals(List<Image> images, List<ImageDto> imageDtos) {
         // check only collection size because we don't know what URL will be used in imageDto
         assertThat(images).hasSize(imageDtos.size());
     }
@@ -63,7 +63,10 @@ public class Assertions {
     }
 
     private static void assertCartItemEquals(CartItem item, Product product, CartItemDto dto) {
-        var sku = product.getSku(item.getEan());
+        var sku = product.getSku().stream()
+                .filter(s -> item.getEan().equals(Ean.fromString(s.getEan())))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Sku with EAN" + item.getEan() + " not found in Product " + product));
 
         // ean
         assertThat(dto.getEan()).isEqualTo(item.getEan().toString());
@@ -72,13 +75,12 @@ public class Assertions {
         // quantity
         assertThat(dto.getQuantity()).isEqualTo(item.getQuantity());
         // available quantity
-        assertThat(dto.getAvailableQuantity()).isEqualTo(sku.getAvailableQuantity());
+        assertThat(dto.getAvailableQuantity()).isEqualTo(sku.getQuantity());
         // price
         Assertions.assertPriceEquals(item.getItemPrice(), dto.getPrice());
         // images
         Assertions.assertImageEquals(product.getImages(), dto.getImages());
         // attributes
-        Assertions.assertListEquals(sku.getAttributeValues(), dto.getAttributes(),
-                Assertions::assertAttributeEquals);
+        Assertions.assertListEquals(dto.getAttributes(), sku.getAttributes(), Assertions::assertAttributeEquals);
     }
 }

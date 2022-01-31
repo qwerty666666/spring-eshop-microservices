@@ -1,8 +1,8 @@
-package com.example.eshop.catalog.rest.mappers;
+package com.example.eshop.catalog.configs;
 
-import com.example.eshop.catalog.rest.MappersConfig;
 import com.example.eshop.sharedtest.IntegrationTest;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -11,14 +11,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Meta-annotation which load Spring's Context for Mapstruct's
- * mappers test.
+ * Meta-annotation which loads Spring's Context for Controller tests.
+ * <p>
+ * Should be used with {@link WebMvcTest}.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@SpringBootTest(classes = MappersConfig.class)
 @IntegrationTest
-public @interface MappersTest {
+@Import(ControllerTestsConfig.class)
+public @interface ControllerTest {
 }

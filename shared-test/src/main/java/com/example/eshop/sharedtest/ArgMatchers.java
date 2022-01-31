@@ -3,16 +3,16 @@ package com.example.eshop.sharedtest;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.mockito.ArgumentMatcher;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ArgMatchers {
     /**
-     * Verifies that the actual collection contains exactly the values
-     * of the given {@code expected} collection and nothing else.
+     * Verifies that the actual collection contains only values
+     * from the given {@code expected} collection and nothing else.
      */
-    public static <T> ArgumentMatcher<Collection<T>> containsExactlyInAnyOrder(Collection<T> expected) {
-        return (Collection<T> actual) -> actual.size() == expected.size() &&
-                expected.containsAll(actual);
+    public static <T> ArgumentMatcher<List<T>> listContainsExactlyInAnyOrder(T... expected) {
+        return actual -> actual.size() == expected.length && actual.containsAll(Arrays.asList(expected));
     }
 }

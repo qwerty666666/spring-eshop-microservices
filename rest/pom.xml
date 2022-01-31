@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>catalog-server</artifactId>
+            <artifactId>catalog-client</artifactId>
             <version>${catalog-service.verison}</version>
         </dependency>
         <dependency>

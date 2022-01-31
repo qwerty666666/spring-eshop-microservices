@@ -1,10 +1,10 @@
 package com.example.eshop.catalog.rest.controllers;
 
-import com.example.eshop.catalog.ExcludeKafkaConfig;
+import com.example.eshop.catalog.configs.ExcludeKafkaConfig;
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryCrudService;
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
-import com.example.eshop.catalog.rest.ControllerTest;
+import com.example.eshop.catalog.configs.ControllerTest;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.rest.mappers.CategoryMapper;

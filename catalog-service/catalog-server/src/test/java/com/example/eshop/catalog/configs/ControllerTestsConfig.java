@@ -1,4 +1,4 @@
-package com.example.eshop.catalog.rest;
+package com.example.eshop.catalog.configs;
 
 import com.example.eshop.catalog.config.AppProperties;
 import com.example.eshop.localizer.LocalizerAutoConfiguration;

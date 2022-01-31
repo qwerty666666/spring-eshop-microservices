@@ -1,7 +1,6 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
-import com.example.eshop.cart.application.services.cataloggateway.CatalogGateway;
-import com.example.eshop.cart.application.services.cataloggateway.ProductNotFoundException;
+import com.example.eshop.cart.application.usecases.placeorder.ProductNotFoundException;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.cart.CartRepository;
@@ -9,10 +8,12 @@ import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.catalog.client.api.model.Money;
 import com.example.eshop.catalog.client.api.model.Product;
 import com.example.eshop.catalog.client.api.model.Sku;
+import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +53,8 @@ class CartItemCrudServiceImplTest {
                                 .build()
                 ))
                 .build();
-        var product = Product.builder()
+
+        var newProduct = Product.builder()
                 .name("Test Product")
                 .sku(List.of(
                         Sku.builder()
@@ -69,9 +71,9 @@ class CartItemCrudServiceImplTest {
                 .build();
 
         var catalogGateway = mock(CatalogGateway.class);
-        when(catalogGateway.getProductByEan(newEan)).thenReturn(product);
-        when(catalogGateway.getProductByEan(existedInCartEan)).thenReturn(existedInCartProduct);
-        when(catalogGateway.getProductByEan(nonExistedInCatalogEan)).thenThrow(new ProductNotFoundException(""));
+        when(catalogGateway.getProductByEan(newEan)).thenReturn(Mono.just(newProduct));
+        when(catalogGateway.getProductByEan(existedInCartEan)).thenReturn(Mono.just(existedInCartProduct));
+        when(catalogGateway.getProductByEan(nonExistedInCatalogEan)).thenReturn(Mono.empty());
 
         // CartItemService
 

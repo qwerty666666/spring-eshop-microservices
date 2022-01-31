@@ -1,9 +1,10 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
-import com.example.eshop.cart.application.services.cataloggateway.CatalogGateway;
+import com.example.eshop.cart.application.usecases.placeorder.ProductNotFoundException;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.catalog.client.api.model.Sku;
+import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +77,9 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
     }
 
     private Sku getSku(Ean ean) {
-        var product = catalogGateway.getProductByEan(ean);
+        var product = catalogGateway.getProductByEan(ean)
+                .blockOptional()
+                .orElseThrow(() -> new ProductNotFoundException("Product for EAN " + ean + " does not exist"));
 
         return product.getSku().stream()
                 .filter(s -> s.getEan().equals(ean.toString()))

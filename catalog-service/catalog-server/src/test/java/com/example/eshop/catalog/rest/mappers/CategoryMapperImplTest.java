@@ -1,6 +1,7 @@
 package com.example.eshop.catalog.rest.mappers;
 
 import com.example.eshop.catalog.client.api.model.CategoryTreeItem;
+import com.example.eshop.catalog.configs.MappersTest;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import org.junit.jupiter.api.Test;

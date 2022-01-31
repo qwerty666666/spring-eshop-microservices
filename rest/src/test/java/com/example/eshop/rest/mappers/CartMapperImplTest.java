@@ -1,83 +1,80 @@
 package com.example.eshop.rest.mappers;
 
 import com.example.eshop.cart.domain.cart.Cart;
-import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
-import com.example.eshop.catalog.domain.file.File;
-import com.example.eshop.catalog.domain.product.Attribute;
-import com.example.eshop.catalog.domain.product.AttributeValue;
-import com.example.eshop.catalog.domain.product.Product;
-import com.example.eshop.catalog.domain.product.Sku;
-import com.example.eshop.rest.config.MappersConfig;
+import com.example.eshop.catalog.client.api.model.Attribute;
+import com.example.eshop.catalog.client.api.model.Image;
+import com.example.eshop.catalog.client.api.model.Product;
+import com.example.eshop.catalog.client.api.model.Sku;
+import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
+import com.example.eshop.rest.config.MappersTest;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
-import org.junit.jupiter.api.BeforeEach;
+import com.example.eshop.sharedtest.ArgMatchers;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import reactor.core.publisher.Mono;
+import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = MappersConfig.class)
+@MappersTest
 class CartMapperImplTest {
     @MockBean
-    private ProductCrudService productCrudService;
+    private CatalogGateway catalogGateway;
 
     @Autowired
     private CartMapper mapper;
 
-    private Cart cart;
-    private Map<Ean, Product> productInfo;
+    @Test
+    void testToCartDto() {
+        // Given
+        var ean1 = Ean.fromString("1111111111111");
+        var ean2 = Ean.fromString("2222222222222");
 
-    @BeforeEach
-    void setUp() {
-        var attribute = new Attribute(1L, "size");
+        var price1 = Money.USD(10);
+        var price2 = Money.USD(20);
 
-        var sku1 = Sku.builder()
-                .ean(Ean.fromString("1111111111111"))
-                .price(Money.USD(10))
-                .availableQuantity(10)
-                .addAttribute(new AttributeValue(attribute, "XL", 1))
-                .build();
-        var sku2 = Sku.builder()
-                .ean(Ean.fromString("2222222222222"))
-                .price(Money.USD(20))
-                .availableQuantity(20)
-                .addAttribute(new AttributeValue(attribute, "XXL", 2))
-                .build();
+        var availableQuantity1 = 10;
+        var availableQuantity2 = 20;
 
         var product = Product.builder()
                 .name("product")
-                .addImage(new File("file-1"))
-                .addImage(new File("file-2"))
-                .addSku(sku1)
-                .addSku(sku2)
+                .images(List.of(new Image("file-1"), new Image("file-2")))
+                .sku(List.of(
+                        Sku.builder()
+                                .ean(ean1.toString())
+                                .price(new com.example.eshop.catalog.client.api.model.Money(price1.getAmount(), price1.getCurrency().getCurrencyCode()))
+                                .quantity(availableQuantity1)
+                                .attributes(List.of(new Attribute("1", "size", "XL")))
+                                .build(),
+                        Sku.builder()
+                                .ean(ean2.toString())
+                                .price(new com.example.eshop.catalog.client.api.model.Money(price2.getAmount(), price2.getCurrency().getCurrencyCode()))
+                                .quantity(availableQuantity2)
+                                .attributes(List.of(new Attribute("1", "size", "XXL")))
+                                .build()
+                ))
                 .build();
 
-        productInfo = Map.of(
-                sku1.getEan(), product,
-                sku2.getEan(), product
+        var products = Map.of(
+                ean1, product,
+                ean2, product
         );
 
-        when(productCrudService.getByEan(anyList())).thenReturn(productInfo);
+        when(catalogGateway.getProductsByEan(argThat(ArgMatchers.listContainsExactlyInAnyOrder(ean1, ean2))))
+                .thenReturn(Mono.just(products));
 
-        cart = new Cart("1");
-        cart.addItem(sku1.getEan(), sku1.getPrice(), sku1.getAvailableQuantity());
-        cart.addItem(sku2.getEan(), sku2.getPrice(), sku2.getAvailableQuantity());
-    }
+        var cart = new Cart("1");
+        cart.addItem(ean1, price1, availableQuantity1);
+        cart.addItem(ean2, price2, availableQuantity2);
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void testToCartDto() {
         // When
         var dto = mapper.toCartDto(cart);
 
         // Then
-        Assertions.assertCartEquals(cart, productInfo, dto);
+        Assertions.assertCartEquals(cart, products, dto);
     }
 }

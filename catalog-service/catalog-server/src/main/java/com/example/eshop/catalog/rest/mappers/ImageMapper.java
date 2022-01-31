@@ -2,7 +2,7 @@ package com.example.eshop.catalog.rest.mappers;
 
 import com.example.eshop.catalog.client.api.model.Image;
 import com.example.eshop.catalog.domain.file.File;
-import com.example.eshop.catalog.utils.UriBuilder;
+import com.example.eshop.catalog.infrastructure.UriBuilder;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 

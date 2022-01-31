@@ -1,7 +1,7 @@
-package com.example.eshop.catalog.rest;
+package com.example.eshop.catalog.configs;
 
 import com.example.eshop.catalog.config.AppProperties;
-import com.example.eshop.catalog.utils.UriBuilder;
+import com.example.eshop.catalog.infrastructure.UriBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

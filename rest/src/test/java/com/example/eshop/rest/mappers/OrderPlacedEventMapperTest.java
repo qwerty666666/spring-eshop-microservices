@@ -1,6 +1,6 @@
 package com.example.eshop.rest.mappers;
 
-import com.example.eshop.rest.config.MappersConfig;
+import com.example.eshop.rest.config.MapperTestsConfig;
 import com.example.eshop.rest.dto.DeliveryAddressDto;
 import com.example.eshop.rest.dto.OrderDeliveryDto;
 import com.example.eshop.rest.dto.OrderDto;
@@ -25,7 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = MappersConfig.class)
+@ContextConfiguration(classes = MapperTestsConfig.class)
 class OrderPlacedEventMapperTest {
     @Autowired
     RestOrderMapper orderMapper;

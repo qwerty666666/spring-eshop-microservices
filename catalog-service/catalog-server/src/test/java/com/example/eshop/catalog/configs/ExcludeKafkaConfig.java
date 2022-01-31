@@ -1,4 +1,4 @@
-package com.example.eshop.catalog;
+package com.example.eshop.catalog.configs;
 
 import com.example.eshop.catalog.config.KafkaConfig;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
