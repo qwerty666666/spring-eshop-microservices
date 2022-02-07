@@ -2,6 +2,22 @@ spring:
   application:
     name: api-gateway
 
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: gateway
+            client-secret: D0pgFM1UBhRM20pHoJ1T8dXh0KCBjs9w
+            authorization-grant-type: password
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:28000/auth/realms/test
+
+  devtools:
+    livereload:
+      enabled: false
+
 eureka:
   client:
     serviceUrl:

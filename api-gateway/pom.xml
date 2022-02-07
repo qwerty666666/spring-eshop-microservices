@@ -14,7 +14,17 @@
     <version>1.0.0-SNAPSHOT</version>
     <description>API Gateway</description>
 
+    <properties>
+        <localizer.version>1.0.0-SNAPSHOT</localizer.version>
+    </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>localizer</artifactId>
+            <version>${localizer.version}</version>
+        </dependency>
+
         <!-- Devtools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -29,7 +39,7 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
-        <!-- Spring -->
+        <!-- Gateway -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
@@ -38,6 +48,14 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
+
+        <!-- Auth -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
+        <!-- Eureka -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>

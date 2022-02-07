@@ -3,13 +3,16 @@ package com.example.eshop.rest.utils;
 import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AuthUtils {
+    private static final AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
+
     /**
      * @return currently authenticated principal
      */
@@ -22,7 +25,7 @@ public final class AuthUtils {
      */
     public static Optional<UserDetailsImpl> getCurrentUserDetails() {
         return getCurrentAuthentication()
-                .filter(auth -> auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken))
+                .filter(auth -> auth.isAuthenticated() && !authenticationTrustResolver.isAnonymous(auth))
                 .map(auth -> (UserDetailsImpl)auth.getPrincipal());
     }
 }
