@@ -1,6 +1,6 @@
 package com.example.eshop.rest.config;
 
-import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
+import com.example.eshop.auth.CustomJwtAuthentication;
 import com.example.eshop.rest.utils.AuthUtils;
 import io.sentry.protocol.User;
 import io.sentry.spring.SentryUserProvider;
@@ -18,7 +18,7 @@ public class SentryConfig {
             var user = new User();
 
             AuthUtils.getCurrentUserDetails()
-                    .map(UserDetailsImpl::getCustomerId)
+                    .map(CustomJwtAuthentication::getCustomerId)
                     .ifPresent(user::setId);
 
             return user;

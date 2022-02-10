@@ -13,5 +13,7 @@
     <modules>
         <module>localizer</module>
         <module>transactional-outbox</module>
+        <module>auth</module>
+        <module>auth-test</module>
     </modules>
 </project>

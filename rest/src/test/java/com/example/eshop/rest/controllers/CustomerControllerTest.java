@@ -1,5 +1,6 @@
 package com.example.eshop.rest.controllers;
 
+import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.customer.application.query.QueryCustomerService;
 import com.example.eshop.customer.application.signup.SignUpCommand;
 import com.example.eshop.customer.application.signup.SignUpService;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDate;
@@ -93,7 +93,7 @@ class CustomerControllerTest {
     @Nested
     class GetAuthenticatedTests {
         @Test
-        @WithUserDetails(CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void givenAuthenticatedUser_whenGetAuthenticated_thenReturnThatUser() throws Exception {
             var expectedJson = objectMapper.writeValueAsString(customerDto);
 
@@ -119,7 +119,7 @@ class CustomerControllerTest {
     @Nested
     class UpdateCurrentTests {
         @Test
-        @WithUserDetails(CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void givenAuthenticatedCustomer_whenUpdateCustomer_thenReturnOk() throws Exception {
             // Given
             var expectedCommand = new UpdateCustomerCommand(customer.getId(), NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY);
@@ -132,7 +132,7 @@ class CustomerControllerTest {
         }
 
         @Test
-        @WithUserDetails(CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void givenAuthenticatedCustomer_whenUpdateCurrentCustomerWithAlreadyUsedEmail_thenReturn400() throws Exception {
             // Given
             var expectedCommand = new UpdateCustomerCommand(customer.getId(), NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY);

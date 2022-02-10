@@ -1,6 +1,6 @@
 package com.example.eshop.rest.utils;
 
-import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
+import com.example.eshop.auth.CustomJwtAuthentication;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
@@ -21,11 +21,11 @@ public final class AuthUtils {
     }
 
     /**
-     * @return currently authenticated {@link UserDetailsImpl}
+     * @return currently authenticated {@link CustomJwtAuthentication}
      */
-    public static Optional<UserDetailsImpl> getCurrentUserDetails() {
+    public static Optional<CustomJwtAuthentication> getCurrentUserDetails() {
         return getCurrentAuthentication()
                 .filter(auth -> auth.isAuthenticated() && !authenticationTrustResolver.isAnonymous(auth))
-                .map(auth -> (UserDetailsImpl)auth.getPrincipal());
+                .map(CustomJwtAuthentication.class::cast);
     }
 }

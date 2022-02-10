@@ -12,6 +12,7 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,12 +33,18 @@ public abstract class CartMapper {
     public CartDto toCartDto(Cart cart) {
         var ean = cart.getItems().stream().map(CartItem::getEan).toList();
 
-        var products = catalogGateway.getProductsByEan(ean)
-                .blockOptional()
-                // empty result is impossible there (otherwise it will be contract violation,
-                // and we end up with NPE, that is OK in this case I think), but we handle
-                // null value to pass static analysis. And it's fucking weird ¯\_(ツ)_/¯
-                .orElseThrow(() -> new RuntimeException("getProductsByEan return null"));
+        Map<Ean, Product> products;
+
+        if (ean.isEmpty()) {
+            products = Collections.emptyMap();
+        } else {
+            products = catalogGateway.getProductsByEan(ean)
+                    .blockOptional()
+                    // empty result is impossible there (otherwise it will be contract violation,
+                    // and we end up with NPE, that is OK in this case I think), but we handle
+                    // null value to pass static analysis. And it's fucking weird ¯\_(ツ)_/¯
+                    .orElseThrow(() -> new RuntimeException("getProductsByEan return null"));
+        }
 
         return new CartDto()
                 .id(cart.getId() == null ? null : cart.getId().toString())

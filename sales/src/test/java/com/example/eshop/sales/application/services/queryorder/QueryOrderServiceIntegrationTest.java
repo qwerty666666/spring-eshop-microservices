@@ -1,5 +1,6 @@
 package com.example.eshop.sales.application.services.queryorder;
 
+import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.sales.config.AuthConfig;
 import com.example.eshop.sales.domain.Order;
 import com.example.eshop.sharedtest.dbtests.DbTest;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.test.context.support.WithUserDetails;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,9 +26,9 @@ class QueryOrderServiceIntegrationTest {
     private QueryOrderService queryOrderService;
 
     @Nested
+    @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
     class GetForCustomerTests {
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         void whenGetForCustomerCalledByNonOwner_thenThrowAccessDeniedException() {
             var pageable = Pageable.unpaged();
 
@@ -37,7 +37,6 @@ class QueryOrderServiceIntegrationTest {
         }
 
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
         @DataSet("orders.yml")
         void whenGetForCustomer_thenReturnOrderOnlyForGivenCustomer() {
             var orders = queryOrderService.getForCustomer(AuthConfig.CUSTOMER_ID, Pageable.ofSize(100));

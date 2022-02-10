@@ -1,5 +1,6 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
+import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.cart.ExcludeKafkaConfig;
 import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.cart.Cart;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.test.context.support.WithUserDetails;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ExcludeKafkaConfig
 @IntegrationTest
+@WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
 class CartItemCrudServiceImplIntegrationTest {
     private final static String OWNER_CUSTOMER_ID = AuthConfig.CUSTOMER_ID;
     private final static String NON_OWNER_CUSTOMER_ID = "non-owner";
@@ -40,7 +41,6 @@ class CartItemCrudServiceImplIntegrationTest {
     }
 
     @Test
-    @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
     void whenAddCalledByNonCartOwner_thenThrowAccessDeniedException() {
         var command = new AddCartItemCommand(NON_OWNER_CUSTOMER_ID, FakeData.ean(), 10);
 
@@ -49,7 +49,6 @@ class CartItemCrudServiceImplIntegrationTest {
     }
 
     @Test
-    @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
     void whenRemoveCalledByNonCartOwner_thenThrowAccessDeniedException() {
         var command = new RemoveCartItemCommand(NON_OWNER_CUSTOMER_ID, existedInCartEan);
 

@@ -31,7 +31,7 @@ public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
     private final StockReservationService stockReservationService;
 
     @Override
-    @PreAuthorize("#createOrderDto.customerId() == principal.getCustomerId()")
+    @PreAuthorize("#createOrderDto.customerId() == authentication.getCustomerId()")
     @Transactional
     public Order place(CreateOrderDto createOrderDto) {
         // create Order

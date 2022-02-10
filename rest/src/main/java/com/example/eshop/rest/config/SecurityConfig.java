@@ -1,46 +1,28 @@
 package com.example.eshop.rest.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.eshop.auth.JwtAuthenticationConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration("rest-securityConfig")
 @Import(com.example.eshop.customer.config.SecurityConfig.class)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    UserDetailsService userDetailsService;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .headers(headers -> headers
-                        // require for h2 console
-                        .frameOptions().disable()
-                )
+                // disable default
                 .csrf().disable()
                 .formLogin().disable()
                 .logout().disable()
-                .httpBasic().and()
+                // session
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                // authorization
                 .authorizeRequests(requests -> requests
                         // /api Endpoints
                         .antMatchers("/api/categories/**").permitAll()
@@ -51,6 +33,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                        .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Role.ADMIN)
                         // Others
                         .anyRequest().permitAll()
+                )
+                .oauth2ResourceServer(resourceServer -> resourceServer
+                        .jwt()
+                        .jwtAuthenticationConverter(new JwtAuthenticationConverter())
                 );
     }
 }

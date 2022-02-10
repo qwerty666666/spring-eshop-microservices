@@ -21,7 +21,7 @@ public class CheckoutProcessServiceImpl implements CheckoutProcessService {
     private final OrderFactory orderFactory;
 
     @Override
-    @PreAuthorize("#createOrderDto.customerId() == principal.getCustomerId()")
+    @PreAuthorize("#createOrderDto.customerId() == authentication.getCustomerId()")
     @Transactional(readOnly = true)
     public CheckoutForm process(CreateOrderDto createOrderDto) {
         var order = orderFactory.create(createOrderDto);

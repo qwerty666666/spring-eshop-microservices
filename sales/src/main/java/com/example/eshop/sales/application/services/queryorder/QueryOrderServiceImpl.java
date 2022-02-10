@@ -22,7 +22,7 @@ public class QueryOrderServiceImpl implements QueryOrderService {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("#customerId == principal.getCustomerId()")
+    @PreAuthorize("#customerId == authentication.getCustomerId()")
     public Page<Order> getForCustomer(String customerId, Pageable pageable) {
         var page = orderRepository.findOrdersWithLinesByCustomerId(customerId, pageable);
 
@@ -52,6 +52,10 @@ public class QueryOrderServiceImpl implements QueryOrderService {
     }
 
     private void fetchImages(List<OrderLine> orderLines) {
+        if (orderLines.isEmpty()) {
+            return;
+        }
+
         em.createQuery("""
                 select l
                     from  OrderLine l
@@ -63,6 +67,10 @@ public class QueryOrderServiceImpl implements QueryOrderService {
     }
 
     private void fetchAttributes(List<OrderLine> orderLines) {
+        if (orderLines.isEmpty()) {
+            return;
+        }
+
         em.createQuery("""
                 select l
                     from  OrderLine l

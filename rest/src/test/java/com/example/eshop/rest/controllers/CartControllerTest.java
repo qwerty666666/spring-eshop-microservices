@@ -1,5 +1,6 @@
 package com.example.eshop.rest.controllers;
 
+import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.cart.application.usecases.cartitemcrud.AddCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
 import com.example.eshop.cart.application.usecases.cartitemcrud.NotEnoughQuantityException;
@@ -22,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -69,7 +69,7 @@ class CartControllerTest {
     @Nested
     class GetCartTest {
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenGetCart_thenReturnCartForTheAuthenticatedCustomer() throws Exception {
             var expectedJson = objectMapper.writeValueAsString(cartDto);
 
@@ -97,7 +97,7 @@ class CartControllerTest {
         private final AddCartItemCommand addCartItemCommand = new AddCartItemCommand(AuthConfig.CUSTOMER_ID, ean, quantity);
 
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenPutCartItem_thenCartItemServiceUpsertIsCalledAndCartIsReturned() throws Exception {
             var expectedJson = objectMapper.writeValueAsString(cartDto);
 
@@ -116,7 +116,7 @@ class CartControllerTest {
         }
 
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenPutItemWithExceededQuantity_thenReturn400() throws Exception {
             doThrow(new NotEnoughQuantityException("", 0, quantity)).when(cartItemCrudService).add(addCartItemCommand);
 
@@ -143,7 +143,7 @@ class CartControllerTest {
     @Nested
     class RemoveCartItemTest {
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenRemoveCartItem_thenCartItemServiceRemoveIsCalledAndCartIsReturned() throws Exception {
             var expectedJson = objectMapper.writeValueAsString(cartDto);
             var expectedCommand = new RemoveCartItemCommand(AuthConfig.CUSTOMER_ID, ean);
@@ -157,7 +157,7 @@ class CartControllerTest {
         }
 
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void givenNonExistingEan_whenRemoveCartItem_thenReturn404() throws Exception {
             var expectedCommand = new RemoveCartItemCommand(AuthConfig.CUSTOMER_ID, ean);
 
