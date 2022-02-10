@@ -18,6 +18,7 @@
         <warehouse-service.verison>1.0.0-SNAPSHOT</warehouse-service.verison>
         <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
         <localizer.verison>1.0.0-SNAPSHOT</localizer.verison>
+        <auth.version>1.0.0-SNAPSHOT</auth.version>
     </properties>
 
     <dependencies>
@@ -118,6 +119,12 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-test</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>auth-test</artifactId>
+            <version>${auth.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

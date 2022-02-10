@@ -22,7 +22,7 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
     private final CatalogGateway catalogGateway;
 
     @Override
-    @PreAuthorize("#command.customerId() == principal.getCustomerId()")
+    @PreAuthorize("#command.customerId() == authentication.getCustomerId()")
     @Transactional
     public void add(AddCartItemCommand command) {
         var cart = getCustomerCart(command.customerId());
@@ -60,7 +60,7 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
     }
 
     @Override
-    @PreAuthorize("#command.customerId() == principal.getCustomerId()")
+    @PreAuthorize("#command.customerId() == authentication.getCustomerId()")
     @Transactional
     public void remove(RemoveCartItemCommand command) {
         var cart = getCustomerCart(command.customerId());

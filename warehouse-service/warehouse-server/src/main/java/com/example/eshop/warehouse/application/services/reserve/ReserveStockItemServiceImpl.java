@@ -17,6 +17,7 @@ import com.example.eshop.warehouse.client.events.ProductStockChangedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +36,12 @@ public class ReserveStockItemServiceImpl implements ReserveStockItemService {
 
     @Override
     public ReservationResult reserve(Map<Ean, StockQuantity> reserveQuantity) {
-        return new TransactionTemplate(txManager).execute(status -> {
+        var transactionTemplate = new TransactionTemplate(txManager);
+
+        // use REPEATABLE_READ to prevent lost updates
+        transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);
+
+        return transactionTemplate.execute(status -> {
             // find required StockItems
             var stockItems = getStockItems(reserveQuantity.keySet());
 

@@ -1,15 +1,18 @@
 package com.example.eshop.rest.utils;
 
-import com.example.eshop.customer.infrastructure.auth.UserDetailsImpl;
+import com.example.eshop.auth.CustomJwtAuthentication;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AuthUtils {
+    private static final AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
+
     /**
      * @return currently authenticated principal
      */
@@ -18,11 +21,11 @@ public final class AuthUtils {
     }
 
     /**
-     * @return currently authenticated {@link UserDetailsImpl}
+     * @return currently authenticated {@link CustomJwtAuthentication}
      */
-    public static Optional<UserDetailsImpl> getCurrentUserDetails() {
+    public static Optional<CustomJwtAuthentication> getCurrentUserDetails() {
         return getCurrentAuthentication()
-                .filter(auth -> auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken))
-                .map(auth -> (UserDetailsImpl)auth.getPrincipal());
+                .filter(auth -> auth.isAuthenticated() && !authenticationTrustResolver.isAnonymous(auth))
+                .map(CustomJwtAuthentication.class::cast);
     }
 }

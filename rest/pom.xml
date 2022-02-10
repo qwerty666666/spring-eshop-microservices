@@ -19,6 +19,7 @@
         <sentry.version>5.4.3</sentry.version>
         <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
+        <auth.version>1.0.0-SNAPSHOT</auth.version>
     </properties>
 
     <dependencies>
@@ -101,6 +102,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
 
         <!-- Eureka -->
         <dependency>
@@ -117,6 +122,12 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-test</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>auth-test</artifactId>
+            <version>${auth.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- OpenAPI -->

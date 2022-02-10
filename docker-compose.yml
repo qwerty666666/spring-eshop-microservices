@@ -13,6 +13,17 @@ services:
     networks:
       - postgres
 
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: /tmp/test_realm.json
+    ports:
+      - "28000:8080"
+    volumes:
+      - ./docker/keycloak/init_data:/tmp
+
   pgadmin:
     container_name: eshop-pgadmin
     image: dpage/pgadmin4:6.1

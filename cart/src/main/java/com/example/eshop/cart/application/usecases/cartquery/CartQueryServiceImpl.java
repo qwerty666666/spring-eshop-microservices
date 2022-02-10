@@ -13,7 +13,7 @@ public class CartQueryServiceImpl implements CartQueryService {
     private final CartRepository cartRepository;
 
     @Override
-    @PreAuthorize("#customerId == principal.getCustomerId()")
+    @PreAuthorize("#customerId == authentication.getCustomerId()")
     @Transactional
     public Cart getForCustomer(String customerId) {
         return cartRepository.findByNaturalId(customerId)

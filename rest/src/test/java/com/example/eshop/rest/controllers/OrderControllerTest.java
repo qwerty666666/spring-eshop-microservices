@@ -1,5 +1,6 @@
 package com.example.eshop.rest.controllers;
 
+import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.rest.config.AuthConfig;
 import com.example.eshop.rest.config.ControllerTest;
 import com.example.eshop.rest.config.MapperTestsConfig;
@@ -14,15 +15,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
@@ -77,7 +75,7 @@ class OrderControllerTest {
         private final int page = 1;
 
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenGetOrderList_thenReturnOrdersForTheAuthenticatedCustomer() throws Exception {
             var expectedJson = objectMapper.writeValueAsString(orderMapper.toPagedOrderListDto(orders));
             var expectedPageable = PageRequest.ofSize(pageSize)
@@ -109,7 +107,7 @@ class OrderControllerTest {
     @Nested
     class GetOrderTests {
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenGetOrder_thenReturnOrderWithGivenId() throws Exception {
             var expectedJson = objectMapper.writeValueAsString(orderMapper.toOrderDto(order));
 
@@ -127,14 +125,14 @@ class OrderControllerTest {
         }
 
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void givenNonOwnerOrderId_whenGetOrder_thenReturn403() throws Exception {
             performGetOrderRequest(nonOwnerOrder.getId())
                     .andExpect(status().isForbidden());
         }
 
         @Test
-        @WithUserDetails(AuthConfig.CUSTOMER_EMAIL)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void givenNonExistedOrderId_whenGetOrder_thenReturn404() throws Exception {
             performGetOrderRequest(notExistedOrderId)
                     .andExpect(status().isNotFound());

@@ -20,6 +20,12 @@ spring:
   web:
     locale: en_US
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:28000/auth/realms/test
+
 management:
   endpoints:
     web:

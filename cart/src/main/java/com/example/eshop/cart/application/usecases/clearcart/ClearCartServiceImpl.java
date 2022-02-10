@@ -12,7 +12,7 @@ public class ClearCartServiceImpl implements ClearCartService {
     private final CartQueryService cartQueryService;
 
     @Override
-    @PreAuthorize("#customerId == principal.getCustomerId()")
+    @PreAuthorize("#customerId == authentication.getCustomerId()")
     @Transactional
     public void clear(String customerId) {
         var cart = cartQueryService.getForCustomer(customerId);
