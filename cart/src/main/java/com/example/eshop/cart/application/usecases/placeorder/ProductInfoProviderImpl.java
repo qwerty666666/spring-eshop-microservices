@@ -3,8 +3,8 @@ package com.example.eshop.cart.application.usecases.placeorder;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
-import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
+import com.example.eshop.catalog.client.SkuWithProductDto;
+import com.example.eshop.catalog.client.CatalogService;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ProductInfoProviderImpl implements ProductInfoProvider {
-    private final CatalogGateway catalogGateway;
+    private final CatalogService catalogService;
 
     // TODO replace with Product DTO
     @Override
     public Map<Ean, ProductInfo> getProductsInfo(Cart cart) {
         var eanList = cart.getItems().stream().map(CartItem::getEan).toList();
 
-        var sku = catalogGateway.getSku(eanList)
+        var sku = catalogService.getSku(eanList)
                 .blockOptional()
                 .orElse(Collections.emptyMap());
 

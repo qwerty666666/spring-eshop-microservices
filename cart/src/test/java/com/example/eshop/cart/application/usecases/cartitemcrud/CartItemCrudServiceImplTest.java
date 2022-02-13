@@ -7,8 +7,8 @@ import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.catalog.client.api.model.ProductDto;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
-import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
+import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -41,7 +41,7 @@ class CartItemCrudServiceImplTest {
         var cartRepository = mock(CartRepository.class);
         when(cartRepository.findByNaturalId(customerId)).thenReturn(Optional.of(cart));
 
-        // CatalogGateway
+        // CatalogService
 
         var existedInCartSku = SkuWithProductDto.builder()
                 .ean(existedInCartCartItem.getEan().toString())
@@ -62,14 +62,14 @@ class CartItemCrudServiceImplTest {
                 )
                 .build();
 
-        var catalogGateway = mock(CatalogGateway.class);
-        when(catalogGateway.getSku(newEan)).thenReturn(Mono.just(newSku));
-        when(catalogGateway.getSku(existedInCartEan)).thenReturn(Mono.just(existedInCartSku));
-        when(catalogGateway.getSku(nonExistedInCatalogEan)).thenReturn(Mono.empty());
+        var catalogService = mock(CatalogService.class);
+        when(catalogService.getSku(newEan)).thenReturn(Mono.just(newSku));
+        when(catalogService.getSku(existedInCartEan)).thenReturn(Mono.just(existedInCartSku));
+        when(catalogService.getSku(nonExistedInCatalogEan)).thenReturn(Mono.empty());
 
         // CartItemService
 
-        cartItemCrudService = new CartItemCrudServiceImpl(cartRepository, catalogGateway);
+        cartItemCrudService = new CartItemCrudServiceImpl(cartRepository, catalogService);
     }
 
     @Nested

@@ -5,8 +5,8 @@ import com.example.eshop.catalog.client.api.model.AttributeDto;
 import com.example.eshop.catalog.client.api.model.ImageDto;
 import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.catalog.client.api.model.ProductDto;
-import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
+import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.rest.config.MappersTest;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 @MappersTest
 class CartMapperImplTest {
     @MockBean
-    private CatalogGateway catalogGateway;
+    private CatalogService catalogService;
 
     @Autowired
     private CartMapper mapper;
@@ -69,7 +69,7 @@ class CartMapperImplTest {
                 ean2, sku2
         );
 
-        when(catalogGateway.getSku(argThat(ArgMatchers.listContainsExactlyInAnyOrder(ean1, ean2))))
+        when(catalogService.getSku(argThat(ArgMatchers.listContainsExactlyInAnyOrder(ean1, ean2))))
                 .thenReturn(Mono.just(skuMap));
 
         var cart = new Cart("1");

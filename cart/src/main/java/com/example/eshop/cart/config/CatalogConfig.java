@@ -2,8 +2,8 @@ package com.example.eshop.cart.config;
 
 import com.example.eshop.catalog.client.ApiClient;
 import com.example.eshop.catalog.client.api.ProductsApi;
-import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
-import com.example.eshop.catalog.client.cataloggateway.CatalogGatewayImpl;
+import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.CatalogServiceImpl;
 import io.netty.channel.ChannelOption;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -16,13 +16,13 @@ import java.time.Duration;
 @Configuration
 public class CatalogConfig {
     @Bean
-    public CatalogGateway catalogGateway() {
+    public CatalogService catalogService() {
         var webClient = catalogWebClientBuilder().build();
         var apiClient = new ApiClient(webClient)
                 .setBasePath("lb://catalog-service/api/");
         var productsApi = new ProductsApi(apiClient);
 
-        return new CatalogGatewayImpl(productsApi);
+        return new CatalogServiceImpl(productsApi);
     }
 
     @Bean

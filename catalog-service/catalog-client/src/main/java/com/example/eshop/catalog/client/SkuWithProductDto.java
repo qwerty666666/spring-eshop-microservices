@@ -1,4 +1,4 @@
-package com.example.eshop.catalog.client.cataloggateway;
+package com.example.eshop.catalog.client;
 
 import com.example.eshop.catalog.client.api.model.AttributeDto;
 import com.example.eshop.catalog.client.api.model.MoneyDto;

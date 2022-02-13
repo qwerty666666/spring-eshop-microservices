@@ -1,4 +1,4 @@
-package com.example.eshop.catalog.client.cataloggateway;
+package com.example.eshop.catalog.client;
 
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import reactor.core.publisher.Mono;
@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Gateway to Catalog microservice
  */
-public interface CatalogGateway {
+public interface CatalogService {
     /**
      * Returns sku by given EAN and {@code Mono.empty} if sku with
      * given EAN does not found.

@@ -1,6 +1,6 @@
 package com.example.eshop.rest.config;
 
-import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
+import com.example.eshop.catalog.client.CatalogService;
 import com.example.eshop.localizer.Localizer;
 import com.example.eshop.rest.AppProperties;
 import com.example.eshop.rest.utils.UriUtils;
@@ -14,8 +14,8 @@ import static org.mockito.Mockito.mock;
 @ComponentScan("com.example.eshop.rest.mappers")
 public class MapperTestsConfig {
     @Bean
-    public CatalogGateway catalogGateway() {
-        return mock(CatalogGateway.class);
+    public CatalogService catalogService() {
+        return mock(CatalogService.class);
     }
 
     @Bean

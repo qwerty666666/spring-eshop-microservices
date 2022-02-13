@@ -3,8 +3,8 @@ package com.example.eshop.cart.application.usecases.cartitemcrud;
 import com.example.eshop.cart.application.usecases.placeorder.ProductNotFoundException;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
-import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
+import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class CartItemCrudServiceImpl implements CartItemCrudService {
     private final CartRepository cartRepository;
-    private final CatalogGateway catalogGateway;
+    private final CatalogService catalogService;
 
     @Override
     @PreAuthorize("#command.customerId() == authentication.getCustomerId()")
@@ -77,7 +77,7 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
     }
 
     private SkuWithProductDto getSku(Ean ean) {
-        return catalogGateway.getSku(ean)
+        return catalogService.getSku(ean)
                 .blockOptional()
                 .orElseThrow(() -> new ProductNotFoundException("Sku for EAN " + ean + " does not exist"));
     }

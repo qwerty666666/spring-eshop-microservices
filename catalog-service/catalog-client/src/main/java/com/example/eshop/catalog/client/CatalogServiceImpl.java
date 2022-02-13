@@ -1,4 +1,4 @@
-package com.example.eshop.catalog.client.cataloggateway;
+package com.example.eshop.catalog.client;
 
 import com.example.eshop.catalog.client.api.ProductsApi;
 import com.example.eshop.catalog.client.api.model.ProductDto;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class CatalogGatewayImpl implements CatalogGateway {
+public class CatalogServiceImpl implements CatalogService {
     private static final int RETRIES = 3;
 
     private final ProductsApi productsApi;
@@ -32,7 +32,7 @@ public class CatalogGatewayImpl implements CatalogGateway {
 
                     for (var sku: skuList.getSku()) {
                         var product = Optional.ofNullable(skuList.getProducts().get(sku.getProductId()))
-                                .orElseThrow(() -> new RuntimeException("CatalogGateway response error. Product " +
+                                .orElseThrow(() -> new RuntimeException("CatalogService response error. Product " +
                                         sku.getProductId() + " not found in response."));
 
                         skuMap.put(Ean.fromString(sku.getEan()), createSkuWithProduct(sku, product));

@@ -2,8 +2,8 @@ package com.example.eshop.rest.mappers;
 
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
-import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
+import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.dto.CartItemDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -21,12 +21,12 @@ import java.util.Optional;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public abstract class CartMapper {
-    private CatalogGateway catalogGateway;
+    private CatalogService catalogService;
 
     // we can't use constructor injection in MapStruct for not @Mapper::uses dependencies
     @Autowired
-    public void setCatalogGateway(CatalogGateway catalogGateway) {
-        this.catalogGateway = catalogGateway;
+    public void setCatalogService(CatalogService catalogService) {
+        this.catalogService = catalogService;
     }
 
     public CartDto toCartDto(Cart cart) {
@@ -37,7 +37,7 @@ public abstract class CartMapper {
         if (ean.isEmpty()) {
             sku = Collections.emptyMap();
         } else {
-            sku = catalogGateway.getSku(ean)
+            sku = catalogService.getSku(ean)
                     .blockOptional()
                     // empty result is impossible there (otherwise it will be contract violation,
                     // and we end up with NPE, that is OK in this case I think), but we handle
