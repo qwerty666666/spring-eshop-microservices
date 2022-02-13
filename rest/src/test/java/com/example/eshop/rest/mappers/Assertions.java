@@ -5,6 +5,7 @@ import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.catalog.client.api.model.Attribute;
 import com.example.eshop.catalog.client.api.model.Image;
 import com.example.eshop.catalog.client.api.model.Product;
+import com.example.eshop.catalog.client.cataloggateway.SkuWithProduct;
 import com.example.eshop.rest.dto.AttributeDto;
 import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.dto.CartItemDto;
@@ -53,7 +54,7 @@ public class Assertions {
         assertThat(images).hasSize(imageDtos.size());
     }
 
-    public static void assertCartEquals(Cart cart, Map<Ean, Product> productInfo, CartDto dto) {
+    public static void assertCartEquals(Cart cart, Map<Ean, SkuWithProduct> productInfo, CartDto dto) {
         // id
         assertThat(dto.getId()).isEqualTo(cart.getId() == null ? null : cart.getId().toString());
         // items
@@ -62,11 +63,8 @@ public class Assertions {
         });
     }
 
-    private static void assertCartItemEquals(CartItem item, Product product, CartItemDto dto) {
-        var sku = product.getSku().stream()
-                .filter(s -> item.getEan().equals(Ean.fromString(s.getEan())))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Sku with EAN" + item.getEan() + " not found in Product " + product));
+    private static void assertCartItemEquals(CartItem item, SkuWithProduct sku, CartItemDto dto) {
+        var product = sku.getProduct();
 
         // ean
         assertThat(dto.getEan()).isEqualTo(item.getEan().toString());

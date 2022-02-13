@@ -3,7 +3,7 @@ package com.example.eshop.cart.application.usecases.cartitemcrud;
 import com.example.eshop.cart.application.usecases.placeorder.ProductNotFoundException;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
-import com.example.eshop.catalog.client.api.model.Sku;
+import com.example.eshop.catalog.client.cataloggateway.SkuWithProduct;
 import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -52,7 +52,7 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
         cart.addItem(ean, Money.of(sku.getPrice().getAmount(), sku.getPrice().getCurrency()), quantity);
     }
 
-    private void checkAvailableQuantity(Sku sku, int requiredQuantity) {
+    private void checkAvailableQuantity(SkuWithProduct sku, int requiredQuantity) {
         if (requiredQuantity > sku.getQuantity()) {
             throw new NotEnoughQuantityException("There are no enough available quantity for " + sku.getEan(),
                     sku.getQuantity(), requiredQuantity);
@@ -76,14 +76,9 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
                 });
     }
 
-    private Sku getSku(Ean ean) {
-        var product = catalogGateway.getProductByEan(ean)
+    private SkuWithProduct getSku(Ean ean) {
+        return catalogGateway.getSku(ean)
                 .blockOptional()
-                .orElseThrow(() -> new ProductNotFoundException("Product for EAN " + ean + " does not exist"));
-
-        return product.getSku().stream()
-                .filter(s -> s.getEan().equals(ean.toString()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Sku with EAN" + ean + " not found in Product " + product));
+                .orElseThrow(() -> new ProductNotFoundException("Sku for EAN " + ean + " does not exist"));
     }
 }

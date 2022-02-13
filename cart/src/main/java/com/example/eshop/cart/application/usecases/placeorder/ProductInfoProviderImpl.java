@@ -3,7 +3,7 @@ package com.example.eshop.cart.application.usecases.placeorder;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.catalog.client.api.model.Image;
-import com.example.eshop.catalog.client.api.model.Product;
+import com.example.eshop.catalog.client.cataloggateway.SkuWithProduct;
 import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.RequiredArgsConstructor;
@@ -24,26 +24,26 @@ public class ProductInfoProviderImpl implements ProductInfoProvider {
     public Map<Ean, ProductInfo> getProductsInfo(Cart cart) {
         var eanList = cart.getItems().stream().map(CartItem::getEan).toList();
 
-        var products = catalogGateway.getProductsByEan(eanList)
+        var sku = catalogGateway.getSku(eanList)
                 .blockOptional()
                 .orElse(Collections.emptyMap());
 
-        checkCartItemsExistence(eanList, products);
+        checkCartItemsExistence(eanList, sku);
 
-        return products.entrySet().stream()
-                .collect(Collectors.toMap(Entry::getKey, e -> mapToProductInfo(e.getValue(), e.getKey())));
+        return sku.entrySet().stream()
+                .collect(Collectors.toMap(Entry::getKey, e -> mapToProductInfo(e.getValue())));
     }
 
     /**
      * Checks that all items are found in catalog microservices
      */
-    private void checkCartItemsExistence(List<Ean> requestedEanList, Map<Ean, Product> foundProducts) {
+    private void checkCartItemsExistence(List<Ean> requestedEanList, Map<Ean, SkuWithProduct> foundSku) {
         var notExistedProducts = requestedEanList.stream()
-                .filter(ean -> foundProducts.get(ean) == null)
+                .filter(ean -> foundSku.get(ean) == null)
                 .toList();
 
         if (!notExistedProducts.isEmpty()) {
-            throw new NotExistedProductException(notExistedProducts, "Product with EANs %s are not found in catalog"
+            throw new NotExistedProductException(notExistedProducts, "Sku with EANs %s are not found in catalog"
                     .formatted(notExistedProducts.stream()
                             .map(Ean::toString)
                             .collect(Collectors.joining(",", "[ ", " ]"))
@@ -52,18 +52,15 @@ public class ProductInfoProviderImpl implements ProductInfoProvider {
         }
     }
 
-    private ProductInfo mapToProductInfo(Product product, Ean ean) {
-        var sku = product.getSku().stream()
-                .filter(s -> ean.toString().equals(s.getEan()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Sku with EAN " + ean + " does not exist in Product"));
-
+    private ProductInfo mapToProductInfo(SkuWithProduct sku) {
+        var productName = sku.getProduct().getName();
+        var images = sku.getProduct().getImages().stream()
+                .map(Image::getUrl)
+                .toList();
         var attributes = sku.getAttributes().stream()
                 .map(attr -> new ProductAttribute(Long.parseLong(attr.getId()), attr.getName(), attr.getValue()))
                 .toList();
 
-        var images = product.getImages().stream().map(Image::getUrl).toList();
-
-        return new ProductInfo(product.getName(), images, attributes);
+        return new ProductInfo(productName, images, attributes);
     }
 }

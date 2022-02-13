@@ -33,8 +33,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/product_list_per_page'
         - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/ean_filter'
-
       responses:
         200:
           $ref: '#/components/responses/paged_product_list'
@@ -55,6 +53,21 @@ paths:
           $ref: '#/components/responses/product'
         404:
           $ref: '#/components/responses/not_found'
+
+  /sku:
+    get:
+      tags:
+        - products
+      summary: Get Sku information by given EAN list
+      operationId: getSku
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ean_filter'
+      responses:
+        200:
+          $ref: '#/components/responses/sku_list'
+        400:
+          $ref: '#/components/responses/validation_error'
 
   /categories:
     get:
@@ -126,10 +139,6 @@ components:
         description:
           type: string
           example: Very cool Sneakers, omg!!
-        sku:
-          type: array
-          items:
-            $ref: '#/components/schemas/sku'
         images:
           type: array
           items:
@@ -138,7 +147,6 @@ components:
         - id
         - name
         - description
-        - sku
         - images
 
     image:
@@ -156,6 +164,8 @@ components:
           $ref: '#/components/schemas/money'
         ean:
           $ref: '#/components/schemas/ean'
+        productId:
+          type: string
         quantity:
           $ref: '#/components/schemas/available-quantity'
         attributes:
@@ -165,8 +175,25 @@ components:
       required:
         - price
         - ean
+        - productId
         - quantity
         - attributes
+
+    product-with-sku:
+      allOf:
+        - $ref: '#/components/schemas/product'
+        - type: object
+          properties:
+            sku:
+              type: array
+              items:
+                $ref: '#/components/schemas/sku'
+      required:
+        - id
+        - name
+        - description
+        - sku
+        - images
 
     available-quantity:
       type: integer
@@ -183,6 +210,10 @@ components:
           type: string
         value:
           type: string
+      required:
+        - id
+        - name
+        - value
       example:
         id: 1
         name: size
@@ -229,6 +260,11 @@ components:
           type: integer
           minimum: 0
           example: 3
+      required:
+        - page
+        - perPage
+        - totalItems
+        - totalPages
 
     category:
       type: object
@@ -276,7 +312,26 @@ components:
         items:
           type: array
           items:
+            $ref: '#/components/schemas/product-with-sku'
+      required:
+        - pageable
+        - items
+
+    sku-info:
+      type: object
+      description: Sku list. Products field is a map of type productId -> product for all sku
+      properties:
+        products:
+          type: object
+          additionalProperties:
             $ref: '#/components/schemas/product'
+        sku:
+          type: array
+          items:
+            $ref: '#/components/schemas/sku'
+      required:
+        - products
+        - sku
 
     basic-error:
       type: object
@@ -339,7 +394,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/product'
+            $ref: '#/components/schemas/product-with-sku'
+
+    sku_list:
+      description: Sku information
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sku-info'
 
     paged_product_list:
       description: Product List

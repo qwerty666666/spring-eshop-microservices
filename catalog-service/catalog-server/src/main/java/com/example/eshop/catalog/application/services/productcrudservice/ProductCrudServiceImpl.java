@@ -94,6 +94,10 @@ class ProductCrudServiceImpl implements ProductCrudService {
     }
 
     private void fetchSku(List<Product> products) {
+        if (products.isEmpty()) {
+            return;
+        }
+
         em.createQuery("""
                 select product
                     from Product product
@@ -107,6 +111,10 @@ class ProductCrudServiceImpl implements ProductCrudService {
     }
 
     private void fetchImages(List<Product> products) {
+        if (products.isEmpty()) {
+            return;
+        }
+
         em.createQuery("""
                 select p
                     from Product p

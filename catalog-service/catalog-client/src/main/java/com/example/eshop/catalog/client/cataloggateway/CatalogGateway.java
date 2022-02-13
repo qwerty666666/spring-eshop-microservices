@@ -1,6 +1,5 @@
 package com.example.eshop.catalog.client.cataloggateway;
 
-import com.example.eshop.catalog.client.api.model.Product;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import reactor.core.publisher.Mono;
 import java.util.List;
@@ -11,14 +10,14 @@ import java.util.Map;
  */
 public interface CatalogGateway {
     /**
-     * Returns product by given EAN and {@code Mono.empty} if product with
+     * Returns sku by given EAN and {@code Mono.empty} if sku with
      * given EAN does not found.
      */
-    Mono<Product> getProductByEan(Ean ean);
+    Mono<SkuWithProduct> getSku(Ean ean);
 
     /**
-     * Returns products by given EANs. If for any EAN there is no product
+     * Returns sku list by given EANs. If for any EAN there is no sku
      * then this EAN will be mapped to {@code null}.
      */
-    Mono<Map<Ean, Product>> getProductsByEan(List<Ean> ean);
+    Mono<Map<Ean, SkuWithProduct>> getSku(List<Ean> ean);
 }

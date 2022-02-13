@@ -19,5 +19,9 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>catalog-client</artifactId>
+        </dependency>
     </dependencies>
 </project>
