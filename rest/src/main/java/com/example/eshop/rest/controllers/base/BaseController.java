@@ -15,7 +15,7 @@ public class BaseController {
      * Returns currently authenticated {@link CustomJwtAuthentication} or
      * throws {@link NotAuthenticatedException} if user is not authenticated.
      */
-    protected CustomJwtAuthentication getAuthenticatedUserDetailsOrFail() {
+    protected CustomJwtAuthentication getCurrentAuthenticationOrFail() {
         return AuthUtils.getCurrentUserDetails()
                 .orElseThrow(() -> new NotAuthenticatedException("User is not authenticated"));
     }

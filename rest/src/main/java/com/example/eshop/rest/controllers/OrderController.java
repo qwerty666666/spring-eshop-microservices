@@ -50,7 +50,7 @@ public class OrderController extends BaseController implements OrderApi {
     public ResponseEntity<OrderDto> getOrder(UUID orderId) {
         var order = queryOrderService.getById(orderId);
 
-        var authenticatedCustomerId = getAuthenticatedUserDetailsOrFail().getCustomerId();
+        var authenticatedCustomerId = getCurrentAuthenticationOrFail().getCustomerId();
         if (!order.getCustomerId().equals(authenticatedCustomerId)) {
             throw new AccessDeniedException("Authenticated customer have no permission to view order " + orderId);
         }
@@ -60,7 +60,7 @@ public class OrderController extends BaseController implements OrderApi {
 
     @Override
     public ResponseEntity<PagedOrderListDto> getOrderList(Integer perPage, Integer page) {
-        var userDetails = getAuthenticatedUserDetailsOrFail();
+        var userDetails = getCurrentAuthenticationOrFail();
         var pageable = PageRequest.ofSize(perPage)
                 .withPage(page - 1)
                 .withSort(Sort.by(new Order(Direction.DESC, "creationDate")));

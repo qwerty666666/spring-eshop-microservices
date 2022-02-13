@@ -3,6 +3,7 @@ package com.example.eshop.auth;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
@@ -18,6 +19,7 @@ public class WithMockCustomJwtAuthenticationSecurityContextFactory implements Wi
         var jwt = Jwt.withTokenValue("token")
                 .header("alg", "none")
                 .claim(JwtClaimNames.SUB, customerId)
+                .claim(StandardClaimNames.EMAIL, mockJwtToken.email())
                 .build();
 
         var authentication = new CustomJwtAuthentication(jwt, Collections.emptyList());
