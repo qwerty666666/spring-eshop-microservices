@@ -1,12 +1,12 @@
 package com.example.eshop.rest.mappers;
 
 import com.example.eshop.cart.domain.cart.Cart;
-import com.example.eshop.catalog.client.api.model.Attribute;
-import com.example.eshop.catalog.client.api.model.Image;
-import com.example.eshop.catalog.client.api.model.Product;
-import com.example.eshop.catalog.client.api.model.Sku;
+import com.example.eshop.catalog.client.api.model.AttributeDto;
+import com.example.eshop.catalog.client.api.model.ImageDto;
+import com.example.eshop.catalog.client.api.model.MoneyDto;
+import com.example.eshop.catalog.client.api.model.ProductDto;
 import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProduct;
+import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
 import com.example.eshop.rest.config.MappersTest;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -41,25 +41,25 @@ class CartMapperImplTest {
         var availableQuantity1 = 10;
         var availableQuantity2 = 20;
 
-        var product = Product.builder()
+        var product = ProductDto.builder()
                 .id("1")
                 .name("product")
-                .images(List.of(new Image("file-1"), new Image("file-2")))
+                .images(List.of(new ImageDto("file-1"), new ImageDto("file-2")))
                 .build();
 
-        var sku1 = SkuWithProduct.builder()
+        var sku1 = SkuWithProductDto.builder()
                 .ean(ean1.toString())
-                .price(new com.example.eshop.catalog.client.api.model.Money(price1.getAmount(), price1.getCurrency().getCurrencyCode()))
+                .price(new MoneyDto(price1.getAmount(), price1.getCurrency().getCurrencyCode()))
                 .quantity(availableQuantity1)
-                .attributes(List.of(new Attribute("1", "size", "XL")))
+                .attributes(List.of(new AttributeDto("1", "size", "XL")))
                 .productId(product.getId())
                 .product(product)
                 .build();
-        var sku2 = SkuWithProduct.builder()
+        var sku2 = SkuWithProductDto.builder()
                 .ean(ean2.toString())
-                .price(new com.example.eshop.catalog.client.api.model.Money(price2.getAmount(), price2.getCurrency().getCurrencyCode()))
+                .price(new MoneyDto(price2.getAmount(), price2.getCurrency().getCurrencyCode()))
                 .quantity(availableQuantity2)
-                .attributes(List.of(new Attribute("1", "size", "XXL")))
+                .attributes(List.of(new AttributeDto("1", "size", "XXL")))
                 .productId(product.getId())
                 .product(product)
                 .build();

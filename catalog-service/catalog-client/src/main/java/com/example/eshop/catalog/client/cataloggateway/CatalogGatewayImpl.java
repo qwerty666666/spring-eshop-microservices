@@ -1,9 +1,9 @@
 package com.example.eshop.catalog.client.cataloggateway;
 
 import com.example.eshop.catalog.client.api.ProductsApi;
-import com.example.eshop.catalog.client.api.model.Product;
-import com.example.eshop.catalog.client.api.model.Sku;
-import com.example.eshop.catalog.client.api.model.SkuInfo;
+import com.example.eshop.catalog.client.api.model.ProductDto;
+import com.example.eshop.catalog.client.api.model.SkuDto;
+import com.example.eshop.catalog.client.api.model.SkuInfoDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -19,16 +19,16 @@ public class CatalogGatewayImpl implements CatalogGateway {
     private final ProductsApi productsApi;
 
     @Override
-    public Mono<SkuWithProduct> getSku(Ean ean) {
+    public Mono<SkuWithProductDto> getSku(Ean ean) {
         return getSku(List.of(ean))
                 .flatMap(products -> Mono.justOrEmpty(products.get(ean)));
     }
 
     @Override
-    public Mono<Map<Ean, SkuWithProduct>> getSku(List<Ean> eanList) {
+    public Mono<Map<Ean, SkuWithProductDto>> getSku(List<Ean> eanList) {
         return requestSku(eanList)
                 .map(skuList -> {
-                    var skuMap = new HashMap<Ean, SkuWithProduct>();
+                    var skuMap = new HashMap<Ean, SkuWithProductDto>();
 
                     for (var sku: skuList.getSku()) {
                         var product = Optional.ofNullable(skuList.getProducts().get(sku.getProductId()))
@@ -49,12 +49,12 @@ public class CatalogGatewayImpl implements CatalogGateway {
                 });
     }
 
-    private SkuWithProduct createSkuWithProduct(Sku sku, Product product) {
-        return new SkuWithProduct(sku.getPrice(), sku.getEan(), sku.getProductId(), sku.getQuantity(),
+    private SkuWithProductDto createSkuWithProduct(SkuDto sku, ProductDto product) {
+        return new SkuWithProductDto(sku.getPrice(), sku.getEan(), sku.getProductId(), sku.getQuantity(),
                 sku.getAttributes(), product);
     }
 
-    private Mono<SkuInfo> requestSku(List<Ean> ean) {
+    private Mono<SkuInfoDto> requestSku(List<Ean> ean) {
         var eanStrings = ean.stream().map(Ean::toString).toList();
 
         return productsApi.getSku(eanStrings)

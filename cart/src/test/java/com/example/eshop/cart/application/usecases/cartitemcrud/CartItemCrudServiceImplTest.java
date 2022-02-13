@@ -5,9 +5,9 @@ import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
-import com.example.eshop.catalog.client.api.model.Money;
-import com.example.eshop.catalog.client.api.model.Product;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProduct;
+import com.example.eshop.catalog.client.api.model.MoneyDto;
+import com.example.eshop.catalog.client.api.model.ProductDto;
+import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
 import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,20 +43,20 @@ class CartItemCrudServiceImplTest {
 
         // CatalogGateway
 
-        var existedInCartSku = SkuWithProduct.builder()
+        var existedInCartSku = SkuWithProductDto.builder()
                 .ean(existedInCartCartItem.getEan().toString())
                 .quantity(existedInCartCartItem.getQuantity())
-                .product(Product.builder()
+                .product(ProductDto.builder()
                         .name("Test Product")
                         .build()
                 )
                 .build();
 
-        var newSku = SkuWithProduct.builder()
+        var newSku = SkuWithProductDto.builder()
                 .ean(newEan.toString())
-                .price(new Money(BigDecimal.valueOf(10), "USD"))
+                .price(new MoneyDto(BigDecimal.valueOf(10), "USD"))
                 .quantity(availableQuantity)
-                .product(Product.builder()
+                .product(ProductDto.builder()
                         .name("Test Product")
                         .build()
                 )

@@ -2,8 +2,8 @@ package com.example.eshop.cart.application.usecases.placeorder;
 
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
-import com.example.eshop.catalog.client.api.model.Image;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProduct;
+import com.example.eshop.catalog.client.api.model.ImageDto;
+import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
 import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class ProductInfoProviderImpl implements ProductInfoProvider {
     /**
      * Checks that all items are found in catalog microservices
      */
-    private void checkCartItemsExistence(List<Ean> requestedEanList, Map<Ean, SkuWithProduct> foundSku) {
+    private void checkCartItemsExistence(List<Ean> requestedEanList, Map<Ean, SkuWithProductDto> foundSku) {
         var notExistedProducts = requestedEanList.stream()
                 .filter(ean -> foundSku.get(ean) == null)
                 .toList();
@@ -52,10 +52,10 @@ public class ProductInfoProviderImpl implements ProductInfoProvider {
         }
     }
 
-    private ProductInfo mapToProductInfo(SkuWithProduct sku) {
+    private ProductInfo mapToProductInfo(SkuWithProductDto sku) {
         var productName = sku.getProduct().getName();
         var images = sku.getProduct().getImages().stream()
-                .map(Image::getUrl)
+                .map(ImageDto::getUrl)
                 .toList();
         var attributes = sku.getAttributes().stream()
                 .map(attr -> new ProductAttribute(Long.parseLong(attr.getId()), attr.getName(), attr.getValue()))

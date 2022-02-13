@@ -3,7 +3,7 @@ package com.example.eshop.cart.application.usecases.cartitemcrud;
 import com.example.eshop.cart.application.usecases.placeorder.ProductNotFoundException;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartRepository;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProduct;
+import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
 import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -52,7 +52,7 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
         cart.addItem(ean, Money.of(sku.getPrice().getAmount(), sku.getPrice().getCurrency()), quantity);
     }
 
-    private void checkAvailableQuantity(SkuWithProduct sku, int requiredQuantity) {
+    private void checkAvailableQuantity(SkuWithProductDto sku, int requiredQuantity) {
         if (requiredQuantity > sku.getQuantity()) {
             throw new NotEnoughQuantityException("There are no enough available quantity for " + sku.getEan(),
                     sku.getQuantity(), requiredQuantity);
@@ -76,7 +76,7 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
                 });
     }
 
-    private SkuWithProduct getSku(Ean ean) {
+    private SkuWithProductDto getSku(Ean ean) {
         return catalogGateway.getSku(ean)
                 .blockOptional()
                 .orElseThrow(() -> new ProductNotFoundException("Sku for EAN " + ean + " does not exist"));

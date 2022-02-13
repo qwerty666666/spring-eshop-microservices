@@ -2,7 +2,7 @@ package com.example.eshop.rest.mappers;
 
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
-import com.example.eshop.catalog.client.cataloggateway.SkuWithProduct;
+import com.example.eshop.catalog.client.cataloggateway.SkuWithProductDto;
 import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
 import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.dto.CartItemDto;
@@ -32,7 +32,7 @@ public abstract class CartMapper {
     public CartDto toCartDto(Cart cart) {
         var ean = cart.getItems().stream().map(CartItem::getEan).toList();
 
-        Map<Ean, SkuWithProduct> sku;
+        Map<Ean, SkuWithProductDto> sku;
 
         if (ean.isEmpty()) {
             sku = Collections.emptyMap();
@@ -50,7 +50,7 @@ public abstract class CartMapper {
                 .items(cart.getItems().stream().map(item -> toCartItemDto(item, sku)).toList());
     }
 
-    protected CartItemDto toCartItemDto(CartItem item, Map<Ean, SkuWithProduct> skuMap) {
+    protected CartItemDto toCartItemDto(CartItem item, Map<Ean, SkuWithProductDto> skuMap) {
         // TODO handle missing product case.
         // It is possible that we remove product from catalog, but it is still in the Cart
         // Therefore, we should handle this instead of throwing exceptions.
@@ -71,5 +71,5 @@ public abstract class CartMapper {
     @Mapping(target = "quantity", source = "cartItem.quantity")
     @Mapping(target = "ean", source = "cartItem.ean")
     @Mapping(target = "price", source = "cartItem.itemPrice")
-    public abstract CartItemDto toCartItemDto(CartItem cartItem, SkuWithProduct sku);
+    public abstract CartItemDto toCartItemDto(CartItem cartItem, SkuWithProductDto sku);
 }

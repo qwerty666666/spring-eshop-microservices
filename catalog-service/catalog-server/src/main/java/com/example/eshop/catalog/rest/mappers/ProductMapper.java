@@ -1,8 +1,10 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.PagedProductList;
-import com.example.eshop.catalog.client.api.model.ProductWithSku;
-import com.example.eshop.catalog.client.api.model.SkuInfo;
+import com.example.eshop.catalog.client.api.model.PagedProductListDto;
+import com.example.eshop.catalog.client.api.model.ProductDto;
+import com.example.eshop.catalog.client.api.model.ProductWithSkuDto;
+import com.example.eshop.catalog.client.api.model.SkuDto;
+import com.example.eshop.catalog.client.api.model.SkuInfoDto;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.Sku;
@@ -24,9 +26,9 @@ import java.util.stream.Stream;
         uses = { EanMapper.class, PageableMapper.class, ImageMapper.class, AttributeMapper.class }
 )
 public interface ProductMapper {
-    com.example.eshop.catalog.client.api.model.Product toProductDto(Product product);
+    ProductDto toProductDto(Product product);
 
-    ProductWithSku toProductWithSkuDto(Product product);
+    ProductWithSkuDto toProductWithSkuDto(Product product);
 
     @Nullable
     default String toString(@Nullable ProductId id) {
@@ -35,23 +37,23 @@ public interface ProductMapper {
 
     @Mapping(target = "productId", source = "sku.product.id")
     @Mapping(target = "quantity", source = "availableQuantity")
-    com.example.eshop.catalog.client.api.model.Sku toSkuDto(Sku sku);
+    SkuDto toSkuDto(Sku sku);
 
     @Mapping(target = "items", expression = "java(toProductDtoList(page.get()))")
     @Mapping(target = "pageable", source = ".")
-    PagedProductList toPagedProductListDto(Page<Product> page);
+    PagedProductListDto toPagedProductListDto(Page<Product> page);
 
-    List<ProductWithSku> toProductDtoList(Stream<Product> products);
+    List<ProductWithSkuDto> toProductDtoList(Stream<Product> products);
 
     /**
-     * Builds {@link SkuInfo} from products founded for given EAN list
+     * Builds {@link SkuInfoDto} from products founded for given EAN list
      *
      * @param skuEans EANs of sku that should be in the result
      * @param products products which have sku for {@code skuEans}
      */
-    default SkuInfo toSkuList(List<Ean> skuEans, List<Product> products) {
-        var productMap = new HashMap<String, com.example.eshop.catalog.client.api.model.Product>();
-        var skuList = new ArrayList<com.example.eshop.catalog.client.api.model.Sku>();
+    default SkuInfoDto toSkuList(List<Ean> skuEans, List<Product> products) {
+        var productMap = new HashMap<String, ProductDto>();
+        var skuList = new ArrayList<SkuDto>();
 
         var eanSet = new HashSet<>(skuEans);
 
@@ -64,6 +66,6 @@ public interface ProductMapper {
             }
         }
 
-        return new SkuInfo(productMap, skuList);
+        return new SkuInfoDto(productMap, skuList);
     }
 }

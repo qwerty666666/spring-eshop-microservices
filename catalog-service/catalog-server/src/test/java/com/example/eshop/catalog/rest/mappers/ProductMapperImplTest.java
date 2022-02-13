@@ -1,8 +1,12 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.Image;
-import com.example.eshop.catalog.client.api.model.ProductWithSku;
-import com.example.eshop.catalog.client.api.model.SkuInfo;
+import com.example.eshop.catalog.client.api.model.AttributeDto;
+import com.example.eshop.catalog.client.api.model.ImageDto;
+import com.example.eshop.catalog.client.api.model.MoneyDto;
+import com.example.eshop.catalog.client.api.model.ProductDto;
+import com.example.eshop.catalog.client.api.model.ProductWithSkuDto;
+import com.example.eshop.catalog.client.api.model.SkuDto;
+import com.example.eshop.catalog.client.api.model.SkuInfoDto;
 import com.example.eshop.catalog.configs.MappersTest;
 import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.domain.product.Attribute;
@@ -113,7 +117,7 @@ class ProductMapperImplTest {
         return product;
     }
 
-    private void assertSkuInfoEquals(List<Sku> sku, SkuInfo skuInfo) {
+    private void assertSkuInfoEquals(List<Sku> sku, SkuInfoDto skuInfo) {
         // assert SkuInfo::products
         var products = sku.stream()
                 .map(Sku::getProduct)
@@ -141,7 +145,7 @@ class ProductMapperImplTest {
         });
     }
 
-    private void assertProductEquals(Product product, com.example.eshop.catalog.client.api.model.Product productDto) {
+    private void assertProductEquals(Product product, ProductDto productDto) {
         assertThat(productDto.getId()).as("product ID")
                 .isEqualTo(product.getId() == null ? null : product.getId().toString());
         assertThat(productDto.getName()).as("product Name").isEqualTo(product.getName());
@@ -149,7 +153,7 @@ class ProductMapperImplTest {
         assertImageEquals(product.getImages(), productDto.getImages());
     }
 
-    private void assertProductWithSkuEquals(Product product, ProductWithSku productDto) {
+    private void assertProductWithSkuEquals(Product product, ProductWithSkuDto productDto) {
         assertThat(productDto.getId()).as("product ID")
                 .isEqualTo(product.getId() == null ? null : product.getId().toString());
         assertThat(productDto.getName()).as("product Name").isEqualTo(product.getName());
@@ -158,25 +162,25 @@ class ProductMapperImplTest {
         assertImageEquals(product.getImages(), productDto.getImages());
     }
 
-    private void assertSkuEquals(Sku sku, com.example.eshop.catalog.client.api.model.Sku skuDto) {
+    private void assertSkuEquals(Sku sku, SkuDto skuDto) {
         assertThat(skuDto.getEan()).as("Sku EAN").isEqualTo(sku.getEan().toString());
         assertThat(skuDto.getQuantity()).as("available quantity").isEqualTo(sku.getAvailableQuantity());
         assertPriceEquals(sku.getPrice(), skuDto.getPrice());
         Assertions.assertListEquals(sku.getAttributeValues(), skuDto.getAttributes(), ProductMapperImplTest::assertAttributeEquals);
     }
 
-    private static void assertPriceEquals(Money money, com.example.eshop.catalog.client.api.model.Money moneyDto) {
+    private static void assertPriceEquals(Money money, MoneyDto moneyDto) {
         assertThat(moneyDto.getAmount()).as("price amount").isEqualTo(money.getAmount());
         assertThat(moneyDto.getCurrency()).as("price currency").isEqualTo(money.getCurrency().getCurrencyCode());
     }
 
-    private static void assertImageEquals(List<File> images, List<Image> imageDtos) {
+    private static void assertImageEquals(List<File> images, List<ImageDto> imageDtos) {
         // check only collection size because we don't know what URL will be used in imageDto,
         // as image can be external URL or can be prefixed with hostname by UriBuilder
         assertThat(images).hasSize(imageDtos.size());
     }
 
-    private static void assertAttributeEquals(AttributeValue attributeValue, com.example.eshop.catalog.client.api.model.Attribute attributeDto) {
+    private static void assertAttributeEquals(AttributeValue attributeValue, AttributeDto attributeDto) {
         assertThat(attributeDto.getId()).as("Attribute ID")
                 .isEqualTo(attributeValue.getId() == null ? null : attributeValue.getId().toString());
         assertThat(attributeDto.getName()).as("Attribute Name").isEqualTo(attributeValue.getAttribute().getName());

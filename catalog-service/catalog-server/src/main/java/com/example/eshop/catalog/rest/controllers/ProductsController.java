@@ -2,11 +2,11 @@ package com.example.eshop.catalog.rest.controllers;
 
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductNotFoundException;
-import com.example.eshop.catalog.client.api.model.ProductWithSku;
-import com.example.eshop.catalog.client.api.model.SkuInfo;
+import com.example.eshop.catalog.client.api.model.ProductWithSkuDto;
+import com.example.eshop.catalog.client.api.model.SkuInfoDto;
 import com.example.eshop.catalog.rest.api.ProductsApi;
-import com.example.eshop.catalog.client.api.model.BasicError;
-import com.example.eshop.catalog.client.api.model.PagedProductList;
+import com.example.eshop.catalog.client.api.model.BasicErrorDto;
+import com.example.eshop.catalog.client.api.model.PagedProductListDto;
 import com.example.eshop.catalog.config.AppProperties;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.rest.mappers.ProductMapper;
@@ -44,7 +44,7 @@ public class ProductsController implements ProductsApi {
      */
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private BasicError handleProductNotFoundException(ProductNotFoundException e) {
+    private BasicErrorDto handleProductNotFoundException(ProductNotFoundException e) {
         return BasicErrorBuilder.newInstance()
                 .setStatus(HttpStatus.NOT_FOUND)
                 .setDetail(getLocalizer().getMessage("productNotFound", e.getProductId()))
@@ -52,14 +52,14 @@ public class ProductsController implements ProductsApi {
     }
 
     @Override
-    public ResponseEntity<ProductWithSku> getProductById(String id) {
+    public ResponseEntity<ProductWithSkuDto> getProductById(String id) {
         var product = productCrudService.getById(new ProductId(id));
 
         return ResponseEntity.ok(productMapper.toProductWithSkuDto(product));
     }
 
     @Override
-    public ResponseEntity<PagedProductList> getProductList(Integer perPage, Integer page) {
+    public ResponseEntity<PagedProductListDto> getProductList(Integer perPage, Integer page) {
         var pageable = PageRequest.of(page - 1, perPage);
 
         var products = productCrudService.getList(pageable);
@@ -68,8 +68,8 @@ public class ProductsController implements ProductsApi {
     }
 
     @Override
-    public ResponseEntity<SkuInfo> getSku(List<String> eanStrings) {
-        SkuInfo skuInfo;
+    public ResponseEntity<SkuInfoDto> getSku(List<String> eanStrings) {
+        SkuInfoDto skuInfo;
 
         if (CollectionUtils.isEmpty(eanStrings)) {
             skuInfo = emptySkuList();
@@ -97,9 +97,9 @@ public class ProductsController implements ProductsApi {
     }
 
     /**
-     * Returns new empty {@link SkuInfo}
+     * Returns new empty {@link SkuInfoDto}
      */
-    private SkuInfo emptySkuList() {
-        return new SkuInfo(Collections.emptyMap(), Collections.emptyList());
+    private SkuInfoDto emptySkuList() {
+        return new SkuInfoDto(Collections.emptyMap(), Collections.emptyList());
     }
 }

@@ -78,6 +78,7 @@
                             <generatorName>java</generatorName>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
                             <apiPackage>com.example.eshop.catalog.client.api</apiPackage>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>

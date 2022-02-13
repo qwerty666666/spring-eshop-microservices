@@ -13,11 +13,11 @@ public interface CatalogGateway {
      * Returns sku by given EAN and {@code Mono.empty} if sku with
      * given EAN does not found.
      */
-    Mono<SkuWithProduct> getSku(Ean ean);
+    Mono<SkuWithProductDto> getSku(Ean ean);
 
     /**
      * Returns sku list by given EANs. If for any EAN there is no sku
      * then this EAN will be mapped to {@code null}.
      */
-    Mono<Map<Ean, SkuWithProduct>> getSku(List<Ean> ean);
+    Mono<Map<Ean, SkuWithProductDto>> getSku(List<Ean> ean);
 }

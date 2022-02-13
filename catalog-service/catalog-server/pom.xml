@@ -168,6 +168,7 @@
                             <generateModels>false</generateModels>
                             <apiPackage>com.example.eshop.catalog.rest.api</apiPackage>
                             <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <openApiNullable>false</openApiNullable>

@@ -1,6 +1,7 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.CategoryTreeItem;
+import com.example.eshop.catalog.client.api.model.CategoryDto;
+import com.example.eshop.catalog.client.api.model.CategoryTreeItemDto;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.sharedkernel.domain.base.DomainObjectId;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     @Mapping(target = "parentId", source = "parent")
-    com.example.eshop.catalog.client.api.model.Category toCategoryDto(Category category);
+    CategoryDto toCategoryDto(Category category);
 
     default String getCategoryId(Category category) {
         if (category == null) {
@@ -27,9 +28,9 @@ public interface CategoryMapper {
         return id == null ? null : id.toString();
     }
 
-    List<com.example.eshop.catalog.client.api.model.Category> toCategoryDtoList(List<Category> categories);
+    List<CategoryDto> toCategoryDtoList(List<Category> categories);
 
-    CategoryTreeItem toCategoryTreeItem(Category category);
+    CategoryTreeItemDto toCategoryTreeItem(Category category);
 
-    List<CategoryTreeItem> toTree(List<Category> categories);
+    List<CategoryTreeItemDto> toTree(List<Category> categories);
 }
