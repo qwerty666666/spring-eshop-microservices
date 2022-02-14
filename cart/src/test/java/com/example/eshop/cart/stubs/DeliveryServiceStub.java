@@ -13,6 +13,8 @@ public class DeliveryServiceStub extends DeliveryService {
     private final boolean isSupported;
 
     public DeliveryServiceStub(boolean isSupported) {
+        this.id = new DeliveryServiceId("1");
+        this.name = "test delivery";
         this.isSupported = isSupported;
     }
 

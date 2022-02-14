@@ -11,6 +11,9 @@ import com.example.eshop.cart.domain.checkout.placeorder.PlaceOrderService;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
+import com.example.eshop.cart.utils.TestDataUtils;
+import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.checkout.client.order.OrderDto;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -21,11 +24,11 @@ import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
+import reactor.core.publisher.Mono;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -44,11 +47,12 @@ class PlaceOrderUsecaseImplTest {
     private Clock clock;
     private CreateOrderDto createOrderDto;
     private Order order;
+    private OrderDto orderDto;
     private OrderFactory orderFactory;
     private ApplicationEventPublisher eventPublisher;
-    private Map<Ean, ProductInfo> productsInfo;
-    private ProductInfoProvider productInfoProvider;
+    private CatalogService catalogService;
     private StockReservationService stockReservationService;
+    private OrderMapper orderMapper;
 
     private final Ean cartItemEan = FakeData.ean();
     private final Money cartItemPrice = Money.USD(3);
@@ -83,14 +87,20 @@ class PlaceOrderUsecaseImplTest {
         // eventPublisher
         eventPublisher = mock(ApplicationEventPublisher.class);
 
-        // productInfoProvider
-        productsInfo = Map.of(cartItemEan, new ProductInfo("test", Collections.emptyList(), Collections.emptyList()));
-
-        productInfoProvider = mock(ProductInfoProvider.class);
-        when(productInfoProvider.getProductsInfo(cart)).thenReturn(productsInfo);
-
         // reserveStockItemService
         stockReservationService = mock(StockReservationService.class);
+
+        // catalogService
+        var skuWithProductDto = TestDataUtils.toSkuWithProductDto(cart.getItem(cartItemEan));
+        catalogService = mock(CatalogService.class);
+        when(catalogService.getSku(List.of(cartItemEan))).thenReturn(Mono.just(
+                Map.of(cartItemEan, skuWithProductDto)
+        ));
+
+        // orderMapper
+        orderMapper = new OrderMapperImpl();
+
+        orderDto = orderMapper.toOrderDto(order, Map.of(cartItemEan, skuWithProductDto));
     }
 
     @Test
@@ -99,19 +109,19 @@ class PlaceOrderUsecaseImplTest {
         var domainService = mock(PlaceOrderService.class);
         when(domainService.place(order)).thenReturn(PlaceOrderResult.success(order));
 
-        when(stockReservationService.reserve(order)).thenReturn(ReservationResult.success());
+        when(stockReservationService.reserve(orderDto)).thenReturn(ReservationResult.success());
 
-        var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock,
-                productInfoProvider, stockReservationService);
+        var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock, catalogService,
+                stockReservationService, orderMapper);
 
-        var expectedEvent = new OrderPlacedEvent(order, CREATION_DATE, productsInfo);
+        var expectedEvent = new OrderPlacedEvent(orderDto, CREATION_DATE);
 
         // When
         service.place(createOrderDto);
 
         // Then
         verify(domainService).place(order);
-        verify(stockReservationService).reserve(order);
+        verify(stockReservationService).reserve(orderDto);
         verify(eventPublisher).publishEvent(expectedEvent);
     }
 
@@ -122,8 +132,8 @@ class PlaceOrderUsecaseImplTest {
         var errors = new Errors().addError("field", "message");
         when(domainService.place(order)).thenReturn(PlaceOrderResult.failure(order, errors));
 
-        var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock,
-                productInfoProvider, stockReservationService);
+        var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock, catalogService,
+                stockReservationService, orderMapper);
 
         // When
         var exception = catchThrowableOfType(() -> service.place(createOrderDto), ValidationException.class);
@@ -143,17 +153,17 @@ class PlaceOrderUsecaseImplTest {
 
         List<ReservationError> reservationErrors = List.of(new InsufficientQuantityError(cartItemEan,
                 cartItemQuantity, 0, ""));
-        when(stockReservationService.reserve(order)).thenReturn(ReservationResult.failure(reservationErrors));
+        when(stockReservationService.reserve(orderDto)).thenReturn(ReservationResult.failure(reservationErrors));
 
-        var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock,
-                productInfoProvider, stockReservationService);
+        var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock, catalogService,
+               stockReservationService, orderMapper);
 
         // When
         var exception = catchThrowableOfType(() -> service.place(createOrderDto), ValidationException.class);
 
         // Then
         assertThat(exception.getErrors()).isNotEmpty();
-        verify(stockReservationService).reserve(order);
+        verify(stockReservationService).reserve(orderDto);
         verify(eventPublisher, never()).publishEvent(any());
     }
 }

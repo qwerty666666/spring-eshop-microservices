@@ -40,7 +40,7 @@ public class FakeData {
 
     public static Delivery delivery(Money price) {
         return Delivery.builder()
-                .id("1")
+                .deliveryServiceId("1")
                 .name("courier")
                 .price(price)
                 .address(address())

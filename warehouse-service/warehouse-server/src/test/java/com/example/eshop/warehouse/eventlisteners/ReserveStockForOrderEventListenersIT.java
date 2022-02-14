@@ -1,10 +1,17 @@
 package com.example.eshop.warehouse.eventlisteners;
 
+import com.example.eshop.catalog.client.SkuWithProductDto;
+import com.example.eshop.catalog.client.api.model.MoneyDto;
+import com.example.eshop.catalog.client.api.model.ProductDto;
 import com.example.eshop.checkout.client.CheckoutApi;
 import com.example.eshop.checkout.client.order.CartDto;
 import com.example.eshop.checkout.client.order.CartItemDto;
 import com.example.eshop.checkout.client.order.DeliveryAddressDto;
+import com.example.eshop.checkout.client.order.DeliveryDto;
+import com.example.eshop.checkout.client.order.DeliveryServiceDto;
 import com.example.eshop.checkout.client.order.OrderDto;
+import com.example.eshop.checkout.client.order.PaymentDto;
+import com.example.eshop.checkout.client.order.PaymentServiceDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
@@ -92,23 +99,51 @@ class ReserveStockForOrderEventListenersIT {
     }
 
     private final Ean ean1 = Ean.fromString("1111111111111");
+    private final Money price1 = Money.USD(10);
     private final int qty1 = 10;
 
     private final Ean ean2 = Ean.fromString("2222222222222");
+    private final Money price2 = Money.USD(10);
     private final int qty2 = 20;
 
-    private final OrderDto order = new OrderDto(
-            UUID.randomUUID(),
-            "customerId",
-            new CartDto(List.of(
-                    new CartItemDto(ean1, Money.USD(10), qty1),
-                    new CartItemDto(ean2, Money.USD(10), qty2)
-            )),
-            Money.USD(300),
-            "deliveryServiceId",
-            "paymentServiceId",
-            new DeliveryAddressDto("fullname", Phone.fromString("+79999999999"), "country", "city", "street", "building", "flat")
-    );
+    private final OrderDto order = OrderDto.builder()
+            .id(UUID.randomUUID())
+            .customerId("customerId")
+            .cart(new CartDto(
+                    price1.add(price2),
+                    List.of(
+                            new CartItemDto(
+                                    ean1,
+                                    price1,
+                                    qty1,
+                                    SkuWithProductDto.builder()
+                                            .ean(ean1.toString())
+                                            .price(new MoneyDto(price1.getAmount(), price1.getCurrency().toString()))
+                                            .product(ProductDto.builder().build())
+                                            .build()
+                            ),
+                            new CartItemDto(
+                                    ean2,
+                                    price2,
+                                    qty2,
+                                    SkuWithProductDto.builder()
+                                            .ean(ean2.toString())
+                                            .price(new MoneyDto(price2.getAmount(), price2.getCurrency().toString()))
+                                            .product(ProductDto.builder().build())
+                                            .build()
+                            )
+                    )
+            ))
+            .totalPrice(Money.USD(300))
+            .delivery(new DeliveryDto(
+                    new DeliveryAddressDto("fullname", Phone.fromString("+79999999999"), "country", "city", "street", "building", "flat"),
+                    new DeliveryServiceDto("deliveryServiceId", "deliveryServiceName"),
+                    Money.USD(3)
+            ))
+            .payment(new PaymentDto(
+                    new PaymentServiceDto("paymentServiceId", "paymentServiceName")
+            ))
+            .build();
 
     @Autowired
     private EmbeddedKafkaBroker broker;

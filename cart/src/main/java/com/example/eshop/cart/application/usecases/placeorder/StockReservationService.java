@@ -1,6 +1,6 @@
 package com.example.eshop.cart.application.usecases.placeorder;
 
-import com.example.eshop.cart.domain.checkout.order.Order;
+import com.example.eshop.checkout.client.order.OrderDto;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 
 public interface StockReservationService {
@@ -10,5 +10,5 @@ public interface StockReservationService {
      * @throws StockReservationException if we can't get result for stock reservation
      *         for some reason
      */
-    ReservationResult reserve(Order order);
+    ReservationResult reserve(OrderDto order);
 }

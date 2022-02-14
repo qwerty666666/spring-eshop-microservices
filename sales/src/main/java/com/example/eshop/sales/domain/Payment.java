@@ -15,16 +15,16 @@ import javax.persistence.Embeddable;
 @Getter
 public class Payment {
     @Column(name = "payment_id", nullable = false)
-    private String id;
+    private String paymentServiceId;
 
     @Column(name = "payment_name", nullable = false)
     private String name;
 
-    public Payment(String id, String name) {
-        Assertions.notEmpty(id, "id must be not empty");
+    public Payment(String paymentServiceId, String name) {
+        Assertions.notEmpty(paymentServiceId, "paymentServiceId must be not empty");
         Assertions.notEmpty(name, "nane must be not empty");
 
-        this.id = id;
+        this.paymentServiceId = paymentServiceId;
         this.name = name;
     }
 }

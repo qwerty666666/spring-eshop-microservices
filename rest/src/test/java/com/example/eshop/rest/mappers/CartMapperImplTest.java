@@ -51,7 +51,7 @@ class CartMapperImplTest {
                 .ean(ean1.toString())
                 .price(new MoneyDto(price1.getAmount(), price1.getCurrency().getCurrencyCode()))
                 .quantity(availableQuantity1)
-                .attributes(List.of(new AttributeDto("1", "size", "XL")))
+                .attributes(List.of(new AttributeDto(1L, "size", "XL")))
                 .productId(product.getId())
                 .product(product)
                 .build();
@@ -59,7 +59,7 @@ class CartMapperImplTest {
                 .ean(ean2.toString())
                 .price(new MoneyDto(price2.getAmount(), price2.getCurrency().getCurrencyCode()))
                 .quantity(availableQuantity2)
-                .attributes(List.of(new AttributeDto("1", "size", "XXL")))
+                .attributes(List.of(new AttributeDto(1L, "size", "XXL")))
                 .productId(product.getId())
                 .product(product)
                 .build();

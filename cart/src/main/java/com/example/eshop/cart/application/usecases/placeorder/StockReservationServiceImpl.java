@@ -1,6 +1,5 @@
 package com.example.eshop.cart.application.usecases.placeorder;
 
-import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.checkout.client.CheckoutApi;
 import com.example.eshop.checkout.client.order.OrderDto;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
@@ -18,15 +17,13 @@ public class StockReservationServiceImpl implements StockReservationService {
     private static final Duration REPLY_TIMEOUT = Duration.ofSeconds(10);
 
     private final ReplyingKafkaTemplate<String, OrderDto, ReservationResult> kafkaTemplate;
-    private final OrderMapper orderMapper;
 
     @Override
     @SneakyThrows
-    public ReservationResult reserve(Order order) {
-        var dto = orderMapper.toOrderDto(order);
-        var key = order.getId().toString();
+    public ReservationResult reserve(OrderDto order) {
+        var key = order.id().toString();
 
-        var producerRecord = new ProducerRecord<>(CheckoutApi.RESERVE_STOCKS_TOPIC, key, dto);
+        var producerRecord = new ProducerRecord<>(CheckoutApi.RESERVE_STOCKS_TOPIC, key, order);
 
         try {
             return kafkaTemplate.sendAndReceive(producerRecord, REPLY_TIMEOUT)

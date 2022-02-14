@@ -14,6 +14,7 @@
 
     <properties>
         <auth.version>1.0.0-SNAPSHOT</auth.version>
+        <checkout.version>1.0.0-SNAPSHOT</checkout.version>
     </properties>
 
     <dependencies>
@@ -31,6 +32,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>cart</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>checkout-client</artifactId>
+            <version>${checkout.version}</version>
         </dependency>
 
         <!-- Devtools -->

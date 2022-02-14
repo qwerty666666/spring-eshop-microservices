@@ -7,6 +7,8 @@ public class PaymentServiceStub extends PaymentService {
     private final boolean isSupported;
 
     public PaymentServiceStub(boolean isSupported) {
+        this.id = new PaymentServiceId("2");
+        this.name = "test payment";
         this.isSupported = isSupported;
     }
 

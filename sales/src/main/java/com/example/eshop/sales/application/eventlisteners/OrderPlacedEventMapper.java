@@ -1,14 +1,16 @@
 package com.example.eshop.sales.application.eventlisteners;
 
 import com.example.eshop.cart.application.usecases.placeorder.OrderPlacedEvent;
-import com.example.eshop.cart.application.usecases.placeorder.ProductAttribute;
-import com.example.eshop.cart.application.usecases.placeorder.ProductInfo;
-import com.example.eshop.cart.domain.cart.CartItem;
-import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
-import com.example.eshop.cart.domain.checkout.order.Order;
-import com.example.eshop.cart.domain.checkout.payment.PaymentService;
+import com.example.eshop.catalog.client.api.model.AttributeDto;
+import com.example.eshop.catalog.client.api.model.ImageDto;
+import com.example.eshop.catalog.client.api.model.MoneyDto;
+import com.example.eshop.checkout.client.order.CartItemDto;
+import com.example.eshop.checkout.client.order.DeliveryAddressDto;
+import com.example.eshop.checkout.client.order.DeliveryDto;
+import com.example.eshop.checkout.client.order.PaymentDto;
 import com.example.eshop.sales.domain.Address;
 import com.example.eshop.sales.domain.Delivery;
+import com.example.eshop.sales.domain.Order;
 import com.example.eshop.sales.domain.OrderLine;
 import com.example.eshop.sales.domain.OrderLineAttribute;
 import com.example.eshop.sales.domain.Payment;
@@ -18,53 +20,48 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface OrderPlacedEventMapper {
-    default com.example.eshop.sales.domain.Order toOrder(OrderPlacedEvent event) {
+    default Order toOrder(OrderPlacedEvent event) {
         var order = event.order();
-        var productsInfo = event.productsInfo();
 
-        var orderLines = order.getCart().getItems().stream()
-                .map(item -> toOrderLine(item, productsInfo.get(item.getEan())))
+        var orderLines = order.cart().items().stream()
+                .map(this::toOrderLine)
                 .toList();
 
-        return new com.example.eshop.sales.domain.Order(
-                order.getId(),
-                order.getCustomerId(),
-                toDelivery(order),
-                toPayment(order.getPaymentService()),
+        return new Order(
+                order.id(),
+                order.customerId(),
+                toDelivery(order.delivery()),
+                toPayment(order.payment()),
                 event.creationDate(),
                 orderLines
         );
     }
 
-    default Delivery toDelivery(Order order) {
-        var deliveryService = order.getDeliveryService();
+    @Mapping(target = "deliveryServiceId", source = "deliveryService.id")
+    @Mapping(target = "name", source = "deliveryService.name")
+    Delivery toDelivery(DeliveryDto delivery);
 
-        if (deliveryService == null) {
-            return null;
-        }
+    @Mapping(target = "paymentServiceId", source = "paymentService.id")
+    @Mapping(target = "name", source = "paymentService.name")
+    Payment toPayment(PaymentDto payment);
 
-        return Delivery.builder()
-                .id(deliveryService.getId() == null ? null : deliveryService.getId().toString())
-                .name(deliveryService.getName())
-                .price(order.getShipmentInfo() == null ? Money.ZERO : order.getShipmentInfo().price())
-                .address(toAddress(order.getAddress()))
-                .build();
+    Address toAddress(DeliveryAddressDto address);
+
+    @Mapping(target = "itemPrice", source = "sku.price")
+    @Mapping(target = "productName", source = "sku.product.name")
+    @Mapping(target = "attributes", source = "sku.attributes")
+    @Mapping(target = "images", source = "sku.product.images")
+    OrderLine toOrderLine(CartItemDto item);
+
+    default String toImage(ImageDto image) {
+        return image.getUrl();
     }
 
-    default Payment toPayment(PaymentService payment) {
-        if (payment == null) {
-            return null;
-        }
-
-        return new Payment(payment.getId() == null ? null : payment.getId().toString(), payment.getName());
+    default OrderLineAttribute toOrderLineAttribute(AttributeDto attr) {
+        return new OrderLineAttribute(attr.getId(), attr.getValue(), attr.getName());
     }
 
-    Address toAddress(DeliveryAddress address);
-
-    @Mapping(target = "itemPrice", source = "item.itemPrice")
-    OrderLine toOrderLine(CartItem item, ProductInfo productInfo);
-
-    default OrderLineAttribute toOrderLineAttribute(ProductAttribute attr) {
-        return new OrderLineAttribute(attr.attributeId(), attr.value(), attr.name());
+    default Money toMoney(MoneyDto money) {
+        return Money.of(money.getAmount(), money.getCurrency());
     }
 }
