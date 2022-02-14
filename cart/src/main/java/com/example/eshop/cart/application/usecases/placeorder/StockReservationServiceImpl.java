@@ -1,7 +1,7 @@
 package com.example.eshop.cart.application.usecases.placeorder;
 
 import com.example.eshop.checkout.client.CheckoutApi;
-import com.example.eshop.checkout.client.order.OrderDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

@@ -1,4 +1,4 @@
-package com.example.eshop.checkout.client.order;
+package com.example.eshop.checkout.client.events.orderplacedevent;
 
 import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;

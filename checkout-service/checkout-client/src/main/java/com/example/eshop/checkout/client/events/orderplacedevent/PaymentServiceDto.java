@@ -1,12 +1,12 @@
-package com.example.eshop.checkout.client.order;
+package com.example.eshop.checkout.client.events.orderplacedevent;
 
 import java.util.Objects;
 
-public record DeliveryServiceDto(
+public record PaymentServiceDto(
         String id,
         String name
 ) {
-    public DeliveryServiceDto {
+    public PaymentServiceDto {
         Objects.requireNonNull(id, "id is required");
         Objects.requireNonNull(name, "name is required");
     }

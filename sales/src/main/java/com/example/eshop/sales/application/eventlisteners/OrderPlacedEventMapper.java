@@ -1,13 +1,13 @@
 package com.example.eshop.sales.application.eventlisteners;
 
-import com.example.eshop.cart.application.usecases.placeorder.OrderPlacedEvent;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.catalog.client.api.model.AttributeDto;
 import com.example.eshop.catalog.client.api.model.ImageDto;
 import com.example.eshop.catalog.client.api.model.MoneyDto;
-import com.example.eshop.checkout.client.order.CartItemDto;
-import com.example.eshop.checkout.client.order.DeliveryAddressDto;
-import com.example.eshop.checkout.client.order.DeliveryDto;
-import com.example.eshop.checkout.client.order.PaymentDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.PaymentDto;
 import com.example.eshop.sales.domain.Address;
 import com.example.eshop.sales.domain.Delivery;
 import com.example.eshop.sales.domain.Order;

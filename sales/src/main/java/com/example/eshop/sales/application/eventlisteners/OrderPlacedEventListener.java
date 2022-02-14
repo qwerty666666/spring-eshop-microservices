@@ -1,6 +1,6 @@
 package com.example.eshop.sales.application.eventlisteners;
 
-import com.example.eshop.cart.application.usecases.placeorder.OrderPlacedEvent;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.sales.application.services.createorder.CreateOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;

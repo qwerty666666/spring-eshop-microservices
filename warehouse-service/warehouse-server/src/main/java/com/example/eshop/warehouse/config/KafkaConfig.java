@@ -1,6 +1,6 @@
 package com.example.eshop.warehouse.config;
 
-import com.example.eshop.checkout.client.order.OrderDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArraySerializer;

@@ -1,7 +1,7 @@
 package com.example.eshop.cart.config;
 
 import com.example.eshop.checkout.client.CheckoutApi;
-import com.example.eshop.checkout.client.order.OrderDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;

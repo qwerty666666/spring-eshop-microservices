@@ -1,6 +1,6 @@
 package com.example.eshop.cart.config;
 
-import com.example.eshop.checkout.client.order.OrderDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

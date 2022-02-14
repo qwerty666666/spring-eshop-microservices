@@ -1,6 +1,5 @@
-package com.example.eshop.cart.application.usecases.placeorder;
+package com.example.eshop.checkout.client.events.orderplacedevent;
 
-import com.example.eshop.checkout.client.order.OrderDto;
 import com.example.eshop.sharedkernel.domain.base.DomainEvent;
 import java.time.LocalDateTime;
 

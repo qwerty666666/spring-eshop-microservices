@@ -1,8 +1,8 @@
 package com.example.eshop.warehouse.eventlisteners;
 
 import com.example.eshop.checkout.client.CheckoutApi;
-import com.example.eshop.checkout.client.order.CartItemDto;
-import com.example.eshop.checkout.client.order.OrderDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
 import com.example.eshop.warehouse.application.services.reserve.ReserveStockItemService;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import com.example.eshop.warehouse.domain.StockQuantity;
