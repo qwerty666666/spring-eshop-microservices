@@ -1,6 +1,6 @@
 package com.example.eshop.order.domain.order;
 
-import com.example.eshop.order.infrastructure.tests.FakeData;
+import com.example.eshop.order.FakeData;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.Test;
 import java.util.Collections;

@@ -1,6 +1,5 @@
-package com.example.eshop.rest.utils;
+package com.example.eshop.auth;
 
-import com.example.eshop.auth.CustomJwtAuthentication;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.AuthenticationTrustResolver;

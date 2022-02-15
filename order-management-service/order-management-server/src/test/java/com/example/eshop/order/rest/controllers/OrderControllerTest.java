@@ -1,14 +1,14 @@
-package com.example.eshop.rest.controllers;
+package com.example.eshop.order.rest.controllers;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
-import com.example.eshop.rest.config.AuthConfig;
-import com.example.eshop.rest.config.ControllerTest;
-import com.example.eshop.rest.config.MapperTestsConfig;
-import com.example.eshop.rest.mappers.RestOrderMapper;
 import com.example.eshop.order.application.services.queryorder.OrderNotFoundException;
 import com.example.eshop.order.application.services.queryorder.QueryOrderService;
-import com.example.eshop.order.domain.Order;
-import com.example.eshop.order.infrastructure.tests.FakeData;
+import com.example.eshop.order.config.AuthConfig;
+import com.example.eshop.order.config.ControllerTest;
+import com.example.eshop.order.config.MapperTestsConfig;
+import com.example.eshop.order.domain.order.Order;
+import com.example.eshop.order.FakeData;
+import com.example.eshop.order.rest.mappers.OrderMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -40,11 +40,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OrderControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private RestOrderMapper orderMapper;
+    private OrderMapper orderMapper;
 
     @MockBean
     private QueryOrderService queryOrderService;

@@ -43,6 +43,11 @@
             <artifactId>checkout-client</artifactId>
             <version>${checkout.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>auth</artifactId>
+            <version>${auth.version}</version>
+        </dependency>
 
         <!-- Devtools -->
         <dependency>

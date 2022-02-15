@@ -1,19 +1,17 @@
-package com.example.eshop.rest.controllers;
+package com.example.eshop.order.rest.controllers;
 
-import com.example.eshop.rest.api.OrderApi;
-import com.example.eshop.rest.controllers.base.BaseController;
-import com.example.eshop.rest.controllers.base.BasicErrorBuilder;
-import com.example.eshop.rest.dto.BasicErrorDto;
-import com.example.eshop.rest.dto.OrderDto;
-import com.example.eshop.rest.dto.PagedOrderListDto;
-import com.example.eshop.rest.mappers.RestOrderMapper;
-import com.example.eshop.rest.utils.UriUtils;
+import com.example.eshop.catalog.client.api.model.BasicErrorDto;
+import com.example.eshop.localizer.Localizer;
 import com.example.eshop.order.application.services.queryorder.OrderNotFoundException;
 import com.example.eshop.order.application.services.queryorder.QueryOrderService;
+import com.example.eshop.order.client.api.model.OrderDto;
+import com.example.eshop.order.client.api.model.PagedOrderListDto;
+import com.example.eshop.order.rest.api.OrderApi;
+import com.example.eshop.order.rest.mappers.OrderMapper;
+import com.example.eshop.order.rest.utils.BasicErrorBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -25,24 +23,23 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Locale;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(UriUtils.API_BASE_PATH_PROPERTY)
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class OrderController extends BaseController implements OrderApi {
     private final QueryOrderService queryOrderService;
-    private final RestOrderMapper orderMapper;
-    private final MessageSource messageSource;
+    private final OrderMapper orderMapper;
+    private final Localizer localizer;
 
-    @ExceptionHandler
+    @ExceptionHandler(OrderNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private BasicErrorDto handleOrderNotFoundException(OrderNotFoundException e, Locale locale) {
+    private BasicErrorDto handleOrderNotFoundException() {
         return BasicErrorBuilder.newInstance()
                 .setStatus(HttpStatus.NOT_FOUND)
-                .setDetail(getMessageSource().getMessage("orderNotFound", null, locale))
+                .setDetail(getLocalizer().getMessage("orderNotFound"))
                 .build();
     }
 

@@ -17,7 +17,7 @@ import com.example.eshop.order.domain.order.Order;
 import com.example.eshop.order.domain.order.OrderLine;
 import com.example.eshop.order.domain.order.OrderLineAttribute;
 import com.example.eshop.order.domain.order.Payment;
-import com.example.eshop.order.infrastructure.tests.FakeData;
+import com.example.eshop.order.FakeData;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

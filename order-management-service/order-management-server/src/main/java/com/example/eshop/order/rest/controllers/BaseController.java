@@ -1,4 +1,4 @@
-package com.example.eshop.rest.controllers.base;
+package com.example.eshop.order.rest.controllers;
 
 import com.example.eshop.auth.AuthUtils;
 import com.example.eshop.auth.CustomJwtAuthentication;
