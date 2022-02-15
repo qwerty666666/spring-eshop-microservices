@@ -58,16 +58,23 @@ components:
         url:
           type: string
           example: https://example.com/images/photo.png
+      required:
+        - url
 
     attribute:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          format: int64
         name:
           type: string
         value:
           type: string
+      required:
+        - id
+        - name
+        - value
       example:
         id: 1
         name: size
@@ -128,6 +135,11 @@ components:
           type: integer
           minimum: 0
           example: 3
+      required:
+        - page
+        - perPage
+        - totalItems
+        - totalPages
 
     delivery-address:
       type: object
@@ -146,6 +158,12 @@ components:
           type: string
         flat:
           type: string
+      required:
+        - fullname
+        - phone
+        - country
+        - city
+        - building
       example:
         fullname: 'Rick Sanches'
         phone: '+79993334444'
@@ -169,6 +187,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/order'
+      required:
+        - pageable
+        - items
 
     order:
       type: object
@@ -190,6 +211,14 @@ components:
           $ref: '#/components/schemas/order-payment'
         total:
           $ref: '#/components/schemas/order-total'
+      required:
+        - id
+        - lines
+        - status
+        - address
+        - delivery
+        - payment
+        - total
 
     order-status:
       type: object
@@ -199,6 +228,9 @@ components:
           enum: [PENDING]
         name:
           type: string
+      required:
+        - code
+        - name
       example:
         code: PENDING
         name: Ожидает

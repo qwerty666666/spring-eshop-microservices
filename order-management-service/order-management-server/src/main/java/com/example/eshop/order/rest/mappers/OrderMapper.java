@@ -1,19 +1,19 @@
-package com.example.eshop.rest.mappers;
+package com.example.eshop.order.rest.mappers;
 
-import com.example.eshop.rest.dto.AttributeDto;
-import com.example.eshop.rest.dto.ImageDto;
-import com.example.eshop.rest.dto.MoneyDto;
-import com.example.eshop.rest.dto.OrderDto;
-import com.example.eshop.rest.dto.OrderLineDto;
-import com.example.eshop.rest.dto.OrderStatusDto;
-import com.example.eshop.rest.dto.OrderStatusDto.CodeEnum;
-import com.example.eshop.rest.dto.OrderTotalDto;
-import com.example.eshop.rest.dto.PagedOrderListDto;
-import com.example.eshop.order.domain.Order;
-import com.example.eshop.order.domain.OrderLine;
-import com.example.eshop.order.domain.OrderLineAttribute;
-import com.example.eshop.order.domain.OrderStatus;
 import com.example.eshop.localizer.Localizer;
+import com.example.eshop.order.client.api.model.AttributeDto;
+import com.example.eshop.order.client.api.model.ImageDto;
+import com.example.eshop.order.client.api.model.MoneyDto;
+import com.example.eshop.order.client.api.model.OrderDto;
+import com.example.eshop.order.client.api.model.OrderLineDto;
+import com.example.eshop.order.client.api.model.OrderStatusDto;
+import com.example.eshop.order.client.api.model.OrderStatusDto.CodeEnum;
+import com.example.eshop.order.client.api.model.OrderTotalDto;
+import com.example.eshop.order.client.api.model.PagedOrderListDto;
+import com.example.eshop.order.domain.order.Order;
+import com.example.eshop.order.domain.order.OrderLine;
+import com.example.eshop.order.domain.order.OrderLineAttribute;
+import com.example.eshop.order.domain.order.OrderStatus;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,9 +24,9 @@ import java.util.stream.Stream;
 
 @Mapper(
         componentModel = "spring",
-        uses = { RestPageableMapper.class, PhoneMapper.class, RestEanMapper.class }
+        uses = { PageableMapper.class, PhoneMapper.class, EanMapper.class }
 )
-public abstract class RestOrderMapper {
+public abstract class OrderMapper {
     private Localizer localizer;
 
     // we can't use constructor injection in MapStruct for not @Mapper::uses dependencies
