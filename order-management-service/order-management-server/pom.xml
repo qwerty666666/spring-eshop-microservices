@@ -4,34 +4,31 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sales</artifactId>
-
     <parent>
-        <artifactId>eshop</artifactId>
+        <artifactId>order-management-service</artifactId>
         <groupId>com.example.eshop</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
+
+    <artifactId>order-management-server</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <description>Order management microservice</description>
 
     <properties>
         <auth.version>1.0.0-SNAPSHOT</auth.version>
         <checkout.version>1.0.0-SNAPSHOT</checkout.version>
+        <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.example.eshop</groupId>
+            <artifactId>order-management-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.example.eshop</groupId>
-            <artifactId>customer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.example.eshop</groupId>
-            <artifactId>cart</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
@@ -97,7 +94,7 @@
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-test</artifactId>
-            <version>${project.version}</version>
+            <version>${shared-test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

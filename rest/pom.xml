@@ -45,11 +45,6 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>sales</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.example.eshop</groupId>
             <artifactId>localizer</artifactId>
             <version>${localizer.version}</version>
         </dependency>

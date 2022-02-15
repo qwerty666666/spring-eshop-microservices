@@ -22,7 +22,6 @@
         <module>rest</module>
         <module>customer</module>
         <module>cart</module>
-        <module>sales</module>
         <module>shared-test</module>
         <module>libs</module>
         <module>message-relay-service</module>
@@ -31,6 +30,7 @@
         <module>catalog-service</module>
         <module>api-gateway</module>
         <module>eureka-server</module>
+        <module>order-management-service</module>
     </modules>
 
     <properties>

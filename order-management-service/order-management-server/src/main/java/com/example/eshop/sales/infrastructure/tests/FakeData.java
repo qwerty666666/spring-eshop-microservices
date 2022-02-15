@@ -1,6 +1,5 @@
 package com.example.eshop.sales.infrastructure.tests;
 
-import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.sales.domain.Address;
 import com.example.eshop.sales.domain.Delivery;
 import com.example.eshop.sales.domain.Order;
@@ -49,10 +48,6 @@ public class FakeData {
 
     public static Address address() {
         return new Address(fullname(), phone(), country(), city(), street(), building(), flat());
-    }
-
-    public static DeliveryAddress deliveryAddress() {
-        return new DeliveryAddress(fullname(), phone(), country(), city(), street(), building(), flat());
     }
 
     public static String fullname() {
