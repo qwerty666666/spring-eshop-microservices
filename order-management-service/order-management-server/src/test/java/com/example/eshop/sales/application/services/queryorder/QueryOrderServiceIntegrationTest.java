@@ -2,7 +2,7 @@ package com.example.eshop.sales.application.services.queryorder;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.sales.config.AuthConfig;
-import com.example.eshop.sales.domain.Order;
+import com.example.eshop.sales.domain.order.Order;
 import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.Nested;

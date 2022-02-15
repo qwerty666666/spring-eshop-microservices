@@ -1,10 +1,10 @@
 package com.example.eshop.sales.infrastructure.tests;
 
-import com.example.eshop.sales.domain.Address;
-import com.example.eshop.sales.domain.Delivery;
-import com.example.eshop.sales.domain.Order;
-import com.example.eshop.sales.domain.OrderLine;
-import com.example.eshop.sales.domain.Payment;
+import com.example.eshop.sales.domain.order.Address;
+import com.example.eshop.sales.domain.order.Delivery;
+import com.example.eshop.sales.domain.order.Order;
+import com.example.eshop.sales.domain.order.OrderLine;
+import com.example.eshop.sales.domain.order.Payment;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;

@@ -1,8 +1,8 @@
 package com.example.eshop.sales.application.services.queryorder;
 
-import com.example.eshop.sales.domain.Order;
-import com.example.eshop.sales.domain.OrderLine;
-import com.example.eshop.sales.domain.OrderRepository;
+import com.example.eshop.sales.domain.order.Order;
+import com.example.eshop.sales.domain.order.OrderLine;
+import com.example.eshop.sales.domain.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

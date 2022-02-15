@@ -1,7 +1,7 @@
 package com.example.eshop.sales.application.services.createorder;
 
-import com.example.eshop.sales.domain.Order;
-import com.example.eshop.sales.domain.OrderRepository;
+import com.example.eshop.sales.domain.order.Order;
+import com.example.eshop.sales.domain.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

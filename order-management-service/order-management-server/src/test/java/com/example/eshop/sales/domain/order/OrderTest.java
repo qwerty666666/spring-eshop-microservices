@@ -1,4 +1,4 @@
-package com.example.eshop.sales.domain;
+package com.example.eshop.sales.domain.order;
 
 import com.example.eshop.sales.infrastructure.tests.FakeData;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;

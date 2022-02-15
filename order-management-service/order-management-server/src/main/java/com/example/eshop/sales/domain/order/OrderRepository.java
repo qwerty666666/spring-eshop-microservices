@@ -1,4 +1,4 @@
-package com.example.eshop.sales.domain;
+package com.example.eshop.sales.domain.order;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

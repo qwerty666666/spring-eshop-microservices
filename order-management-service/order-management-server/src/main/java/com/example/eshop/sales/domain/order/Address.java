@@ -1,4 +1,4 @@
-package com.example.eshop.sales.domain;
+package com.example.eshop.sales.domain.order;
 
 import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;

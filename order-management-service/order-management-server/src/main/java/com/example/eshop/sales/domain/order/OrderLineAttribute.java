@@ -1,4 +1,4 @@
-package com.example.eshop.sales.domain;
+package com.example.eshop.sales.domain.order;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
