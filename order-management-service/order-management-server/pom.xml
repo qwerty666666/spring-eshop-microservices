@@ -43,11 +43,6 @@
             <artifactId>checkout-client</artifactId>
             <version>${checkout.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.example.eshop</groupId>
-            <artifactId>auth</artifactId>
-            <version>${auth.version}</version>
-        </dependency>
 
         <!-- Devtools -->
         <dependency>
@@ -97,6 +92,29 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <!-- Eureka -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <!-- Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>auth</artifactId>
+            <version>${auth.version}</version>
         </dependency>
 
         <!-- Swagger -->

@@ -30,6 +30,17 @@ public class ApiGatewayApplication {
                         .uri("lb://catalog-service")
 
                 )
+                .route("orders", r -> r
+                        .order(200)
+                        .path("/api/orders/**")
+                        .filters(f -> f
+                                .filter(new UpperBoundLimitRequestParameterFilterFactory().apply(config -> config
+                                        .setParameterName("per_page")
+                                        .setMaxValue(30)
+                                ))
+                        )
+                        .uri("lb://orders-service")
+                )
                 .route("monolith", r -> r
                         .order(1000)
                         .path("/**")
