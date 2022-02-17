@@ -1,12 +1,15 @@
 spring:
   application:
     name: monolith
+
   jpa:
     open-in-view: false
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
   data:
     web:
       pageable:
@@ -15,8 +18,10 @@ spring:
         max-page-size: 100
         default-page-size: 30
         one-indexed-parameters: true
+
   messages:
     basename: messages, cart_messages, order_statuses
+
   web:
     locale: en_US
 
@@ -25,6 +30,15 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:28000/auth/realms/test
+
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+      clients:
+        catalog-service:
+          retry:
+            enabled: true
 
 management:
   endpoints:

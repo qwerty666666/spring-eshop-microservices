@@ -67,7 +67,7 @@ services:
     networks:
       - app-tier
     depends_on:
-      - zookeeper
+      - kafka
     ports:
       - "8085:8080"
     environment:

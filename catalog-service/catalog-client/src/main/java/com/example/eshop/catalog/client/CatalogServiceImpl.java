@@ -1,11 +1,12 @@
 package com.example.eshop.catalog.client;
 
-import com.example.eshop.catalog.client.api.ProductsApi;
 import com.example.eshop.catalog.client.api.model.ProductDto;
 import com.example.eshop.catalog.client.api.model.SkuDto;
 import com.example.eshop.catalog.client.api.model.SkuInfoDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import java.util.HashMap;
 import java.util.List;
@@ -14,9 +15,10 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class CatalogServiceImpl implements CatalogService {
-    private static final int RETRIES = 3;
+    private static final String API_PREFIX = "/api";
+    private static final String SKU_URL = API_PREFIX + "/sku";
 
-    private final ProductsApi productsApi;
+    private final WebClient webClient;
 
     @Override
     public Mono<SkuWithProductDto> getSku(Ean ean) {
@@ -55,9 +57,14 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private Mono<SkuInfoDto> requestSku(List<Ean> ean) {
-        var eanStrings = ean.stream().map(Ean::toString).toList();
-
-        return productsApi.getSku(eanStrings)
-                .retry(RETRIES);   // just to try other instances from load balancer
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(SKU_URL)
+                        .queryParam("ean", ean)
+                        .build()
+                )
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(SkuInfoDto.class);
     }
 }

@@ -20,7 +20,7 @@ public class ApiGatewayApplication {
         return routeLocatorBuilder.routes()
                 .route("catalog", r -> r
                         .order(100)
-                        .path("/api/{path:(?:products|categories)}/**")
+                        .path("/api/{path:(?:products|categories|sku)}/**")
                         .filters(f -> f
                                 .filter(new UpperBoundLimitRequestParameterFilterFactory().apply(config -> config
                                         .setParameterName("per_page")
