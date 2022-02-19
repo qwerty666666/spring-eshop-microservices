@@ -16,7 +16,6 @@ import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import com.example.eshop.warehouse.client.reservationresult.StockItemNotFoundError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
     private final PlaceOrderService placeOrderService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final OrderPlacedEventPublisher orderPlacedEventPublisher;
     private final OrderFactory orderFactory;
     private final Clock clock;
     private final CatalogService catalogService;
@@ -91,7 +90,7 @@ public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
                 errors.addError(PlaceOrderValidator.CART_ITEMS_FIELD, "cart.item.not_found", ean);
             } else {
                 log.error("Unknown ReservationError type " + reservationResult.getClass());
-                throw new StockReservationException("Unknown ReservationError type " + reservationResult.getClass());
+                throw new PublishEventException("Unknown ReservationError type " + reservationResult.getClass());
             }
         });
 
@@ -100,7 +99,8 @@ public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
 
     private void publishOrderCreatedEvent(OrderDto order) {
         var creationDate = LocalDateTime.now(clock);
+        var event = new OrderPlacedEvent(order, creationDate);
 
-        eventPublisher.publishEvent(new OrderPlacedEvent(order, creationDate));
+        orderPlacedEventPublisher.publish(event);
     }
 }

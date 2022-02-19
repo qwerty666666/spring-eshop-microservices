@@ -24,7 +24,6 @@ import com.example.eshop.warehouse.client.reservationresult.ReservationError;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
 import reactor.core.publisher.Mono;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -50,7 +49,7 @@ class PlaceOrderUsecaseImplTest {
     private Order order;
     private OrderDto orderDto;
     private OrderFactory orderFactory;
-    private ApplicationEventPublisher eventPublisher;
+    private OrderPlacedEventPublisher orderPlacedEventPublisher;
     private CatalogService catalogService;
     private StockReservationService stockReservationService;
     private OrderMapper orderMapper;
@@ -85,8 +84,8 @@ class PlaceOrderUsecaseImplTest {
         orderFactory = mock(OrderFactory.class);
         when(orderFactory.create(createOrderDto)).thenReturn(order);
 
-        // eventPublisher
-        eventPublisher = mock(ApplicationEventPublisher.class);
+        // orderPlacedEventPublisher
+        orderPlacedEventPublisher = mock(OrderPlacedEventPublisher.class);
 
         // reserveStockItemService
         stockReservationService = mock(StockReservationService.class);
@@ -112,7 +111,7 @@ class PlaceOrderUsecaseImplTest {
 
         when(stockReservationService.reserve(orderDto)).thenReturn(ReservationResult.success());
 
-        var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock, catalogService,
+        var service = new PlaceOrderUsecaseImpl(domainService, orderPlacedEventPublisher, orderFactory, clock, catalogService,
                 stockReservationService, orderMapper);
 
         var expectedEvent = new OrderPlacedEvent(orderDto, CREATION_DATE);
@@ -123,7 +122,7 @@ class PlaceOrderUsecaseImplTest {
         // Then
         verify(domainService).place(order);
         verify(stockReservationService).reserve(orderDto);
-        verify(eventPublisher).publishEvent(expectedEvent);
+        verify(orderPlacedEventPublisher).publish(expectedEvent);
     }
 
     @Test
@@ -133,7 +132,7 @@ class PlaceOrderUsecaseImplTest {
         var errors = new Errors().addError("field", "message");
         when(domainService.place(order)).thenReturn(PlaceOrderResult.failure(order, errors));
 
-        var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock, catalogService,
+        var service = new PlaceOrderUsecaseImpl(domainService, orderPlacedEventPublisher, orderFactory, clock, catalogService,
                 stockReservationService, orderMapper);
 
         // When
@@ -143,7 +142,7 @@ class PlaceOrderUsecaseImplTest {
         verify(domainService).place(order);
         assertThat(exception.getErrors()).isEqualTo(errors);
         verify(stockReservationService, never()).reserve(any());
-        verify(eventPublisher, never()).publishEvent(any());
+        verify(orderPlacedEventPublisher, never()).publish(any());
     }
 
     @Test
@@ -156,7 +155,7 @@ class PlaceOrderUsecaseImplTest {
                 cartItemQuantity, 0, ""));
         when(stockReservationService.reserve(orderDto)).thenReturn(ReservationResult.failure(reservationErrors));
 
-        var service = new PlaceOrderUsecaseImpl(domainService, eventPublisher, orderFactory, clock, catalogService,
+        var service = new PlaceOrderUsecaseImpl(domainService, orderPlacedEventPublisher, orderFactory, clock, catalogService,
                stockReservationService, orderMapper);
 
         // When
@@ -165,6 +164,6 @@ class PlaceOrderUsecaseImplTest {
         // Then
         assertThat(exception.getErrors()).isNotEmpty();
         verify(stockReservationService).reserve(orderDto);
-        verify(eventPublisher, never()).publishEvent(any());
+        verify(orderPlacedEventPublisher, never()).publish(any());
     }
 }

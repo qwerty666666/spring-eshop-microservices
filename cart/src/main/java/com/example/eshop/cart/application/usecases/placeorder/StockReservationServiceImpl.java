@@ -31,9 +31,9 @@ public class StockReservationServiceImpl implements StockReservationService {
                     .value();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new StockReservationException(e);
+            throw new PublishEventException(e);
         } catch (Exception e) {
-            throw new StockReservationException(e);
+            throw new PublishEventException(e);
         }
     }
 }

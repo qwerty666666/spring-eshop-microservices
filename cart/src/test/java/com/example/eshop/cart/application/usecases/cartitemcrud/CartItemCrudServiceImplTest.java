@@ -1,6 +1,5 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
-import com.example.eshop.cart.application.usecases.placeorder.ProductNotFoundException;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.cart.CartRepository;

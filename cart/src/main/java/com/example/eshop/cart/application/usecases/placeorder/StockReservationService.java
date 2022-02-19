@@ -7,7 +7,7 @@ public interface StockReservationService {
     /**
      * Reserve stocks in warehouse for the given {@code order}
      *
-     * @throws StockReservationException if we can't get result for stock reservation
+     * @throws PublishEventException if we can't get result for stock reservation
      *         for some reason
      */
     ReservationResult reserve(OrderDto order);
