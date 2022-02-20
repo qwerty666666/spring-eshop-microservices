@@ -1,6 +1,7 @@
 package com.example.eshop.order.application.services.queryorder;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
+import com.example.eshop.order.config.ExcludeKafkaConfig;
 import com.example.eshop.order.config.AuthConfig;
 import com.example.eshop.order.domain.order.Order;
 import com.example.eshop.sharedtest.dbtests.DbTest;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DbTest
 @SpringBootTest
+@ExcludeKafkaConfig
 class QueryOrderServiceIntegrationTest {
     private final static UUID ORDER_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
     private final static UUID NOT_EXISTED_ORDER_ID = UUID.fromString("c8ca0699-1a8b-423a-bf62-12f21eb58a57");
