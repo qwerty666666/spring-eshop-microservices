@@ -19,6 +19,5 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 @TestPropertySource(properties = { KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY + "=true" })
-@ImportAutoConfiguration(exclude = KafkaAutoConfiguration.class)
 public @interface ExcludeKafkaConfig {
 }

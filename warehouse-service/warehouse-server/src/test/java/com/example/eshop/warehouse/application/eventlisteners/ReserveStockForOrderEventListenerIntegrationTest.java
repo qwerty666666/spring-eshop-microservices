@@ -1,4 +1,4 @@
-package com.example.eshop.warehouse.eventlisteners;
+package com.example.eshop.warehouse.application.eventlisteners;
 
 import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.catalog.client.api.model.MoneyDto;
@@ -15,8 +15,12 @@ import com.example.eshop.checkout.client.events.orderplacedevent.PaymentServiceD
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
+import com.example.eshop.sharedtest.IntegrationTest;
 import com.example.eshop.warehouse.application.services.reserve.ReserveStockItemService;
+import com.example.eshop.warehouse.application.eventlisteners.ReserveStockForOrderEventListener;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
+import com.example.eshop.warehouse.config.AppProperties;
+import com.example.eshop.warehouse.config.KafkaConfig;
 import com.example.eshop.warehouse.domain.StockQuantity;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -27,11 +31,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -57,14 +62,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@AutoConfigureTestDatabase
+@IntegrationTest
 @EmbeddedKafka(
         partitions = 1,
         topics = { CheckoutApi.RESERVE_STOCKS_TOPIC, CheckoutApi.RESERVE_STOCKS_REPLY_TOPIC },
         bootstrapServersProperty = "spring.kafka.bootstrap-servers"
 )
-class ReserveStockForOrderEventListenersIT {
-    @TestConfiguration
+class ReserveStockForOrderEventListenerIntegrationTest {
+    @Configuration
+    @Import({ KafkaConfig.class, ReserveStockForOrderEventListener.class })
+    @EnableConfigurationProperties(AppProperties.class)
     public static class Config {
         @Value("${spring.kafka.bootstrap-servers}")
         private String bootstrapServers;

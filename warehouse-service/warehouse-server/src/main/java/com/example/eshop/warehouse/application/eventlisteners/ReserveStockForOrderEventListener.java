@@ -1,4 +1,4 @@
-package com.example.eshop.warehouse.eventlisteners;
+package com.example.eshop.warehouse.application.eventlisteners;
 
 import com.example.eshop.checkout.client.CheckoutApi;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 @Lazy(false)
 @RequiredArgsConstructor
-public class ReserveStockForOrderEventListeners {
+public class ReserveStockForOrderEventListener {
     private final ReserveStockItemService reserveStockItemService;
 
     @KafkaListener(

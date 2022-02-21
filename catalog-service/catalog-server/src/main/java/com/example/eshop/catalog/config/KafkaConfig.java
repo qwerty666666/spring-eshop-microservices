@@ -1,14 +1,25 @@
 package com.example.eshop.catalog.config;
 
 import com.example.eshop.warehouse.client.events.ProductStockChangedEvent;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
+import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Scope;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -16,8 +27,9 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
-import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
@@ -25,91 +37,119 @@ import org.springframework.util.backoff.FixedBackOff;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Configuration("catalog-kafkaConfig")
-@ConditionalOnProperty(value = KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY, havingValue = "false", matchIfMissing = true)
+@Configuration
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class KafkaConfig {
-    public static final String DISABLE_KAFKA_CONFIG_PROPERTY = "kafka.disable";
+    public static final String DISABLE_KAFKA_CONFIG_PROPERTY = "kafka.disabled";
 
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
-
-    @Bean
-    public ConsumerFactory<String, ProductStockChangedEvent> productStockChangedConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(
-                Map.of(
-                        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
-                        ConsumerConfig.GROUP_ID_CONFIG, "catalog",
-                        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
-                        JsonDeserializer.TRUSTED_PACKAGES, "*"
-                ),
-                null,
-                () -> {
-                    var jsonDeserializer = new JsonDeserializer<>(ProductStockChangedEvent.class)
-                            .trustedPackages("*");
-                    return new ErrorHandlingDeserializer<>(jsonDeserializer);
-                }
-        );
+    @Configuration
+    @ConditionalOnProperty(value = KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY, havingValue = "true")
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    static class DisabledKafkaConfig {
+        @Configuration
+        @ComponentScan(excludeFilters = {
+                @Filter(type = FilterType.REGEX, pattern = "com.example.eshop.catalog.eventlisteners.*")
+        })
+        static class ExcludeKafkaConfig {
+        }
     }
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ProductStockChangedEvent> productStockChangedKafkaListenerContainerFactory(
-            DeadLetterPublishingRecoverer dltRecoverer
-    ) {
-        var factory = new ConcurrentKafkaListenerContainerFactory<String, ProductStockChangedEvent>();
+    @Configuration
+    @ConditionalOnProperty(value = KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY, havingValue = "false", matchIfMissing = true)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    static class EnabledKafkaConfig {
+        @Value("${spring.kafka.bootstrap-servers}")
+        private String bootstrapServers;
 
-        factory.setConsumerFactory(productStockChangedConsumerFactory());
-        factory.setErrorHandler(new SeekToCurrentErrorHandler(dltRecoverer, new FixedBackOff(3000, 10)));
+        @Configuration
+        @ImportAutoConfiguration(KafkaAutoConfiguration.class)
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        static class EnableKafkaConfig {
+        }
 
-        return factory;
-    }
+        @Bean
+        public ConcurrentKafkaListenerContainerFactory<String, ProductStockChangedEvent> productStockChangedKafkaListenerContainerFactory(
+                ConsumerFactory<String, ProductStockChangedEvent> consumerFactory,
+                @Qualifier("productStockChangedErrorHandler") CommonErrorHandler errorHandler
+        ) {
+            var factory = new ConcurrentKafkaListenerContainerFactory<String, ProductStockChangedEvent>();
 
-    @Bean
-    public DeadLetterPublishingRecoverer deadLetterPublishingRecoverer(
-            ProducerFactory<String, byte[]> byteProducerFactory,
-            ProducerFactory<Object, Object> jsonProducerFactory
-    ) {
-        /*
-         * Use different KafkaTemplates for different original record's value.
-         *
-         * Spring try to save original record's value to DLT. To produce record
-         * to DLT, we need to provide serializer as original producer does. But
-         * when there is a deserialization error in consumed record (when random
-         * data is sent), the original serializer will fail too. In this case
-         * Spring's ErrorHandlingDeserializer saves consumed record value in
-         * byte[] header and Spring use it as value to produce record to DLT.
-         * Therefore, we should provide two serializers: for succeeded deserialization
-         * and for byte[] value.
-         *
-         * Spring will use the last serializer when no other is satisfied, so we use
-         * Object.class in last item in templates.
-         *
-         * see: https://docs.spring.io/spring-kafka/docs/current/reference/html/#dead-letters
-         */
-        Map<Class<?>, KafkaOperations<?, ?>> templates = new LinkedHashMap<>();
-        templates.put(byte[].class, new KafkaTemplate<>(byteProducerFactory));
-        templates.put(Object.class, new KafkaTemplate<>(jsonProducerFactory));
+            factory.setConsumerFactory(consumerFactory);
+            factory.setCommonErrorHandler(errorHandler);
 
-        var dltRecoverer = new DeadLetterPublishingRecoverer(templates);
-        dltRecoverer.setRetainExceptionHeader(true);
+            return factory;
+        }
 
-        return dltRecoverer;
-    }
+        @Bean
+        public ConsumerFactory<String, ProductStockChangedEvent> productStockChangedConsumerFactory(
+                @Value("#{commonConsumerConfigs}") Map<String, Object> commonConsumerConfigs,
+                Deserializer<String> keyDeserializer,
+                Deserializer<ProductStockChangedEvent> valueDeserializer
+        ) {
+            return new DefaultKafkaConsumerFactory<>(commonConsumerConfigs, keyDeserializer, valueDeserializer);
+        }
 
-    @Bean
-    public ProducerFactory<String, byte[]> bytesProducerFactory() {
-        return new DefaultKafkaProducerFactory<>(Map.of(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class,
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class
-        ));
-    }
+        @Bean
+        public CommonErrorHandler productStockChangedErrorHandler(DeadLetterPublishingRecoverer dltRecoverer) {
+            // retry 5 times and then publish message to DTL
+            return new DefaultErrorHandler(dltRecoverer, new FixedBackOff(3000, 5));
+        }
 
-    @Bean
-    public ProducerFactory<Object, Object> jsonProducerFactory() {
-        return new DefaultKafkaProducerFactory<>(Map.of(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class,
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class
-        ));
+        @Bean
+        @Scope("prototype")
+        public Deserializer<String> stringKeyDeserializer() {
+            return new ErrorHandlingDeserializer<>(new StringDeserializer()) // NOSONAR close resource
+                    .keyDeserializer(true);
+        }
+
+        @Bean
+        @Scope("prototype")
+        public Deserializer<ProductStockChangedEvent> productStockChangedEventJsonDeserializer() {
+            var jsonDeserializer = new JsonDeserializer<>(ProductStockChangedEvent.class) // NOSONAR close resource
+                    .trustedPackages("*");
+
+            return new ErrorHandlingDeserializer<>(jsonDeserializer);
+        }
+
+        @Bean
+        public Map<String, Object> commonConsumerConfigs(AppProperties appProperties) {
+            return Map.of(
+                    ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
+                    ConsumerConfig.GROUP_ID_CONFIG, appProperties.getKafka().getConsumerGroup()
+            );
+        }
+
+        @Bean
+        public DeadLetterPublishingRecoverer deadLetterPublishingRecoverer(
+                ProducerFactory<String, byte[]> byteProducerFactory,
+                ProducerFactory<String, Object> jsonProducerFactory
+        ) {
+            Map<Class<?>, KafkaOperations<?, ?>> templates = new LinkedHashMap<>();
+            templates.put(byte[].class, new KafkaTemplate<>(byteProducerFactory));
+            templates.put(Object.class, new KafkaTemplate<>(jsonProducerFactory));
+
+            var dltRecoverer = new DeadLetterPublishingRecoverer(templates);
+            dltRecoverer.setRetainExceptionHeader(true);
+
+            return dltRecoverer;
+        }
+
+        @Bean
+        public ProducerFactory<String, byte[]> bytesProducerFactory() {
+            return new DefaultKafkaProducerFactory<>(Map.of(
+                    ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
+                    ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
+                    ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class
+            ));
+        }
+
+        @Bean
+        public ProducerFactory<String, Object> jsonProducerFactory() {
+            return new DefaultKafkaProducerFactory<>(Map.of(
+                    ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
+                    ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
+                    ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class
+            ));
+        }
     }
 }

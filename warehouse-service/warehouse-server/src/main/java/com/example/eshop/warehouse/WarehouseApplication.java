@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication(exclude = {
-        KafkaAutoConfiguration.class  // included in KafkaConfig.class
+        KafkaAutoConfiguration.class  // included in KafkaConfig
 })
 @EnableConfigurationProperties(AppProperties.class)
 public class WarehouseApplication {
