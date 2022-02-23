@@ -6,7 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(repositoryFactoryBeanClass = EntityGraphJpaRepositoryFactoryBean.class)
+@EnableJpaRepositories(
+        basePackages = "com.example.eshop.catalog",
+        repositoryFactoryBeanClass = EntityGraphJpaRepositoryFactoryBean.class
+)
 @EntityScan(basePackages = "com.example.eshop.catalog")
 public class DataConfig {
 }
