@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 @ExcludeKafkaConfig
 @DbTest
-class ReserveStockItemServiceImplIT {
+class ReserveStockItemServiceImplIntegrationTest {
     private final static Ean STOCK_ITEM_1_EAN = Ean.fromString("0000000000001");
     private final static StockQuantity STOCK_ITEM_1_QUANTITY = StockQuantity.of(10);
 

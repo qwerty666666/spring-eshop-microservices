@@ -25,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@IntegrationTest
 @ExcludeKafkaConfig
 @DbTest
 class ProductCrudServiceIntegrationTest {
@@ -78,7 +77,7 @@ class ProductCrudServiceIntegrationTest {
             var page = productCrudService.getList(pageable);
 
             assertAll(
-                    () -> assertThat(page.getContent().size()).as("Page size").isEqualTo(size),
+                    () -> assertThat(page.getContent()).as("Page size").hasSize(size),
                     () -> assertThat(page.getTotalPages()).as("Total pages").isEqualTo(2),
                     () -> assertThat(page.getTotalElements()).as("Total Elements").isEqualTo(3),
                     () -> assertThat(page.getContent().get(0).getId()).as("First Product").isEqualTo(SNEAKERS_PRODUCT_ID),
@@ -97,7 +96,7 @@ class ProductCrudServiceIntegrationTest {
             var page = productCrudService.getByCategory(CLOTHES_CATEGORY_ID, pageable);
 
             assertAll(
-                    () -> assertThat(page.getContent().size()).as("Product count").isEqualTo(2),
+                    () -> assertThat(page.getContent()).as("Product count").hasSize(2),
                     () -> assertThat(page.getContent()).as("Products found")
                             .extracting(Product::getId)
                             .containsOnly(SHIRT_PRODUCT_ID, JACKET_PRODUCT_ID)
