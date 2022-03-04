@@ -16,12 +16,11 @@ import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
 import com.example.eshop.sharedtest.IntegrationTest;
+import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.example.eshop.warehouse.application.services.reserve.ReserveStockItemService;
-import com.example.eshop.warehouse.application.eventlisteners.ReserveStockForOrderEventListener;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
-import com.example.eshop.warehouse.config.AppProperties;
-import com.example.eshop.warehouse.config.KafkaConfig;
 import com.example.eshop.warehouse.domain.StockQuantity;
+import com.github.database.rider.core.api.dataset.DataSet;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -31,12 +30,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -58,6 +55,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -68,11 +66,10 @@ import static org.mockito.Mockito.when;
         topics = { CheckoutApi.RESERVE_STOCKS_TOPIC, CheckoutApi.RESERVE_STOCKS_REPLY_TOPIC },
         bootstrapServersProperty = "spring.kafka.bootstrap-servers"
 )
+@DbTest
 class ReserveStockForOrderEventListenerIntegrationTest {
-    @Configuration
-    @Import({ KafkaConfig.class, ReserveStockForOrderEventListener.class })
-    @EnableConfigurationProperties(AppProperties.class)
-    public static class Config {
+    @TestConfiguration
+    static class Config {
         @Value("${spring.kafka.bootstrap-servers}")
         private String bootstrapServers;
 
@@ -154,10 +151,8 @@ class ReserveStockForOrderEventListenerIntegrationTest {
 
     @Autowired
     private EmbeddedKafkaBroker broker;
-
     @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
-
     @Autowired
     private ReplyingKafkaTemplate<String, OrderDto, ReservationResult> kafkaTemplate;
 
@@ -168,31 +163,36 @@ class ReserveStockForOrderEventListenerIntegrationTest {
     public void setUp() {
         // we should wait because listener container can start after the first message was published
         for (MessageListenerContainer messageListenerContainer : kafkaListenerEndpointRegistry.getListenerContainers()) {
+//            ContainerTestUtils.waitForAssignment(messageListenerContainer, 1);
             ContainerTestUtils.waitForAssignment(messageListenerContainer, broker.getPartitionsPerTopic());
         }
     }
 
     @Test
+    @DataSet(cleanAfter = true)
     void givenReserveStockForOrderEvent_whenEventIsPublished_thenReserveStockItemServiceIsCalledAndResponseReturned()
             throws ExecutionException, InterruptedException, TimeoutException {
         // Given
-        var expectedReservingQty = Map.of(
+        var reservingQty = Map.of(
                 ean1, StockQuantity.of(qty1),
                 ean2, StockQuantity.of(qty2)
         );
         var expectedResult = ReservationResult.success();
-
-        when(reserveStockItemService.reserve(expectedReservingQty)).thenReturn(expectedResult);
+        when(reserveStockItemService.reserve(reservingQty)).thenReturn(expectedResult);
 
         // When
-        var result = kafkaTemplate.sendAndReceive(new ProducerRecord<>(CheckoutApi.RESERVE_STOCKS_TOPIC, order),
-                        Duration.ofSeconds(5))
-                .get(5, TimeUnit.SECONDS)
-                .value();
+        ReservationResult reservationResult = null;
+
+        for (int i = 0; i < 2; i++) {
+            var producerRecord = new ProducerRecord<>(CheckoutApi.RESERVE_STOCKS_TOPIC, order.id().toString(), order);
+
+            reservationResult = kafkaTemplate.sendAndReceive(producerRecord, Duration.ofSeconds(5))
+                    .get(5, TimeUnit.SECONDS)
+                    .value();
+        }
 
         // Then
-        // check that event is handled in given timeout
-        assertThat(result).isEqualTo(expectedResult);
-        verify(reserveStockItemService).reserve(expectedReservingQty);
+        assertThat(reservationResult).isEqualTo(expectedResult);
+        verify(reserveStockItemService, timeout(5000).only()).reserve(reservingQty);
     }
 }

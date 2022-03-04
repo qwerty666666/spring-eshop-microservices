@@ -4,22 +4,20 @@ import com.example.eshop.checkout.client.CheckoutApi;
 import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.order.FakeData;
 import com.example.eshop.order.application.services.createorder.CreateOrderService;
-import com.example.eshop.order.config.AppProperties;
-import com.example.eshop.order.config.KafkaConfig;
 import com.example.eshop.sharedtest.IntegrationTest;
+import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.github.database.rider.core.api.dataset.DataSet;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -43,44 +41,37 @@ import static org.mockito.Mockito.when;
 @IntegrationTest
 @EmbeddedKafka(
         partitions = 1,
-        topics = {CheckoutApi.ORDER_PLACED_TOPIC },
+        topics = {CheckoutApi.ORDER_PLACED_TOPIC},
         bootstrapServersProperty = "spring.kafka.bootstrap-servers"
 )
+@DbTest
 class OrderPlacedEventListenerIntegrationTest {
-    @Configuration
-    @EnableConfigurationProperties(AppProperties.class)
-    @Import({ KafkaConfig.class, OrderPlacedEventListener.class })
-    public static class Config {
+    @TestConfiguration
+    static class Config {
         @Bean
-        public KafkaTemplate<String, OrderPlacedEvent> orderPlacedKafkaTemplate(
+        public KafkaTemplate<String, OrderPlacedEvent> orderPlacedEventKafkaTemplate(
                 @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers
         ) {
-            var keySerializer = new StringSerializer();
-            var valueSerializer = new JsonSerializer<OrderPlacedEvent>(
-                    JacksonUtils.enhancedObjectMapper()
-                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            );
-
             return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(
                     Map.of(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers),
-                    keySerializer,
-                    valueSerializer
+                    new StringSerializer(),
+                    new JsonSerializer<>(
+                            JacksonUtils.enhancedObjectMapper()
+                                    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    )
             ));
         }
     }
 
     @Autowired
     private EmbeddedKafkaBroker broker;
-
     @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
-
     @Autowired
     private KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
     @MockBean
     private OrderPlacedEventMapper orderPlacedEventMapper;
-
     @MockBean
     private CreateOrderService createOrderService;
 
@@ -93,15 +84,19 @@ class OrderPlacedEventListenerIntegrationTest {
     }
 
     @Test
-    void whenOrderPlacedEventIsPublished_thenOrderIsCreated() throws ExecutionException, InterruptedException, TimeoutException {
+    @DataSet(cleanAfter = true)
+    void whenProcessDuplicatedEvent_thenEventProcessedOnce() throws ExecutionException, InterruptedException, TimeoutException {
         var event = new OrderPlacedEvent(FakeData.orderDto(), LocalDateTime.now());
+        var key = event.order().id().toString();
         var expectedOrder = FakeData.order();
 
         when(orderPlacedEventMapper.toOrder(event)).thenReturn(expectedOrder);
 
-        kafkaTemplate.send(CheckoutApi.ORDER_PLACED_TOPIC, event)
-                .get(5, TimeUnit.SECONDS);
+        for (int i = 0; i < 2; i++) {
+            kafkaTemplate.send(CheckoutApi.ORDER_PLACED_TOPIC, key, event)
+                    .get(5, TimeUnit.SECONDS);
+        }
 
-        verify(createOrderService, timeout(5000)).save(expectedOrder);
+        verify(createOrderService, timeout(5000).only()).save(expectedOrder);
     }
 }

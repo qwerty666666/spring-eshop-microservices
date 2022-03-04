@@ -2,6 +2,7 @@ package com.example.eshop.warehouse.client.reservationresult;
 
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import java.util.Collections;
@@ -41,6 +42,7 @@ public class ReservationResult {
     /**
      * @return if all items was reserved successfully
      */
+    @JsonIgnore
     public boolean isSuccess() {
         return errors.isEmpty();
     }
@@ -51,5 +53,4 @@ public class ReservationResult {
     public Map<Ean, ReservationError> getErrors() {
         return Collections.unmodifiableMap(errors);
     }
-
 }
