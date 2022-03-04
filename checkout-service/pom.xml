@@ -21,6 +21,7 @@
 
     <properties>
         <shared-kernel.version>0.0.1-SNAPSHOT</shared-kernel.version>
+        <catalog-service.version>1.0.0-SNAPSHOT</catalog-service.version>
     </properties>
 
     <dependencyManagement>
@@ -29,6 +30,11 @@
                 <groupId>com.example.eshop</groupId>
                 <artifactId>shared-kernel</artifactId>
                 <version>${shared-kernel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.example.eshop</groupId>
+                <artifactId>catalog-client</artifactId>
+                <version>${catalog-service.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

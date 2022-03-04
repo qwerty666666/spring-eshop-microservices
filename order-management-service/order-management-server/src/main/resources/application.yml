@@ -1,0 +1,31 @@
+server:
+  port: 0
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: orders-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:28000/auth/realms/test
+
+  devtools:
+    livereload:
+      enabled: false
+
+  jpa:
+    open-in-view: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+app:
+  kafka:
+    consumer-group: orders-management

@@ -71,7 +71,7 @@ public class CustomerController extends BaseController implements CustomerApi {
 
     @Override
     public ResponseEntity<CustomerDto> getAuthenticatedCustomer() {
-        var userDetails = getAuthenticatedUserDetailsOrFail();
+        var userDetails = getCurrentAuthenticationOrFail();
         var customer = queryCustomerService.getByEmail(userDetails.getEmail());
 
         return ResponseEntity.ok(customerMapper.toCustomerDto(customer));
@@ -79,7 +79,7 @@ public class CustomerController extends BaseController implements CustomerApi {
 
     @Override
     public ResponseEntity<Void> updateAuthenticatedCustomer(CustomerFieldsDto customerFieldsDto) {
-        var userDetails = getAuthenticatedUserDetailsOrFail();
+        var userDetails = getCurrentAuthenticationOrFail();
         var customer = queryCustomerService.getByEmail(userDetails.getEmail());
 
         var command = new UpdateCustomerCommand(

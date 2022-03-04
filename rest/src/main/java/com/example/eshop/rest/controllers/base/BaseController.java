@@ -1,7 +1,7 @@
 package com.example.eshop.rest.controllers.base;
 
+import com.example.eshop.auth.AuthUtils;
 import com.example.eshop.auth.CustomJwtAuthentication;
-import com.example.eshop.rest.utils.AuthUtils;
 
 /**
  * Base class for all Controllers.
@@ -15,7 +15,7 @@ public class BaseController {
      * Returns currently authenticated {@link CustomJwtAuthentication} or
      * throws {@link NotAuthenticatedException} if user is not authenticated.
      */
-    protected CustomJwtAuthentication getAuthenticatedUserDetailsOrFail() {
+    protected CustomJwtAuthentication getCurrentAuthenticationOrFail() {
         return AuthUtils.getCurrentUserDetails()
                 .orElseThrow(() -> new NotAuthenticatedException("User is not authenticated"));
     }

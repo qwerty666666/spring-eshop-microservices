@@ -1,6 +1,6 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.Pageable;
+import com.example.eshop.catalog.client.api.model.PageableDto;
 import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -16,7 +16,7 @@ public class Assertions {
         }
     }
 
-    public static void assertPageableEquals(Page<?> page, Pageable pageableDto) {
+    public static void assertPageableEquals(Page<?> page, PageableDto pageableDto) {
         assertThat(pageableDto.getPage()).as("page number").isEqualTo(page.getNumber() + 1);
         assertThat(pageableDto.getPerPage()).as("page size").isEqualTo(page.getSize());
         assertThat(pageableDto.getTotalPages()).as("total pages").isEqualTo(page.getTotalPages());

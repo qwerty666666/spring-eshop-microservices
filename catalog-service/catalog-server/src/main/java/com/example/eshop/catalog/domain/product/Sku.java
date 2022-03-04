@@ -92,7 +92,6 @@ public class Sku implements Entity<Long> {
             fetch = FetchType.EAGER,
             cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH }
     )
-    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
             name = "sku_attributes",
             joinColumns = @JoinColumn(name = "sku_id"),

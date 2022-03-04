@@ -34,7 +34,8 @@ public final class Order implements ValueObject {
     @Nullable
     private final ShipmentInfo shipmentInfo;
 
-    public Order(UUID id, String customerId, Cart cart, DeliveryAddress address, @Nullable DeliveryService deliveryService, @Nullable PaymentService paymentService) {
+    public Order(UUID id, String customerId, Cart cart, DeliveryAddress address, @Nullable DeliveryService deliveryService,
+            @Nullable PaymentService paymentService) {
         this.id = id;
         this.customerId = customerId;
         this.cart = cart;

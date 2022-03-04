@@ -1,10 +1,10 @@
 package com.example.eshop.catalog.rest.utils;
 
-import com.example.eshop.catalog.client.api.model.FieldError;
-import com.example.eshop.catalog.client.api.model.ValidationError;
+import com.example.eshop.catalog.client.api.model.FieldErrorDto;
+import com.example.eshop.catalog.client.api.model.ValidationErrorDto;
 
 public class ValidationErrorBuilder {
-    private final ValidationError errors = new ValidationError();
+    private final ValidationErrorDto errors = new ValidationErrorDto();
 
     private ValidationErrorBuilder() {
     }
@@ -13,12 +13,12 @@ public class ValidationErrorBuilder {
         return new ValidationErrorBuilder();
     }
 
-    public ValidationError build() {
+    public ValidationErrorDto build() {
         return errors;
     }
 
     public ValidationErrorBuilder addError(String field, String message) {
-        var error = new FieldError();
+        var error = new FieldErrorDto();
         error.setField(field);
         error.setMessage(message);
 

@@ -8,6 +8,7 @@ import com.example.eshop.catalog.domain.product.ProductRepository;
 import com.example.eshop.catalog.domain.product.Sku;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,7 @@ class ProductCrudServiceImpl implements ProductCrudService {
     }
 
     @Override
+    @Transactional
     public Page<Product> getByEan(List<Ean> ean, Pageable pageable) {
         if (ean.isEmpty()) {
             return Page.empty();
@@ -88,32 +90,48 @@ class ProductCrudServiceImpl implements ProductCrudService {
         return productPage;
     }
 
+    /**
+     * Load lazy-load associations for products
+     * {@see https://stackoverflow.com/a/30093606}
+     */
     private void fetchAssociations(List<Product> products) {
         fetchImages(products);
         fetchSku(products);
     }
 
     private void fetchSku(List<Product> products) {
+        if (products.isEmpty()) {
+            return;
+        }
+
         em.createQuery("""
-                select product
+                select distinct product
                     from Product product
                     left join fetch product.sku sku
                     left join fetch sku.attributes attr_value
                     left join fetch attr_value.attribute attr
-                    where product in :products"""
+                    where product in :products""",
+                Product.class
         )
                 .setParameter("products", products)
+                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
                 .getResultList();
     }
 
     private void fetchImages(List<Product> products) {
+        if (products.isEmpty()) {
+            return;
+        }
+
         em.createQuery("""
-                select p
+                select distinct p
                     from Product p
                     left join fetch p.images
-                    where p in :products"""
+                    where p in :products""",
+                Product.class
         )
                 .setParameter("products", products)
+                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
                 .getResultList();
     }
 }

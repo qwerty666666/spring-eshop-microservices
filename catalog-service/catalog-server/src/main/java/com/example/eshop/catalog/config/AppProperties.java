@@ -1,11 +1,13 @@
 package com.example.eshop.catalog.config;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 
 @ConfigurationProperties("app")
 @Getter
+@Setter
 public class AppProperties {
     /**
      * Base path to REST Endpoints
@@ -26,6 +28,8 @@ public class AppProperties {
      * All image Urls are resolved relative to this path.
      */
     private String imagesBasePath = "";
+
+    private KafkaProperties kafka;
 
     public void setPublicHostName(String publicHostName) {
         this.publicHostName = cleanUrl(publicHostName);
@@ -50,5 +54,14 @@ public class AppProperties {
         }
 
         return candidate;
+    }
+
+    @Getter
+    @Setter
+    public static class KafkaProperties {
+        /**
+         * Consumer Group ID
+         */
+        private String consumerGroup;
     }
 }

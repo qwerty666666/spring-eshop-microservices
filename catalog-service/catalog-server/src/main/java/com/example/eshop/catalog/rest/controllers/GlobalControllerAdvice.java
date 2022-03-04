@@ -1,11 +1,10 @@
 package com.example.eshop.catalog.rest.controllers;
 
-import com.example.eshop.catalog.client.api.model.ValidationError;
+import com.example.eshop.catalog.client.api.model.ValidationErrorDto;
 import com.example.eshop.catalog.rest.utils.ValidationErrorBuilder;
 import com.example.eshop.localizer.Localizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.validation.ConstraintViolation;
@@ -13,8 +12,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Path.Node;
 import java.util.stream.StreamSupport;
 
-// TODO remove bean name
-@Component("catalog-globalControllerAdvice")
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalControllerAdvice {
@@ -24,7 +21,7 @@ public class GlobalControllerAdvice {
      * Handle exception if method parameter is invalid
      */
     @ExceptionHandler
-    private ResponseEntity<ValidationError> handleInvalidMethodParameterException(InvalidMethodParameterException e) {
+    private ResponseEntity<ValidationErrorDto> handleInvalidMethodParameterException(InvalidMethodParameterException e) {
         var error = e.getFieldError();
 
         var validationError = ValidationErrorBuilder.newInstance()
@@ -38,7 +35,7 @@ public class GlobalControllerAdvice {
      * Handle exception from validating Controller's parameters
      */
     @ExceptionHandler
-    private ResponseEntity<ValidationError> onConstraintViolationException(ConstraintViolationException e) {
+    private ResponseEntity<ValidationErrorDto> onConstraintViolationException(ConstraintViolationException e) {
         var errorBuilder = ValidationErrorBuilder.newInstance();
 
         e.getConstraintViolations().forEach(violation -> {
@@ -59,7 +56,7 @@ public class GlobalControllerAdvice {
                 .orElse(null);
     }
 
-    private ResponseEntity<ValidationError> getValidationErrorResponse(ValidationError err) {
+    private ResponseEntity<ValidationErrorDto> getValidationErrorResponse(ValidationErrorDto err) {
         return ResponseEntity.badRequest().body(err);
     }
 }

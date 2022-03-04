@@ -1,6 +1,8 @@
 package com.example.eshop.sharedkernel.domain.valueobject;
 
 import com.example.eshop.sharedkernel.domain.base.ValueObject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
@@ -33,11 +35,13 @@ public class Phone implements ValueObject {
      *
      * @throws InvalidPhoneFormatException if {@code phone} is null or bad formed
      */
+    @JsonCreator
     public static Phone fromString(String phone) {
         return new Phone(phone);
     }
 
     @Override
+    @JsonValue
     public String toString() {
         return phone;
     }

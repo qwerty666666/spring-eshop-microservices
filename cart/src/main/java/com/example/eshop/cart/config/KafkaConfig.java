@@ -1,8 +1,10 @@
 package com.example.eshop.cart.config;
 
 import com.example.eshop.checkout.client.CheckoutApi;
-import com.example.eshop.checkout.client.order.OrderDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -14,9 +16,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
+import org.springframework.kafka.support.JacksonUtils;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
@@ -30,10 +34,15 @@ public class KafkaConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
+    @Bean("cart-orderPlacedEventKafkaTemplate")
+    public KafkaTemplate<String, OrderPlacedEvent> orderPlacedEventKafkaTemplate() {
+        return new KafkaTemplate<>(jsonKafkaProducerFactory());
+    }
+
     @Bean("cart-stocksReservationKafkaTemplate")
     public ReplyingKafkaTemplate<String, OrderDto, ReservationResult> stocksReservationKafkaTemplate() {
         return new ReplyingKafkaTemplate<>(
-                new DefaultKafkaProducerFactory<>(jsonProducerFactoryConfigs()),
+                jsonKafkaProducerFactory(),
                 stocksReservationMessageListenerContainer()
         );
     }
@@ -65,9 +74,24 @@ public class KafkaConfig {
     @Bean("cart-jsonKafkaProducerFactoryConfigs")
     public Map<String, Object> jsonProducerFactoryConfigs() {
         return Map.of(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers
         );
+    }
+
+    @Bean
+    public <T> DefaultKafkaProducerFactory<String, T> jsonKafkaProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(
+                jsonProducerFactoryConfigs(),
+                new StringSerializer(),
+                jsonSerializer()
+        );
+    }
+
+    @Bean
+    public <T> JsonSerializer<T> jsonSerializer() {
+        var objectMapper = JacksonUtils.enhancedObjectMapper()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        return new JsonSerializer<>(objectMapper);
     }
 }

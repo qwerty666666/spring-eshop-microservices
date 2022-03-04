@@ -1,0 +1,18 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: catalog-service
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+  devtools:
+    livereload:
+      enabled: false
+app:
+  kafka:
+    consumer-group: catalog

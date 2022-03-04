@@ -50,7 +50,7 @@ public class CheckoutController extends BaseController implements CheckoutApi {
         var order = placeOrderUsecase.place(createOrderDto);
 
         // clear customer's cart
-        clearCartService.clear(getAuthenticatedUserDetailsOrFail().getCustomerId());
+        clearCartService.clear(getCurrentAuthenticationOrFail().getCustomerId());
 
         // and return Location to created order
         var location = uriUtils.buildOrderUri(order.getId());
@@ -59,14 +59,14 @@ public class CheckoutController extends BaseController implements CheckoutApi {
     }
 
     private CreateOrderDto buildCreateOrderDto(CheckoutRequestDto checkoutRequestDto) {
-        var customerId = getAuthenticatedUserDetailsOrFail().getCustomerId();
+        var customerId = getCurrentAuthenticationOrFail().getCustomerId();
         var cart = getCartForAuthenticatedCustomer();
 
         return checkoutMapper.toCreateOrderDto(checkoutRequestDto, customerId, cart);
     }
 
     private Cart getCartForAuthenticatedCustomer() {
-        var userDetails = getAuthenticatedUserDetailsOrFail();
+        var userDetails = getCurrentAuthenticationOrFail();
 
         return cartQueryService.getForCustomer(userDetails.getCustomerId());
     }

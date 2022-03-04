@@ -45,13 +45,13 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>sales</artifactId>
-            <version>${project.version}</version>
+            <artifactId>localizer</artifactId>
+            <version>${localizer.version}</version>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>localizer</artifactId>
-            <version>${localizer.version}</version>
+            <artifactId>auth</artifactId>
+            <version>${auth.version}</version>
         </dependency>
 
         <!-- Devtools -->

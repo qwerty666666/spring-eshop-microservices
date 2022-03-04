@@ -27,6 +27,16 @@
             <artifactId>shared-kernel</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webflux</artifactId>
+        </dependency>
+
         <!-- Swagger -->
         <dependency>
             <groupId>org.openapitools</groupId>
@@ -51,15 +61,6 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webflux</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -78,6 +79,7 @@
                             <generatorName>java</generatorName>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
                             <apiPackage>com.example.eshop.catalog.client.api</apiPackage>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>

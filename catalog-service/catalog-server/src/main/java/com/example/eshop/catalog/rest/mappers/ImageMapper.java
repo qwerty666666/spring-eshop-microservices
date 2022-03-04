@@ -1,6 +1,6 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.Image;
+import com.example.eshop.catalog.client.api.model.ImageDto;
 import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.infrastructure.UriBuilder;
 import org.mapstruct.Mapper;
@@ -11,8 +11,8 @@ public abstract class ImageMapper {
     @Autowired
     private UriBuilder uriBuilder;
 
-    public Image toImageDto(File image) {
-        var dto = new Image();
+    public ImageDto toImageDto(File image) {
+        var dto = new ImageDto();
 
         var url = image.isExternal() ? image.getLocation() : uriBuilder.buildImageUri(image.getLocation()).toString();
         dto.setUrl(url);

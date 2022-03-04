@@ -1,21 +1,19 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
-import com.example.eshop.cart.application.usecases.placeorder.ProductNotFoundException;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.cart.CartRepository;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
-import com.example.eshop.catalog.client.api.model.Money;
-import com.example.eshop.catalog.client.api.model.Product;
-import com.example.eshop.catalog.client.api.model.Sku;
-import com.example.eshop.catalog.client.cataloggateway.CatalogGateway;
+import com.example.eshop.catalog.client.api.model.MoneyDto;
+import com.example.eshop.catalog.client.api.model.ProductDto;
+import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,42 +40,35 @@ class CartItemCrudServiceImplTest {
         var cartRepository = mock(CartRepository.class);
         when(cartRepository.findByNaturalId(customerId)).thenReturn(Optional.of(cart));
 
-        // CatalogGateway
+        // CatalogService
 
-        var existedInCartProduct = Product.builder()
-                .name("test")
-                .sku(List.of(
-                        Sku.builder()
-                                .ean(existedInCartCartItem.getEan().toString())
-                                .quantity(existedInCartCartItem.getQuantity())
-                                .build()
-                ))
+        var existedInCartSku = SkuWithProductDto.builder()
+                .ean(existedInCartCartItem.getEan().toString())
+                .quantity(existedInCartCartItem.getQuantity())
+                .product(ProductDto.builder()
+                        .name("Test Product")
+                        .build()
+                )
                 .build();
 
-        var newProduct = Product.builder()
-                .name("Test Product")
-                .sku(List.of(
-                        Sku.builder()
-                                .ean(existedInCartEan.toString())
-                                .price(new Money(BigDecimal.valueOf(10), "USD"))
-                                .quantity(availableQuantity)
-                                .build(),
-                        Sku.builder()
-                                .ean(newEan.toString())
-                                .price(new Money(BigDecimal.valueOf(10), "USD"))
-                                .quantity(availableQuantity)
-                                .build()
-                ))
+        var newSku = SkuWithProductDto.builder()
+                .ean(newEan.toString())
+                .price(new MoneyDto(BigDecimal.valueOf(10), "USD"))
+                .quantity(availableQuantity)
+                .product(ProductDto.builder()
+                        .name("Test Product")
+                        .build()
+                )
                 .build();
 
-        var catalogGateway = mock(CatalogGateway.class);
-        when(catalogGateway.getProductByEan(newEan)).thenReturn(Mono.just(newProduct));
-        when(catalogGateway.getProductByEan(existedInCartEan)).thenReturn(Mono.just(existedInCartProduct));
-        when(catalogGateway.getProductByEan(nonExistedInCatalogEan)).thenReturn(Mono.empty());
+        var catalogService = mock(CatalogService.class);
+        when(catalogService.getSku(newEan)).thenReturn(Mono.just(newSku));
+        when(catalogService.getSku(existedInCartEan)).thenReturn(Mono.just(existedInCartSku));
+        when(catalogService.getSku(nonExistedInCatalogEan)).thenReturn(Mono.empty());
 
         // CartItemService
 
-        cartItemCrudService = new CartItemCrudServiceImpl(cartRepository, catalogGateway);
+        cartItemCrudService = new CartItemCrudServiceImpl(cartRepository, catalogService);
     }
 
     @Nested

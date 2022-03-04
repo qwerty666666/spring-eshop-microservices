@@ -85,7 +85,7 @@ public class Money implements ValueObject {
      */
     private BigDecimal scaleAmount(BigDecimal amount, Currency currency) {
         if (amount.scale() > currency.getDefaultFractionDigits()) {
-            throw new IllegalArgumentException("Scale of amount " + amount + " is greater than the scale of the"
+            throw new IllegalArgumentException("Scale of amount " + amount + " is greater than the scale of the "
                     + "currency " + currency);
         }
 

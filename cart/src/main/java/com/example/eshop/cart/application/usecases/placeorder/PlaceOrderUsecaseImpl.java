@@ -1,10 +1,14 @@
 package com.example.eshop.cart.application.usecases.placeorder;
 
+import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.order.OrderFactory;
 import com.example.eshop.cart.domain.checkout.placeorder.PlaceOrderService;
 import com.example.eshop.cart.domain.checkout.placeorder.PlaceOrderValidator;
+import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import com.example.eshop.warehouse.client.reservationresult.InsufficientQuantityError;
@@ -12,7 +16,6 @@ import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import com.example.eshop.warehouse.client.reservationresult.StockItemNotFoundError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +27,12 @@ import java.time.LocalDateTime;
 @Slf4j
 public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
     private final PlaceOrderService placeOrderService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final OrderPlacedEventPublisher orderPlacedEventPublisher;
     private final OrderFactory orderFactory;
     private final Clock clock;
-    private final ProductInfoProvider productInfoProvider;
+    private final CatalogService catalogService;
     private final StockReservationService stockReservationService;
+    private final OrderMapper orderMapper;
 
     @Override
     @PreAuthorize("#createOrderDto.customerId() == authentication.getCustomerId()")
@@ -43,11 +47,13 @@ public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
             throw new ValidationException(result.getErrors());
         }
 
+        var orderDto = createOrderDto(order);
+
         // reserve products in warehouse
-        reserveStocksInWarehouse(order);
+        reserveStocksInWarehouse(orderDto);
 
         // and publish Application Event
-        publishOrderCreatedEvent(order);
+        publishOrderCreatedEvent(orderDto);
 
         return order;
     }
@@ -56,7 +62,16 @@ public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
         return orderFactory.create(createOrderDto);
     }
 
-    private void reserveStocksInWarehouse(Order order) {
+    private OrderDto createOrderDto(Order order) {
+        var eanList = order.getCart().getItems().stream().map(CartItem::getEan).toList();
+        var skuInfo = catalogService.getSku(eanList)
+                .blockOptional()
+                .orElseThrow(() -> new RuntimeException("CatalogService::getSku() return null"));
+
+        return orderMapper.toOrderDto(order, skuInfo);
+    }
+
+    private void reserveStocksInWarehouse(OrderDto order) {
         var reservationResult = stockReservationService.reserve(order);
 
         if (!reservationResult.isSuccess()) {
@@ -75,17 +90,17 @@ public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
                 errors.addError(PlaceOrderValidator.CART_ITEMS_FIELD, "cart.item.not_found", ean);
             } else {
                 log.error("Unknown ReservationError type " + reservationResult.getClass());
-                throw new StockReservationException("Unknown ReservationError type " + reservationResult.getClass());
+                throw new PublishEventException("Unknown ReservationError type " + reservationResult.getClass());
             }
         });
 
         return errors;
     }
 
-    private void publishOrderCreatedEvent(Order order) {
+    private void publishOrderCreatedEvent(OrderDto order) {
         var creationDate = LocalDateTime.now(clock);
-        var productsInfo = productInfoProvider.getProductsInfo(order.getCart());
+        var event = new OrderPlacedEvent(order, creationDate);
 
-        eventPublisher.publishEvent(new OrderPlacedEvent(order, creationDate, productsInfo));
+        orderPlacedEventPublisher.publish(event);
     }
 }

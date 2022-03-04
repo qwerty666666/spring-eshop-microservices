@@ -93,7 +93,7 @@ class CustomerControllerTest {
     @Nested
     class GetAuthenticatedTests {
         @Test
-        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID, email = AuthConfig.CUSTOMER_EMAIL)
         void givenAuthenticatedUser_whenGetAuthenticated_thenReturnThatUser() throws Exception {
             var expectedJson = objectMapper.writeValueAsString(customerDto);
 
@@ -119,7 +119,7 @@ class CustomerControllerTest {
     @Nested
     class UpdateCurrentTests {
         @Test
-        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID, email = AuthConfig.CUSTOMER_EMAIL)
         void givenAuthenticatedCustomer_whenUpdateCustomer_thenReturnOk() throws Exception {
             // Given
             var expectedCommand = new UpdateCustomerCommand(customer.getId(), NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY);
@@ -132,7 +132,7 @@ class CustomerControllerTest {
         }
 
         @Test
-        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID, email = AuthConfig.CUSTOMER_EMAIL)
         void givenAuthenticatedCustomer_whenUpdateCurrentCustomerWithAlreadyUsedEmail_thenReturn400() throws Exception {
             // Given
             var expectedCommand = new UpdateCustomerCommand(customer.getId(), NEW_FIRSTNAME, NEW_LASTNAME, NEW_EMAIL, NEW_BIRTHDAY);

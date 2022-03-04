@@ -27,7 +27,7 @@ public class ProductStockChangedEventListener {
     public void changeSkuQuantity(ProductStockChangedEvent event) {
         productRepository.findByEan(event.ean())
                 .ifPresent(product -> {
-                    log.info("Handle ProductStockChangedEvent " + event);
+                    log.trace("Handle ProductStockChangedEvent " + event);
 
                     product.setSkuAvailableQuantity(event.ean(), event.newQuantity());
                 });

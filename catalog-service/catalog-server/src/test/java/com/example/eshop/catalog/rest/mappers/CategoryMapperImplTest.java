@@ -1,6 +1,7 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.CategoryTreeItem;
+import com.example.eshop.catalog.client.api.model.CategoryDto;
+import com.example.eshop.catalog.client.api.model.CategoryTreeItemDto;
 import com.example.eshop.catalog.configs.MappersTest;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
@@ -50,22 +51,22 @@ class CategoryMapperImplTest {
         return parent;
     }
 
-    private static void assertCategoriesEquals(Category category, com.example.eshop.catalog.client.api.model.Category categoryDto) {
+    private static void assertCategoriesEquals(Category category, CategoryDto categoryDto) {
         assertThat(categoryDto.getId())
                 .as("ID")
-                .isEqualTo(category.getId().toString());
+                .isEqualTo(category.getId().toString()); // NOSONAR npe
         assertThat(categoryDto.getName())
                 .as("Name")
                 .isEqualTo(category.getName());
         assertThat(categoryDto.getParentId())
                 .as("Parent ID")
-                .isEqualTo(category.getParent() == null ? null : category.getParent().getId().toString());
+                .isEqualTo(category.getParent() == null ? null : category.getParent().getId().toString());  // NOSONAR npe
     }
 
-    private static void assertCategoryTreeEquals(Category category, CategoryTreeItem treeItemDto) {
+    private static void assertCategoryTreeEquals(Category category, CategoryTreeItemDto treeItemDto) {
         assertThat(treeItemDto.getId())
                 .as("ID")
-                .isEqualTo(category.getId().toString());
+                .isEqualTo(category.getId().toString());  // NOSONAR npe
         assertThat(treeItemDto.getName())
                 .as("Name")
                 .isEqualTo(category.getName());

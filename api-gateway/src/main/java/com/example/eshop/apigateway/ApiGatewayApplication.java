@@ -20,7 +20,7 @@ public class ApiGatewayApplication {
         return routeLocatorBuilder.routes()
                 .route("catalog", r -> r
                         .order(100)
-                        .path("/api/{path:(?:products|categories)}/**")
+                        .path("/api/{path:(?:products|categories|sku)}/**")
                         .filters(f -> f
                                 .filter(new UpperBoundLimitRequestParameterFilterFactory().apply(config -> config
                                         .setParameterName("per_page")
@@ -29,6 +29,17 @@ public class ApiGatewayApplication {
                         )
                         .uri("lb://catalog-service")
 
+                )
+                .route("orders", r -> r
+                        .order(200)
+                        .path("/api/orders/**")
+                        .filters(f -> f
+                                .filter(new UpperBoundLimitRequestParameterFilterFactory().apply(config -> config
+                                        .setParameterName("per_page")
+                                        .setMaxValue(30)
+                                ))
+                        )
+                        .uri("lb://orders-service")
                 )
                 .route("monolith", r -> r
                         .order(1000)

@@ -21,4 +21,6 @@ import java.lang.annotation.Target;
 @WithSecurityContext(factory = WithMockCustomJwtAuthenticationSecurityContextFactory.class)
 public @interface WithMockCustomJwtAuthentication {
     String customerId();
+
+    String email() default "";
 }

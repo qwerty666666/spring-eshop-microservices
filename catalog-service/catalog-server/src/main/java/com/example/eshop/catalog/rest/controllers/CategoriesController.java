@@ -4,10 +4,10 @@ import com.example.eshop.catalog.application.services.categorycrudservice.Catego
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.rest.api.CategoriesApi;
-import com.example.eshop.catalog.client.api.model.BasicError;
-import com.example.eshop.catalog.client.api.model.Category;
-import com.example.eshop.catalog.client.api.model.CategoryTreeItem;
-import com.example.eshop.catalog.client.api.model.PagedProductList;
+import com.example.eshop.catalog.client.api.model.BasicErrorDto;
+import com.example.eshop.catalog.client.api.model.CategoryDto;
+import com.example.eshop.catalog.client.api.model.CategoryTreeItemDto;
+import com.example.eshop.catalog.client.api.model.PagedProductListDto;
 import com.example.eshop.catalog.config.AppProperties;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.rest.mappers.CategoryMapper;
@@ -45,7 +45,7 @@ public class CategoriesController implements CategoriesApi {
      */
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private BasicError handleCategoryNotFoundException(CategoryNotFoundException e, Locale locale) {
+    private BasicErrorDto handleCategoryNotFoundException(CategoryNotFoundException e, Locale locale) {
         return BasicErrorBuilder.newInstance()
                 .setStatus(HttpStatus.NOT_FOUND)
                 .setDetail(getMessageSource().getMessage("categoryNotFound", new Object[]{ e.getCategoryId() }, locale))
@@ -53,28 +53,28 @@ public class CategoriesController implements CategoriesApi {
     }
 
     @Override
-    public ResponseEntity<Category> getCategoryById(String id) {
+    public ResponseEntity<CategoryDto> getCategoryById(String id) {
         var category = categoryCrudService.getCategory(new CategoryId(id));
 
         return ResponseEntity.ok(categoryMapper.toCategoryDto(category));
     }
 
     @Override
-    public ResponseEntity<List<Category>> getCategoryList() {
+    public ResponseEntity<List<CategoryDto>> getCategoryList() {
         var categories = categoryCrudService.getAll();
 
         return ResponseEntity.ok(categoryMapper.toCategoryDtoList(categories));
     }
 
     @Override
-    public ResponseEntity<List<CategoryTreeItem>> getCategoryTree() {
+    public ResponseEntity<List<CategoryTreeItemDto>> getCategoryTree() {
         var tree = categoryCrudService.getTree();
 
         return ResponseEntity.ok(categoryMapper.toTree(tree));
     }
 
     @Override
-    public ResponseEntity<PagedProductList> getProductsByCategory(String id, Integer perPage, Integer page) {
+    public ResponseEntity<PagedProductListDto> getProductsByCategory(String id, Integer perPage, Integer page) {
         var pageable = PageRequest.of(page - 1, perPage);
         var products = productCrudService.getByCategory(new CategoryId(id), pageable);
 

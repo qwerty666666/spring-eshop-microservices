@@ -66,7 +66,7 @@ public class CartController extends BaseController implements CartApi {
 
     @Override
     public ResponseEntity<CartDto> removeCartItem(String ean) {
-        var userDetails = getAuthenticatedUserDetailsOrFail();
+        var userDetails = getCurrentAuthenticationOrFail();
         var command = new RemoveCartItemCommand(userDetails.getCustomerId(), Ean.fromString(ean));
 
         cartItemCrudService.remove(command);
@@ -76,7 +76,7 @@ public class CartController extends BaseController implements CartApi {
 
     @Override
     public ResponseEntity<CartDto> addCartItem(AddCartItemCommandDto dto) {
-        var userDetails = getAuthenticatedUserDetailsOrFail();
+        var userDetails = getCurrentAuthenticationOrFail();
         var command = new AddCartItemCommand(userDetails.getCustomerId(), Ean.fromString(dto.getEan()), dto.getQuantity());
 
         cartItemCrudService.add(command);
@@ -85,7 +85,7 @@ public class CartController extends BaseController implements CartApi {
     }
 
     private Cart getCartForAuthenticatedCustomer() {
-        var userDetails = getAuthenticatedUserDetailsOrFail();
+        var userDetails = getCurrentAuthenticationOrFail();
 
         return cartQueryService.getForCustomer(userDetails.getCustomerId());
     }

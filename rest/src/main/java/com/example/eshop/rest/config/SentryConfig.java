@@ -1,7 +1,7 @@
 package com.example.eshop.rest.config;
 
+import com.example.eshop.auth.AuthUtils;
 import com.example.eshop.auth.CustomJwtAuthentication;
-import com.example.eshop.rest.utils.AuthUtils;
 import io.sentry.protocol.User;
 import io.sentry.spring.SentryUserProvider;
 import org.springframework.context.annotation.Bean;

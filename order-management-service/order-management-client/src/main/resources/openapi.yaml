@@ -1,0 +1,402 @@
+openapi: 3.0.3
+
+info:
+  version: 1.0.0
+  title: Orders microservice
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+
+tags:
+  - name: order
+
+servers:
+  - url: '/api'
+
+security:
+  - bearerAuth: []
+
+paths:
+  /orders:
+    get:
+      tags:
+        - order
+      summary: Get authorized customer orders list
+      operationId: getOrderList
+      parameters:
+        - $ref: '#/components/parameters/orders_list_per_page'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+          $ref: '#/components/responses/paged_order_list'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+  /orders/{order_id}:
+    get:
+      tags:
+        - order
+      summary: Get order info
+      operationId: getOrder
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+      responses:
+        200:
+          $ref: '#/components/responses/order'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+        403:
+          $ref: '#/components/responses/forbidden'
+        404:
+          $ref: '#/components/responses/not_found'
+
+components:
+  schemas:
+    image:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://example.com/images/photo.png
+      required:
+        - url
+
+    attribute:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - id
+        - name
+        - value
+      example:
+        id: 1
+        name: size
+        value: XXL
+
+    ean:
+      type: string
+      format: gtin13
+      description: Global Trade Item Number (GTIN-13)
+      example: '5901234123457'
+
+    money:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: 0
+          example: 100.1
+        currency:
+          type: string
+          description: 3 letter currency code as defined by ISO-4217
+          format: iso-4217
+          example: EUR
+      required:
+        - amount
+        - currency
+
+    basic-error:
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+        detail:
+          type: string
+      required:
+        - status
+        - detail
+
+    pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          example: 2
+        perPage:
+          type: integer
+          minimum: 1
+          example: 30
+        totalItems:
+          type: integer
+          minimum: 0
+          example: 63
+        totalPages:
+          type: integer
+          minimum: 0
+          example: 3
+      required:
+        - page
+        - perPage
+        - totalItems
+        - totalPages
+
+    delivery-address:
+      type: object
+      properties:
+        fullname:
+          type: string
+        phone:
+          $ref: '#/components/schemas/phone'
+        country:
+          type: string
+        city:
+          type: string
+        street:
+          type: string
+        building:
+          type: string
+        flat:
+          type: string
+      required:
+        - fullname
+        - phone
+        - country
+        - city
+        - building
+      example:
+        fullname: 'Rick Sanches'
+        phone: '+79993334444'
+        country: 'Russia'
+        city: 'Khasavyurt'
+        street: 'Street'
+        building: '14/2'
+        flat: '12'
+
+    phone:
+      type: string
+      pattern: '^\+7\d{10}$'
+      example: '+79993334444'
+
+    paged-order-list:
+      type: object
+      properties:
+        pageable:
+          $ref: '#/components/schemas/pageable'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/order'
+      required:
+        - pageable
+        - items
+
+    order:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/order-line'
+        status:
+          $ref: '#/components/schemas/order-status'
+        address:
+          $ref: '#/components/schemas/delivery-address'
+        delivery:
+          $ref: '#/components/schemas/order-delivery'
+        payment:
+          $ref: '#/components/schemas/order-payment'
+        total:
+          $ref: '#/components/schemas/order-total'
+      required:
+        - id
+        - lines
+        - status
+        - address
+        - delivery
+        - payment
+        - total
+
+    order-status:
+      type: object
+      properties:
+        code:
+          type: string
+          enum: [PENDING]
+        name:
+          type: string
+      required:
+        - code
+        - name
+      example:
+        code: PENDING
+        name: Ожидает
+
+    order-line:
+      type: object
+      properties:
+        id:
+          type: string
+        ean:
+          $ref: '#/components/schemas/ean'
+        quantity:
+          type: integer
+        productName:
+          type: string
+        itemPrice:
+          $ref: '#/components/schemas/money'
+        linePrice:
+          $ref: '#/components/schemas/money'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
+      required:
+        - id
+        - ean
+        - quantity
+        - productName
+        - itemPrice
+        - linePrice
+        - images
+        - attributes
+      example:
+        id: 123
+        ean: '5901234123457'
+        quantity: 3
+        productName: 'Sneakers'
+        itemPrice:
+          amount: 100
+          currency: USD
+        linePrice:
+          amount: 300
+          currency: USD
+        images:
+          - url: https://example.com/images/photo.png
+        attributes:
+          - id: 1
+            name: size
+            value: XXL
+
+    order-delivery:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+      example:
+        name: Courier
+
+    order-payment:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+      example:
+        name: Cash
+
+    order-total:
+      type: object
+      properties:
+        cartPrice:
+          $ref: '#/components/schemas/money'
+        deliveryPrice:
+          $ref: '#/components/schemas/money'
+        totalPrice:
+          $ref: '#/components/schemas/money'
+      required:
+        - cartPrice
+        - deliveryPrice
+        - totalPrice
+      example:
+        cartPrice:
+          amount: 100
+          currency: 'USD'
+        deliveryPrice:
+          amount: 10
+          currency: 'USD'
+        totalPrice:
+          amount: 110
+          currency: 'USD'
+
+  responses:
+    not_found:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/basic-error'
+          examples:
+            default:
+              $ref: '#/components/examples/not_found'
+
+    requires_authentication:
+      description: Requires authentication
+
+    forbidden:
+      description: Forbidden
+
+    paged_order_list:
+      description: Order List
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/paged-order-list'
+
+    order:
+      description: Order Info
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order'
+
+  parameters:
+    orders_list_per_page:
+      name: per_page
+      description: Results per page
+      in: query
+      schema:
+        type: integer
+        maximum: 30
+        minimum: 1
+        default: 10
+
+    page:
+      name: page
+      description: Page number of the results to fetch
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    order_id:
+      name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 'bc046a6e-1e2b-468a-9a98-1ce99f087249'
+
+  examples:
+    not_found:
+      value:
+        status: 404
+        detail: Resource not found
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
