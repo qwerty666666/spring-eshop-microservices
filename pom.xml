@@ -31,6 +31,7 @@
         <module>api-gateway</module>
         <module>eureka-server</module>
         <module>order-management-service</module>
+        <module>shopping-cart-service</module>
     </modules>
 
     <properties>
