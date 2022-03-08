@@ -64,7 +64,7 @@ servers:
   - url: '/api'
 
 security:
-  - basicAuth: []
+  - bearerAuth: []
 
 paths:
   /products:
@@ -1109,6 +1109,7 @@ components:
         detail: Resource not found
 
   securitySchemes:
-    basicAuth:
+    bearerAuth:
       type: http
-      scheme: basic
+      scheme: bearer
+      bearerFormat: JWT

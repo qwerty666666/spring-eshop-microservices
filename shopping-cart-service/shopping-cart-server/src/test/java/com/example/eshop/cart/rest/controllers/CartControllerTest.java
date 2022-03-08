@@ -1,18 +1,18 @@
-package com.example.eshop.rest.controllers;
+package com.example.eshop.cart.rest.controllers;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
+import com.example.eshop.cart.FakeData;
 import com.example.eshop.cart.application.usecases.cartitemcrud.AddCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
 import com.example.eshop.cart.application.usecases.cartitemcrud.NotEnoughQuantityException;
 import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
-import com.example.eshop.cart.domain.cart.Cart;
-import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
-import com.example.eshop.cart.infrastructure.tests.FakeData;
-import com.example.eshop.rest.config.AuthConfig;
-import com.example.eshop.rest.config.ControllerTest;
-import com.example.eshop.rest.dto.CartDto;
-import com.example.eshop.rest.mappers.CartMapper;
+import com.example.eshop.cart.client.api.model.CartDto;
+import com.example.eshop.cart.testconfig.ControllerTest;
+import com.example.eshop.cart.domain.Cart;
+import com.example.eshop.cart.domain.CartItemNotFoundException;
+import com.example.eshop.cart.testconfig.AuthConfig;
+import com.example.eshop.cart.rest.mappers.CartMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.fasterxml.jackson.databind.ObjectMapper;

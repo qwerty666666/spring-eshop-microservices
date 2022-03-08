@@ -1,7 +1,6 @@
-package com.example.eshop.cart;
+package com.example.eshop.cart.testconfig;
 
 import com.example.eshop.cart.config.KafkaConfig;
-import com.example.eshop.cart.config.TestKafkaConfig;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -19,6 +18,6 @@ import java.lang.annotation.Target;
 @Inherited
 @TestPropertySource(properties = { KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY + "=true" })
 @ImportAutoConfiguration(exclude = KafkaAutoConfiguration.class)
-@Import(TestKafkaConfig.class)
+@Import(KafkaTestsConfig.class)
 public @interface ExcludeKafkaConfig {
 }

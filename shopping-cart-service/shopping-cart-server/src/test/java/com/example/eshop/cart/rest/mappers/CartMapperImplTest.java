@@ -1,13 +1,13 @@
-package com.example.eshop.rest.mappers;
+package com.example.eshop.cart.rest.mappers;
 
-import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.testconfig.MapperTest;
+import com.example.eshop.cart.domain.Cart;
+import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.catalog.client.api.model.AttributeDto;
 import com.example.eshop.catalog.client.api.model.ImageDto;
 import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.catalog.client.api.model.ProductDto;
-import com.example.eshop.catalog.client.CatalogService;
-import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.rest.config.MappersTest;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedtest.ArgMatchers;
@@ -21,7 +21,7 @@ import java.util.Map;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
-@MappersTest
+@MapperTest
 class CartMapperImplTest {
     @MockBean
     private CatalogService catalogService;

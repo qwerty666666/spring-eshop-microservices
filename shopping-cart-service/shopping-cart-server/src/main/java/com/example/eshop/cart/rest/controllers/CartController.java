@@ -1,47 +1,46 @@
-package com.example.eshop.rest.controllers;
+package com.example.eshop.cart.rest.controllers;
 
 import com.example.eshop.cart.application.usecases.cartitemcrud.AddCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
 import com.example.eshop.cart.application.usecases.cartitemcrud.NotEnoughQuantityException;
 import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
-import com.example.eshop.cart.domain.cart.Cart;
-import com.example.eshop.cart.domain.cart.CartItemNotFoundException;
+import com.example.eshop.cart.client.api.model.AddCartItemCommandDto;
+import com.example.eshop.cart.client.api.model.BasicErrorDto;
+import com.example.eshop.cart.client.api.model.CartDto;
+import com.example.eshop.cart.domain.Cart;
+import com.example.eshop.cart.domain.CartItemNotFoundException;
+import com.example.eshop.cart.rest.api.CartApi;
+import com.example.eshop.cart.rest.mappers.CartMapper;
+import com.example.eshop.cart.rest.utils.BasicErrorBuilder;
 import com.example.eshop.localizer.Localizer;
-import com.example.eshop.rest.api.CartApi;
-import com.example.eshop.rest.controllers.base.BaseController;
-import com.example.eshop.rest.controllers.base.BasicErrorBuilder;
-import com.example.eshop.rest.dto.AddCartItemCommandDto;
-import com.example.eshop.rest.dto.BasicErrorDto;
-import com.example.eshop.rest.dto.CartDto;
-import com.example.eshop.rest.mappers.CartMapper;
-import com.example.eshop.rest.utils.UriUtils;
+import com.example.eshop.sharedkernel.domain.validation.FieldError;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedkernel.domain.valueobject.InvalidEanFormatException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Locale;
 
 @RestController
-@RequestMapping(UriUtils.API_BASE_PATH_PROPERTY)
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CartController extends BaseController implements CartApi {
     private final CartItemCrudService cartItemCrudService;
     private final CartQueryService cartQueryService;
     private final CartMapper cartMapper;
-
     private final Localizer localizer;
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private BasicErrorDto handleCartItemNotFoundException(CartItemNotFoundException e, Locale locale) {
+    private BasicErrorDto handleCartItemNotFoundException(CartItemNotFoundException e) {
         return BasicErrorBuilder.newInstance()
                 .setStatus(HttpStatus.NOT_FOUND)
                 .setDetail(getLocalizer().getMessage("cartItemNotFound", e.getEan()))
@@ -50,7 +49,7 @@ public class CartController extends BaseController implements CartApi {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private BasicErrorDto handleNException(NotEnoughQuantityException e) {
+    private BasicErrorDto handleNotEnoughQuantityException(NotEnoughQuantityException e) {
         return BasicErrorBuilder.newInstance()
                 .setStatus(HttpStatus.BAD_REQUEST)
                 .setDetail(getLocalizer().getMessage("notEnoughQuantityException", e.getAvailableQuantity()))
@@ -65,9 +64,9 @@ public class CartController extends BaseController implements CartApi {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<CartDto> removeCartItem(String ean) {
-        var userDetails = getCurrentAuthenticationOrFail();
-        var command = new RemoveCartItemCommand(userDetails.getCustomerId(), Ean.fromString(ean));
+        var command = new RemoveCartItemCommand(getCurrentAuthenticationOrFail().getCustomerId(), convertEanQueryParam(ean));
 
         cartItemCrudService.remove(command);
 
@@ -75,9 +74,9 @@ public class CartController extends BaseController implements CartApi {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<CartDto> addCartItem(AddCartItemCommandDto dto) {
-        var userDetails = getCurrentAuthenticationOrFail();
-        var command = new AddCartItemCommand(userDetails.getCustomerId(), Ean.fromString(dto.getEan()), dto.getQuantity());
+        var command = convertAddCartItemCommandParam(dto);
 
         cartItemCrudService.add(command);
 
@@ -88,5 +87,29 @@ public class CartController extends BaseController implements CartApi {
         var userDetails = getCurrentAuthenticationOrFail();
 
         return cartQueryService.getForCustomer(userDetails.getCustomerId());
+    }
+
+    private Ean convertEanQueryParam(String ean) {
+        try {
+            return Ean.fromString(ean);
+        } catch (InvalidEanFormatException e) {
+            throw new InvalidMethodParameterException(new FieldError("ean", "invalidEanFormat", ean));
+        }
+    }
+
+    private AddCartItemCommand convertAddCartItemCommandParam(AddCartItemCommandDto dto) {
+        Ean ean;
+        try {
+            ean = Ean.fromString(dto.getEan());
+        } catch (InvalidEanFormatException e) {
+            throw new InvalidMethodParameterException(new FieldError("ean", "invalidEanFormat", e.getEan()));
+        }
+
+        int quantity = dto.getQuantity();
+        if (quantity <= 0) {
+            throw new InvalidMethodParameterException(new FieldError("quantity", "invalidQuantity"));
+        }
+
+        return new AddCartItemCommand(getCurrentAuthenticationOrFail().getCustomerId(), ean, quantity);
     }
 }

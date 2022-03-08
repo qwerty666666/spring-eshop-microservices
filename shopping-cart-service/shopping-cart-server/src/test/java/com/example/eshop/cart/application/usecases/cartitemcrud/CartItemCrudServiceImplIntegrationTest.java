@@ -1,9 +1,9 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
-import com.example.eshop.cart.ExcludeKafkaConfig;
+import com.example.eshop.cart.testconfig.ExcludeKafkaConfig;
 import com.example.eshop.cart.FakeData;
-import com.example.eshop.cart.config.AuthConfig;
+import com.example.eshop.cart.testconfig.AuthConfig;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartRepository;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;

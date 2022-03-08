@@ -1,8 +1,8 @@
 package com.example.eshop.cart.application.usecases.cartquery;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
-import com.example.eshop.cart.ExcludeKafkaConfig;
-import com.example.eshop.cart.config.AuthConfig;
+import com.example.eshop.cart.testconfig.ExcludeKafkaConfig;
+import com.example.eshop.cart.testconfig.AuthConfig;
 import com.example.eshop.sharedtest.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
