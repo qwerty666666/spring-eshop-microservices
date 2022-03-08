@@ -15,11 +15,13 @@ public class CreateCartServiceImpl implements CreateCartService {
 
     @Override
     @Transactional
-    public void create(String customerId) {
+    public Cart create(String customerId) {
         var cart = new Cart(customerId);
 
         cartRepository.save(cart);
 
         log.info("Cart created for customer " + customerId);
+
+        return cart;
     }
 }

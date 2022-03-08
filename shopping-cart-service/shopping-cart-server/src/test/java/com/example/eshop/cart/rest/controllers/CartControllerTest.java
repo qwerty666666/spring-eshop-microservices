@@ -61,7 +61,7 @@ class CartControllerTest {
     void setUp() {
         cart.addItem(ean, price, quantity);
 
-        when(cartQueryService.getForCustomer(customerId)).thenReturn(cart);
+        when(cartQueryService.getForCustomerOrCreate(customerId)).thenReturn(cart);
 
         when(cartMapper.toCartDto(cart)).thenReturn(cartDto);
     }
@@ -77,7 +77,7 @@ class CartControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(cartQueryService).getForCustomer(AuthConfig.CUSTOMER_ID);
+            verify(cartQueryService).getForCustomerOrCreate(AuthConfig.CUSTOMER_ID);
             verify(cartMapper).toCartDto(cart);
         }
 

@@ -15,7 +15,7 @@ public class ClearCartServiceImpl implements ClearCartService {
     @PreAuthorize("#customerId == authentication.getCustomerId()")
     @Transactional
     public void clear(String customerId) {
-        var cart = cartQueryService.getForCustomer(customerId);
+        var cart = cartQueryService.getForCustomerOrCreate(customerId);
 
         cart.clear();
     }

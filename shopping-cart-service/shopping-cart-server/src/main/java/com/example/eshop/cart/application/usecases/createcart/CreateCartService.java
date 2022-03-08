@@ -8,5 +8,5 @@ public interface CreateCartService {
      *
      * @throws CartAlreadyExistException if cart already exist for this customer
      */
-    void create(String customerId);
+    Cart create(String customerId);
 }

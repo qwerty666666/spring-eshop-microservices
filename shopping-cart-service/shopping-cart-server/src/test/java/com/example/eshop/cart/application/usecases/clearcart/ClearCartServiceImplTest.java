@@ -19,7 +19,7 @@ class ClearCartServiceImplTest {
     @BeforeEach
     void setUp() {
         var cartQueryService = mock(CartQueryService.class);
-        when(cartQueryService.getForCustomer(customerId)).thenReturn(cart);
+        when(cartQueryService.getForCustomerOrCreate(customerId)).thenReturn(cart);
 
         clearCartService = new ClearCartServiceImpl(cartQueryService);
     }

@@ -86,7 +86,7 @@ public class CartController extends BaseController implements CartApi {
     private Cart getCartForAuthenticatedCustomer() {
         var userDetails = getCurrentAuthenticationOrFail();
 
-        return cartQueryService.getForCustomer(userDetails.getCustomerId());
+        return cartQueryService.getForCustomerOrCreate(userDetails.getCustomerId());
     }
 
     private Ean convertEanQueryParam(String ean) {

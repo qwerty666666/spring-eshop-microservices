@@ -4,9 +4,8 @@ import com.example.eshop.cart.domain.Cart;
 
 public interface CartQueryService {
     /**
-     * @return {@link Cart} for the given customer
-     *
-     * @throws CartNotFoundException
+     * @return {@link Cart} for the given customer. If user has no cart
+     *         creates new one and return it.
      */
-    Cart getForCustomer(String customerId);
+    Cart getForCustomerOrCreate(String customerId);
 }

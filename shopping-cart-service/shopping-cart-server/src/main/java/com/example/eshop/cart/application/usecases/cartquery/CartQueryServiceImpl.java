@@ -1,5 +1,6 @@
 package com.example.eshop.cart.application.usecases.cartquery;
 
+import com.example.eshop.cart.application.usecases.createcart.CreateCartService;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CartQueryServiceImpl implements CartQueryService {
     private final CartRepository cartRepository;
+    private final CreateCartService createCartService;
 
     @Override
     @PreAuthorize("#customerId == authentication.getCustomerId()")
     @Transactional
-    public Cart getForCustomer(String customerId) {
+    public Cart getForCustomerOrCreate(String customerId) {
         return cartRepository.findByNaturalId(customerId)
-                .orElseThrow(() -> new CartNotFoundException("Cart for customer " + customerId + " not found"));
+                .orElseGet(() -> createCartService.create(customerId));
     }
 }

@@ -4,6 +4,7 @@ import com.example.eshop.cart.FakeData;
 import com.example.eshop.cart.domain.CartRepository;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -19,9 +20,10 @@ class CreateCartServiceImplTest {
         var createCartService = new CreateCartServiceImpl(cartRepository);
 
         // When
-        createCartService.create(customerId);
+        var newCart = createCartService.create(customerId);
 
         // Then
+        assertThat(newCart).isEqualTo(expectedCart);
         verify(cartRepository).save(expectedCart);
     }
 }

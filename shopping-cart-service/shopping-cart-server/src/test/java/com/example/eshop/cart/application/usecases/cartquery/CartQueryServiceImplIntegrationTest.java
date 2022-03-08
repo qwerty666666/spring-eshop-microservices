@@ -23,7 +23,7 @@ class CartQueryServiceImplIntegrationTest {
     @Test
     @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
     void whenGetForCustomerCalledByNonOwner_thenThrowAccessDeniedException() {
-        assertThatThrownBy(() -> cartQueryService.getForCustomer("non-owner"))
+        assertThatThrownBy(() -> cartQueryService.getForCustomerOrCreate("non-owner"))
                 .isInstanceOf(AccessDeniedException.class);
     }
 }
