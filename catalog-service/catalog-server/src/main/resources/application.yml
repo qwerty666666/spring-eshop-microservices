@@ -13,6 +13,7 @@ spring:
   devtools:
     livereload:
       enabled: false
+
 app:
   kafka:
     consumer-group: catalog

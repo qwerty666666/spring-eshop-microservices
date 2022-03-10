@@ -2,7 +2,7 @@ package com.example.eshop.catalog.rest.mappers;
 
 import com.example.eshop.catalog.client.api.model.CategoryDto;
 import com.example.eshop.catalog.client.api.model.CategoryTreeItemDto;
-import com.example.eshop.catalog.configs.MappersTest;
+import com.example.eshop.catalog.configs.MapperTest;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@MappersTest
+@MapperTest
 class CategoryMapperImplTest {
 
     @Autowired

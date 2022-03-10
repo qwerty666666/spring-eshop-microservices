@@ -1,7 +1,7 @@
 package com.example.eshop.order.config;
 
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -19,6 +19,6 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = MapperTestsConfig.class)
-public @interface MappersTest {
+@Import(MapperTestsConfig.class)
+public @interface MapperTest {
 }

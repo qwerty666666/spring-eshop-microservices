@@ -4,7 +4,6 @@ import com.example.eshop.cart.FakeData;
 import com.example.eshop.cart.application.usecases.createcart.CreateCartService;
 import com.example.eshop.cart.domain.CartRepository;
 import org.junit.jupiter.api.Test;
-
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,8 +1,10 @@
 package com.example.eshop.catalog.configs;
 
-import com.example.eshop.sharedtest.IntegrationTest;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -19,7 +21,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@IntegrationTest
+@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 @Import(ControllerTestsConfig.class)
 public @interface ControllerTest {
 }

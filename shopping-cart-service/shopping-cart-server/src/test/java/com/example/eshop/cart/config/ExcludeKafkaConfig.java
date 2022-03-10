@@ -1,6 +1,5 @@
-package com.example.eshop.cart.testconfig;
+package com.example.eshop.cart.config;
 
-import com.example.eshop.cart.config.KafkaConfig;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.context.annotation.Import;

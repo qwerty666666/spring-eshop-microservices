@@ -1,6 +1,5 @@
-package com.example.eshop.cart.testconfig;
+package com.example.eshop.cart.config;
 
-import com.example.eshop.cart.config.KafkaConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.TestConfiguration;
 

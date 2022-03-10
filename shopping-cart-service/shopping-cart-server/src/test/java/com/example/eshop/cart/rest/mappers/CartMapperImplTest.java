@@ -1,6 +1,6 @@
 package com.example.eshop.cart.rest.mappers;
 
-import com.example.eshop.cart.testconfig.MapperTest;
+import com.example.eshop.cart.config.MapperTest;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.catalog.client.CatalogService;
 import com.example.eshop.catalog.client.SkuWithProductDto;

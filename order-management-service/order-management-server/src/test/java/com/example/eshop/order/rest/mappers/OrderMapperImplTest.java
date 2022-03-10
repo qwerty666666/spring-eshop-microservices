@@ -10,7 +10,7 @@ import com.example.eshop.order.client.api.model.OrderLineDto;
 import com.example.eshop.order.client.api.model.OrderPaymentDto;
 import com.example.eshop.order.client.api.model.OrderTotalDto;
 import com.example.eshop.order.client.api.model.PageableDto;
-import com.example.eshop.order.config.MappersTest;
+import com.example.eshop.order.config.MapperTest;
 import com.example.eshop.order.domain.order.Address;
 import com.example.eshop.order.domain.order.Delivery;
 import com.example.eshop.order.domain.order.Order;
@@ -30,7 +30,7 @@ import java.util.function.BiConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@MappersTest
+@MapperTest
 class OrderMapperImplTest {
     @Autowired
     OrderMapper orderMapper;

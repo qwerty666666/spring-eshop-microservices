@@ -1,4 +1,4 @@
-package com.example.eshop.cart.testconfig;
+package com.example.eshop.cart.config;
 
 import com.example.eshop.localizer.LocalizerAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;

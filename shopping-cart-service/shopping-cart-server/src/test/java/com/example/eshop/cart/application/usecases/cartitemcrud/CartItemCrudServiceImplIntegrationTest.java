@@ -1,13 +1,12 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
-import com.example.eshop.cart.testconfig.ExcludeKafkaConfig;
+import com.example.eshop.cart.config.ExcludeKafkaConfig;
 import com.example.eshop.cart.FakeData;
-import com.example.eshop.cart.testconfig.AuthConfig;
+import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartRepository;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import com.example.eshop.sharedtest.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExcludeKafkaConfig
-@IntegrationTest
 @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
 class CartItemCrudServiceImplIntegrationTest {
     private final static String OWNER_CUSTOMER_ID = AuthConfig.CUSTOMER_ID;

@@ -7,7 +7,7 @@ import com.example.eshop.catalog.client.api.model.ProductDto;
 import com.example.eshop.catalog.client.api.model.ProductWithSkuDto;
 import com.example.eshop.catalog.client.api.model.SkuDto;
 import com.example.eshop.catalog.client.api.model.SkuInfoDto;
-import com.example.eshop.catalog.configs.MappersTest;
+import com.example.eshop.catalog.configs.MapperTest;
 import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.domain.product.Attribute;
 import com.example.eshop.catalog.domain.product.AttributeValue;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@MappersTest
+@MapperTest
 class ProductMapperImplTest {
     private static final Ean SKU1_EAN = Ean.fromString("1111111111111");
     private static final Ean SKU2_EAN = Ean.fromString("2222222222222");
