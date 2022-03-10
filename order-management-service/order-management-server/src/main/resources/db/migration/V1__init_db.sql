@@ -1,6 +1,10 @@
 CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START 1;
 
-CREATE TYPE order_statuses AS ENUM ('PENDING');
+DO $$ BEGIN
+    CREATE TYPE order_statuses AS ENUM ('PENDING');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 CREATE TABLE IF NOT EXISTS orders
 (
@@ -25,7 +29,7 @@ CREATE TABLE IF NOT EXISTS orders
 );
 CREATE INDEX IF NOT EXISTS orders_customer_id_idx ON orders (customer_id);;
 
-CREATE TABLE order_lines
+CREATE TABLE IF NOT EXISTS order_lines
 (
     id                  bigint                 NOT NULL,
     ean                 character varying(255) NOT NULL,
