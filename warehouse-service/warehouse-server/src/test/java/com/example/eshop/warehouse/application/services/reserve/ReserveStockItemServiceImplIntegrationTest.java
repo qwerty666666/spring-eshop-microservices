@@ -4,7 +4,6 @@ import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
-import com.example.eshop.warehouse.ExcludeKafkaConfig;
 import com.example.eshop.warehouse.client.reservationresult.InsufficientQuantityError;
 import com.example.eshop.warehouse.client.reservationresult.StockItemNotFoundError;
 import com.example.eshop.warehouse.domain.StockQuantity;
@@ -18,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-@ExcludeKafkaConfig
+@ActiveProfiles("test")
 @DbTest
 class ReserveStockItemServiceImplIntegrationTest {
     private final static Ean STOCK_ITEM_1_EAN = Ean.fromString("0000000000001");

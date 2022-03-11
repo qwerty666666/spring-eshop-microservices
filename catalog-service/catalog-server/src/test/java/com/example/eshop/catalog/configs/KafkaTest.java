@@ -1,8 +1,9 @@
 package com.example.eshop.catalog.configs;
 
 import com.example.eshop.catalog.config.KafkaConfig;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
+import com.example.eshop.kafkatest.RunKafka;
+import com.example.eshop.sharedtest.IntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -12,12 +13,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Excludes Kafka Configs from Spring's Context
+ * Annotation is used by Integration tests which are depends on Kafka.
+ * <p>
+ * Runs Kafka broker and enable {@link KafkaConfig}
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@TestPropertySource(properties = { KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY + "=true" })
-public @interface ExcludeKafkaConfig {
+@SpringBootTest
+@IntegrationTest
+@RunKafka
+@TestPropertySource(properties = KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY + "=false")
+public @interface KafkaTest {
 }

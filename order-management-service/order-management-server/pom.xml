@@ -18,9 +18,11 @@
         <auth.version>1.0.0-SNAPSHOT</auth.version>
         <checkout.version>1.0.0-SNAPSHOT</checkout.version>
         <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+        <kafka-test.version>1.0.0-SNAPSHOT</kafka-test.version>
+        <localizer.version>1.0.0-SNAPSHOT</localizer.version>
+
         <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
-        <localizer.version>1.0.0-SNAPSHOT</localizer.version>
     </properties>
 
     <dependencies>
@@ -128,10 +130,6 @@
 
         <!-- Tests -->
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-test</artifactId>
             <version>${shared-test.version}</version>
@@ -144,22 +142,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- downgrading Apache Kafka -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <classifier>test</classifier>
-            <scope>test</scope>
-        </dependency>
-        <!-- downgrading Apache Kafka -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.13</artifactId>
-            <classifier>test</classifier>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>kafka-test</artifactId>
+            <version>${kafka-test.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -7,3 +7,6 @@ app:
   public-host-name: http://localhost
   api-base-path: /api
   images-base-path: /tmp/test
+
+kafka:
+  disabled: true

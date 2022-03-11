@@ -1,7 +1,6 @@
 package com.example.eshop.cart.application.usecases.cartitemcrud;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
-import com.example.eshop.cart.config.ExcludeKafkaConfig;
 import com.example.eshop.cart.FakeData;
 import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.Cart;
@@ -13,13 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.test.context.ActiveProfiles;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@ExcludeKafkaConfig
+@ActiveProfiles("test")
 @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
 class CartItemCrudServiceImplIntegrationTest {
     private final static String OWNER_CUSTOMER_ID = AuthConfig.CUSTOMER_ID;

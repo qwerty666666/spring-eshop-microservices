@@ -45,8 +45,6 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <hibernate-types-52.version>2.14.0</hibernate-types-52.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
-        <!-- We do not use Kafka 3.0.0 due to the bug https://docs.spring.io/spring-kafka/docs/2.8.1-SNAPSHOT/reference/html/#update-deps -->
-        <kafka.version>2.8.1</kafka.version>
 
         <integration.tests.tag>IntegrationTest</integration.tests.tag>
     </properties>
@@ -114,20 +112,6 @@
                         <artifactId>zookeeper</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <!-- downgrading Apache Kafka -->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka-clients</artifactId>
-                <classifier>test</classifier>
-                <version>${kafka.version}</version>
-            </dependency>
-            <!-- downgrading Apache Kafka -->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.13</artifactId>
-                <classifier>test</classifier>
-                <version>${kafka.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

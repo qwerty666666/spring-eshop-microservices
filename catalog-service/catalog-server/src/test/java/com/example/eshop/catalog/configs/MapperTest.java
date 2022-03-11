@@ -23,7 +23,6 @@ import java.lang.annotation.Target;
 @Inherited
 @SpringBootTest(classes = MapperTestConfig.class)
 @ActiveProfiles({ "mapper-test", "test" })
-@ExcludeKafkaConfig
 public @interface MapperTest {
 
     @Configuration

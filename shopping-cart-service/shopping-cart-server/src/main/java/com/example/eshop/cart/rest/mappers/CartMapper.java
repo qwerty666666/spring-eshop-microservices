@@ -46,7 +46,7 @@ public abstract class CartMapper {
         }
 
         return new CartDto()
-                .id(cart.getId().toString())
+                .id(Optional.ofNullable(cart.getId()).map(Object::toString).orElse(null))
                 .items(cart.getItems().stream().map(item -> toCartItemDto(item, sku)).toList());
     }
 
@@ -55,7 +55,7 @@ public abstract class CartMapper {
         // It is possible that we remove product from catalog, but it is still in the Cart
         // Therefore, we should handle this instead of throwing exceptions.
         // We can either:
-        //  1. sync cart and catalog
+        //  1. sync cart with catalog
         //  2. or notify client that this CartItem is unavailable anymore
         // I think, this should be implemented somewhere in domain logic (i.e. in Cart conctructor or smth else)
 

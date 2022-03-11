@@ -15,8 +15,8 @@ import com.example.eshop.checkout.client.events.orderplacedevent.PaymentServiceD
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
-import com.example.eshop.sharedtest.IntegrationTest;
 import com.example.eshop.sharedtest.dbtests.DbTest;
+import com.example.eshop.warehouse.KafkaTest;
 import com.example.eshop.warehouse.application.services.reserve.ReserveStockItemService;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import com.example.eshop.warehouse.domain.StockQuantity;
@@ -44,7 +44,6 @@ import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import java.time.Duration;
 import java.util.List;
@@ -60,12 +59,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@IntegrationTest
-@EmbeddedKafka(
-        partitions = 1,
-        topics = { CheckoutApi.RESERVE_STOCKS_TOPIC, CheckoutApi.RESERVE_STOCKS_REPLY_TOPIC },
-        bootstrapServersProperty = "spring.kafka.bootstrap-servers"
-)
+@KafkaTest
 @DbTest
 class ReserveStockForOrderEventListenerIntegrationTest {
     @TestConfiguration

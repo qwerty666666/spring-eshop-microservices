@@ -17,9 +17,11 @@
     <packaging>jar</packaging>
 
     <properties>
-        <transactional-outbox.version>1.0.0-SNAPSHOT</transactional-outbox.version>
         <checkout-service.version>1.0.0-SNAPSHOT</checkout-service.version>
+
+        <transactional-outbox.version>1.0.0-SNAPSHOT</transactional-outbox.version>
         <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+        <kafka-test.version>1.0.0-SNAPSHOT</kafka-test.version>
     </properties>
 
     <dependencies>
@@ -103,22 +105,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- downgrading Apache Kafka -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <classifier>test</classifier>
-            <scope>test</scope>
-        </dependency>
-        <!-- downgrading Apache Kafka -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.13</artifactId>
-            <classifier>test</classifier>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>kafka-test</artifactId>
+            <version>${kafka-test.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

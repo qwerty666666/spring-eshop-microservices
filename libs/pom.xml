@@ -15,5 +15,6 @@
         <module>transactional-outbox</module>
         <module>auth</module>
         <module>auth-test</module>
+        <module>kafka-test</module>
     </modules>
 </project>
