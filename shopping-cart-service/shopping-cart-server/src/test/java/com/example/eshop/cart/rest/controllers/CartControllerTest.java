@@ -2,11 +2,11 @@ package com.example.eshop.cart.rest.controllers;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.cart.FakeData;
-import com.example.eshop.cart.application.usecases.cartitemcrud.AddCartItemCommand;
-import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
-import com.example.eshop.cart.application.usecases.cartitemcrud.NotEnoughQuantityException;
-import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
-import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
+import com.example.eshop.cart.application.services.cartitem.AddCartItemCommand;
+import com.example.eshop.cart.application.services.cartitem.CartItemService;
+import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityException;
+import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
+import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.client.api.model.CartDto;
 import com.example.eshop.cart.config.ControllerTest;
 import com.example.eshop.cart.domain.Cart;
@@ -41,7 +41,7 @@ class CartControllerTest {
     @MockBean
     private CartQueryService cartQueryService;
     @MockBean
-    private CartItemCrudService cartItemCrudService;
+    private CartItemService cartItemService;
     @MockBean
     private CartMapper cartMapper;
 
@@ -105,7 +105,7 @@ class CartControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(cartItemCrudService).add(addCartItemCommand);
+            verify(cartItemService).add(addCartItemCommand);
             verify(cartMapper).toCartDto(cart);
         }
 
@@ -118,12 +118,12 @@ class CartControllerTest {
         @Test
         @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenPutItemWithExceededQuantity_thenReturn400() throws Exception {
-            doThrow(new NotEnoughQuantityException("", 0, quantity)).when(cartItemCrudService).add(addCartItemCommand);
+            doThrow(new NotEnoughQuantityException("", 0, quantity)).when(cartItemService).add(addCartItemCommand);
 
             performPutCartItemRequest()
                     .andExpect(status().isBadRequest());
 
-            verify(cartItemCrudService).add(addCartItemCommand);
+            verify(cartItemService).add(addCartItemCommand);
         }
 
         private ResultActions performPutCartItemRequest() throws Exception {
@@ -152,7 +152,7 @@ class CartControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson));
 
-            verify(cartItemCrudService).remove(expectedCommand);
+            verify(cartItemService).remove(expectedCommand);
             verify(cartMapper).toCartDto(cart);
         }
 
@@ -161,12 +161,12 @@ class CartControllerTest {
         void givenNonExistingEan_whenRemoveCartItem_thenReturn404() throws Exception {
             var expectedCommand = new RemoveCartItemCommand(AuthConfig.CUSTOMER_ID, ean);
 
-            doThrow(CartItemNotFoundException.class).when(cartItemCrudService).remove(expectedCommand);
+            doThrow(CartItemNotFoundException.class).when(cartItemService).remove(expectedCommand);
 
             performRemoveCartItemRequest()
                     .andExpect(status().isNotFound());
 
-            verify(cartItemCrudService).remove(expectedCommand);
+            verify(cartItemService).remove(expectedCommand);
         }
 
         @Test

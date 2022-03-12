@@ -1,10 +1,10 @@
 package com.example.eshop.cart.rest.controllers;
 
-import com.example.eshop.cart.application.usecases.cartitemcrud.AddCartItemCommand;
-import com.example.eshop.cart.application.usecases.cartitemcrud.CartItemCrudService;
-import com.example.eshop.cart.application.usecases.cartitemcrud.NotEnoughQuantityException;
-import com.example.eshop.cart.application.usecases.cartitemcrud.RemoveCartItemCommand;
-import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
+import com.example.eshop.cart.application.services.cartitem.AddCartItemCommand;
+import com.example.eshop.cart.application.services.cartitem.CartItemService;
+import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityException;
+import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
+import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.client.api.model.AddCartItemCommandDto;
 import com.example.eshop.cart.client.api.model.BasicErrorDto;
 import com.example.eshop.cart.client.api.model.CartDto;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CartController extends BaseController implements CartApi {
-    private final CartItemCrudService cartItemCrudService;
+    private final CartItemService cartItemService;
     private final CartQueryService cartQueryService;
     private final CartMapper cartMapper;
     private final Localizer localizer;
@@ -68,7 +68,7 @@ public class CartController extends BaseController implements CartApi {
     public ResponseEntity<CartDto> removeCartItem(String ean) {
         var command = new RemoveCartItemCommand(getCurrentAuthenticationOrFail().getCustomerId(), convertEanQueryParam(ean));
 
-        cartItemCrudService.remove(command);
+        cartItemService.remove(command);
 
         return getCart();
     }
@@ -78,7 +78,7 @@ public class CartController extends BaseController implements CartApi {
     public ResponseEntity<CartDto> addCartItem(AddCartItemCommandDto dto) {
         var command = convertAddCartItemCommandParam(dto);
 
-        cartItemCrudService.add(command);
+        cartItemService.add(command);
 
         return getCart();
     }

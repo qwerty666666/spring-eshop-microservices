@@ -1,0 +1,56 @@
+package com.example.eshop.cart.application.services.cartitem;
+
+import com.example.eshop.auth.WithMockCustomJwtAuthentication;
+import com.example.eshop.cart.FakeData;
+import com.example.eshop.cart.config.AuthConfig;
+import com.example.eshop.cart.domain.Cart;
+import com.example.eshop.cart.domain.CartRepository;
+import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.test.context.ActiveProfiles;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
+@ActiveProfiles("test")
+@WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+class CartItemServiceImplIntegrationTest {
+    private final static String OWNER_CUSTOMER_ID = AuthConfig.CUSTOMER_ID;
+    private final static String NON_OWNER_CUSTOMER_ID = "non-owner";
+    private final Cart cart = FakeData.cart(OWNER_CUSTOMER_ID);
+    private final Ean existedInCartEan = cart.getItems().get(0).getEan();
+
+    @MockBean
+    private CartRepository cartRepository;
+
+    @Autowired
+    private CartItemService cartItemService;
+
+    @BeforeEach
+    void setUp() {
+        when(cartRepository.findByNaturalId(OWNER_CUSTOMER_ID)).thenReturn(Optional.of(cart));
+    }
+
+    @Test
+    void whenAddCalledByNonCartOwner_thenThrowAccessDeniedException() {
+        var command = new AddCartItemCommand(NON_OWNER_CUSTOMER_ID, FakeData.ean(), 10);
+
+        assertThatThrownBy(() -> cartItemService.add(command))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void whenRemoveCalledByNonCartOwner_thenThrowAccessDeniedException() {
+        var command = new RemoveCartItemCommand(NON_OWNER_CUSTOMER_ID, existedInCartEan);
+
+        assertThatThrownBy(() -> cartItemService.remove(command))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+}
