@@ -1,9 +1,9 @@
 package com.example.eshop.cart.application.services.cartitem;
 
 import com.example.eshop.cart.FakeData;
+import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItem;
-import com.example.eshop.cart.domain.CartRepository;
 import com.example.eshop.catalog.client.CatalogService;
 import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.catalog.client.api.model.MoneyDto;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -35,10 +34,10 @@ class CartItemServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        // CartRepository
+        // CartQueryService
 
-        var cartRepository = mock(CartRepository.class);
-        when(cartRepository.findByNaturalId(customerId)).thenReturn(Optional.of(cart));
+        var cartQueryService = mock(CartQueryService.class);
+        when(cartQueryService.getForCustomerOrCreate(customerId)).thenReturn(cart);
 
         // CatalogService
 
@@ -68,7 +67,7 @@ class CartItemServiceImplTest {
 
         // CartItemService
 
-        cartItemService = new CartItemServiceImpl(cartRepository, catalogService);
+        cartItemService = new CartItemServiceImpl(catalogService, cartQueryService);
     }
 
     @Nested
@@ -107,11 +106,14 @@ class CartItemServiceImplTest {
 
             // When
             var exception = catchThrowableOfType(() -> cartItemService.add(addCommand),
-                    NotEnoughQuantityException.class);
+                    AddToCartRuleViolationException.class);
 
             // Then
-            assertThat(exception.getAvailableQuantity()).isEqualTo(availableQuantity);
-            assertThat(exception.getRequiredQuantity()).isEqualTo(quantity);
+            assertThat(exception.getCause()).isInstanceOf(NotEnoughQuantityException.class);
+
+            var cause = (NotEnoughQuantityException) exception.getCause();
+            assertThat(cause.getAvailableQuantity()).isEqualTo(availableQuantity);
+            assertThat(cause.getRequiredQuantity()).isEqualTo(quantity);
 
             assertThat(cart.containsItem(newEan)).isFalse();
         }

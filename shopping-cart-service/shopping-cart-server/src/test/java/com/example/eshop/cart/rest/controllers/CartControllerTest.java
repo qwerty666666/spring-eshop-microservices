@@ -3,6 +3,7 @@ package com.example.eshop.cart.rest.controllers;
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.cart.FakeData;
 import com.example.eshop.cart.application.services.cartitem.AddCartItemCommand;
+import com.example.eshop.cart.application.services.cartitem.AddToCartRuleViolationException;
 import com.example.eshop.cart.application.services.cartitem.CartItemService;
 import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityException;
 import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
@@ -118,7 +119,8 @@ class CartControllerTest {
         @Test
         @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenPutItemWithExceededQuantity_thenReturn400() throws Exception {
-            doThrow(new NotEnoughQuantityException("", 0, quantity)).when(cartItemService).add(addCartItemCommand);
+            doThrow(new AddToCartRuleViolationException(new NotEnoughQuantityException("", 0, quantity)))
+                    .when(cartItemService).add(addCartItemCommand);
 
             performPutCartItemRequest()
                     .andExpect(status().isBadRequest());

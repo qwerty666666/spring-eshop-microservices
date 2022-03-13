@@ -1,10 +1,10 @@
 package com.example.eshop.cart.application.services.cartitem;
 
+import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.cart.domain.CartRepository;
 import com.example.eshop.catalog.client.CatalogService;
 import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class CartItemServiceImpl implements CartItemService {
-    private final CartRepository cartRepository;
     private final CatalogService catalogService;
+    private final CartQueryService cartQueryService;
+    private AddCartItemRule addCartItemRule = new AvailableQuantityRule();
+
+    public CartItemServiceImpl setAddCartItemRule(AddCartItemRule addCartItemRule) {
+        this.addCartItemRule = addCartItemRule;
+        return this;
+    }
 
     @Override
     @PreAuthorize("#command.customerId() == authentication.getCustomerId()")
@@ -25,36 +31,46 @@ public class CartItemServiceImpl implements CartItemService {
     public void add(AddCartItemCommand command) {
         var cart = getCustomerCart(command.customerId());
 
-        var ean = command.ean();
-        var quantity = command.quantity();
-
-        if (cart.containsItem(ean)) {
-            changeItemQuantity(cart, ean, quantity);
+        if (cart.containsItem(command.ean())) {
+            changeItemQuantity(cart, command);
         } else {
-            addItem(cart, ean, quantity);
+            addItem(cart, command);
         }
     }
 
-    private void changeItemQuantity(Cart cart, Ean ean, int quantity) {
-        var sku = getSku(ean);
-        checkAvailableQuantity(sku, quantity);
+    /**
+     * @throws AddToCartRuleViolationException if quantity can't be changed
+     */
+    private void changeItemQuantity(Cart cart, AddCartItemCommand command) {
+        var sku = getSku(command);
 
-        cart.changeItemQuantity(ean, quantity);
+        checkIfItemCanBeAdded(cart, command, sku);
+
+        cart.changeItemQuantity(command.ean(), command.quantity());
     }
 
-    private void addItem(Cart cart, Ean ean, int quantity) {
-        var sku = getSku(ean);
+    /**
+     * @throws AddToCartRuleViolationException if item can't be added
+     */
+    private void addItem(Cart cart, AddCartItemCommand command) {
+        var sku = getSku(command);
 
-        checkAvailableQuantity(sku, quantity);
+        checkIfItemCanBeAdded(cart, command, sku);
 
-        cart.addItem(ean, Money.of(sku.getPrice().getAmount(), sku.getPrice().getCurrency()), quantity);
+        cart.addItem(command.ean(), convertToMoney(sku.getPrice()), command.quantity());
     }
 
-    private void checkAvailableQuantity(SkuWithProductDto sku, int requiredQuantity) {
-        if (requiredQuantity > sku.getQuantity()) {
-            throw new NotEnoughQuantityException("There are no enough available quantity for " + sku.getEan(),
-                    sku.getQuantity(), requiredQuantity);
-        }
+    /**
+     * Checks if the given item can be added to the cart
+     *
+     * @throws AddToCartRuleViolationException if item can be added
+     */
+    private void checkIfItemCanBeAdded(Cart cart, AddCartItemCommand command, SkuWithProductDto sku) {
+        addCartItemRule.check(cart, command, sku);
+    }
+
+    private Money convertToMoney(MoneyDto dto) {
+        return Money.of(dto.getAmount(), dto.getCurrency());
     }
 
     @Override
@@ -67,16 +83,12 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     private Cart getCustomerCart(String customerId) {
-        return cartRepository.findByNaturalId(customerId)
-                .orElseThrow(() -> {
-                    log.error("Can not find Cart for customer " + customerId);
-                    return new RuntimeException("Can not find Cart for customer " + customerId);
-                });
+        return cartQueryService.getForCustomerOrCreate(customerId);
     }
 
-    private SkuWithProductDto getSku(Ean ean) {
-        return catalogService.getSku(ean)
+    private SkuWithProductDto getSku(AddCartItemCommand command) {
+        return catalogService.getSku(command.ean())
                 .blockOptional()
-                .orElseThrow(() -> new ProductNotFoundException("Sku for EAN " + ean + " does not exist"));
+                .orElseThrow(() -> new ProductNotFoundException("Sku for EAN " + command.ean() + " does not exist"));
     }
 }

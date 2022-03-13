@@ -1,6 +1,7 @@
 package com.example.eshop.cart.rest.controllers;
 
 import com.example.eshop.cart.application.services.cartitem.AddCartItemCommand;
+import com.example.eshop.cart.application.services.cartitem.AddToCartRuleViolationException;
 import com.example.eshop.cart.application.services.cartitem.CartItemService;
 import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityException;
 import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
@@ -49,10 +50,18 @@ public class CartController extends BaseController implements CartApi {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private BasicErrorDto handleNotEnoughQuantityException(NotEnoughQuantityException e) {
+    private BasicErrorDto handleAddToCartRuleViolationException(AddToCartRuleViolationException e) {
+        String message;
+
+        if (e.getCause() instanceof NotEnoughQuantityException notEnoughQuantityException) {
+            message = getLocalizer().getMessage("notEnoughQuantityException", notEnoughQuantityException.getAvailableQuantity());
+        } else {
+            message = getLocalizer().getMessage("cartItemCantBeAdded");
+        }
+
         return BasicErrorBuilder.newInstance()
                 .setStatus(HttpStatus.BAD_REQUEST)
-                .setDetail(getLocalizer().getMessage("notEnoughQuantityException", e.getAvailableQuantity()))
+                .setDetail(message)
                 .build();
     }
 
