@@ -1,7 +1,9 @@
 package com.example.eshop.cart.application.services.cartitem;
 
+import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.cart.FakeData;
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
+import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItem;
 import com.example.eshop.catalog.client.CatalogService;
@@ -12,17 +14,26 @@ import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.test.context.ActiveProfiles;
 import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class CartItemServiceImplTest {
-    private final String customerId = FakeData.customerId();
+@SpringBootTest
+@ActiveProfiles("test")
+@WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+class CartItemServiceTest {
+    private final String customerId = AuthConfig.CUSTOMER_ID;
+    private final String nonAuthorizedCustomerId = "non-authorized";
     private final Cart cart = FakeData.cart(customerId);
     private final CartItem existedInCartCartItem = cart.getItems().get(0);
     private final Ean existedInCartEan = existedInCartCartItem.getEan();
@@ -30,13 +41,18 @@ class CartItemServiceImplTest {
     private final Ean nonExistedInCatalogEan = Ean.fromString("1237569802342");
     private final int availableQuantity = 10;
 
+    @MockBean
+    private CartQueryService cartQueryService;
+    @MockBean
+    private CatalogService catalogService;
+
+    @Autowired
     private CartItemService cartItemService;
 
     @BeforeEach
     void setUp() {
         // CartQueryService
 
-        var cartQueryService = mock(CartQueryService.class);
         when(cartQueryService.getForCustomerOrCreate(customerId)).thenReturn(cart);
 
         // CatalogService
@@ -55,23 +71,26 @@ class CartItemServiceImplTest {
                 .price(new MoneyDto(BigDecimal.valueOf(10), "USD"))
                 .quantity(availableQuantity)
                 .product(ProductDto.builder()
-                        .name("Test Product")
+                        .name("Test Product 2")
                         .build()
                 )
                 .build();
 
-        var catalogService = mock(CatalogService.class);
         when(catalogService.getSku(newEan)).thenReturn(Mono.just(newSku));
         when(catalogService.getSku(existedInCartEan)).thenReturn(Mono.just(existedInCartSku));
         when(catalogService.getSku(nonExistedInCatalogEan)).thenReturn(Mono.empty());
-
-        // CartItemService
-
-        cartItemService = new CartItemServiceImpl(catalogService, cartQueryService);
     }
 
     @Nested
-    class AddTest {
+    class AddTests {
+        @Test
+        void whenAddCalledByNonCartOwner_thenThrowAccessDeniedException() {
+            var command = new AddCartItemCommand(nonAuthorizedCustomerId, newEan, 1);
+
+            assertThatThrownBy(() -> cartItemService.add(command))
+                    .isInstanceOf(AccessDeniedException.class);
+        }
+
         @Test
         void givenNonExistingInCartEan_whenAdd_thenNewCartItemShouldBeCreatedAndSavedToCart() {
             // Given
@@ -124,6 +143,17 @@ class CartItemServiceImplTest {
 
             assertThatExceptionOfType(ProductNotFoundException.class)
                     .isThrownBy(() -> cartItemService.add(command));
+        }
+    }
+
+    @Nested
+    class RemoveTests {
+        @Test
+        void whenRemoveCalledByNonCartOwner_thenThrowAccessDeniedException() {
+            var command = new RemoveCartItemCommand(nonAuthorizedCustomerId, existedInCartEan);
+
+            assertThatThrownBy(() -> cartItemService.remove(command))
+                    .isInstanceOf(AccessDeniedException.class);
         }
     }
 }

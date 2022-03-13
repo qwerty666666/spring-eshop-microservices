@@ -2,9 +2,9 @@ package com.example.eshop.cart.application.services.clearcart;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.cart.FakeData;
+import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.cart.domain.CartRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,35 +12,42 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.ActiveProfiles;
-import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class ClearCartServiceImplIntegrationTest {
+@WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+class ClearCartServiceTest {
+    @MockBean
+    private CartQueryService cartQueryService;
+
     @Autowired
     private ClearCartService clearCartService;
 
-    @MockBean
-    private CartRepository cartRepository;
-
-    private Cart cart;
-    private static final String OWNER_CUSTOMER_ID = AuthConfig.CUSTOMER_ID;
-    private static final String NON_OWNER_CUSTOMER_ID = "non-owner";
+    private final String customerId = AuthConfig.CUSTOMER_ID;
+    private final String notAuthorizedCustomerId = "non-owner";
+    private final Cart cart = FakeData.cart(customerId);
 
     @BeforeEach
     void setUp() {
-        cart = FakeData.cart(OWNER_CUSTOMER_ID);
-
-        when(cartRepository.findByNaturalId(OWNER_CUSTOMER_ID)).thenReturn(Optional.of(cart));
+        when(cartQueryService.getForCustomerOrCreate(customerId)).thenReturn(cart);
     }
 
     @Test
-    @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
     void whenClearCalledByNonOwner_thenThrowAccessDeniedException() {
         assertThatExceptionOfType(AccessDeniedException.class)
-                .isThrownBy(() -> clearCartService.clear(NON_OWNER_CUSTOMER_ID));
+                .isThrownBy(() -> clearCartService.clear(notAuthorizedCustomerId));
+    }
+
+    @Test
+    void whenClearCart_thenCartHasNoItems() {
+        // When
+        clearCartService.clear(customerId);
+
+        // Then
+        assertThat(cart.getItems()).isEmpty();
     }
 }
