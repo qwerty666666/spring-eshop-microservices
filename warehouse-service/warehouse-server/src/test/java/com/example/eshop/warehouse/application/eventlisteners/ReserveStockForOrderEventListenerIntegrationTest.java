@@ -43,7 +43,6 @@ import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import java.time.Duration;
 import java.util.List;
@@ -144,8 +143,6 @@ class ReserveStockForOrderEventListenerIntegrationTest {
             .build();
 
     @Autowired
-    private EmbeddedKafkaBroker broker;
-    @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
     @Autowired
     private ReplyingKafkaTemplate<String, OrderDto, ReservationResult> kafkaTemplate;
@@ -157,8 +154,7 @@ class ReserveStockForOrderEventListenerIntegrationTest {
     public void setUp() {
         // we should wait because listener container can start after the first message was published
         for (MessageListenerContainer messageListenerContainer : kafkaListenerEndpointRegistry.getListenerContainers()) {
-//            ContainerTestUtils.waitForAssignment(messageListenerContainer, 1);
-            ContainerTestUtils.waitForAssignment(messageListenerContainer, broker.getPartitionsPerTopic());
+            ContainerTestUtils.waitForAssignment(messageListenerContainer, 1);
         }
     }
 

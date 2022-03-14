@@ -1,12 +1,9 @@
 package com.example.eshop.warehouse;
 
-import com.example.eshop.kafkatest.RunKafka;
+import com.example.eshop.kafkatest.RunKafkaTestcontainer;
 import com.example.eshop.sharedtest.IntegrationTest;
 import com.example.eshop.warehouse.config.KafkaConfig;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -18,7 +15,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation is used by Integration tests which are depends on Kafka.
  * <p>
- * Runs Kafka broker and enable {@link KafkaConfig}
+ * Runs Kafka broker and enables {@link KafkaConfig}
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -26,7 +23,7 @@ import java.lang.annotation.Target;
 @Inherited
 @SpringBootTest
 @IntegrationTest
-@RunKafka
+@RunKafkaTestcontainer
 @TestPropertySource(properties = { KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY + "=false" })
 public @interface KafkaTest {
 }

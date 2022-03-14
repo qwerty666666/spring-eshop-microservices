@@ -17,13 +17,11 @@
     <description>Utils for Kafka integration tests</description>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
 
         <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
 
-        <!-- We do not use Kafka 3.0.0 due to the bug https://docs.spring.io/spring-kafka/docs/2.8.1-SNAPSHOT/reference/html/#update-deps -->
-        <kafka.version>2.8.1</kafka.version>
+        <kafka.testcontainers.version>1.16.3</kafka.testcontainers.version>
     </properties>
 
     <dependencies>
@@ -35,28 +33,15 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
-            <version>${spring-kafka.version}</version>
-            <!-- needed if downgrading to Apache Kafka 2.8.1 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.zookeeper</groupId>
-                    <artifactId>zookeeper</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-        <!-- downgrading Apache Kafka -->
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <classifier>test</classifier>
-            <version>${kafka.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>${kafka.testcontainers.version}</version>
         </dependency>
-        <!-- downgrading Apache Kafka -->
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.13</artifactId>
-            <classifier>test</classifier>
-            <version>${kafka.version}</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 </project>

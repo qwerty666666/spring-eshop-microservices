@@ -113,7 +113,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.example.eshop</groupId>
+            <groupId>com.example.eshop</groupId>
             <artifactId>kafka-test</artifactId>
             <version>${kafka-test.version}</version>
             <scope>test</scope>

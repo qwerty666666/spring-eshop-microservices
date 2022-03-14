@@ -24,7 +24,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.JacksonUtils;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
@@ -60,8 +59,6 @@ class OrderPlacedEventListenerIntegrationTest {
     }
 
     @Autowired
-    private EmbeddedKafkaBroker broker;
-    @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
     @Autowired
     private KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
@@ -75,7 +72,7 @@ class OrderPlacedEventListenerIntegrationTest {
     public void setUp() {
         // we should wait because listener container can start after the first message was published
         for (MessageListenerContainer messageListenerContainer : kafkaListenerEndpointRegistry.getListenerContainers()) {
-            ContainerTestUtils.waitForAssignment(messageListenerContainer, broker.getPartitionsPerTopic());
+            ContainerTestUtils.waitForAssignment(messageListenerContainer, 1);
         }
     }
 
