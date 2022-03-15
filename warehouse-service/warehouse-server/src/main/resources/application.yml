@@ -2,16 +2,12 @@ spring:
   application:
     name: warehouse
 
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
   jpa:
     open-in-view: false
+
   devtools:
     livereload:
       enabled: false
