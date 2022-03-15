@@ -1,15 +1,13 @@
 package com.example.eshop.cart.rest.mappers;
 
-import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.cart.domain.CartItem;
-import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.cart.client.api.model.AttributeDto;
 import com.example.eshop.cart.client.api.model.CartDto;
 import com.example.eshop.cart.client.api.model.CartItemDto;
 import com.example.eshop.cart.client.api.model.ImageDto;
-import com.example.eshop.cart.client.api.model.MoneyDto;
+import com.example.eshop.cart.domain.Cart;
+import com.example.eshop.cart.domain.CartItem;
+import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -23,11 +21,6 @@ public class Assertions {
         for (int i = 0; i < list1.size(); i++) {
             itemAssertion.accept(list1.get(i), list2.get(i));
         }
-    }
-
-    public static void assertPriceEquals(Money money, MoneyDto moneyDto) {
-        assertThat(moneyDto.getAmount()).as("price amount").isEqualTo(money.getAmount());
-        assertThat(moneyDto.getCurrency()).as("price currency").isEqualTo(money.getCurrency().getCurrencyCode());
     }
 
     public static void assertAttributeEquals(AttributeDto attributeDto, com.example.eshop.catalog.client.api.model.AttributeDto attributeValue) {
@@ -63,7 +56,7 @@ public class Assertions {
         // available quantity
         assertThat(dto.getAvailableQuantity()).isEqualTo(sku.getQuantity());
         // price
-        Assertions.assertPriceEquals(item.getItemPrice(), dto.getPrice());
+        assertThat(dto.getPrice()).isEqualTo(item.getItemPrice());
         // images
         Assertions.assertImageEquals(product.getImages(), dto.getImages());
         // attributes

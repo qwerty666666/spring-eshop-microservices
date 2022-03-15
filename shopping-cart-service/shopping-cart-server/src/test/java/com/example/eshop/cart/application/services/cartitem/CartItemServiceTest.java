@@ -8,9 +8,9 @@ import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItem;
 import com.example.eshop.catalog.client.CatalogService;
 import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.catalog.client.api.model.ProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
+import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 import reactor.core.publisher.Mono;
-import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -68,7 +67,7 @@ class CartItemServiceTest {
 
         var newSku = SkuWithProductDto.builder()
                 .ean(newEan.toString())
-                .price(new MoneyDto(BigDecimal.valueOf(10), "USD"))
+                .price(Money.USD(10))
                 .quantity(availableQuantity)
                 .product(ProductDto.builder()
                         .name("Test Product 2")

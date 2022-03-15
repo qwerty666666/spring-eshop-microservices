@@ -94,9 +94,9 @@ class CheckoutMapperTest {
     }
 
     private void assertTotalEquals(Total total, CheckoutTotalDto dto) {
-        Assertions.assertPriceEquals(total.getCartPrice(), dto.getCartPrice());
-        Assertions.assertPriceEquals(total.getDeliveryPrice(), dto.getDeliveryPrice());
-        Assertions.assertPriceEquals(total.getTotalPrice(), dto.getTotalPrice());
+        assertThat(dto.getCartPrice()).isEqualTo(total.getCartPrice());
+        assertThat(dto.getDeliveryPrice()).isEqualTo(total.getDeliveryPrice());
+        assertThat(dto.getTotalPrice()).isEqualTo(total.getTotalPrice());
     }
 
     private static class DeliveryServiceStub extends DeliveryService {

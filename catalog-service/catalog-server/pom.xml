@@ -171,9 +171,12 @@
                             <generatorName>spring</generatorName>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateModels>false</generateModels>
+
                             <apiPackage>com.example.eshop.catalog.rest.api</apiPackage>
                             <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
+                            <typeMappings>money=com.example.eshop.sharedkernel.domain.valueobject.Money</typeMappings>
+
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <openApiNullable>false</openApiNullable>

@@ -30,39 +30,41 @@ public abstract class CartMapper {
     }
 
     public CartDto toCartDto(Cart cart) {
-        var ean = cart.getItems().stream().map(CartItem::getEan).toList();
+        var eanList = cart.getItems().stream().map(CartItem::getEan).toList();
 
-        Map<Ean, SkuWithProductDto> sku;
+        Map<Ean, SkuWithProductDto> skuMap;
 
-        if (ean.isEmpty()) {
-            sku = Collections.emptyMap();
+        if (eanList.isEmpty()) {
+            skuMap = Collections.emptyMap();
         } else {
-            sku = catalogService.getSku(ean)
+            skuMap = catalogService.getSku(eanList)
                     .blockOptional()
-                    // empty result is impossible there (otherwise it will be contract violation,
-                    // and we end up with NPE, that is OK in this case I think), but we handle
-                    // null value to pass static analysis. And it's fucking weird ¯\_(ツ)_/¯
+                    // empty result is impossible there (otherwise it will be contract violation
+                    // (we can't have not-existed items in the cart), and we end up with NPE,
+                    // that is OK in this case I think), but we handle null value to pass static
+                    // analysis. And it's fucking weird ¯\_(ツ)_/¯
                     .orElseThrow(() -> new RuntimeException("getSku() return null"));
         }
 
+        var items = cart.getItems().stream()
+                .map(item -> {
+                    // TODO handle missing product case.
+                    // It is possible that we remove product from catalog, but it is still in the Cart
+                    // Therefore, we should handle this instead of throwing exceptions.
+                    // We can either:
+                    //  1. sync cart with catalog
+                    //  2. or notify client that this CartItem is unavailable anymore
+                    // I think, this should be implemented somewhere in domain logic (i.e. in Cart conctructor or smth else)
+                    var sku = Optional.ofNullable(skuMap.get(item.getEan()))
+                            .orElseThrow(() -> new RuntimeException("Sku for EAN " + item.getEan() + " does not exist"));
+
+                    return toCartItemDto(item, sku);
+                })
+                .toList();
+
         return new CartDto()
-                .id(Optional.ofNullable(cart.getId()).map(Object::toString).orElse(null))
-                .items(cart.getItems().stream().map(item -> toCartItemDto(item, sku)).toList());
-    }
-
-    protected CartItemDto toCartItemDto(CartItem item, Map<Ean, SkuWithProductDto> skuMap) {
-        // TODO handle missing product case.
-        // It is possible that we remove product from catalog, but it is still in the Cart
-        // Therefore, we should handle this instead of throwing exceptions.
-        // We can either:
-        //  1. sync cart with catalog
-        //  2. or notify client that this CartItem is unavailable anymore
-        // I think, this should be implemented somewhere in domain logic (i.e. in Cart conctructor or smth else)
-
-        var sku = Optional.ofNullable(skuMap.get(item.getEan()))
-                .orElseThrow(() -> new RuntimeException("Sku for EAN " + item.getEan() + " does not exist"));
-
-        return toCartItemDto(item, sku);
+                .id(cart.getId() != null ? cart.getId().toString() : null) // NOSONAR id can be null
+                .items(items);
     }
 
     @Mapping(target = "images", source = "sku.product.images")
@@ -71,6 +73,5 @@ public abstract class CartMapper {
     @Mapping(target = "availableQuantity", source = "sku.quantity")
     @Mapping(target = "quantity", source = "cartItem.quantity")
     @Mapping(target = "ean", source = "cartItem.ean")
-    @Mapping(target = "price", source = "cartItem.itemPrice")
     public abstract CartItemDto toCartItemDto(CartItem cartItem, SkuWithProductDto sku);
 }

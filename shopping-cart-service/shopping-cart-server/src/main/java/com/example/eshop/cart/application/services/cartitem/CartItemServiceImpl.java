@@ -4,8 +4,6 @@ import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.catalog.client.CatalogService;
 import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,7 +55,7 @@ public class CartItemServiceImpl implements CartItemService {
 
         checkIfItemCanBeAdded(cart, command, sku);
 
-        cart.addItem(command.ean(), convertToMoney(sku.getPrice()), command.quantity());
+        cart.addItem(command.ean(), sku.getPrice(), command.quantity());
     }
 
     /**
@@ -67,10 +65,6 @@ public class CartItemServiceImpl implements CartItemService {
      */
     private void checkIfItemCanBeAdded(Cart cart, AddCartItemCommand command, SkuWithProductDto sku) {
         addCartItemRule.check(cart, command, sku);
-    }
-
-    private Money convertToMoney(MoneyDto dto) {
-        return Money.of(dto.getAmount(), dto.getCurrency());
     }
 
     @Override

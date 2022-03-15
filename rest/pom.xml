@@ -228,10 +228,13 @@
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/public/openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
                             <apiPackage>com.example.eshop.rest.api</apiPackage>
                             <modelPackage>com.example.eshop.rest.dto</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+                            <typeMappings>money=com.example.eshop.sharedkernel.domain.valueobject.Money</typeMappings>
+
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <openApiNullable>false</openApiNullable>

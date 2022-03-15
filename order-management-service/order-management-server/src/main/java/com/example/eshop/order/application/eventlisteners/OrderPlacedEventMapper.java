@@ -1,12 +1,11 @@
 package com.example.eshop.order.application.eventlisteners;
 
-import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.catalog.client.api.model.AttributeDto;
 import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.checkout.client.events.orderplacedevent.PaymentDto;
 import com.example.eshop.order.domain.order.Address;
 import com.example.eshop.order.domain.order.Delivery;
@@ -14,7 +13,6 @@ import com.example.eshop.order.domain.order.Order;
 import com.example.eshop.order.domain.order.OrderLine;
 import com.example.eshop.order.domain.order.OrderLineAttribute;
 import com.example.eshop.order.domain.order.Payment;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -47,10 +45,10 @@ public interface OrderPlacedEventMapper {
 
     Address toAddress(DeliveryAddressDto address);
 
-    @Mapping(target = "itemPrice", source = "sku.price")
     @Mapping(target = "productName", source = "sku.product.name")
     @Mapping(target = "attributes", source = "sku.attributes")
     @Mapping(target = "images", source = "sku.product.images")
+    @Mapping(target = "itemPrice", source = "sku.price")
     OrderLine toOrderLine(CartItemDto item);
 
     default String toImage(ImageDto image) {
@@ -59,9 +57,5 @@ public interface OrderPlacedEventMapper {
 
     default OrderLineAttribute toOrderLineAttribute(AttributeDto attr) {
         return new OrderLineAttribute(attr.getId(), attr.getValue(), attr.getName());
-    }
-
-    default Money toMoney(MoneyDto money) {
-        return Money.of(money.getAmount(), money.getCurrency());
     }
 }

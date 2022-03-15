@@ -77,13 +77,17 @@
                             <inputSpec>${basedir}/src/main/resources/openapi.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
                             <modelPackage>com.example.eshop.order.client.api.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
+                            <typeMappings>money=com.example.eshop.sharedkernel.domain.valueobject.Money</typeMappings>
                             <apiPackage>com.example.eshop.order.client.api</apiPackage>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
+
                             <generateApiDocumentation>false</generateApiDocumentation>
                             <generateApiTests>false</generateApiTests>
+
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <serializationLibrary>jackson</serializationLibrary>

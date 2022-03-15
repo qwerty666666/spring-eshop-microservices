@@ -146,6 +146,8 @@ components:
         id:
           type: string
           example: 1234
+        totalPrice:
+          $ref: '#/components/schemas/money'
         items:
           type: array
           items:
@@ -153,6 +155,7 @@ components:
       required:
         - id
         - items
+        - totalPrice
 
     cart-item:
       type: object

@@ -1,12 +1,11 @@
 package com.example.eshop.order.application.eventlisteners;
 
-import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.catalog.client.api.model.AttributeDto;
 import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;
+import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.checkout.client.events.orderplacedevent.PaymentDto;
 import com.example.eshop.order.FakeData;
 import com.example.eshop.order.domain.order.Address;
@@ -15,7 +14,6 @@ import com.example.eshop.order.domain.order.Order;
 import com.example.eshop.order.domain.order.OrderLine;
 import com.example.eshop.order.domain.order.OrderLineAttribute;
 import com.example.eshop.order.domain.order.Payment;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
@@ -75,14 +73,9 @@ class OrderPlacedEventMapperImplTest {
         assertThat(line.getQuantity()).isEqualTo(itemDto.quantity());
         assertThat(line.getPrice()).isEqualTo(itemDto.price());
         assertThat(line.getEan()).isEqualTo(itemDto.ean());
-        assertPriceEquals(line.getItemPrice(), itemDto.sku().getPrice());
+        assertThat(line.getItemPrice()).isEqualTo(itemDto.sku().getPrice());
         assertListEquals(line.getAttributes(), itemDto.sku().getAttributes(), this::assertAttributeEquals);
         assertListEquals(line.getImages(), itemDto.sku().getProduct().getImages(), this::assertImageEquals);
-    }
-
-    private void assertPriceEquals(Money price, MoneyDto priceDto) {
-        assertThat(price.getAmount()).isEqualTo(priceDto.getAmount());
-        assertThat(price.getCurrency().toString()).hasToString(priceDto.getCurrency());
     }
 
     private void assertAttributeEquals(OrderLineAttribute attr, AttributeDto attrDto) {

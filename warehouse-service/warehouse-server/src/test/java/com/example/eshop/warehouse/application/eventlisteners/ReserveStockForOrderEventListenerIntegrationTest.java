@@ -1,7 +1,6 @@
 package com.example.eshop.warehouse.application.eventlisteners;
 
 import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.catalog.client.api.model.ProductDto;
 import com.example.eshop.checkout.client.CheckoutApi;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartDto;
@@ -117,7 +116,7 @@ class ReserveStockForOrderEventListenerIntegrationTest {
                                     qty1,
                                     SkuWithProductDto.builder()
                                             .ean(ean1.toString())
-                                            .price(new MoneyDto(price1.getAmount(), price1.getCurrency().toString()))
+                                            .price(price1)
                                             .product(ProductDto.builder().build())
                                             .build()
                             ),
@@ -127,7 +126,7 @@ class ReserveStockForOrderEventListenerIntegrationTest {
                                     qty2,
                                     SkuWithProductDto.builder()
                                             .ean(ean2.toString())
-                                            .price(new MoneyDto(price2.getAmount(), price2.getCurrency().toString()))
+                                            .price(price2)
                                             .product(ProductDto.builder().build())
                                             .build()
                             )

@@ -2,7 +2,6 @@ package com.example.eshop.catalog.rest.mappers;
 
 import com.example.eshop.catalog.client.api.model.AttributeDto;
 import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.catalog.client.api.model.ProductDto;
 import com.example.eshop.catalog.client.api.model.ProductWithSkuDto;
 import com.example.eshop.catalog.client.api.model.SkuDto;
@@ -165,13 +164,8 @@ class ProductMapperImplTest {
     private void assertSkuEquals(Sku sku, SkuDto skuDto) {
         assertThat(skuDto.getEan()).as("Sku EAN").isEqualTo(sku.getEan().toString());
         assertThat(skuDto.getQuantity()).as("available quantity").isEqualTo(sku.getAvailableQuantity());
-        assertPriceEquals(sku.getPrice(), skuDto.getPrice());
+        assertThat(skuDto.getPrice()).as("Sku price").isEqualTo(sku.getPrice());
         Assertions.assertListEquals(sku.getAttributeValues(), skuDto.getAttributes(), ProductMapperImplTest::assertAttributeEquals);
-    }
-
-    private static void assertPriceEquals(Money money, MoneyDto moneyDto) {
-        assertThat(moneyDto.getAmount()).as("price amount").isEqualTo(money.getAmount());
-        assertThat(moneyDto.getCurrency()).as("price currency").isEqualTo(money.getCurrency().getCurrencyCode());
     }
 
     private static void assertImageEquals(List<File> images, List<ImageDto> imageDtos) {

@@ -81,6 +81,7 @@
 
                             <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
+                            <typeMappings>money=com.example.eshop.sharedkernel.domain.valueobject.Money</typeMappings>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
 

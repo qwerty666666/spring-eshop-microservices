@@ -6,7 +6,6 @@ import com.example.eshop.catalog.client.CatalogService;
 import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.catalog.client.api.model.AttributeDto;
 import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.catalog.client.api.model.ProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -49,7 +48,7 @@ class CartMapperImplTest {
 
         var sku1 = SkuWithProductDto.builder()
                 .ean(ean1.toString())
-                .price(new MoneyDto(price1.getAmount(), price1.getCurrency().getCurrencyCode()))
+                .price(price1)
                 .quantity(availableQuantity1)
                 .attributes(List.of(new AttributeDto(1L, "size", "XL")))
                 .productId(product.getId())
@@ -57,7 +56,7 @@ class CartMapperImplTest {
                 .build();
         var sku2 = SkuWithProductDto.builder()
                 .ean(ean2.toString())
-                .price(new MoneyDto(price2.getAmount(), price2.getCurrency().getCurrencyCode()))
+                .price(price2)
                 .quantity(availableQuantity2)
                 .attributes(List.of(new AttributeDto(1L, "size", "XXL")))
                 .productId(product.getId())

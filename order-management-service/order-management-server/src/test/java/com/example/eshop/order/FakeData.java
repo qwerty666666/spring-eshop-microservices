@@ -3,7 +3,6 @@ package com.example.eshop.order;
 import com.example.eshop.catalog.client.SkuWithProductDto;
 import com.example.eshop.catalog.client.api.model.AttributeDto;
 import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
 import com.example.eshop.catalog.client.api.model.ProductDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
@@ -49,7 +48,7 @@ public final class FakeData {
         var sku = SkuWithProductDto.builder()
                 .ean(ean.toString())
                 .quantity(quantity)
-                .price(new MoneyDto(skuPrice.getAmount(), skuPrice.getCurrency().toString()))
+                .price(skuPrice)
                 .productId(product.getId())
                 .product(product)
                 .attributes(List.of(

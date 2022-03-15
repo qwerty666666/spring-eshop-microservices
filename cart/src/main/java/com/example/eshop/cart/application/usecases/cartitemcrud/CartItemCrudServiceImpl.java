@@ -48,7 +48,7 @@ public class CartItemCrudServiceImpl implements CartItemCrudService {
 
         checkAvailableQuantity(sku, quantity);
 
-        cart.addItem(ean, Money.of(sku.getPrice().getAmount(), sku.getPrice().getCurrency()), quantity);
+        cart.addItem(ean, sku.getPrice(), quantity);
     }
 
     private void checkAvailableQuantity(SkuWithProductDto sku, int requiredQuantity) {
