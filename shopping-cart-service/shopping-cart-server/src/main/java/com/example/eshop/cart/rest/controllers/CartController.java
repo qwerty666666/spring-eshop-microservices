@@ -4,6 +4,7 @@ import com.example.eshop.cart.application.services.cartitem.AddCartItemCommand;
 import com.example.eshop.cart.application.services.cartitem.AddToCartRuleViolationException;
 import com.example.eshop.cart.application.services.cartitem.CartItemService;
 import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityException;
+import com.example.eshop.cart.application.services.cartitem.ProductNotFoundException;
 import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.client.api.CartApi;
@@ -15,9 +16,7 @@ import com.example.eshop.cart.domain.CartItemNotFoundException;
 import com.example.eshop.cart.rest.mappers.CartMapper;
 import com.example.eshop.cart.rest.utils.BasicErrorBuilder;
 import com.example.eshop.localizer.Localizer;
-import com.example.eshop.sharedkernel.domain.validation.FieldError;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import com.example.eshop.sharedkernel.domain.valueobject.InvalidEanFormatException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +39,15 @@ public class CartController extends BaseController implements CartApi {
     private final Localizer localizer;
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    private BasicErrorDto handleProductNotFoundException(ProductNotFoundException e) {
+        return BasicErrorBuilder.newInstance()
+                .setStatus(HttpStatus.NOT_FOUND)
+                .setDetail(getLocalizer().getMessage("productNotFound", e.getEan()))
+                .build();
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private BasicErrorDto handleCartItemNotFoundException(CartItemNotFoundException e) {
         return BasicErrorBuilder.newInstance()
@@ -49,7 +57,7 @@ public class CartController extends BaseController implements CartApi {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     private BasicErrorDto handleAddToCartRuleViolationException(AddToCartRuleViolationException e) {
         String message;
 
@@ -74,8 +82,8 @@ public class CartController extends BaseController implements CartApi {
 
     @Override
     @Transactional
-    public ResponseEntity<CartDto> removeCartItem(String ean) {
-        var command = new RemoveCartItemCommand(getCurrentAuthenticationOrFail().getCustomerId(), convertEanQueryParam(ean));
+    public ResponseEntity<CartDto> removeCartItem(Ean ean) {
+        var command = new RemoveCartItemCommand(getCurrentAuthenticationOrFail().getCustomerId(), ean);
 
         cartItemService.remove(command);
 
@@ -85,7 +93,11 @@ public class CartController extends BaseController implements CartApi {
     @Override
     @Transactional
     public ResponseEntity<CartDto> addCartItem(AddCartItemCommandDto dto) {
-        var command = convertAddCartItemCommandParam(dto);
+        var command = new AddCartItemCommand(
+                getCurrentAuthenticationOrFail().getCustomerId(),
+                dto.getEan(),
+                dto.getQuantity()
+        );
 
         cartItemService.add(command);
 
@@ -96,29 +108,5 @@ public class CartController extends BaseController implements CartApi {
         var userDetails = getCurrentAuthenticationOrFail();
 
         return cartQueryService.getForCustomerOrCreate(userDetails.getCustomerId());
-    }
-
-    private Ean convertEanQueryParam(String ean) {
-        try {
-            return Ean.fromString(ean);
-        } catch (InvalidEanFormatException e) {
-            throw new InvalidMethodParameterException(new FieldError("ean", "invalidEanFormat", ean));
-        }
-    }
-
-    private AddCartItemCommand convertAddCartItemCommandParam(AddCartItemCommandDto dto) {
-        Ean ean;
-        try {
-            ean = dto.getEan();
-        } catch (InvalidEanFormatException e) {
-            throw new InvalidMethodParameterException(new FieldError("ean", "invalidEanFormat", e.getEan()));
-        }
-
-        int quantity = dto.getQuantity();
-        if (quantity <= 0) {
-            throw new InvalidMethodParameterException(new FieldError("quantity", "invalidQuantity"));
-        }
-
-        return new AddCartItemCommand(getCurrentAuthenticationOrFail().getCustomerId(), ean, quantity);
     }
 }

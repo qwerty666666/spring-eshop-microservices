@@ -21,6 +21,9 @@ spring:
   jpa:
     open-in-view: false
 
+  web:
+    locale: en_US
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}

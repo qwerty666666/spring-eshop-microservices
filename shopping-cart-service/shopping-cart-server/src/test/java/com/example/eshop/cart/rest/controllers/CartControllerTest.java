@@ -6,13 +6,14 @@ import com.example.eshop.cart.application.services.cartitem.AddCartItemCommand;
 import com.example.eshop.cart.application.services.cartitem.AddToCartRuleViolationException;
 import com.example.eshop.cart.application.services.cartitem.CartItemService;
 import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityException;
+import com.example.eshop.cart.application.services.cartitem.ProductNotFoundException;
 import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.client.model.CartDto;
+import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.config.ControllerTest;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItemNotFoundException;
-import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.rest.mappers.CartMapper;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -28,14 +29,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CartController.class)
@@ -125,16 +125,40 @@ class CartControllerTest {
                     .when(cartItemService).add(addCartItemCommand);
 
             performPutCartItemRequest()
+                    .andExpect(status().isUnprocessableEntity());
+
+            verify(cartItemService).add(addCartItemCommand);
+        }
+
+        @Test
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+        void givenInvalidRequest_whenPutItem_thenReturn400() throws Exception {
+            performPutCartItemRequest("invalidEan", "1")
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errors[?(@.field == 'ean')]").exists());
+        }
+
+        @Test
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+        void givenNotExistedEan_whenPutItem_thenReturn400() throws Exception {
+            doThrow(new ProductNotFoundException(ean, ""))
+                    .when(cartItemService).add(addCartItemCommand);
+
+            performPutCartItemRequest()
                     .andExpect(status().isBadRequest());
 
             verify(cartItemService).add(addCartItemCommand);
         }
 
         private ResultActions performPutCartItemRequest() throws Exception {
+            return performPutCartItemRequest(ean.toString(), String.valueOf(quantity));
+        }
+
+        private ResultActions performPutCartItemRequest(String ean, String quantity) throws Exception {
             var json = """
                     {
                         "ean": "%s",
-                        "quantity": %d
+                        "quantity": %s
                     }
                     """.formatted(ean, quantity);
 
@@ -179,7 +203,19 @@ class CartControllerTest {
                     .andExpect(status().isUnauthorized());
         }
 
+        @Test
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+        void givenInvalidEan_whenRemoveCartItem_thenReturn400() throws Exception {
+            performRemoveCartItemRequest("invalidEan")
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errors[?(@.field == 'ean')]").exists());
+        }
+
         private ResultActions performRemoveCartItemRequest() throws Exception {
+            return performRemoveCartItemRequest(ean.toString());
+        }
+
+        private ResultActions performRemoveCartItemRequest(String ean) throws Exception {
             return mockMvc.perform(delete("/api/cart/items/" + ean));
         }
     }

@@ -49,6 +49,7 @@ public class CartItemServiceImpl implements CartItemService {
 
     /**
      * @throws AddToCartRuleViolationException if item can't be added
+     * @throws ProductNotFoundException if product does not exist in catalog
      */
     private void addItem(Cart cart, AddCartItemCommand command) {
         var sku = getSku(command);
@@ -62,6 +63,7 @@ public class CartItemServiceImpl implements CartItemService {
      * Checks if the given item can be added to the cart
      *
      * @throws AddToCartRuleViolationException if item can be added
+     * @throws ProductNotFoundException if product does not exist in catalog
      */
     private void checkIfItemCanBeAdded(Cart cart, AddCartItemCommand command, SkuWithProductDto sku) {
         addCartItemRule.check(cart, command, sku);
@@ -80,9 +82,12 @@ public class CartItemServiceImpl implements CartItemService {
         return cartQueryService.getForCustomerOrCreate(customerId);
     }
 
+    /**
+     * @throws ProductNotFoundException if product does not exist in catalog
+     */
     private SkuWithProductDto getSku(AddCartItemCommand command) {
         return catalogService.getSku(command.ean())
                 .blockOptional()
-                .orElseThrow(() -> new ProductNotFoundException("Sku for EAN " + command.ean() + " does not exist"));
+                .orElseThrow(() -> new ProductNotFoundException(command.ean(), "Sku for EAN " + command.ean() + " does not exist"));
     }
 }

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
-import org.hibernate.validator.constraints.EAN;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -20,7 +19,6 @@ public class Ean implements ValueObject, Serializable {
     private static final Pattern EAN_PATTERN = Pattern.compile("^[0-9]{13}$");
 
     @Column(name = "ean")
-    @EAN
     private String ean;
 
     private Ean(String ean) {
