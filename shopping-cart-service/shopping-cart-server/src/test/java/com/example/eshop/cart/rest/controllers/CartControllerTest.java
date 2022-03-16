@@ -8,7 +8,7 @@ import com.example.eshop.cart.application.services.cartitem.CartItemService;
 import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityException;
 import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
-import com.example.eshop.cart.client.api.model.CartDto;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.config.ControllerTest;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItemNotFoundException;
@@ -28,11 +28,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

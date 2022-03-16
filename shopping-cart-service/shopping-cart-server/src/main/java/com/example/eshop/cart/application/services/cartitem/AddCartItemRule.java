@@ -1,7 +1,7 @@
 package com.example.eshop.cart.application.services.cartitem;
 
 import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.catalog.client.SkuWithProductDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 
 public interface AddCartItemRule {
     /**

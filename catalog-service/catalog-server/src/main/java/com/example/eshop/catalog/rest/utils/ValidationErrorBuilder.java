@@ -1,7 +1,7 @@
 package com.example.eshop.catalog.rest.utils;
 
-import com.example.eshop.catalog.client.api.model.FieldErrorDto;
-import com.example.eshop.catalog.client.api.model.ValidationErrorDto;
+import com.example.eshop.catalog.client.model.FieldErrorDto;
+import com.example.eshop.catalog.client.model.ValidationErrorDto;
 
 public class ValidationErrorBuilder {
     private final ValidationErrorDto errors = new ValidationErrorDto();

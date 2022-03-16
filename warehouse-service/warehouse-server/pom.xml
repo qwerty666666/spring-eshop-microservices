@@ -25,6 +25,7 @@
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>warehouse-client</artifactId>

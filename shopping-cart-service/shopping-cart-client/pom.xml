@@ -22,6 +22,7 @@
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
@@ -78,9 +79,8 @@
                             <generatorName>java</generatorName>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
 
-                            <modelPackage>com.example.eshop.cart.client.api.model</modelPackage>
+                            <modelPackage>com.example.eshop.cart.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <typeMappings>money=com.example.eshop.sharedkernel.domain.valueobject.Money</typeMappings>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
 
@@ -88,11 +88,21 @@
                             <generateApiDocumentation>false</generateApiDocumentation>
                             <generateApiTests>false</generateApiTests>
 
+                            <typeMappings>
+                                <mapping>money=Money</mapping>
+                                <mapping>string+gtin13=Ean</mapping>
+                            </typeMappings>
+                            <importMappings>
+                                <mapping>Money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>Ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                            </importMappings>
+
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <serializationLibrary>jackson</serializationLibrary>
                                 <library>webclient</library>
                                 <openApiNullable>false</openApiNullable>
+                                <useBeanValidation>true</useBeanValidation>
                                 <additionalModelTypeAnnotations>
                                     @lombok.Builder
                                     @lombok.NoArgsConstructor

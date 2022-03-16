@@ -2,11 +2,11 @@ package com.example.eshop.catalog.rest.controllers;
 
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductNotFoundException;
-import com.example.eshop.catalog.client.api.model.ProductWithSkuDto;
-import com.example.eshop.catalog.client.api.model.SkuInfoDto;
+import com.example.eshop.catalog.client.model.ProductWithSkuDto;
+import com.example.eshop.catalog.client.model.SkuInfoDto;
 import com.example.eshop.catalog.rest.api.ProductsApi;
-import com.example.eshop.catalog.client.api.model.BasicErrorDto;
-import com.example.eshop.catalog.client.api.model.PagedProductListDto;
+import com.example.eshop.catalog.client.model.BasicErrorDto;
+import com.example.eshop.catalog.client.model.PagedProductListDto;
 import com.example.eshop.catalog.config.AppProperties;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.rest.mappers.ProductMapper;

@@ -1,6 +1,6 @@
 package com.example.eshop.cart.rest.controllers;
 
-import com.example.eshop.cart.client.api.model.ValidationErrorDto;
+import com.example.eshop.cart.client.model.ValidationErrorDto;
 import com.example.eshop.cart.rest.utils.ValidationErrorBuilder;
 import com.example.eshop.localizer.Localizer;
 import lombok.RequiredArgsConstructor;

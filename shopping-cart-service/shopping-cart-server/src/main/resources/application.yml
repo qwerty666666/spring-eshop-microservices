@@ -7,6 +7,7 @@ server:
 spring:
   application:
     name: shopping-cart-service
+
   security:
     oauth2:
       resourceserver:
@@ -19,6 +20,11 @@ spring:
 
   jpa:
     open-in-view: false
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    preferIpAddress: true
 
 management:
   endpoints:

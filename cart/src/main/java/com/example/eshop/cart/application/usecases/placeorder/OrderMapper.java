@@ -8,7 +8,7 @@ import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
-import com.example.eshop.catalog.client.SkuWithProductDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;

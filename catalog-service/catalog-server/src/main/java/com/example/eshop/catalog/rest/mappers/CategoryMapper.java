@@ -1,7 +1,7 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.CategoryDto;
-import com.example.eshop.catalog.client.api.model.CategoryTreeItemDto;
+import com.example.eshop.catalog.client.model.CategoryDto;
+import com.example.eshop.catalog.client.model.CategoryTreeItemDto;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.sharedkernel.domain.base.DomainObjectId;

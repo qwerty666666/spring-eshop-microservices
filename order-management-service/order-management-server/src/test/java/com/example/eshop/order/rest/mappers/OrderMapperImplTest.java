@@ -1,15 +1,15 @@
 package com.example.eshop.order.rest.mappers;
 
 import com.example.eshop.order.FakeData;
-import com.example.eshop.order.client.api.model.AttributeDto;
-import com.example.eshop.order.client.api.model.DeliveryAddressDto;
-import com.example.eshop.order.client.api.model.ImageDto;
-import com.example.eshop.order.client.api.model.OrderDeliveryDto;
-import com.example.eshop.order.client.api.model.OrderDto;
-import com.example.eshop.order.client.api.model.OrderLineDto;
-import com.example.eshop.order.client.api.model.OrderPaymentDto;
-import com.example.eshop.order.client.api.model.OrderTotalDto;
-import com.example.eshop.order.client.api.model.PageableDto;
+import com.example.eshop.order.client.model.AttributeDto;
+import com.example.eshop.order.client.model.DeliveryAddressDto;
+import com.example.eshop.order.client.model.ImageDto;
+import com.example.eshop.order.client.model.OrderDeliveryDto;
+import com.example.eshop.order.client.model.OrderDto;
+import com.example.eshop.order.client.model.OrderLineDto;
+import com.example.eshop.order.client.model.OrderPaymentDto;
+import com.example.eshop.order.client.model.OrderTotalDto;
+import com.example.eshop.order.client.model.PageableDto;
 import com.example.eshop.order.config.MapperTest;
 import com.example.eshop.order.domain.order.Address;
 import com.example.eshop.order.domain.order.Delivery;
@@ -100,7 +100,7 @@ class OrderMapperImplTest {
 
     private void assertOrderLineEquals(OrderLine line, OrderLineDto dto) {
         assertThat(dto.getId()).isEqualTo(line.getId() == null ? null : line.getId().toString());
-        assertThat(dto.getEan()).isEqualTo(line.getEan().toString());
+        assertThat(dto.getEan()).isEqualTo(line.getEan());
         assertThat(dto.getProductName()).isEqualTo(line.getProductName());
         assertThat(dto.getQuantity()).isEqualTo(line.getQuantity());
         assertThat(dto.getItemPrice()).isEqualTo(line.getItemPrice());

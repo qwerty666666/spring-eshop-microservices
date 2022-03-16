@@ -4,10 +4,10 @@ import com.example.eshop.catalog.application.services.categorycrudservice.Catego
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.rest.api.CategoriesApi;
-import com.example.eshop.catalog.client.api.model.BasicErrorDto;
-import com.example.eshop.catalog.client.api.model.CategoryDto;
-import com.example.eshop.catalog.client.api.model.CategoryTreeItemDto;
-import com.example.eshop.catalog.client.api.model.PagedProductListDto;
+import com.example.eshop.catalog.client.model.BasicErrorDto;
+import com.example.eshop.catalog.client.model.CategoryDto;
+import com.example.eshop.catalog.client.model.CategoryTreeItemDto;
+import com.example.eshop.catalog.client.model.PagedProductListDto;
 import com.example.eshop.catalog.config.AppProperties;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.rest.mappers.CategoryMapper;

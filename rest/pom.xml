@@ -23,6 +23,7 @@
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
@@ -233,7 +234,6 @@
                             <apiPackage>com.example.eshop.rest.api</apiPackage>
                             <modelPackage>com.example.eshop.rest.dto</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <typeMappings>money=com.example.eshop.sharedkernel.domain.valueobject.Money</typeMappings>
 
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>

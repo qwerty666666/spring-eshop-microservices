@@ -25,6 +25,7 @@
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>catalog-client</artifactId>
@@ -173,9 +174,8 @@
                             <generateModels>false</generateModels>
 
                             <apiPackage>com.example.eshop.catalog.rest.api</apiPackage>
-                            <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
+                            <modelPackage>com.example.eshop.catalog.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <typeMappings>money=com.example.eshop.sharedkernel.domain.valueobject.Money</typeMappings>
 
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>

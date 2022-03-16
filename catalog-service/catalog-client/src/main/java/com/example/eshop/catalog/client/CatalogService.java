@@ -1,5 +1,6 @@
 package com.example.eshop.catalog.client;
 
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import reactor.core.publisher.Mono;
 import java.util.List;

@@ -22,6 +22,7 @@
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>

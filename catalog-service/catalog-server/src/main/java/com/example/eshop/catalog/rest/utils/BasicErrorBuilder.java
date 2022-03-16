@@ -1,6 +1,6 @@
 package com.example.eshop.catalog.rest.utils;
 
-import com.example.eshop.catalog.client.api.model.BasicErrorDto;
+import com.example.eshop.catalog.client.model.BasicErrorDto;
 import org.springframework.http.HttpStatus;
 
 public class BasicErrorBuilder {

@@ -1,10 +1,10 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.PagedProductListDto;
-import com.example.eshop.catalog.client.api.model.ProductDto;
-import com.example.eshop.catalog.client.api.model.ProductWithSkuDto;
-import com.example.eshop.catalog.client.api.model.SkuDto;
-import com.example.eshop.catalog.client.api.model.SkuInfoDto;
+import com.example.eshop.catalog.client.model.PagedProductListDto;
+import com.example.eshop.catalog.client.model.ProductDto;
+import com.example.eshop.catalog.client.model.ProductWithSkuDto;
+import com.example.eshop.catalog.client.model.SkuDto;
+import com.example.eshop.catalog.client.model.SkuInfoDto;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.catalog.domain.product.Sku;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 @Mapper(
         componentModel = "spring",
-        uses = { EanMapper.class, PageableMapper.class, ImageMapper.class, AttributeMapper.class }
+        uses = { PageableMapper.class, ImageMapper.class, AttributeMapper.class }
 )
 public interface ProductMapper {
     ProductDto toProductDto(Product product);

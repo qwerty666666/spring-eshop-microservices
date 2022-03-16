@@ -1,7 +1,7 @@
 package com.example.eshop.cart.rest.utils;
 
-import com.example.eshop.cart.client.api.model.FieldErrorDto;
-import com.example.eshop.cart.client.api.model.ValidationErrorDto;
+import com.example.eshop.cart.client.model.FieldErrorDto;
+import com.example.eshop.cart.client.model.ValidationErrorDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

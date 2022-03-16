@@ -1,12 +1,12 @@
 package com.example.eshop.order.rest.controllers;
 
-import com.example.eshop.catalog.client.api.model.BasicErrorDto;
+import com.example.eshop.catalog.client.model.BasicErrorDto;
 import com.example.eshop.localizer.Localizer;
 import com.example.eshop.order.application.services.queryorder.OrderNotFoundException;
 import com.example.eshop.order.application.services.queryorder.QueryOrderService;
-import com.example.eshop.order.client.api.model.OrderDto;
-import com.example.eshop.order.client.api.model.PagedOrderListDto;
-import com.example.eshop.order.rest.api.OrderApi;
+import com.example.eshop.order.client.api.OrderApi;
+import com.example.eshop.order.client.model.OrderDto;
+import com.example.eshop.order.client.model.PagedOrderListDto;
 import com.example.eshop.order.rest.mappers.OrderMapper;
 import com.example.eshop.order.rest.utils.BasicErrorBuilder;
 import lombok.AccessLevel;

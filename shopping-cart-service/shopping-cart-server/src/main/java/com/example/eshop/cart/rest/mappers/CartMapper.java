@@ -1,11 +1,11 @@
 package com.example.eshop.cart.rest.mappers;
 
-import com.example.eshop.cart.client.api.model.CartDto;
-import com.example.eshop.cart.client.api.model.CartItemDto;
+import com.example.eshop.cart.client.model.CartDto;
+import com.example.eshop.cart.client.model.CartItemDto;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItem;
 import com.example.eshop.catalog.client.CatalogService;
-import com.example.eshop.catalog.client.SkuWithProductDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -17,7 +17,6 @@ import java.util.Optional;
 
 @Mapper(
         componentModel = "spring",
-        uses = { EanMapper.class },
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public abstract class CartMapper {

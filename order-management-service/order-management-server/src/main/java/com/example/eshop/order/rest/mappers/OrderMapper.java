@@ -1,14 +1,14 @@
 package com.example.eshop.order.rest.mappers;
 
 import com.example.eshop.localizer.Localizer;
-import com.example.eshop.order.client.api.model.AttributeDto;
-import com.example.eshop.order.client.api.model.ImageDto;
-import com.example.eshop.order.client.api.model.OrderDto;
-import com.example.eshop.order.client.api.model.OrderLineDto;
-import com.example.eshop.order.client.api.model.OrderStatusDto;
-import com.example.eshop.order.client.api.model.OrderStatusDto.CodeEnum;
-import com.example.eshop.order.client.api.model.OrderTotalDto;
-import com.example.eshop.order.client.api.model.PagedOrderListDto;
+import com.example.eshop.order.client.model.AttributeDto;
+import com.example.eshop.order.client.model.ImageDto;
+import com.example.eshop.order.client.model.OrderDto;
+import com.example.eshop.order.client.model.OrderLineDto;
+import com.example.eshop.order.client.model.OrderStatusDto;
+import com.example.eshop.order.client.model.OrderStatusDto.CodeEnum;
+import com.example.eshop.order.client.model.OrderTotalDto;
+import com.example.eshop.order.client.model.PagedOrderListDto;
 import com.example.eshop.order.domain.order.Order;
 import com.example.eshop.order.domain.order.OrderLine;
 import com.example.eshop.order.domain.order.OrderLineAttribute;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 @Mapper(
         componentModel = "spring",
-        uses = { PageableMapper.class, PhoneMapper.class, EanMapper.class }
+        uses = { PageableMapper.class, PhoneMapper.class }
 )
 public abstract class OrderMapper {
     private Localizer localizer;

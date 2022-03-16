@@ -1,7 +1,7 @@
 package com.example.eshop.order.application.eventlisteners;
 
-import com.example.eshop.catalog.client.api.model.AttributeDto;
-import com.example.eshop.catalog.client.api.model.ImageDto;
+import com.example.eshop.catalog.client.model.AttributeDto;
+import com.example.eshop.catalog.client.model.ImageDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;

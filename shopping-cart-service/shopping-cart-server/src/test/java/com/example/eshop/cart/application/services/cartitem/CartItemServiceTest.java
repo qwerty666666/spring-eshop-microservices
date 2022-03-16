@@ -7,8 +7,8 @@ import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItem;
 import com.example.eshop.catalog.client.CatalogService;
-import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.catalog.client.api.model.ProductDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
+import com.example.eshop.catalog.client.model.ProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +57,7 @@ class CartItemServiceTest {
         // CatalogService
 
         var existedInCartSku = SkuWithProductDto.builder()
-                .ean(existedInCartCartItem.getEan().toString())
+                .ean(existedInCartCartItem.getEan())
                 .quantity(existedInCartCartItem.getQuantity())
                 .product(ProductDto.builder()
                         .name("Test Product")
@@ -66,7 +66,7 @@ class CartItemServiceTest {
                 .build();
 
         var newSku = SkuWithProductDto.builder()
-                .ean(newEan.toString())
+                .ean(newEan)
                 .price(Money.USD(10))
                 .quantity(availableQuantity)
                 .product(ProductDto.builder()

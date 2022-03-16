@@ -1,6 +1,6 @@
 package com.example.eshop.checkout.client.events.orderplacedevent;
 
-import com.example.eshop.catalog.client.SkuWithProductDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import java.util.Objects;

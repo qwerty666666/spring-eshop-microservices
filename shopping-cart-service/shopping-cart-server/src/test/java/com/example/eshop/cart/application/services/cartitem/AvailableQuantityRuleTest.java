@@ -1,7 +1,7 @@
 package com.example.eshop.cart.application.services.cartitem;
 
 import com.example.eshop.cart.FakeData;
-import com.example.eshop.catalog.client.SkuWithProductDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

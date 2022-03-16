@@ -6,12 +6,12 @@ import com.example.eshop.cart.application.services.cartitem.CartItemService;
 import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityException;
 import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
-import com.example.eshop.cart.client.api.model.AddCartItemCommandDto;
-import com.example.eshop.cart.client.api.model.BasicErrorDto;
-import com.example.eshop.cart.client.api.model.CartDto;
+import com.example.eshop.cart.client.api.CartApi;
+import com.example.eshop.cart.client.model.AddCartItemCommandDto;
+import com.example.eshop.cart.client.model.BasicErrorDto;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItemNotFoundException;
-import com.example.eshop.cart.rest.api.CartApi;
 import com.example.eshop.cart.rest.mappers.CartMapper;
 import com.example.eshop.cart.rest.utils.BasicErrorBuilder;
 import com.example.eshop.localizer.Localizer;
@@ -109,7 +109,7 @@ public class CartController extends BaseController implements CartApi {
     private AddCartItemCommand convertAddCartItemCommandParam(AddCartItemCommandDto dto) {
         Ean ean;
         try {
-            ean = Ean.fromString(dto.getEan());
+            ean = dto.getEan();
         } catch (InvalidEanFormatException e) {
             throw new InvalidMethodParameterException(new FieldError("ean", "invalidEanFormat", e.getEan()));
         }

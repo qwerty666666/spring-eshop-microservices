@@ -1,9 +1,9 @@
 package com.example.eshop.order;
 
-import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.catalog.client.api.model.AttributeDto;
-import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.api.model.ProductDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
+import com.example.eshop.catalog.client.model.AttributeDto;
+import com.example.eshop.catalog.client.model.ImageDto;
+import com.example.eshop.catalog.client.model.ProductDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
@@ -46,7 +46,7 @@ public final class FakeData {
                 .images(List.of(new ImageDto("url")))
                 .build();
         var sku = SkuWithProductDto.builder()
-                .ean(ean.toString())
+                .ean(ean)
                 .quantity(quantity)
                 .price(skuPrice)
                 .productId(product.getId())

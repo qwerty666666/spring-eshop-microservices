@@ -1,8 +1,9 @@
 package com.example.eshop.catalog.client;
 
-import com.example.eshop.catalog.client.api.model.ProductDto;
-import com.example.eshop.catalog.client.api.model.SkuDto;
-import com.example.eshop.catalog.client.api.model.SkuInfoDto;
+import com.example.eshop.catalog.client.model.ProductDto;
+import com.example.eshop.catalog.client.model.SkuDto;
+import com.example.eshop.catalog.client.model.SkuInfoDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -37,7 +38,7 @@ public class CatalogServiceImpl implements CatalogService {
                                 .orElseThrow(() -> new RuntimeException("CatalogService response error. Product " +
                                         sku.getProductId() + " not found in response."));
 
-                        skuMap.put(Ean.fromString(sku.getEan()), createSkuWithProduct(sku, product));
+                        skuMap.put(sku.getEan(), createSkuWithProduct(sku, product));
                     }
 
                     // if there are EANs for which sku is not found, map them to null

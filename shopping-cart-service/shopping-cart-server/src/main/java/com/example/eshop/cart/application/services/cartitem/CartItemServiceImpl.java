@@ -3,7 +3,7 @@ package com.example.eshop.cart.application.services.cartitem;
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.catalog.client.CatalogService;
-import com.example.eshop.catalog.client.SkuWithProductDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;

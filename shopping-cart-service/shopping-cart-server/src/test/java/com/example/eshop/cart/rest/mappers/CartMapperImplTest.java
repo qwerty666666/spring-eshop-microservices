@@ -3,10 +3,10 @@ package com.example.eshop.cart.rest.mappers;
 import com.example.eshop.cart.config.MapperTest;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.catalog.client.CatalogService;
-import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.catalog.client.api.model.AttributeDto;
-import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.api.model.ProductDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
+import com.example.eshop.catalog.client.model.AttributeDto;
+import com.example.eshop.catalog.client.model.ImageDto;
+import com.example.eshop.catalog.client.model.ProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedtest.ArgMatchers;
@@ -47,7 +47,7 @@ class CartMapperImplTest {
                 .build();
 
         var sku1 = SkuWithProductDto.builder()
-                .ean(ean1.toString())
+                .ean(ean1)
                 .price(price1)
                 .quantity(availableQuantity1)
                 .attributes(List.of(new AttributeDto(1L, "size", "XL")))
@@ -55,7 +55,7 @@ class CartMapperImplTest {
                 .product(product)
                 .build();
         var sku2 = SkuWithProductDto.builder()
-                .ean(ean2.toString())
+                .ean(ean2)
                 .price(price2)
                 .quantity(availableQuantity2)
                 .attributes(List.of(new AttributeDto(1L, "size", "XXL")))
