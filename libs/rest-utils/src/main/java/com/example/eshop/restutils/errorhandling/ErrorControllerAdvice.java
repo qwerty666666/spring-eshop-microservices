@@ -1,8 +1,7 @@
-package com.example.eshop.cart.rest.controllers;
+package com.example.eshop.restutils.errorhandling;
 
-import com.example.eshop.cart.client.model.ValidationErrorDto;
-import com.example.eshop.cart.rest.utils.ValidationErrorBuilder;
 import com.example.eshop.localizer.Localizer;
+import com.example.eshop.rest.models.ValidationErrorDto;
 import com.example.eshop.sharedkernel.domain.valueobject.InvalidEanFormatException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
@@ -29,6 +28,25 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Provides common error handling for:
+ *
+ * <ul>
+ *     <li>Controller method parameters validation errors:
+ *         <ul>
+ *             <li>ConstraintViolationException
+ *             <li>MethodArgumentNotValidException
+ *         </ul>
+ *     </li>
+ *
+ *     <li>Controller method argument conversion errors:
+ *         <ul>
+ *             <li>MethodArgumentTypeMismatchException
+ *             <li>HttpMessageNotReadableException
+ *         </ul>
+ *     </li>
+ * </ul>
+ */
 @ControllerAdvice
 @RequiredArgsConstructor
 public class ErrorControllerAdvice extends ResponseEntityExceptionHandler {
@@ -43,16 +61,16 @@ public class ErrorControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler
     private ResponseEntity<ValidationErrorDto> onConstraintViolationException(ConstraintViolationException e) {
-        var errorBuilder = ValidationErrorBuilder.newInstance();
+        var errors = new ValidationErrorDto();
 
         e.getConstraintViolations().forEach(violation -> {
             var field = getFieldPath(violation);
             var message = violation.getMessage();
 
-            errorBuilder.addError(field, message);
+            errors.addError(field, message);
         });
 
-        return ResponseEntity.badRequest().body(errorBuilder.build());
+        return ResponseEntity.badRequest().body(errors);
     }
 
     /**
@@ -60,8 +78,10 @@ public class ErrorControllerAdvice extends ResponseEntityExceptionHandler {
      */
     protected String getFieldPath(ConstraintViolation<?> violation) {
         return StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
+                // find last Node in Path
+                .reduce((prev, next) -> next)
                 .map(Node::getName)
-                .collect(Collectors.joining("."));
+                .orElse("");
     }
 
     /**
@@ -104,16 +124,16 @@ public class ErrorControllerAdvice extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
-        var error = ValidationErrorBuilder.newInstance();
+        var errors = new ValidationErrorDto();
 
         e.getBindingResult().getFieldErrors().forEach(fieldError -> {
             var field = fieldError.getField();
             var message = fieldError.getDefaultMessage();
 
-            error.addError(field, message);
+            errors.addError(field, message);
         });
 
-        return handleExceptionInternal(e, error.build(), headers, status, request);
+        return handleExceptionInternal(e, errors, headers, status, request);
     }
 
     /**
@@ -197,8 +217,7 @@ public class ErrorControllerAdvice extends ResponseEntityExceptionHandler {
      * Builds {@link ValidationErrorDto} with single field error
      */
     protected ValidationErrorDto buildValidationErrorDto(String field, String message) {
-        return ValidationErrorBuilder.newInstance()
-                .addError(field, message)
-                .build();
+        return new ValidationErrorDto()
+                .addError(field, message);
     }
 }

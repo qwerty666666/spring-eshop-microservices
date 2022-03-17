@@ -51,6 +51,8 @@ paths:
           $ref: '#/components/responses/validation_error'
         401:
           $ref: '#/components/responses/requires_authentication'
+        422:
+          $ref: '#/components/responses/unprocessable_entity'
 
   /cart/items/{ean}:
     delete:
@@ -246,6 +248,18 @@ components:
             default:
               $ref: '#/components/examples/not_found'
 
+    unprocessable_entity:
+      description: Unprocessable Entity indicates that the server understands  
+        the content type of the request entity, and the syntax of the request 
+        entity is correct, but it was unable to process the contained instructions.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/basic-error'
+          examples:
+            default:
+              $ref: '#/components/examples/unprocessable_entity'
+
     requires_authentication:
       description: Requires authentication
 
@@ -276,6 +290,11 @@ components:
       value:
         status: 404
         detail: Resource not found
+
+    unprocessable_entity:
+      value:
+        status: 422
+        detail: Can't do operation with given parameters
 
   securitySchemes:
     bearerAuth:

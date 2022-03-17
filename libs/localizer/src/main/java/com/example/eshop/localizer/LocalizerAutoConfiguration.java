@@ -19,7 +19,7 @@ public class LocalizerAutoConfiguration {
      */
     @Bean
     @ConditionalOnBean(MessageSource.class)
-    @ConditionalOnMissingBean(Localizer.class)
+    @ConditionalOnMissingBean
     public Localizer localizer(MessageSource messageSource) {
         return new MessageSourceLocalizer(messageSource, LocaleContextHolder::getLocale);
     }

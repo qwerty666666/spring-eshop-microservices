@@ -27,6 +27,10 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+        </dependency>
 
         <!-- Swagger -->
         <dependency>
@@ -61,6 +65,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webflux</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>${openapi-generator-maven-plugin.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -89,12 +99,14 @@
                             <generateApiTests>false</generateApiTests>
 
                             <typeMappings>
-                                <mapping>money=Money</mapping>
-                                <mapping>string+gtin13=Ean</mapping>
+                                <mapping>string+gtin13=ean</mapping>
                             </typeMappings>
                             <importMappings>
-                                <mapping>Money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
-                                <mapping>Ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <mapping>money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
+                                <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
+                                <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
                             </importMappings>
 
                             <configOptions>

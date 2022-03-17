@@ -9,13 +9,12 @@ import com.example.eshop.cart.application.services.cartitem.RemoveCartItemComman
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.client.api.CartApi;
 import com.example.eshop.cart.client.model.AddCartItemCommandDto;
-import com.example.eshop.cart.client.model.BasicErrorDto;
 import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItemNotFoundException;
 import com.example.eshop.cart.rest.mappers.CartMapper;
-import com.example.eshop.cart.rest.utils.BasicErrorBuilder;
 import com.example.eshop.localizer.Localizer;
+import com.example.eshop.rest.models.BasicErrorDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,19 +40,19 @@ public class CartController extends BaseController implements CartApi {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private BasicErrorDto handleProductNotFoundException(ProductNotFoundException e) {
-        return BasicErrorBuilder.newInstance()
-                .setStatus(HttpStatus.NOT_FOUND)
-                .setDetail(getLocalizer().getMessage("productNotFound", e.getEan()))
-                .build();
+        return new BasicErrorDto(
+                HttpStatus.BAD_REQUEST.value(),
+                getLocalizer().getMessage("productNotFound", e.getEan())
+        );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private BasicErrorDto handleCartItemNotFoundException(CartItemNotFoundException e) {
-        return BasicErrorBuilder.newInstance()
-                .setStatus(HttpStatus.NOT_FOUND)
-                .setDetail(getLocalizer().getMessage("cartItemNotFound", e.getEan()))
-                .build();
+        return new BasicErrorDto(
+                HttpStatus.NOT_FOUND.value(),
+                getLocalizer().getMessage("cartItemNotFound", e.getEan())
+        );
     }
 
     @ExceptionHandler
@@ -67,10 +66,10 @@ public class CartController extends BaseController implements CartApi {
             message = getLocalizer().getMessage("cartItemCantBeAdded");
         }
 
-        return BasicErrorBuilder.newInstance()
-                .setStatus(HttpStatus.BAD_REQUEST)
-                .setDetail(message)
-                .build();
+        return new BasicErrorDto(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                message
+        );
     }
 
     @Override
