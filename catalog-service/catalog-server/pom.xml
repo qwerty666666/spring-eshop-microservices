@@ -45,6 +45,14 @@
             <artifactId>localizer</artifactId>
             <version>${localizer.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>rest-utils</artifactId>
+        </dependency>
 
         <!-- Devtools -->
         <dependency>
@@ -176,6 +184,17 @@
                             <apiPackage>com.example.eshop.catalog.rest.api</apiPackage>
                             <modelPackage>com.example.eshop.catalog.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
+
+                            <typeMappings>
+                                <mapping>string+gtin13=ean</mapping>
+                            </typeMappings>
+                            <importMappings>
+                                <mapping>money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
+                                <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
+                                <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
+                            </importMappings>
 
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>

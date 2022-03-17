@@ -1,6 +1,5 @@
 package com.example.eshop.order.rest.controllers;
 
-import com.example.eshop.catalog.client.model.BasicErrorDto;
 import com.example.eshop.localizer.Localizer;
 import com.example.eshop.order.application.services.queryorder.OrderNotFoundException;
 import com.example.eshop.order.application.services.queryorder.QueryOrderService;
@@ -8,7 +7,7 @@ import com.example.eshop.order.client.api.OrderApi;
 import com.example.eshop.order.client.model.OrderDto;
 import com.example.eshop.order.client.model.PagedOrderListDto;
 import com.example.eshop.order.rest.mappers.OrderMapper;
-import com.example.eshop.order.rest.utils.BasicErrorBuilder;
+import com.example.eshop.rest.models.BasicErrorDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +36,10 @@ public class OrderController extends BaseController implements OrderApi {
     @ExceptionHandler(OrderNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private BasicErrorDto handleOrderNotFoundException() {
-        return BasicErrorBuilder.newInstance()
-                .setStatus(HttpStatus.NOT_FOUND)
-                .setDetail(getLocalizer().getMessage("orderNotFound"))
-                .build();
+        return new BasicErrorDto(
+                HttpStatus.NOT_FOUND.value(),
+                getLocalizer().getMessage("orderNotFound")
+        );
     }
 
     @Override

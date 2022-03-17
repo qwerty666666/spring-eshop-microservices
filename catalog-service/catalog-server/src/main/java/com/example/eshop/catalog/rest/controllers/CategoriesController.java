@@ -4,7 +4,6 @@ import com.example.eshop.catalog.application.services.categorycrudservice.Catego
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.rest.api.CategoriesApi;
-import com.example.eshop.catalog.client.model.BasicErrorDto;
 import com.example.eshop.catalog.client.model.CategoryDto;
 import com.example.eshop.catalog.client.model.CategoryTreeItemDto;
 import com.example.eshop.catalog.client.model.PagedProductListDto;
@@ -12,11 +11,11 @@ import com.example.eshop.catalog.config.AppProperties;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.rest.mappers.CategoryMapper;
 import com.example.eshop.catalog.rest.mappers.ProductMapper;
-import com.example.eshop.catalog.rest.utils.BasicErrorBuilder;
+import com.example.eshop.localizer.Localizer;
+import com.example.eshop.rest.models.BasicErrorDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +37,7 @@ public class CategoriesController implements CategoriesApi {
     private final ProductMapper productMapper;
     private final CategoryMapper categoryMapper;
 
-    private final MessageSource messageSource;
+    private final Localizer localizer;
 
     /**
      * @return 404 response if Category doesn't exist
@@ -46,10 +45,10 @@ public class CategoriesController implements CategoriesApi {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private BasicErrorDto handleCategoryNotFoundException(CategoryNotFoundException e, Locale locale) {
-        return BasicErrorBuilder.newInstance()
-                .setStatus(HttpStatus.NOT_FOUND)
-                .setDetail(getMessageSource().getMessage("categoryNotFound", new Object[]{ e.getCategoryId() }, locale))
-                .build();
+        return new BasicErrorDto(
+                HttpStatus.NOT_FOUND.value(),
+                getLocalizer().getMessage("categoryNotFound", e.getCategoryId())
+        );
     }
 
     @Override

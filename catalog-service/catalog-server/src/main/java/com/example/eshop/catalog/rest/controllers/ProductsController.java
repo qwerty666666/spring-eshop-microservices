@@ -2,19 +2,16 @@ package com.example.eshop.catalog.rest.controllers;
 
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductNotFoundException;
+import com.example.eshop.catalog.client.model.PagedProductListDto;
 import com.example.eshop.catalog.client.model.ProductWithSkuDto;
 import com.example.eshop.catalog.client.model.SkuInfoDto;
-import com.example.eshop.catalog.rest.api.ProductsApi;
-import com.example.eshop.catalog.client.model.BasicErrorDto;
-import com.example.eshop.catalog.client.model.PagedProductListDto;
 import com.example.eshop.catalog.config.AppProperties;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
+import com.example.eshop.catalog.rest.api.ProductsApi;
 import com.example.eshop.catalog.rest.mappers.ProductMapper;
-import com.example.eshop.catalog.rest.utils.BasicErrorBuilder;
 import com.example.eshop.localizer.Localizer;
-import com.example.eshop.sharedkernel.domain.validation.FieldError;
+import com.example.eshop.rest.models.BasicErrorDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import com.example.eshop.sharedkernel.domain.valueobject.InvalidEanFormatException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -45,10 +42,10 @@ public class ProductsController implements ProductsApi {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private BasicErrorDto handleProductNotFoundException(ProductNotFoundException e) {
-        return BasicErrorBuilder.newInstance()
-                .setStatus(HttpStatus.NOT_FOUND)
-                .setDetail(getLocalizer().getMessage("productNotFound", e.getProductId()))
-                .build();
+        return new BasicErrorDto(
+                HttpStatus.NOT_FOUND.value(),
+                getLocalizer().getMessage("productNotFound", e.getProductId())
+        );
     }
 
     @Override
@@ -68,32 +65,18 @@ public class ProductsController implements ProductsApi {
     }
 
     @Override
-    public ResponseEntity<SkuInfoDto> getSku(List<String> eanStrings) {
+    public ResponseEntity<SkuInfoDto> getSku(List<Ean> eanList) {
         SkuInfoDto skuInfo;
 
-        if (CollectionUtils.isEmpty(eanStrings)) {
+        if (CollectionUtils.isEmpty(eanList)) {
             skuInfo = emptySkuList();
         } else {
-            var eanList = mapToEanList(eanStrings);
             var products = productCrudService.getByEan(eanList, Pageable.unpaged());
 
             skuInfo = productMapper.toSkuList(eanList, products.getContent());
         }
 
         return ResponseEntity.ok(skuInfo);
-    }
-
-    /**
-     * Maps requested EAN list to {@link Ean} list
-     *
-     * @throws InvalidMethodParameterException if there are any invalid EAN
-     */
-    private List<Ean> mapToEanList(List<String> ean) {
-        try {
-            return ean.stream().map(Ean::fromString).toList();
-        } catch (InvalidEanFormatException e) {
-            throw new InvalidMethodParameterException(new FieldError("ean", "invalidEanFormat", e.getEan()));
-        }
     }
 
     /**

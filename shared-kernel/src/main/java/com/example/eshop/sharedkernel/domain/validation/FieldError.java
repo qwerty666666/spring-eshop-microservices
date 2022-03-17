@@ -18,4 +18,9 @@ public class FieldError {
         this.messageCode = messageCode;
         this.messageParams = messageParams;
     }
+
+    @Override
+    public String toString() {
+        return "Error: field - %s, messageCode - %s".formatted(field, messageCode);
+    }
 }

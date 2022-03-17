@@ -7,6 +7,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Represents validation result.
@@ -88,5 +91,19 @@ public class Errors implements Iterable<FieldError> {
         return fieldsErrors.values().stream()
                 .flatMap(Collection::stream)
                 .iterator();
+    }
+
+    /**
+     * @return non-parallel stream of {@link FieldError}
+     */
+    public Stream<FieldError> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
+
+    @Override
+    public String toString() {
+        return "Errors: " + stream()
+                .map(FieldError::toString)
+                .collect(Collectors.joining("; "));
     }
 }
