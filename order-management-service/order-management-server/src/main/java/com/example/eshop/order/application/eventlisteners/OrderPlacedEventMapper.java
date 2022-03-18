@@ -1,8 +1,8 @@
 package com.example.eshop.order.application.eventlisteners;
 
-import com.example.eshop.catalog.client.model.AttributeDto;
-import com.example.eshop.catalog.client.model.ImageDto;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
+import com.example.eshop.cart.client.model.AttributeDto;
+import com.example.eshop.cart.client.model.CartItemDto;
+import com.example.eshop.cart.client.model.ImageDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
@@ -21,7 +21,7 @@ public interface OrderPlacedEventMapper {
     default Order toOrder(OrderPlacedEvent event) {
         var order = event.order();
 
-        var orderLines = order.cart().items().stream()
+        var orderLines = order.cart().getItems().stream()
                 .map(this::toOrderLine)
                 .toList();
 
@@ -45,10 +45,7 @@ public interface OrderPlacedEventMapper {
 
     Address toAddress(DeliveryAddressDto address);
 
-    @Mapping(target = "productName", source = "sku.product.name")
-    @Mapping(target = "attributes", source = "sku.attributes")
-    @Mapping(target = "images", source = "sku.product.images")
-    @Mapping(target = "itemPrice", source = "sku.price")
+    @Mapping(target = "itemPrice", source = "price")
     OrderLine toOrderLine(CartItemDto item);
 
     default String toImage(ImageDto image) {
@@ -56,6 +53,6 @@ public interface OrderPlacedEventMapper {
     }
 
     default OrderLineAttribute toOrderLineAttribute(AttributeDto attr) {
-        return new OrderLineAttribute(attr.getId(), attr.getValue(), attr.getName());
+        return new OrderLineAttribute(Long.valueOf(attr.getId()), attr.getValue(), attr.getName());
     }
 }

@@ -15,6 +15,7 @@
     <description>Shared DTO for checkout service clients</description>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
@@ -22,6 +23,10 @@
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>catalog-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shopping-cart-client</artifactId>
         </dependency>
 
         <dependency>

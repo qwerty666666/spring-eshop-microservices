@@ -1,8 +1,8 @@
 package com.example.eshop.order.application.eventlisteners;
 
-import com.example.eshop.catalog.client.model.AttributeDto;
-import com.example.eshop.catalog.client.model.ImageDto;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
+import com.example.eshop.cart.client.model.AttributeDto;
+import com.example.eshop.cart.client.model.CartItemDto;
+import com.example.eshop.cart.client.model.ImageDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
@@ -40,10 +40,10 @@ class OrderPlacedEventMapperImplTest {
         assertThat(order.getId()).isEqualTo(orderDto.id());
         assertThat(order.getCustomerId()).isEqualTo(orderDto.customerId());
         assertThat(order.getCreationDate()).isEqualTo(event.creationDate());
-        assertThat(order.getCartPrice()).isEqualTo(orderDto.cart().price());
+        assertThat(order.getCartPrice()).isEqualTo(orderDto.cart().getTotalPrice());
         assertDeliveryEquals(order.getDelivery(), orderDto.delivery());
         assertPaymentEquals(order.getPayment(), orderDto.payment());
-        assertListEquals(order.getLines(), orderDto.cart().items(), this::assertOrderLineEquals);
+        assertListEquals(order.getLines(), orderDto.cart().getItems(), this::assertOrderLineEquals);
     }
 
     private void assertDeliveryEquals(Delivery delivery, DeliveryDto deliveryDto) {
@@ -69,17 +69,16 @@ class OrderPlacedEventMapperImplTest {
     }
 
     private void assertOrderLineEquals(OrderLine line, CartItemDto itemDto) {
-        assertThat(line.getProductName()).isEqualTo(itemDto.sku().getProduct().getName());
-        assertThat(line.getQuantity()).isEqualTo(itemDto.quantity());
-        assertThat(line.getPrice()).isEqualTo(itemDto.price());
-        assertThat(line.getEan()).isEqualTo(itemDto.ean());
-        assertThat(line.getItemPrice()).isEqualTo(itemDto.sku().getPrice());
-        assertListEquals(line.getAttributes(), itemDto.sku().getAttributes(), this::assertAttributeEquals);
-        assertListEquals(line.getImages(), itemDto.sku().getProduct().getImages(), this::assertImageEquals);
+        assertThat(line.getProductName()).isEqualTo(itemDto.getProductName());
+        assertThat(line.getQuantity()).isEqualTo(itemDto.getQuantity());
+        assertThat(line.getItemPrice()).isEqualTo(itemDto.getPrice());
+        assertThat(line.getEan()).isEqualTo(itemDto.getEan());
+        assertListEquals(line.getAttributes(), itemDto.getAttributes(), this::assertAttributeEquals);
+        assertListEquals(line.getImages(), itemDto.getImages(), this::assertImageEquals);
     }
 
     private void assertAttributeEquals(OrderLineAttribute attr, AttributeDto attrDto) {
-        assertThat(attr.getAttributeId()).isEqualTo(attrDto.getId());
+        assertThat(attr.getAttributeId()).isEqualTo(Long.valueOf(attrDto.getId()));
         assertThat(attr.getName()).isEqualTo(attrDto.getName());
         assertThat(attr.getValue()).isEqualTo(attrDto.getValue());
     }

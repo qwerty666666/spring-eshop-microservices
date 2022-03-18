@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
-public class OrderPlacedEventPublisherImpl implements OrderPlacedEventPublisher {
+public class KafkaOrderPlacedEventPublisher implements OrderPlacedEventPublisher {
     private static final Duration REPLY_TIMEOUT = Duration.ofSeconds(10);
 
     private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;

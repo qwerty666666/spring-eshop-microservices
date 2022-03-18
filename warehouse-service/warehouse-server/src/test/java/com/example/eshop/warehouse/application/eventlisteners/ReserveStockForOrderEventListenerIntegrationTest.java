@@ -1,10 +1,8 @@
 package com.example.eshop.warehouse.application.eventlisteners;
 
-import com.example.eshop.catalog.client.model.SkuWithProductDto;
-import com.example.eshop.catalog.client.model.ProductDto;
+import com.example.eshop.cart.client.model.CartDto;
+import com.example.eshop.cart.client.model.CartItemDto;
 import com.example.eshop.checkout.client.CheckoutApi;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartDto;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryServiceDto;
@@ -107,31 +105,20 @@ class ReserveStockForOrderEventListenerIntegrationTest {
     private final OrderDto order = OrderDto.builder()
             .id(UUID.randomUUID())
             .customerId("customerId")
-            .cart(new CartDto(
-                    price1.add(price2),
-                    List.of(
-                            new CartItemDto(
-                                    ean1,
-                                    price1,
-                                    qty1,
-                                    SkuWithProductDto.builder()
-                                            .ean(ean1)
-                                            .price(price1)
-                                            .product(ProductDto.builder().build())
-                                            .build()
-                            ),
-                            new CartItemDto(
-                                    ean2,
-                                    price2,
-                                    qty2,
-                                    SkuWithProductDto.builder()
-                                            .ean(ean2)
-                                            .price(price2)
-                                            .product(ProductDto.builder().build())
-                                            .build()
-                            )
-                    )
-            ))
+            .cart(new CartDto()
+                    .id("1")
+                    .totalPrice((price1.multiply(qty1)).add(price2.multiply(qty2)))
+                    .items(List.of(
+                            new CartItemDto()
+                                    .ean(ean1)
+                                    .price(price1)
+                                    .quantity(qty1),
+                            new CartItemDto()
+                                    .ean(ean2)
+                                    .price(price2)
+                                    .quantity(qty2)
+                    ))
+            )
             .totalPrice(Money.USD(300))
             .delivery(new DeliveryDto(
                     new DeliveryAddressDto("fullname", Phone.fromString("+79999999999"), "country", "city", "street", "building", "flat"),

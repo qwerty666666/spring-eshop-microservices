@@ -1,5 +1,6 @@
 package com.example.eshop.checkout.client.events.orderplacedevent;
 
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import lombok.Builder;
 import java.util.Objects;
