@@ -1,5 +1,6 @@
 package com.example.eshop.cart.domain.checkout.placeorder;
 
+import com.example.eshop.cart.domain.cart.CartMapper;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
 import lombok.RequiredArgsConstructor;
@@ -34,14 +35,14 @@ public class PlaceOrderValidator {
     }
 
     private void validateCart(Order order, Errors errors) {
-        var cart = order.getCart();
+        var cart = CartMapper.getInstance().toCartDto(order.getCart());
 
         if (cart == null) {
             errors.addError(CART_FIELD, "cart.null");
             return;
         }
 
-        if (cart.isEmpty()) {
+        if (cart.getItems().isEmpty()) {
             errors.addError(CART_FIELD, "cart.empty");
         }
     }

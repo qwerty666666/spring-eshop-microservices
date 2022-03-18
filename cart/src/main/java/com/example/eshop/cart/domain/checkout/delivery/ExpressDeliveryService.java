@@ -1,5 +1,7 @@
 package com.example.eshop.cart.domain.checkout.delivery;
 
+import com.example.eshop.cart.client.model.CartItemDto;
+import com.example.eshop.cart.domain.cart.CartMapper;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import javax.persistence.DiscriminatorValue;
@@ -14,7 +16,10 @@ public class ExpressDeliveryService extends DeliveryService {
 
     @Override
     public boolean canDeliver(Order order) {
-        return order.getCart().getTotalItemsQuantity() > MAX_ITEMS_THRESHOLD;
+        var cart = CartMapper.getInstance().toCartDto(order.getCart());
+        var totalItemsQuantity = cart.getItems().stream().mapToInt(CartItemDto::getQuantity).sum();
+
+        return totalItemsQuantity <= MAX_ITEMS_THRESHOLD;
     }
 
     @Override
