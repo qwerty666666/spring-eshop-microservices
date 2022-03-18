@@ -49,7 +49,6 @@ class CheckoutMapperTest {
                 .order(new Order(UUID.randomUUID(), FakeData.customerId(), cart, FakeData.deliveryAddress(), deliveryService, paymentService))
                 .availableDeliveries(List.of(deliveryService))
                 .availablePayments(List.of(paymentService))
-                .total(new Total(Money.USD(1), Money.USD(2.3), Money.USD(10)))
                 .build();
 
         // When

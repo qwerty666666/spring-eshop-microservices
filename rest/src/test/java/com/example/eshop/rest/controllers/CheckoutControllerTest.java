@@ -88,16 +88,20 @@ class CheckoutControllerTest {
 
     @Nested
     class CheckoutProcessTest {
-        private final CheckoutForm checkoutForm = CheckoutForm.builder()
-                .order(new Order(UUID.randomUUID(), customerId, cart, deliveryAddress, null, null))
-                .availableDeliveries(Collections.emptyList())
-                .availablePayments(Collections.emptyList())
-                .total(new Total(cart, null))
-                .build();
-        private final CheckoutFormDto checkoutFormDto = new CheckoutFormDto();
+        private Order order;
+        private CheckoutForm checkoutForm;
+        private CheckoutFormDto checkoutFormDto;
 
         @BeforeEach
         void setUp() {
+            order = new Order(UUID.randomUUID(), customerId, cart, deliveryAddress, null, null);
+            checkoutForm = CheckoutForm.builder()
+                    .order(order)
+                    .availableDeliveries(Collections.emptyList())
+                    .availablePayments(Collections.emptyList())
+                    .build();
+            checkoutFormDto = new CheckoutFormDto();
+
             when(checkoutMapper.toCheckoutFormDto(checkoutForm)).thenReturn(checkoutFormDto);
         }
 

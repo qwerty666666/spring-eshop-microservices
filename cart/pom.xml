@@ -19,6 +19,7 @@
         <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
         <localizer.verison>1.0.0-SNAPSHOT</localizer.verison>
         <auth.version>1.0.0-SNAPSHOT</auth.version>
+        <shopping-cart-service.version>1.0.0-SNAPSHOT</shopping-cart-service.version>
     </properties>
 
     <dependencies>
@@ -52,6 +53,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>localizer</artifactId>
             <version>${localizer.verison}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shopping-cart-client</artifactId>
+            <version>${shopping-cart-service.version}</version>
         </dependency>
 
         <!-- Devtools -->

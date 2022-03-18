@@ -29,13 +29,10 @@ public class CheckoutProcessServiceImpl implements CheckoutProcessService {
         var availableDeliveries = getAvailableDeliveries(order);
         var availablePayments = getAvailablePayments(order);
 
-        var total = getTotal(order);
-
         return CheckoutForm.builder()
                 .order(order)
                 .availableDeliveries(availableDeliveries)
                 .availablePayments(availablePayments)
-                .total(total)
                 .build();
     }
 
@@ -49,9 +46,5 @@ public class CheckoutProcessServiceImpl implements CheckoutProcessService {
         return paymentServiceRepository.findAll().stream()
                 .filter(paymentService -> paymentService.canPay(order))
                 .toList();
-    }
-
-    private Total getTotal(Order order) {
-        return new Total(order.getCart(), order.getShipmentInfo());
     }
 }

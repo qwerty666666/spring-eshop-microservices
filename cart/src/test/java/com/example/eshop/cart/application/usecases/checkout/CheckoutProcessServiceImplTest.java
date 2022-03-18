@@ -37,7 +37,6 @@ class CheckoutProcessServiceImplTest {
 
     private final String customerId = FakeData.customerId();
     private final DeliveryAddress address = FakeData.deliveryAddress();
-    private Money cartItemsPrice;
     private Cart cart;
 
     private CheckoutProcessServiceImpl checkoutProcessService;
@@ -61,7 +60,6 @@ class CheckoutProcessServiceImplTest {
         // Cart
 
         cart = FakeData.cart(customerId);
-        cartItemsPrice = cart.getItems().stream().map(CartItem::getItemPrice).reduce(Money.ZERO, Money::add);
 
         var cartRepository = mock(CartRepository.class);
         when(cartRepository.findByNaturalId(customerId)).thenReturn(Optional.of(cart));
@@ -87,7 +85,7 @@ class CheckoutProcessServiceImplTest {
     void whenProcess_thenTotalSumShouldBeSumOfCartAndDelivery() {
         // Given
         var createOrderDto = new CreateOrderDto(customerId, cart, address, SUPPORTED_DELIVERY_ID, SUPPORTED_PAYMENT_ID);
-        var expectedPrice = cartItemsPrice.add(DeliveryServiceStub.COST);
+        var expectedPrice = cart.getTotalPrice().add(DeliveryServiceStub.COST);
 
         // When
         var form = checkoutProcessService.process(createOrderDto);
