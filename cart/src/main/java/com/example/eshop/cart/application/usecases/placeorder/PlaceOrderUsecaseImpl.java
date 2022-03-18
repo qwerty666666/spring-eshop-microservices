@@ -1,7 +1,6 @@
 package com.example.eshop.cart.application.usecases.placeorder;
 
 import com.example.eshop.cart.client.model.CartItemDto;
-import com.example.eshop.cart.domain.cart.CartMapper;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.order.OrderFactory;
@@ -64,7 +63,7 @@ public class PlaceOrderUsecaseImpl implements PlaceOrderUsecase {
     }
 
     private OrderDto createOrderDto(Order order) {
-        var eanList = CartMapper.getInstance().toCartDto(order.getCart()).getItems().stream()
+        var eanList = order.getCart().getItems().stream()
                 .map(CartItemDto::getEan)
                 .toList();
         var skuInfo = catalogService.getSku(eanList)

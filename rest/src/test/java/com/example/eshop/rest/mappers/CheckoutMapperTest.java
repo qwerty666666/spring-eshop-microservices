@@ -2,6 +2,7 @@ package com.example.eshop.rest.mappers;
 
 import com.example.eshop.cart.application.usecases.checkout.CheckoutForm;
 import com.example.eshop.cart.application.usecases.checkout.Total;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
@@ -11,13 +12,11 @@ import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.rest.config.MappersTest;
-import com.example.eshop.rest.dto.CartDto;
 import com.example.eshop.rest.dto.CheckoutFormDto;
 import com.example.eshop.rest.dto.CheckoutTotalDto;
 import com.example.eshop.rest.dto.DeliveryAddressDto;
 import com.example.eshop.rest.dto.DeliveryServiceDto;
 import com.example.eshop.rest.dto.PaymentServiceDto;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @MappersTest
 class CheckoutMapperTest {
@@ -40,13 +38,10 @@ class CheckoutMapperTest {
         // Given
         var deliveryService = new DeliveryServiceStub(new DeliveryServiceId("1"), "delivery");
         var paymentService = new PaymentServiceStub(new PaymentServiceId("1"), "payment");
-        var cart = FakeData.cart();
-
-        var cartDto = new CartDto();
-        when(cartMapper.toCartDto(cart)).thenReturn(cartDto);
+        var cartDto = FakeData.emptyCartDto();
 
         var checkoutForm = CheckoutForm.builder()
-                .order(new Order(UUID.randomUUID(), FakeData.customerId(), cart, FakeData.deliveryAddress(), deliveryService, paymentService))
+                .order(new Order(UUID.randomUUID(), FakeData.customerId(), cartDto, FakeData.deliveryAddress(), deliveryService, paymentService))
                 .availableDeliveries(List.of(deliveryService))
                 .availablePayments(List.of(paymentService))
                 .build();

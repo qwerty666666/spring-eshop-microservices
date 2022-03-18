@@ -1,6 +1,6 @@
 package com.example.eshop.cart.domain.checkout.placeorder;
 
-import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
@@ -32,7 +32,7 @@ class PlaceOrderValidatorTest {
     private final String city = FakeData.city();
     private final String building = FakeData.building();
     private final DeliveryAddress address = FakeData.deliveryAddress();
-    private final Cart cart = FakeData.cart();
+    private final CartDto cart = FakeData.cartDto();
 
     private final PlaceOrderValidator validator = new PlaceOrderValidator();
 
@@ -167,12 +167,12 @@ class PlaceOrderValidatorTest {
         }
 
         @Test
-        void notSupportedPaymentService() {
-            var order = createOrderWithCart(new Cart(customerId));
+        void emptyCart() {
+            var order = createOrderWithCart(FakeData.emptyCartDto());
             assertValidationReturnsError("empty cart", order, PlaceOrderValidator.CART_FIELD);
         }
 
-        private Order createOrderWithCart(@Nullable Cart cart) {
+        private Order createOrderWithCart(@Nullable CartDto cart) {
             return new Order(UUID.randomUUID(), customerId, cart, address, SUPPORTED_DELIVERY, SUPPORTED_PAYMENT);
         }
     }

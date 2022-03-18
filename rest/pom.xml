@@ -257,6 +257,8 @@
                                 <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
                                 <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
                                 <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
+                                <mapping>cart=com.example.eshop.cart.client.model.CartDto</mapping>
+                                <mapping>cart-item=com.example.eshop.cart.client.model.CartItemDto</mapping>
                             </importMappings>
 
                             <configOptions>

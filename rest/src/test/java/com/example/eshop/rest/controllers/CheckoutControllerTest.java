@@ -4,9 +4,9 @@ import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
 import com.example.eshop.cart.application.usecases.checkout.CheckoutForm;
 import com.example.eshop.cart.application.usecases.checkout.CheckoutProcessService;
-import com.example.eshop.cart.application.usecases.checkout.Total;
 import com.example.eshop.cart.application.usecases.clearcart.ClearCartService;
 import com.example.eshop.cart.application.usecases.placeorder.PlaceOrderUsecase;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
@@ -62,6 +62,7 @@ class CheckoutControllerTest {
 
     private final String customerId = AuthConfig.CUSTOMER_ID;
     private final Cart cart = FakeData.cart(customerId);
+    private final CartDto cartDto = FakeData.cartDto();
 
     private final DeliveryAddress deliveryAddress = FakeData.deliveryAddress();
     private final CheckoutRequestDto checkoutRequestDto = new CheckoutRequestDto()
@@ -76,7 +77,7 @@ class CheckoutControllerTest {
             );
     private final CreateOrderDto createOrderDto = CreateOrderDto.builder()
             .customerId(customerId)
-            .cart(cart)
+            .cart(cartDto)
             .address(deliveryAddress)
             .build();
 
@@ -94,7 +95,7 @@ class CheckoutControllerTest {
 
         @BeforeEach
         void setUp() {
-            order = new Order(UUID.randomUUID(), customerId, cart, deliveryAddress, null, null);
+            order = new Order(UUID.randomUUID(), customerId, cartDto, deliveryAddress, null, null);
             checkoutForm = CheckoutForm.builder()
                     .order(order)
                     .availableDeliveries(Collections.emptyList())
@@ -168,7 +169,7 @@ class CheckoutControllerTest {
         @Test
         @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenPlaceOrder_thenCartIsClearedAndReturn200() throws Exception {
-            var createdOrder = new Order(UUID.randomUUID(), customerId, cart, deliveryAddress, null, null);
+            var createdOrder = new Order(UUID.randomUUID(), customerId, cartDto, deliveryAddress, null, null);
             when(placeOrderUsecase.place(createOrderDto)).thenReturn(createdOrder);
 
             performPlaceOrderRequest()

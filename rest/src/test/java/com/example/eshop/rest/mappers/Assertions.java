@@ -1,15 +1,8 @@
 package com.example.eshop.rest.mappers;
 
-import com.example.eshop.cart.domain.cart.Cart;
-import com.example.eshop.cart.domain.cart.CartItem;
-import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.rest.dto.AttributeDto;
-import com.example.eshop.rest.dto.CartDto;
-import com.example.eshop.rest.dto.CartItemDto;
 import com.example.eshop.rest.dto.ImageDto;
-import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;

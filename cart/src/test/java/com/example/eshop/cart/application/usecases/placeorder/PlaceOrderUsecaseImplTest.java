@@ -65,17 +65,18 @@ class PlaceOrderUsecaseImplTest {
 
         // createOrderDto
         var customerId = FakeData.customerId();
+        var cartDto = FakeData.cartDto();
         var cart = new Cart(customerId);
         cart.addItem(cartItemEan, cartItemPrice, cartItemQuantity);
 
-        createOrderDto = new CreateOrderDto(customerId, cart, FakeData.deliveryAddress(),
+        createOrderDto = new CreateOrderDto(customerId, cartDto, FakeData.deliveryAddress(),
                 new DeliveryServiceId("1"), new PaymentServiceId("1"));
 
         // orderFactory
         order = new Order(
                 UUID.randomUUID(),
                 customerId,
-                cart,
+                cartDto,
                 FakeData.deliveryAddress(),
                 new DeliveryServiceStub(true),
                 new PaymentServiceStub(true)

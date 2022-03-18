@@ -1,11 +1,11 @@
 package com.example.eshop.rest.mappers;
 
+import com.example.eshop.cart.client.model.CartDto;
+import com.example.eshop.cart.client.model.CartItemDto;
 import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.cart.CartItem;
 import com.example.eshop.catalog.client.CatalogService;
 import com.example.eshop.catalog.client.model.SkuWithProductDto;
-import com.example.eshop.rest.dto.CartDto;
-import com.example.eshop.rest.dto.CartItemDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

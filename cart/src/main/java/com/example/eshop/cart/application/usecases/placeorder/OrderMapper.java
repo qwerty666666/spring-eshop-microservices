@@ -1,6 +1,5 @@
 package com.example.eshop.cart.application.usecases.placeorder;
 
-import com.example.eshop.cart.domain.cart.CartMapper;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
@@ -28,7 +27,7 @@ public interface OrderMapper {
         return new OrderDto(
                 order.getId(),
                 order.getCustomerId(),
-                CartMapper.getInstance().toCartDto(order.getCart()),
+                order.getCart(),
                 order.getTotalPrice(),
                 toDeliveryDto(order),
                 toPaymentDto(order)
