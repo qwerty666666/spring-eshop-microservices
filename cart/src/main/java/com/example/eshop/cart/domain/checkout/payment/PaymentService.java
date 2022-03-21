@@ -2,18 +2,9 @@ package com.example.eshop.cart.domain.checkout.payment;
 
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
+import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.base.DomainObjectId;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-import java.util.Objects;
 
 /**
  * This class represents order Payment method.
@@ -21,15 +12,17 @@ import java.util.Objects;
  * We use it only for checkout process, so it is simple stub and
  * has no logic.
  */
-@Entity
-@Table(name = "payments")
 public abstract class PaymentService extends AggregateRoot<PaymentServiceId> {
-    @EmbeddedId
     protected PaymentServiceId id;
-
-    @Column(name = "name", nullable = false)
-    @NotEmpty
     protected String name;
+
+    protected PaymentService(PaymentServiceId id, String name) {
+        Assertions.notNull(id, "id is required");
+        Assertions.notEmpty(name, "name should be not empty");
+
+        this.id = id;
+        this.name = name;
+    }
 
     @Override
     public PaymentServiceId getId() {
@@ -48,22 +41,36 @@ public abstract class PaymentService extends AggregateRoot<PaymentServiceId> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        PaymentService other = (PaymentService) o;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        return id != null && Objects.equals(id, other.id);
+        var that = (PaymentService) o;
+
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return id.hashCode();
     }
 
-    @Embeddable
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class PaymentServiceId extends DomainObjectId {
         public PaymentServiceId(String uuid) {
             super(uuid);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            var that = (PaymentServiceId) o;
+
+            return uuid.equals(that.uuid);
+        }
+
+        @Override
+        public int hashCode() {
+            return uuid.hashCode();
         }
     }
 }

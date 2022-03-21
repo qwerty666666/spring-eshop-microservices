@@ -2,14 +2,17 @@ package com.example.eshop.cart.domain.checkout.delivery;
 
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 import java.time.LocalDate;
 
-@Entity
-@DiscriminatorValue("STANDARD")
+/**
+ * {@link DeliveryService} which is available for every Order.
+ */
 public class StandardDeliveryService extends DeliveryService {
     private static final Money PRICE = Money.USD(3);
+
+    public StandardDeliveryService(DeliveryServiceId id, String name) {
+        super(id, name);
+    }
 
     @Override
     public ShipmentInfo getShipmentInfo(Order order) {

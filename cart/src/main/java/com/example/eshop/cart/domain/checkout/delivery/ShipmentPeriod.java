@@ -1,24 +1,25 @@
 package com.example.eshop.cart.domain.checkout.delivery;
 
-import lombok.Getter;
+import com.example.eshop.sharedkernel.domain.Assertions;
+import com.example.eshop.sharedkernel.domain.base.ValueObject;
 import java.time.LocalDate;
 
 /**
  * The period for which the shipment can be delivered to
  * the client.
  */
-@Getter
-public class ShipmentPeriod {
-    private final LocalDate from;
-    private final LocalDate to;
+public record ShipmentPeriod(
+        LocalDate from,
+        LocalDate to
+) implements ValueObject {
+    public ShipmentPeriod {
+        Assertions.notNull(from, "from can't be null");
+        Assertions.notNull(to, "to can't be null");
 
-    public ShipmentPeriod(LocalDate from, LocalDate to) {
-        this.from = from;
-        this.to = to;
     }
 
     @Override
     public String toString() {
-        return from + " " + to;
+        return "ShipmentPeriod{ %s - %s }".formatted(from, to);
     }
 }

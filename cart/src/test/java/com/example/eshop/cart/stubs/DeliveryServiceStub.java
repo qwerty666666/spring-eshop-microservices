@@ -1,8 +1,8 @@
 package com.example.eshop.cart.stubs;
 
+import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
-import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
 import com.example.eshop.cart.domain.checkout.delivery.ShipmentPeriod;
 import com.example.eshop.cart.domain.checkout.delivery.ShipmentNotAvailableException;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -13,8 +13,7 @@ public class DeliveryServiceStub extends DeliveryService {
     private final boolean isSupported;
 
     public DeliveryServiceStub(boolean isSupported) {
-        this.id = new DeliveryServiceId("1");
-        this.name = "test delivery";
+        super(new DeliveryServiceId("1"), "test delivery");
         this.isSupported = isSupported;
     }
 

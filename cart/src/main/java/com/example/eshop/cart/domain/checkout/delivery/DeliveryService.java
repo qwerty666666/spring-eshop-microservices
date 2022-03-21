@@ -1,19 +1,10 @@
 package com.example.eshop.cart.domain.checkout.delivery;
 
-import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
+import com.example.eshop.cart.domain.checkout.order.Order;
+import com.example.eshop.sharedkernel.domain.Assertions;
 import com.example.eshop.sharedkernel.domain.base.AggregateRoot;
 import com.example.eshop.sharedkernel.domain.base.DomainObjectId;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-import java.util.Objects;
 
 /**
  * This class represents order Delivery method.
@@ -21,15 +12,17 @@ import java.util.Objects;
  * We use it only for checkout process, so it is simple stub and
  * has no logic.
  */
-@Entity
-@Table(name = "deliveries")
 public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
-    @EmbeddedId
     protected DeliveryServiceId id;
-
-    @Column(name = "name", nullable = false)
-    @NotEmpty
     protected String name;
+
+    protected DeliveryService(DeliveryServiceId id, String name) {
+        Assertions.notNull(id, "id is required");
+        Assertions.notEmpty(name, "name should be not empty");
+
+        this.id = id;
+        this.name = name;
+    }
 
     @Override
     public DeliveryServiceId getId() {
@@ -53,8 +46,7 @@ public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
     }
 
     /**
-     * @return information about shipment if it can be delivered by this Delivery Service,
-     *          or empty Optional otherwise.
+     * @return information about shipment if it can be delivered by this Delivery Service.
      *
      * @throws ShipmentNotAvailableException if shipment can't be applied to given order
      */
@@ -63,21 +55,36 @@ public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        DeliveryService that = (DeliveryService) o;
-        return id != null && Objects.equals(id, that.id);
+        if (o == null || getClass() != o.getClass()) return false;
+
+        var that = (DeliveryService) o;
+
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return id.hashCode();
     }
 
-    @Embeddable
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class DeliveryServiceId extends DomainObjectId {
         public DeliveryServiceId(String uuid) {
             super(uuid);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            var that = (DeliveryServiceId) o;
+
+            return uuid.equals(that.uuid);
+        }
+
+        @Override
+        public int hashCode() {
+            return uuid.hashCode();
         }
     }
 }

@@ -3,15 +3,20 @@ package com.example.eshop.cart.domain.checkout.delivery;
 import com.example.eshop.cart.client.model.CartItemDto;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 import java.time.LocalDate;
 
-@Entity
-@DiscriminatorValue("EXPRESS")
+/**
+ * {@link DeliveryService} that can be used when there are
+ * less than {@link ExpressDeliveryService#MAX_ITEMS_THRESHOLD}
+ * items in the Cart.
+ */
 public class ExpressDeliveryService extends DeliveryService {
     private static final int MAX_ITEMS_THRESHOLD = 5;
     private static final Money PRICE = Money.USD(10);
+
+    public ExpressDeliveryService(DeliveryServiceId id, String name) {
+        super(id, name);
+    }
 
     @Override
     public boolean canDeliver(Order order) {
