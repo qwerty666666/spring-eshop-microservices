@@ -9,6 +9,7 @@ import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityExc
 import com.example.eshop.cart.application.services.cartitem.ProductNotFoundException;
 import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
+import com.example.eshop.cart.application.services.clearcart.ClearCartService;
 import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.config.ControllerTest;
@@ -45,6 +46,8 @@ class CartControllerTest {
     private CartQueryService cartQueryService;
     @MockBean
     private CartItemService cartItemService;
+    @MockBean
+    private ClearCartService clearCartService;
     @MockBean
     private CartMapper cartMapper;
 
@@ -217,6 +220,32 @@ class CartControllerTest {
 
         private ResultActions performRemoveCartItemRequest(String ean) throws Exception {
             return mockMvc.perform(delete("/api/cart/items/" + ean));
+        }
+    }
+
+    @Nested
+    class ClearCartTest {
+        @Test
+        @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
+        void whenClearCart_thenClearCartServiceIsCalledAndCartIsReturned() throws Exception {
+            var expectedJson = objectMapper.writeValueAsString(cartDto);
+
+            performClearCartRequest()
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(expectedJson));
+
+            verify(clearCartService).clear(AuthConfig.CUSTOMER_ID);
+            verify(cartMapper).toCartDto(cart);
+        }
+
+        @Test
+        void givenUnauthorizedRequest_whenClearCart_thenReturn401() throws Exception {
+            performClearCartRequest()
+                    .andExpect(status().isUnauthorized());
+        }
+
+        private ResultActions performClearCartRequest() throws Exception {
+            return mockMvc.perform(delete("/api/cart/items/"));
         }
     }
 }

@@ -7,6 +7,7 @@ import com.example.eshop.cart.application.services.cartitem.NotEnoughQuantityExc
 import com.example.eshop.cart.application.services.cartitem.ProductNotFoundException;
 import com.example.eshop.cart.application.services.cartitem.RemoveCartItemCommand;
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
+import com.example.eshop.cart.application.services.clearcart.ClearCartService;
 import com.example.eshop.cart.client.api.CartApi;
 import com.example.eshop.cart.client.model.AddCartItemCommandDto;
 import com.example.eshop.cart.client.model.CartDto;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CartController extends BaseController implements CartApi {
     private final CartItemService cartItemService;
     private final CartQueryService cartQueryService;
+    private final ClearCartService clearCartService;
     private final CartMapper cartMapper;
     private final Localizer localizer;
 
@@ -103,6 +105,21 @@ public class CartController extends BaseController implements CartApi {
         return getCart();
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<CartDto> clearCart() {
+        var customerId = getCurrentAuthenticationOrFail().getCustomerId();
+
+        clearCartService.clear(customerId);
+
+        return getCart();
+    }
+
+    /**
+     * Retrieves Cart for the currently authenticated user
+     *
+     * @throws NotAuthenticatedException if user is not authenticated
+     */
     private Cart getCartForAuthenticatedCustomer() {
         var userDetails = getCurrentAuthenticationOrFail();
 

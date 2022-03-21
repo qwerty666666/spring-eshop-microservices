@@ -54,6 +54,17 @@ paths:
         422:
           $ref: '#/components/responses/unprocessable_entity'
 
+    delete:
+      tags:
+        - cart
+      summary: Clear cart
+      operationId: clearCart
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
   /cart/items/{ean}:
     delete:
       tags:
