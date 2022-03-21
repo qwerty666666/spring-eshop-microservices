@@ -12,7 +12,7 @@ public class Total {
 
     public Total(Order order) {
         cartPrice = order.getCart().getTotalPrice();
-        deliveryPrice = order.getShipmentInfo() == null ? Money.ZERO : order.getShipmentInfo().price();
+        deliveryPrice = order.getShipment() == null ? Money.ZERO : order.getShipment().price();
         totalPrice = cartPrice.add(deliveryPrice);
     }
 }

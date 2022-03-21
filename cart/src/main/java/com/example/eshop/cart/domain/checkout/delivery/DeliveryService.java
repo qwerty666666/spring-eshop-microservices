@@ -38,7 +38,7 @@ public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
      */
     public boolean canDeliver(Order order) {
         try {
-            getShipmentInfo(order);
+            getShipment(order);
             return true;
         } catch (ShipmentNotAvailableException e) {
             return false;
@@ -50,7 +50,7 @@ public abstract class DeliveryService extends AggregateRoot<DeliveryServiceId> {
      *
      * @throws ShipmentNotAvailableException if shipment can't be applied to given order
      */
-    public abstract ShipmentInfo getShipmentInfo(Order order);
+    public abstract Shipment getShipment(Order order);
 
     @Override
     public boolean equals(Object o) {

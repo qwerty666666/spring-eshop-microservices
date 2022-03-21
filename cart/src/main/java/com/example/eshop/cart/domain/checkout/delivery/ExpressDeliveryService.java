@@ -27,7 +27,7 @@ public class ExpressDeliveryService extends DeliveryService {
     }
 
     @Override
-    public ShipmentInfo getShipmentInfo(Order order) {
+    public Shipment getShipment(Order order) {
         if (!canDeliver(order)) {
             throw new ShipmentNotAvailableException();
         }
@@ -35,6 +35,6 @@ public class ExpressDeliveryService extends DeliveryService {
         var now = LocalDate.now();
         var period = new ShipmentPeriod(now.plusDays(1), now.plusDays(2));
 
-        return new ShipmentInfo(order.getAddress(), period, PRICE);
+        return new Shipment(order.getAddress(), period, PRICE);
     }
 }

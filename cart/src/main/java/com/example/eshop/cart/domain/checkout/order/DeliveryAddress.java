@@ -10,9 +10,14 @@ public record DeliveryAddress(
         @Nullable String city,
         @Nullable String street,
         @Nullable String building,
-        @Nullable String flat) {
+        @Nullable String flat
+) {
+    private static final DeliveryAddress NULL_ADDRESS = new DeliveryAddress(null, null, null, null, null, null, null);
 
-    public DeliveryAddress() {
-        this(null, null, null, null, null, null, null);
+    /**
+     * @return empty address
+     */
+    public static DeliveryAddress nullAddress() {
+        return NULL_ADDRESS;
     }
 }

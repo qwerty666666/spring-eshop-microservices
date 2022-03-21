@@ -5,7 +5,7 @@ import com.example.eshop.cart.application.usecases.checkout.Total;
 import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
-import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
+import com.example.eshop.cart.domain.checkout.delivery.Shipment;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
@@ -89,21 +89,19 @@ class CheckoutMapperTest {
     }
 
     private static class DeliveryServiceStub extends DeliveryService {
-        public DeliveryServiceStub(DeliveryServiceId id, String name) {
-            this.id = id;
-            this.name = name;
+        protected DeliveryServiceStub(DeliveryServiceId id, String name) {
+            super(id, name);
         }
 
         @Override
-        public ShipmentInfo getShipmentInfo(Order order) {
-            return null;
+        public Shipment getShipment(Order order) {
+            return Shipment.nullShipment();
         }
     }
 
     private static class PaymentServiceStub extends PaymentService {
         public PaymentServiceStub(PaymentServiceId id, String name) {
-            this.id = id;
-            this.name = name;
+            super(id, name);
         }
 
         @Override

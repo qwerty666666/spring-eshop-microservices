@@ -2,7 +2,7 @@ package com.example.eshop.cart.domain.checkout.order;
 
 import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
-import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
+import com.example.eshop.cart.domain.checkout.delivery.Shipment;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.sharedkernel.domain.base.ValueObject;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -27,12 +27,11 @@ public final class Order implements ValueObject {
     private final String customerId;
     private final CartDto cart;
     private final DeliveryAddress address;
+    private final Shipment shipment;
     @Nullable
     private final DeliveryService deliveryService;
     @Nullable
     private final PaymentService paymentService;
-    @Nullable
-    private final ShipmentInfo shipmentInfo;
 
     public Order(UUID id, String customerId, CartDto cart, DeliveryAddress address, @Nullable DeliveryService deliveryService,
             @Nullable PaymentService paymentService) {
@@ -44,9 +43,9 @@ public final class Order implements ValueObject {
         this.paymentService = paymentService;
 
         if (deliveryService != null && deliveryService.canDeliver(this)) {
-            this.shipmentInfo = deliveryService.getShipmentInfo(this);
+            this.shipment = deliveryService.getShipment(this);
         } else {
-            this.shipmentInfo = null;
+            this.shipment = Shipment.nullShipment();
         }
     }
 
@@ -55,9 +54,7 @@ public final class Order implements ValueObject {
      */
     public Money getTotalPrice() {
         var cartPrice = cart.getTotalPrice();
-        var deliveryPrice = Optional.ofNullable(shipmentInfo)
-                .map(ShipmentInfo::price)
-                .orElse(Money.ZERO);
+        var deliveryPrice = shipment.price();
 
         return cartPrice.add(deliveryPrice);
     }

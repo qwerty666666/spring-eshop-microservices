@@ -2,7 +2,7 @@ package com.example.eshop.cart.application.usecases.placeorder;
 
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
-import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
+import com.example.eshop.cart.domain.checkout.delivery.Shipment;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
@@ -35,9 +35,10 @@ public interface OrderMapper {
     }
 
     private DeliveryDto toDeliveryDto(Order order) {
-        var deliveryPrice = Optional.ofNullable(order.getShipmentInfo())
-                .map(ShipmentInfo::price)
-                .orElseThrow(() -> new IllegalArgumentException("ShipmentInfo is required for OrderDto"));
+        if (order.getShipment().equals(Shipment.nullShipment())) {
+            throw new IllegalArgumentException("Shipment is not provided for Order. Shipment is required for OrderDto");
+        }
+        var deliveryPrice = order.getShipment().price();
 
         return new DeliveryDto(
                 toDeliveryAddressDto(order.getAddress()),

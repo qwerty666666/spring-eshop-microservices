@@ -1,6 +1,6 @@
 package com.example.eshop.cart.stubs;
 
-import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
+import com.example.eshop.cart.domain.checkout.delivery.Shipment;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.ShipmentPeriod;
@@ -23,12 +23,12 @@ public class DeliveryServiceStub extends DeliveryService {
     }
 
     @Override
-    public ShipmentInfo getShipmentInfo(Order order) {
+    public Shipment getShipment(Order order) {
         if (!isSupported) {
             throw new ShipmentNotAvailableException();
         }
 
         var period = new ShipmentPeriod(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
-        return new ShipmentInfo(order.getAddress(), period, COST);
+        return new Shipment(order.getAddress(), period, COST);
     }
 }

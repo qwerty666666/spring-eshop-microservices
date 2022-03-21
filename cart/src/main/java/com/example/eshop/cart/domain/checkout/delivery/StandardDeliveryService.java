@@ -15,10 +15,10 @@ public class StandardDeliveryService extends DeliveryService {
     }
 
     @Override
-    public ShipmentInfo getShipmentInfo(Order order) {
+    public Shipment getShipment(Order order) {
         var now = LocalDate.now();
         var period = new ShipmentPeriod(now.plusDays(5), now.plusDays(6));
 
-        return new ShipmentInfo(order.getAddress(), period, PRICE);
+        return new Shipment(order.getAddress(), period, PRICE);
     }
 }
