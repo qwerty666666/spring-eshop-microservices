@@ -23,7 +23,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -79,7 +78,7 @@ public class OrderLine implements Entity<Long> {
     private final List<String> images = new ArrayList<>();
 
     public OrderLine(Ean ean, int quantity, Money itemPrice, String productName,
-            Collection<OrderLineAttribute> attributes, Collection<String> images) {
+            List<OrderLineAttribute> attributes, List<String> images) {
         Assertions.notNull(ean, "ean must be not null");
         Assertions.positive(quantity, "quantity must be positive");
         Assertions.notNull(itemPrice, "itemPrice must be not null");

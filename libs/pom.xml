@@ -15,5 +15,8 @@
         <module>transactional-outbox</module>
         <module>auth</module>
         <module>auth-test</module>
+        <module>kafka-test</module>
+        <module>rest-utils</module>
+        <module>shared-rest-models</module>
     </modules>
 </project>

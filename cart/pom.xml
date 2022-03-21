@@ -19,9 +19,11 @@
         <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
         <localizer.verison>1.0.0-SNAPSHOT</localizer.verison>
         <auth.version>1.0.0-SNAPSHOT</auth.version>
+        <shopping-cart-service.version>1.0.0-SNAPSHOT</shopping-cart-service.version>
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
@@ -51,6 +53,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>localizer</artifactId>
             <version>${localizer.verison}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shopping-cart-client</artifactId>
+            <version>${shopping-cart-service.version}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -87,6 +94,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
         </dependency>
 
         <!-- Kafka -->

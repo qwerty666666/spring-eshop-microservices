@@ -1,6 +1,6 @@
 package com.example.eshop.cart.domain.checkout.placeorder;
 
-import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryServiceRepository;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
@@ -27,7 +27,7 @@ class OrderFactoryImplTest {
 
     private final String customerId = FakeData.customerId();
     private final DeliveryAddress address = FakeData.deliveryAddress();
-    private final Cart cart = FakeData.cart();
+    private final CartDto cart = FakeData.cartDto();
 
     private OrderFactory orderFactory;
 
@@ -98,10 +98,10 @@ class OrderFactoryImplTest {
 
             @Test
             void emptyCart() {
-                assertThrowValidationException(createWithCart(new Cart(customerId)));
+                assertThrowValidationException(createWithCart(FakeData.emptyCartDto()));
             }
 
-            private CreateOrderDto createWithCart(Cart cart) {
+            private CreateOrderDto createWithCart(CartDto cart) {
                 return CreateOrderDto.builder()
                         .customerId(customerId)
                         .address(address)

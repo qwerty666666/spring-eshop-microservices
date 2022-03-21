@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.2</version>
+    </parent>
+
+    <groupId>com.example.eshop</groupId>
+    <artifactId>rest-utils</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <description>Common utils for Spring MVC</description>
+
+    <properties>
+        <java.version>17</java.version>
+
+        <shared-kernel.version>0.0.1-SNAPSHOT</shared-kernel.version>
+        <localizer.version>1.0.0-SNAPSHOT</localizer.version>
+        <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
+    </properties>
+
+    <dependencies>
+        <!-- Project libs -->
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-kernel</artifactId>
+            <version>${shared-kernel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>localizer</artifactId>
+            <version>${localizer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+            <version>${shared-rest-models.version}</version>
+        </dependency>
+
+        <!-- Spring Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

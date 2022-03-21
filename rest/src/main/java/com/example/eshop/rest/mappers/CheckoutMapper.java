@@ -1,7 +1,7 @@
 package com.example.eshop.rest.mappers;
 
 import com.example.eshop.cart.application.usecases.checkout.CheckoutForm;
-import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
@@ -15,10 +15,10 @@ import org.springframework.lang.Nullable;
 
 @Mapper(
         componentModel = "spring",
-        uses = { CartMapper.class, PhoneMapper.class }
+        uses = { PhoneMapper.class }
 )
 public interface CheckoutMapper {
-    CreateOrderDto toCreateOrderDto(CheckoutRequestDto checkoutRequest, String customerId, Cart cart);
+    CreateOrderDto toCreateOrderDto(CheckoutRequestDto checkoutRequest, String customerId, CartDto cart);
 
     DeliveryAddress toDeliveryAddress(DeliveryAddressDto dto);
 

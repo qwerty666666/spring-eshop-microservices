@@ -1,12 +1,9 @@
 package com.example.eshop.order;
 
-import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.catalog.client.api.model.AttributeDto;
-import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
-import com.example.eshop.catalog.client.api.model.ProductDto;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartDto;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
+import com.example.eshop.cart.client.model.AttributeDto;
+import com.example.eshop.cart.client.model.CartDto;
+import com.example.eshop.cart.client.model.CartItemDto;
+import com.example.eshop.cart.client.model.ImageDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryServiceDto;
@@ -34,39 +31,36 @@ public final class FakeData {
     private static final RandomGenerator random = RandomGenerator.getDefault();
 
     public static OrderDto orderDto() {
-        var ean = Ean.fromString("9578495810658");
         var skuPrice = Money.USD(10);
         var quantity = 2;
         var cartPrice = Money.USD(20);
         var deliveryPrice = Money.USD(12);
         var totalPrice = Money.USD(32);
-        var product = ProductDto.builder()
-                .id("123")
-                .name("fake product")
-                .description("descr")
-                .images(List.of(new ImageDto("url")))
-                .build();
-        var sku = SkuWithProductDto.builder()
-                .ean(ean.toString())
-                .quantity(quantity)
-                .price(new MoneyDto(skuPrice.getAmount(), skuPrice.getCurrency().toString()))
-                .productId(product.getId())
-                .product(product)
-                .attributes(List.of(
-                        new AttributeDto(1L, "attr_name", "attr_value")
-                ))
-                .build();
 
         return OrderDto.builder()
                 .id(UUID.randomUUID())
                 .customerId("customerId")
-                .cart(new CartDto(
-                        cartPrice,
-                        List.of(new CartItemDto(ean, skuPrice.multiply(quantity), quantity, sku))
-                ))
+                .cart(new CartDto()
+                        .id("1")
+                        .totalPrice(cartPrice)
+                        .items(List.of(
+                                new CartItemDto()
+                                        .ean(ean())
+                                        .price(skuPrice)
+                                        .quantity(quantity)
+                                        .availableQuantity(quantity)
+                                        .productName("productName")
+                                        .attributes(List.of(
+                                                new AttributeDto("1", "size", "42")
+                                        ))
+                                        .images(List.of(
+                                                new ImageDto("url")
+                                        ))
+                        ))
+                )
                 .totalPrice(totalPrice)
                 .delivery(new DeliveryDto(
-                        new DeliveryAddressDto("fullname", Phone.fromString("+79999999999"), "country", "city", "street", "building", "flat"),
+                        new DeliveryAddressDto(fullname(), phone(), country(), city(), street(), building(), flat()),
                         new DeliveryServiceDto("deliveryServiceId", "deliveryServiceName"),
                         deliveryPrice
                 ))
@@ -149,7 +143,7 @@ public final class FakeData {
         var orderLines = List.of(
                 new OrderLine(Ean.fromString("1111111111111"), 1, Money.USD(12), productName(),
                         Collections.emptyList(), Collections.emptyList()),
-                new OrderLine(Ean.fromString("2222222222222"),  2, Money.USD(123), productName(),
+                new OrderLine(Ean.fromString("2222222222222"), 2, Money.USD(123), productName(),
                         Collections.emptyList(), Collections.emptyList())
         );
 

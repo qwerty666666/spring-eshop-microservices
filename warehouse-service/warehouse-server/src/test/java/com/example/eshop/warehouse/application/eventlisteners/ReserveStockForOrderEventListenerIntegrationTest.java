@@ -1,11 +1,8 @@
 package com.example.eshop.warehouse.application.eventlisteners;
 
-import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
-import com.example.eshop.catalog.client.api.model.ProductDto;
+import com.example.eshop.cart.client.model.CartDto;
+import com.example.eshop.cart.client.model.CartItemDto;
 import com.example.eshop.checkout.client.CheckoutApi;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartDto;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryServiceDto;
@@ -15,8 +12,8 @@ import com.example.eshop.checkout.client.events.orderplacedevent.PaymentServiceD
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
-import com.example.eshop.sharedtest.IntegrationTest;
 import com.example.eshop.sharedtest.dbtests.DbTest;
+import com.example.eshop.warehouse.KafkaTest;
 import com.example.eshop.warehouse.application.services.reserve.ReserveStockItemService;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import com.example.eshop.warehouse.domain.StockQuantity;
@@ -43,9 +40,8 @@ import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
+import org.springframework.test.context.ActiveProfiles;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -60,12 +56,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@IntegrationTest
-@EmbeddedKafka(
-        partitions = 1,
-        topics = { CheckoutApi.RESERVE_STOCKS_TOPIC, CheckoutApi.RESERVE_STOCKS_REPLY_TOPIC },
-        bootstrapServersProperty = "spring.kafka.bootstrap-servers"
-)
+@ActiveProfiles("test")
+@KafkaTest
 @DbTest
 class ReserveStockForOrderEventListenerIntegrationTest {
     @TestConfiguration
@@ -113,31 +105,20 @@ class ReserveStockForOrderEventListenerIntegrationTest {
     private final OrderDto order = OrderDto.builder()
             .id(UUID.randomUUID())
             .customerId("customerId")
-            .cart(new CartDto(
-                    price1.add(price2),
-                    List.of(
-                            new CartItemDto(
-                                    ean1,
-                                    price1,
-                                    qty1,
-                                    SkuWithProductDto.builder()
-                                            .ean(ean1.toString())
-                                            .price(new MoneyDto(price1.getAmount(), price1.getCurrency().toString()))
-                                            .product(ProductDto.builder().build())
-                                            .build()
-                            ),
-                            new CartItemDto(
-                                    ean2,
-                                    price2,
-                                    qty2,
-                                    SkuWithProductDto.builder()
-                                            .ean(ean2.toString())
-                                            .price(new MoneyDto(price2.getAmount(), price2.getCurrency().toString()))
-                                            .product(ProductDto.builder().build())
-                                            .build()
-                            )
-                    )
-            ))
+            .cart(new CartDto()
+                    .id("1")
+                    .totalPrice((price1.multiply(qty1)).add(price2.multiply(qty2)))
+                    .items(List.of(
+                            new CartItemDto()
+                                    .ean(ean1)
+                                    .price(price1)
+                                    .quantity(qty1),
+                            new CartItemDto()
+                                    .ean(ean2)
+                                    .price(price2)
+                                    .quantity(qty2)
+                    ))
+            )
             .totalPrice(Money.USD(300))
             .delivery(new DeliveryDto(
                     new DeliveryAddressDto("fullname", Phone.fromString("+79999999999"), "country", "city", "street", "building", "flat"),
@@ -150,8 +131,6 @@ class ReserveStockForOrderEventListenerIntegrationTest {
             .build();
 
     @Autowired
-    private EmbeddedKafkaBroker broker;
-    @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
     @Autowired
     private ReplyingKafkaTemplate<String, OrderDto, ReservationResult> kafkaTemplate;
@@ -163,8 +142,7 @@ class ReserveStockForOrderEventListenerIntegrationTest {
     public void setUp() {
         // we should wait because listener container can start after the first message was published
         for (MessageListenerContainer messageListenerContainer : kafkaListenerEndpointRegistry.getListenerContainers()) {
-//            ContainerTestUtils.waitForAssignment(messageListenerContainer, 1);
-            ContainerTestUtils.waitForAssignment(messageListenerContainer, broker.getPartitionsPerTopic());
+            ContainerTestUtils.waitForAssignment(messageListenerContainer, 1);
         }
     }
 

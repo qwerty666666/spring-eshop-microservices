@@ -1,6 +1,6 @@
 package com.example.eshop.cart.domain.checkout.order;
 
-import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import org.springframework.lang.Nullable;
 
 public record CreateOrderDto(
         String customerId,
-        Cart cart,
+        CartDto cart,
         DeliveryAddress address,
         @Nullable DeliveryServiceId deliveryServiceId,
         @Nullable PaymentServiceId paymentServiceId
@@ -20,7 +20,7 @@ public record CreateOrderDto(
     public static final String CUSTOMER_ID_FIELD = "customerId";
 
     @Builder
-    public CreateOrderDto {
+    public CreateOrderDto { // NOSONAR redudant constructor
         // We use constructor because of @Builder is not allowed on Record
     }
 }

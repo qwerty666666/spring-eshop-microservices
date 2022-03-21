@@ -1,8 +1,6 @@
 package com.example.eshop.cart.application.usecases.checkout;
 
-import com.example.eshop.cart.domain.cart.Cart;
-import com.example.eshop.cart.domain.cart.CartItem;
-import com.example.eshop.cart.domain.cart.CartRepository;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryServiceRepository;
@@ -15,7 +13,6 @@ import com.example.eshop.cart.domain.checkout.payment.PaymentServiceRepository;
 import com.example.eshop.cart.infrastructure.tests.FakeData;
 import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -37,8 +34,7 @@ class CheckoutProcessServiceImplTest {
 
     private final String customerId = FakeData.customerId();
     private final DeliveryAddress address = FakeData.deliveryAddress();
-    private Money cartItemsPrice;
-    private Cart cart;
+    private CartDto cart;
 
     private CheckoutProcessServiceImpl checkoutProcessService;
 
@@ -60,11 +56,7 @@ class CheckoutProcessServiceImplTest {
 
         // Cart
 
-        cart = FakeData.cart(customerId);
-        cartItemsPrice = cart.getItems().stream().map(CartItem::getItemPrice).reduce(Money.ZERO, Money::add);
-
-        var cartRepository = mock(CartRepository.class);
-        when(cartRepository.findByNaturalId(customerId)).thenReturn(Optional.of(cart));
+        cart = FakeData.cartDto();
     }
 
     @Test
@@ -87,7 +79,7 @@ class CheckoutProcessServiceImplTest {
     void whenProcess_thenTotalSumShouldBeSumOfCartAndDelivery() {
         // Given
         var createOrderDto = new CreateOrderDto(customerId, cart, address, SUPPORTED_DELIVERY_ID, SUPPORTED_PAYMENT_ID);
-        var expectedPrice = cartItemsPrice.add(DeliveryServiceStub.COST);
+        var expectedPrice = cart.getTotalPrice().add(DeliveryServiceStub.COST);
 
         // When
         var form = checkoutProcessService.process(createOrderDto);

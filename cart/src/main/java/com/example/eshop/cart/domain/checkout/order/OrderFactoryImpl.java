@@ -1,13 +1,13 @@
 package com.example.eshop.cart.domain.checkout.order;
 
-import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
-import com.example.eshop.cart.domain.checkout.delivery.DeliveryServiceRepository;
-import com.example.eshop.cart.domain.checkout.payment.PaymentServiceNotFoundException;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryServiceNotFoundException;
+import com.example.eshop.cart.domain.checkout.delivery.DeliveryServiceRepository;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
+import com.example.eshop.cart.domain.checkout.payment.PaymentServiceNotFoundException;
 import com.example.eshop.cart.domain.checkout.payment.PaymentServiceRepository;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
@@ -38,7 +38,7 @@ public class OrderFactoryImpl implements OrderFactory {
         return new Order(
                 UUID.randomUUID(),
                 createOrderDto.customerId(),
-                new Cart(createOrderDto.cart()),      // clone cart to avoid modifications
+                createOrderDto.cart(),
                 createOrderDto.address(),
                 delivery,
                 payment
@@ -69,13 +69,13 @@ public class OrderFactoryImpl implements OrderFactory {
         }
     }
 
-    private void validateCart(@Nullable Cart cart, Errors errors) {
+    private void validateCart(@Nullable CartDto cart, Errors errors) {
         if (cart == null) {
             errors.addError(CreateOrderDto.CART_FIELD, "cart.null");
             return;
         }
 
-        if (cart.isEmpty()) {
+        if (cart.getItems().isEmpty()) {
             errors.addError(CreateOrderDto.CART_FIELD, "cart.empty");
         }
     }

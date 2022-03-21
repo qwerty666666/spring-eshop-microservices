@@ -1,6 +1,5 @@
 package com.example.eshop.catalog.application.services.productcrudservice;
 
-import com.example.eshop.catalog.configs.ExcludeKafkaConfig;
 import com.example.eshop.catalog.application.services.categorycrudservice.CategoryNotFoundException;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.catalog.domain.product.Product;
@@ -17,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-
+import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,11 +24,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@ExcludeKafkaConfig
+@ActiveProfiles("test")
+@IntegrationTest
 @DbTest
 class ProductCrudServiceIntegrationTest {
 
-    // These constants taken from DB datasets
+    // These constants are taken from DB datasets
 
     private static final ProductId SNEAKERS_PRODUCT_ID = new ProductId("1");
     private static final ProductId SHIRT_PRODUCT_ID = new ProductId("2");
@@ -47,7 +47,7 @@ class ProductCrudServiceIntegrationTest {
     private ProductCrudService productCrudService;
 
     @Nested
-    class getByIdTest {
+    class GetByIdTest {
         @Test
         @DataSet(value = "products.yml", cleanAfter = true)
         void givenProductId_whenGetProduct_thenReturnProductById() {

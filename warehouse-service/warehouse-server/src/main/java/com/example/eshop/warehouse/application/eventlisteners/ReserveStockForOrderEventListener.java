@@ -1,7 +1,7 @@
 package com.example.eshop.warehouse.application.eventlisteners;
 
+import com.example.eshop.cart.client.model.CartItemDto;
 import com.example.eshop.checkout.client.CheckoutApi;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
 import com.example.eshop.warehouse.application.services.reserve.ReserveStockItemService;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
@@ -53,8 +53,8 @@ public class ReserveStockForOrderEventListener {
     }
 
     private ReservationResult handleEvent(OrderDto order) {
-        var reservingItems = order.cart().items().stream()
-                .collect(Collectors.toMap(CartItemDto::ean, item -> StockQuantity.of(item.quantity())));
+        var reservingItems = order.cart().getItems().stream()
+                .collect(Collectors.toMap(CartItemDto::getEan, item -> StockQuantity.of(item.getQuantity())));
 
         return reserveStockItemService.reserve(reservingItems);
     }

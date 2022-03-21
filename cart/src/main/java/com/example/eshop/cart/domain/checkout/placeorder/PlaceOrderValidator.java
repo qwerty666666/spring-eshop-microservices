@@ -41,7 +41,7 @@ public class PlaceOrderValidator {
             return;
         }
 
-        if (cart.isEmpty()) {
+        if (cart.getItems().isEmpty()) {
             errors.addError(CART_FIELD, "cart.empty");
         }
     }

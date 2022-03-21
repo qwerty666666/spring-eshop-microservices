@@ -1,6 +1,6 @@
 package com.example.eshop.order.rest.mappers;
 
-import com.example.eshop.order.client.api.model.PageableDto;
+import com.example.eshop.order.client.model.PageableDto;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Page;
 

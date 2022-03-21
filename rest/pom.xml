@@ -17,12 +17,16 @@
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <springdoc.version>1.5.12</springdoc.version>
         <sentry.version>5.4.3</sentry.version>
+
         <catalog-service.verison>1.0.0-SNAPSHOT</catalog-service.verison>
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <auth.version>1.0.0-SNAPSHOT</auth.version>
+        <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
+        <rest-utils.version>1.0.0-SNAPSHOT</rest-utils.version>
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
@@ -52,6 +56,16 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>auth</artifactId>
             <version>${auth.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>rest-utils</artifactId>
+            <version>${rest-utils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+            <version>${shared-rest-models.version}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -228,10 +242,25 @@
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/public/openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
                             <apiPackage>com.example.eshop.rest.api</apiPackage>
                             <modelPackage>com.example.eshop.rest.dto</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
+                            <typeMappings>
+                                <mapping>string+gtin13=ean</mapping>
+                            </typeMappings>
+                            <importMappings>
+                                <mapping>money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
+                                <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
+                                <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
+                                <mapping>cart=com.example.eshop.cart.client.model.CartDto</mapping>
+                                <mapping>cart-item=com.example.eshop.cart.client.model.CartItemDto</mapping>
+                            </importMappings>
+
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <openApiNullable>false</openApiNullable>

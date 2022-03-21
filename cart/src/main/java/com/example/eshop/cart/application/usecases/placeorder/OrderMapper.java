@@ -1,6 +1,5 @@
 package com.example.eshop.cart.application.usecases.placeorder;
 
-import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.cart.domain.checkout.delivery.ShipmentInfo;
@@ -8,9 +7,7 @@ import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
-import com.example.eshop.catalog.client.SkuWithProductDto;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartDto;
-import com.example.eshop.checkout.client.events.orderplacedevent.CartItemDto;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryAddressDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.DeliveryServiceDto;
@@ -30,26 +27,11 @@ public interface OrderMapper {
         return new OrderDto(
                 order.getId(),
                 order.getCustomerId(),
-                toCartDto(order.getCart(), skuMap),
+                order.getCart(),
                 order.getTotalPrice(),
                 toDeliveryDto(order),
                 toPaymentDto(order)
         );
-    }
-
-    private CartDto toCartDto(Cart cart, Map<Ean, SkuWithProductDto> skuMap) {
-        var cartItems = cart.getItems().stream()
-                .map(cartItem -> {
-                    var ean  = cartItem.getEan();
-                    var sku = Optional.ofNullable(skuMap.get(ean))
-                            .orElseThrow(() -> new IllegalArgumentException("skuMap does not contain sku " +
-                                    "for CartItem " + ean));
-
-                    return new CartItemDto(ean, cartItem.getTotalPrice(), cartItem.getQuantity(), sku);
-                })
-                .toList();
-
-        return new CartDto(cart.getTotalPrice(), cartItems);
     }
 
     private DeliveryDto toDeliveryDto(Order order) {

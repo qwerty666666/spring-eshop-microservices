@@ -2,10 +2,10 @@ package com.example.eshop.catalog.application.eventlisteners;
 
 import com.example.eshop.catalog.config.AppProperties;
 import com.example.eshop.catalog.config.KafkaConfig;
+import com.example.eshop.catalog.configs.KafkaTest;
 import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.ProductRepository;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import com.example.eshop.sharedtest.IntegrationTest;
 import com.example.eshop.warehouse.client.WarehouseApi;
 import com.example.eshop.warehouse.client.events.ProductStockChangedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,8 +24,6 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import java.util.Map;
 import java.util.Optional;
@@ -37,13 +34,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@IntegrationTest
-@EmbeddedKafka(
-        partitions = 1,
-        topics = WarehouseApi.STOCK_CHANGED_TOPIC,
-        bootstrapServersProperty = "spring.kafka.bootstrap-servers"
-)
+@KafkaTest
 class ProductStockChangedEventListenerIntegrationTest {
     @Configuration
     @EnableConfigurationProperties(AppProperties.class)
@@ -63,9 +54,6 @@ class ProductStockChangedEventListenerIntegrationTest {
     }
 
     @Autowired
-    private EmbeddedKafkaBroker broker;
-
-    @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
     @Autowired
@@ -78,7 +66,7 @@ class ProductStockChangedEventListenerIntegrationTest {
     public void setUp() {
         // we should wait because listener container can start after the first message was published
         for (MessageListenerContainer messageListenerContainer : kafkaListenerEndpointRegistry.getListenerContainers()) {
-            ContainerTestUtils.waitForAssignment(messageListenerContainer, broker.getPartitionsPerTopic());
+            ContainerTestUtils.waitForAssignment(messageListenerContainer, 1);
         }
     }
 

@@ -22,9 +22,14 @@
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-kernel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
         </dependency>
 
         <dependency>
@@ -78,13 +83,27 @@
                             <inputSpec>${basedir}/src/main/resources/openapi.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
-                            <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
+
+                            <modelPackage>com.example.eshop.catalog.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <apiPackage>com.example.eshop.catalog.client.api</apiPackage>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
+
+                            <apiPackage>com.example.eshop.catalog.client.api</apiPackage>
                             <generateApiDocumentation>false</generateApiDocumentation>
                             <generateApiTests>false</generateApiTests>
+
+                            <typeMappings>
+                                <mapping>string+gtin13=ean</mapping>
+                            </typeMappings>
+                            <importMappings>
+                                <mapping>money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
+                                <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
+                                <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
+                            </importMappings>
+
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <serializationLibrary>jackson</serializationLibrary>

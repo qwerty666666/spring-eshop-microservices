@@ -16,11 +16,13 @@
 
     <properties>
         <message-relay.version>1.0.0-SNAPSHOT</message-relay.version>
+        <kafka-test.version>1.0.0-SNAPSHOT</kafka-test.version>
         <transactional-outbox.version>1.0.0-SNAPSHOT</transactional-outbox.version>
         <lombok.version>1.18.22</lombok.version>
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>message-relay</artifactId>
@@ -74,8 +76,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka-test</artifactId>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>kafka-test</artifactId>
+            <version>${kafka-test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

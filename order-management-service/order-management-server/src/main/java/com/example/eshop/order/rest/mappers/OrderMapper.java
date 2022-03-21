@@ -1,20 +1,18 @@
 package com.example.eshop.order.rest.mappers;
 
 import com.example.eshop.localizer.Localizer;
-import com.example.eshop.order.client.api.model.AttributeDto;
-import com.example.eshop.order.client.api.model.ImageDto;
-import com.example.eshop.order.client.api.model.MoneyDto;
-import com.example.eshop.order.client.api.model.OrderDto;
-import com.example.eshop.order.client.api.model.OrderLineDto;
-import com.example.eshop.order.client.api.model.OrderStatusDto;
-import com.example.eshop.order.client.api.model.OrderStatusDto.CodeEnum;
-import com.example.eshop.order.client.api.model.OrderTotalDto;
-import com.example.eshop.order.client.api.model.PagedOrderListDto;
+import com.example.eshop.order.client.model.AttributeDto;
+import com.example.eshop.order.client.model.ImageDto;
+import com.example.eshop.order.client.model.OrderDto;
+import com.example.eshop.order.client.model.OrderLineDto;
+import com.example.eshop.order.client.model.OrderStatusDto;
+import com.example.eshop.order.client.model.OrderStatusDto.CodeEnum;
+import com.example.eshop.order.client.model.OrderTotalDto;
+import com.example.eshop.order.client.model.PagedOrderListDto;
 import com.example.eshop.order.domain.order.Order;
 import com.example.eshop.order.domain.order.OrderLine;
 import com.example.eshop.order.domain.order.OrderLineAttribute;
 import com.example.eshop.order.domain.order.OrderStatus;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,7 @@ import java.util.stream.Stream;
 
 @Mapper(
         componentModel = "spring",
-        uses = { PageableMapper.class, PhoneMapper.class, EanMapper.class }
+        uses = { PageableMapper.class, PhoneMapper.class }
 )
 public abstract class OrderMapper {
     private Localizer localizer;
@@ -51,7 +49,7 @@ public abstract class OrderMapper {
 
     protected abstract List<OrderDto> toOrderDtoList(Stream<Order> orders);
 
-    @Mapping(target = "linePrice", expression = "java(toMoneyDto(line.getPrice()))")
+    @Mapping(target = "linePrice", expression = "java(line.getPrice())")
     protected abstract OrderLineDto toOrderLineDto(OrderLine line);
 
     @Mapping(target = "url", source = ".")
@@ -60,9 +58,7 @@ public abstract class OrderMapper {
     @Mapping(target = "id", source = "attributeId")
     protected abstract AttributeDto toAttributeDto(OrderLineAttribute attr);
 
-    @Mapping(target = "totalPrice", expression = "java(toMoneyDto(order.getPrice()))")
+    @Mapping(target = "totalPrice", expression = "java(order.getPrice())")
     @Mapping(target = "deliveryPrice", source = "delivery.price")
     protected abstract OrderTotalDto toOrderTotalDto(Order order);
-
-    protected abstract MoneyDto toMoneyDto(Money money);
 }

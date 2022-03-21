@@ -16,12 +16,16 @@
     <properties>
         <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
+
         <warehouse-service.version>1.0.0-SNAPSHOT</warehouse-service.version>
+
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+        <kafka-test.version>1.0.0-SNAPSHOT</kafka-test.version>
     </properties>
 
     <dependencies>
+        <!-- Project libs -->
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>catalog-client</artifactId>
@@ -40,6 +44,14 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>localizer</artifactId>
             <version>${localizer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>rest-utils</artifactId>
         </dependency>
 
         <!-- Devtools -->
@@ -110,22 +122,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- downgrading Apache Kafka -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <classifier>test</classifier>
-            <scope>test</scope>
-        </dependency>
-        <!-- downgrading Apache Kafka -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.13</artifactId>
-            <classifier>test</classifier>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>kafka-test</artifactId>
+            <version>${kafka-test.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -181,9 +180,22 @@
                             <generatorName>spring</generatorName>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateModels>false</generateModels>
+
                             <apiPackage>com.example.eshop.catalog.rest.api</apiPackage>
-                            <modelPackage>com.example.eshop.catalog.client.api.model</modelPackage>
+                            <modelPackage>com.example.eshop.catalog.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
+
+                            <typeMappings>
+                                <mapping>string+gtin13=ean</mapping>
+                            </typeMappings>
+                            <importMappings>
+                                <mapping>money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
+                                <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
+                                <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
+                            </importMappings>
+
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <openApiNullable>false</openApiNullable>

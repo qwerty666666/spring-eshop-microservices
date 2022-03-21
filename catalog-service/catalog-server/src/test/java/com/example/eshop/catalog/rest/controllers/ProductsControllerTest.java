@@ -1,6 +1,5 @@
 package com.example.eshop.catalog.rest.controllers;
 
-import com.example.eshop.catalog.configs.ExcludeKafkaConfig;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductCrudService;
 import com.example.eshop.catalog.application.services.productcrudservice.ProductNotFoundException;
 import com.example.eshop.catalog.domain.product.Product;
@@ -38,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductsController.class)
-@ExcludeKafkaConfig
 @ControllerTest
 class ProductsControllerTest {
     @Autowired

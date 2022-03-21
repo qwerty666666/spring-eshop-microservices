@@ -1,0 +1,1 @@
+Contains shared DTO across all microservices REST Endpoints.

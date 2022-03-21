@@ -1,5 +1,7 @@
 package com.example.eshop.messagerelay;
 
+import com.example.eshop.kafkatest.RunKafkaTestcontainer;
+import com.example.eshop.sharedtest.IntegrationTest;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
 import com.example.eshop.transactionaloutbox.messagerelay.MessageRelay;
@@ -21,7 +23,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
 import javax.sql.DataSource;
@@ -36,12 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
         "logging.level.org.apache.kafka=info"  // hide listener log noise
 })
 @ActiveProfiles("test")
+@IntegrationTest
 @AutoConfigureTestDatabase
-@EmbeddedKafka(
-        partitions = 1,
-        topics = DefaultMessageRelayIntegrationTest.TOPIC,
-        bootstrapServersProperty = "spring.kafka.bootstrap-servers"
-)
+@RunKafkaTestcontainer
 class DefaultMessageRelayIntegrationTest {
     public static final String TOPIC = "test_topic";
 

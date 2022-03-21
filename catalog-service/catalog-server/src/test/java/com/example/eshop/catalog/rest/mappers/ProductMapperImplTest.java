@@ -1,13 +1,12 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.AttributeDto;
-import com.example.eshop.catalog.client.api.model.ImageDto;
-import com.example.eshop.catalog.client.api.model.MoneyDto;
-import com.example.eshop.catalog.client.api.model.ProductDto;
-import com.example.eshop.catalog.client.api.model.ProductWithSkuDto;
-import com.example.eshop.catalog.client.api.model.SkuDto;
-import com.example.eshop.catalog.client.api.model.SkuInfoDto;
-import com.example.eshop.catalog.configs.MappersTest;
+import com.example.eshop.catalog.client.model.AttributeDto;
+import com.example.eshop.catalog.client.model.ImageDto;
+import com.example.eshop.catalog.client.model.ProductDto;
+import com.example.eshop.catalog.client.model.ProductWithSkuDto;
+import com.example.eshop.catalog.client.model.SkuDto;
+import com.example.eshop.catalog.client.model.SkuInfoDto;
+import com.example.eshop.catalog.configs.MapperTest;
 import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.domain.product.Attribute;
 import com.example.eshop.catalog.domain.product.AttributeValue;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@MappersTest
+@MapperTest
 class ProductMapperImplTest {
     private static final Ean SKU1_EAN = Ean.fromString("1111111111111");
     private static final Ean SKU2_EAN = Ean.fromString("2222222222222");
@@ -119,6 +118,7 @@ class ProductMapperImplTest {
 
     private void assertSkuInfoEquals(List<Sku> sku, SkuInfoDto skuInfo) {
         // assert SkuInfo::products
+
         var products = sku.stream()
                 .map(Sku::getProduct)
                 .collect(Collectors.toMap(
@@ -133,11 +133,9 @@ class ProductMapperImplTest {
         });
 
         // assert SkuInfo::sku
+
         var skuMap = sku.stream()
-                .collect(Collectors.toMap(
-                        s -> s.getEan().toString(),
-                        Function.identity())
-                );
+                .collect(Collectors.toMap(Sku::getEan, Function.identity()));
 
         assertThat(skuInfo.getSku()).hasSize(sku.size());
         skuInfo.getSku().forEach(skuDto -> {
@@ -163,15 +161,10 @@ class ProductMapperImplTest {
     }
 
     private void assertSkuEquals(Sku sku, SkuDto skuDto) {
-        assertThat(skuDto.getEan()).as("Sku EAN").isEqualTo(sku.getEan().toString());
+        assertThat(skuDto.getEan()).as("Sku EAN").isEqualTo(sku.getEan());
         assertThat(skuDto.getQuantity()).as("available quantity").isEqualTo(sku.getAvailableQuantity());
-        assertPriceEquals(sku.getPrice(), skuDto.getPrice());
+        assertThat(skuDto.getPrice()).as("Sku price").isEqualTo(sku.getPrice());
         Assertions.assertListEquals(sku.getAttributeValues(), skuDto.getAttributes(), ProductMapperImplTest::assertAttributeEquals);
-    }
-
-    private static void assertPriceEquals(Money money, MoneyDto moneyDto) {
-        assertThat(moneyDto.getAmount()).as("price amount").isEqualTo(money.getAmount());
-        assertThat(moneyDto.getCurrency()).as("price currency").isEqualTo(money.getCurrency().getCurrencyCode());
     }
 
     private static void assertImageEquals(List<File> images, List<ImageDto> imageDtos) {

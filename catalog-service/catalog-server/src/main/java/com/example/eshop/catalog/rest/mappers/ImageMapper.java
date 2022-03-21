@@ -1,6 +1,6 @@
 package com.example.eshop.catalog.rest.mappers;
 
-import com.example.eshop.catalog.client.api.model.ImageDto;
+import com.example.eshop.catalog.client.model.ImageDto;
 import com.example.eshop.catalog.domain.file.File;
 import com.example.eshop.catalog.infrastructure.UriBuilder;
 import org.mapstruct.Mapper;

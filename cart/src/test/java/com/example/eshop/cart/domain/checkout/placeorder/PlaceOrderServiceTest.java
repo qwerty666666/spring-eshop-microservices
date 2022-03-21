@@ -17,7 +17,7 @@ class PlaceOrderServiceTest {
     private final Order order = new Order(
             UUID.randomUUID(),
             FakeData.customerId(),
-            FakeData.emptyCart(),
+            FakeData.emptyCartDto(),
             FakeData.deliveryAddress(),
             new DeliveryServiceStub(true),
             new PaymentServiceStub(true)

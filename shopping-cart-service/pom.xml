@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>eshop</artifactId>
+        <groupId>com.example.eshop</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>shopping-cart-service</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <description>Shopping cart microservice</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>shopping-cart-client</module>
+        <module>shopping-cart-server</module>
+    </modules>
+
+    <properties>
+        <shared-kernel.version>0.0.1-SNAPSHOT</shared-kernel.version>
+        <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
+        <rest-utils.version>1.0.0-SNAPSHOT</rest-utils.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.example.eshop</groupId>
+                <artifactId>shared-kernel</artifactId>
+                <version>${shared-kernel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.example.eshop</groupId>
+                <artifactId>rest-utils</artifactId>
+                <version>${rest-utils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.example.eshop</groupId>
+                <artifactId>shared-rest-models</artifactId>
+                <version>${shared-rest-models.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

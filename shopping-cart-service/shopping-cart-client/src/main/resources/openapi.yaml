@@ -1,0 +1,314 @@
+openapi: 3.0.3
+
+info:
+  version: 1.0.0
+  title: Spring E-Shop
+  description: |
+    Every `Customer` has a Shopping `Cart`.
+
+    `Cart` consist of `items` where each `item` has unique `SKU`.
+    Customer can add, remove and update `SKU` in the Shopping `Cart`.
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+
+tags:
+  - name: cart
+
+servers:
+  - url: '/api'
+
+security:
+  - bearerAuth: []
+
+paths:
+  /cart:
+    get:
+      tags:
+        - cart
+      summary: Get cart for the authenticated customer
+      operationId: getCart
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+  /cart/items:
+    put:
+      tags:
+        - cart
+      summary: Add new item to cart of authorized customer or
+        change quantity of already existed in cart item, if item
+        with the given EAN already exist in the cart
+      operationId: addCartItem
+      requestBody:
+        $ref: '#/components/requestBodies/add_cart_item'
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        400:
+          $ref: '#/components/responses/validation_error'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+        422:
+          $ref: '#/components/responses/unprocessable_entity'
+
+    delete:
+      tags:
+        - cart
+      summary: Clear cart
+      operationId: clearCart
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+  /cart/items/{ean}:
+    delete:
+      tags:
+        - cart
+      summary: Remove cart item with provided EAN from authorized
+        customer's cart
+      operationId: removeCartItem
+      parameters:
+        - $ref: '#/components/parameters/ean'
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+        404:
+          $ref: '#/components/responses/not_found'
+
+components:
+  schemas:
+    image:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://example.com/images/photo.png
+      required:
+        - url
+
+    available-quantity:
+      type: integer
+      minimum: 0
+      description: Available quantity for purchase
+      example: 12
+
+    attribute:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - id
+        - name
+        - value
+      example:
+        id: 1
+        name: size
+        value: XXL
+
+    ean:
+      type: string
+      format: gtin13
+      description: Global Trade Item Number (GTIN-13)
+      example: '5901234123457'
+
+    money:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: 0
+          example: 100.1
+        currency:
+          type: string
+          description: 3 letter currency code as defined by ISO-4217
+          format: iso-4217
+          example: EUR
+      required:
+        - amount
+        - currency
+
+    basic-error:
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+        detail:
+          type: string
+      required:
+        - status
+        - detail
+
+    cart:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1234
+        totalPrice:
+          $ref: '#/components/schemas/money'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/cart-item'
+      required:
+        - id
+        - items
+        - totalPrice
+
+    cart-item:
+      type: object
+      properties:
+        ean:
+          $ref: '#/components/schemas/ean'
+        price:
+          $ref: '#/components/schemas/money'
+        productName:
+          type: string
+          example: Sneakers
+        quantity:
+          $ref: '#/components/schemas/cart-item-quantity'
+        availableQuantity:
+          $ref: '#/components/schemas/available-quantity'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+      required:
+        - ean
+        - price
+        - productName
+        - quantity
+        - availableQuantity
+        - attributes
+        - images
+
+    add-cart-item-command:
+      type: object
+      properties:
+        ean:
+          $ref: '#/components/schemas/ean'
+        quantity:
+          $ref: '#/components/schemas/cart-item-quantity'
+      required:
+        - ean
+        - quantity
+
+    cart-item-quantity:
+      type: integer
+      minimum: 1
+      example: 7
+
+    validation-error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-error'
+      required:
+        - errors
+
+    field-error:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - field
+        - message
+      example:
+        field: email
+        message: Invalid email format
+
+  requestBodies:
+    add_cart_item:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/add-cart-item-command'
+
+  responses:
+    not_found:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/basic-error'
+          examples:
+            default:
+              $ref: '#/components/examples/not_found'
+
+    unprocessable_entity:
+      description: Unprocessable Entity indicates that the server understands  
+        the content type of the request entity, and the syntax of the request 
+        entity is correct, but it was unable to process the contained instructions.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/basic-error'
+          examples:
+            default:
+              $ref: '#/components/examples/unprocessable_entity'
+
+    requires_authentication:
+      description: Requires authentication
+
+    validation_error:
+      description: Request parameters validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validation-error'
+
+    cart:
+      description: Cart
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cart'
+
+  parameters:
+    ean:
+      name: ean
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ean'
+
+  examples:
+    not_found:
+      value:
+        status: 404
+        detail: Resource not found
+
+    unprocessable_entity:
+      value:
+        status: 422
+        detail: Can't do operation with given parameters
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

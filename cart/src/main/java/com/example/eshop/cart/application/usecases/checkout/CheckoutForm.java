@@ -3,14 +3,14 @@ package com.example.eshop.cart.application.usecases.checkout;
 import com.example.eshop.cart.domain.checkout.order.Order;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
 import com.example.eshop.cart.domain.checkout.payment.PaymentService;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
  * Form for Checkout process.
  */
-@Builder
 @Getter
 public class CheckoutForm {
     private Order order;
@@ -22,11 +22,20 @@ public class CheckoutForm {
         order = builder.order;
         availablePayments = builder.availablePayments;
         availableDeliveries = builder.availableDeliveries;
-        total = builder.total;
+        total = new Total(order);
     }
 
-    // override Lombok's @Builder
+    public static CheckoutFormBuilder builder() {
+        return new CheckoutFormBuilder();
+    }
+
+    @Setter
+    @Accessors(fluent = true, chain = true)
     public static class CheckoutFormBuilder {
+        private Order order;
+        private List<PaymentService> availablePayments;
+        private List<DeliveryService> availableDeliveries;
+
         public CheckoutForm build() {
             validate();
             return new CheckoutForm(this);
@@ -41,9 +50,6 @@ public class CheckoutForm {
             }
             if (availablePayments == null) {
                 throw new IllegalStateException("availablePayments is required");
-            }
-            if (total == null) {
-                throw new IllegalStateException("total is required");
             }
         }
     }

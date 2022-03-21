@@ -4,7 +4,7 @@ import com.example.eshop.checkout.client.CheckoutApi;
 import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.order.FakeData;
 import com.example.eshop.order.application.services.createorder.CreateOrderService;
-import com.example.eshop.sharedtest.IntegrationTest;
+import com.example.eshop.order.config.KafkaTest;
 import com.example.eshop.sharedtest.dbtests.DbTest;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.database.rider.core.api.dataset.DataSet;
@@ -24,9 +24,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.JacksonUtils;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
+import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -38,12 +37,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@IntegrationTest
-@EmbeddedKafka(
-        partitions = 1,
-        topics = {CheckoutApi.ORDER_PLACED_TOPIC},
-        bootstrapServersProperty = "spring.kafka.bootstrap-servers"
-)
+@ActiveProfiles("test")
+@KafkaTest
 @DbTest
 class OrderPlacedEventListenerIntegrationTest {
     @TestConfiguration
@@ -64,8 +59,6 @@ class OrderPlacedEventListenerIntegrationTest {
     }
 
     @Autowired
-    private EmbeddedKafkaBroker broker;
-    @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
     @Autowired
     private KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
@@ -79,7 +72,7 @@ class OrderPlacedEventListenerIntegrationTest {
     public void setUp() {
         // we should wait because listener container can start after the first message was published
         for (MessageListenerContainer messageListenerContainer : kafkaListenerEndpointRegistry.getListenerContainers()) {
-            ContainerTestUtils.waitForAssignment(messageListenerContainer, broker.getPartitionsPerTopic());
+            ContainerTestUtils.waitForAssignment(messageListenerContainer, 1);
         }
     }
 

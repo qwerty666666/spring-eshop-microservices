@@ -8,12 +8,11 @@ import com.example.eshop.customer.domain.customer.EmailAlreadyExistException;
 import com.example.eshop.customer.domain.customer.PasswordPolicyException;
 import com.example.eshop.rest.api.CustomerApi;
 import com.example.eshop.rest.controllers.base.BaseController;
-import com.example.eshop.rest.controllers.base.ValidationErrorBuilder;
 import com.example.eshop.rest.dto.CustomerDto;
 import com.example.eshop.rest.dto.CustomerFieldsDto;
 import com.example.eshop.rest.dto.NewCustomerDto;
-import com.example.eshop.rest.dto.ValidationErrorDto;
 import com.example.eshop.rest.mappers.CustomerMapper;
+import com.example.eshop.rest.models.ValidationErrorDto;
 import com.example.eshop.rest.utils.UriUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -44,9 +43,8 @@ public class CustomerController extends BaseController implements CustomerApi {
     @ExceptionHandler(EmailAlreadyExistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private ValidationErrorDto handleEmailAlreadyExistException(Locale locale) {
-        return ValidationErrorBuilder.newInstance()
-                .addError("email", getMessageSource().getMessage("emailAlreadyInUse", null, locale))
-                .build();
+        return new ValidationErrorDto()
+                .addError("email", getMessageSource().getMessage("emailAlreadyInUse", null, locale));
     }
 
     /**
@@ -55,9 +53,8 @@ public class CustomerController extends BaseController implements CustomerApi {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private ValidationErrorDto handlePasswordPolicyException(PasswordPolicyException e) {
-        return ValidationErrorBuilder.newInstance()
-                .addError("password", String.join(" ", e.getPolicyViolationMessages()))
-                .build();
+        return new ValidationErrorDto()
+                .addError("password", String.join(" ", e.getPolicyViolationMessages()));
     }
 
     @Override

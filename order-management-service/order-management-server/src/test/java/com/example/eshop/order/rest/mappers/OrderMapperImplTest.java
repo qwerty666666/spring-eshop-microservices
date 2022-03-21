@@ -1,24 +1,22 @@
 package com.example.eshop.order.rest.mappers;
 
-import com.example.eshop.order.client.api.model.AttributeDto;
-import com.example.eshop.order.client.api.model.DeliveryAddressDto;
-import com.example.eshop.order.client.api.model.ImageDto;
-import com.example.eshop.order.client.api.model.MoneyDto;
-import com.example.eshop.order.client.api.model.OrderDeliveryDto;
-import com.example.eshop.order.client.api.model.OrderDto;
-import com.example.eshop.order.client.api.model.OrderLineDto;
-import com.example.eshop.order.client.api.model.OrderPaymentDto;
-import com.example.eshop.order.client.api.model.OrderTotalDto;
-import com.example.eshop.order.client.api.model.PageableDto;
-import com.example.eshop.order.config.MappersTest;
+import com.example.eshop.order.FakeData;
+import com.example.eshop.order.client.model.AttributeDto;
+import com.example.eshop.order.client.model.DeliveryAddressDto;
+import com.example.eshop.order.client.model.ImageDto;
+import com.example.eshop.order.client.model.OrderDeliveryDto;
+import com.example.eshop.order.client.model.OrderDto;
+import com.example.eshop.order.client.model.OrderLineDto;
+import com.example.eshop.order.client.model.OrderPaymentDto;
+import com.example.eshop.order.client.model.OrderTotalDto;
+import com.example.eshop.order.client.model.PageableDto;
+import com.example.eshop.order.config.MapperTest;
 import com.example.eshop.order.domain.order.Address;
 import com.example.eshop.order.domain.order.Delivery;
 import com.example.eshop.order.domain.order.Order;
 import com.example.eshop.order.domain.order.OrderLine;
 import com.example.eshop.order.domain.order.OrderLineAttribute;
 import com.example.eshop.order.domain.order.Payment;
-import com.example.eshop.order.FakeData;
-import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +28,7 @@ import java.util.function.BiConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@MappersTest
+@MapperTest
 class OrderMapperImplTest {
     @Autowired
     OrderMapper orderMapper;
@@ -95,18 +93,18 @@ class OrderMapperImplTest {
     }
 
     private void assertTotalEquals(Order order, OrderTotalDto dto) {
-        assertPriceEquals(order.getCartPrice(), dto.getCartPrice());
-        assertPriceEquals(order.getDelivery().getPrice(), dto.getDeliveryPrice());
-        assertPriceEquals(order.getPrice(), dto.getTotalPrice());
+        assertThat(dto.getCartPrice()).isEqualTo(order.getCartPrice());
+        assertThat(dto.getDeliveryPrice()).isEqualTo(order.getDelivery().getPrice());
+        assertThat(dto.getTotalPrice()).isEqualTo(order.getPrice());
     }
 
     private void assertOrderLineEquals(OrderLine line, OrderLineDto dto) {
         assertThat(dto.getId()).isEqualTo(line.getId() == null ? null : line.getId().toString());
-        assertThat(dto.getEan()).isEqualTo(line.getEan().toString());
+        assertThat(dto.getEan()).isEqualTo(line.getEan());
         assertThat(dto.getProductName()).isEqualTo(line.getProductName());
         assertThat(dto.getQuantity()).isEqualTo(line.getQuantity());
-        assertPriceEquals(line.getItemPrice(), dto.getItemPrice());
-        assertPriceEquals(line.getPrice(), dto.getLinePrice());
+        assertThat(dto.getItemPrice()).isEqualTo(line.getItemPrice());
+        assertThat(dto.getLinePrice()).isEqualTo(line.getPrice());
         assertListEquals(line.getAttributes(), dto.getAttributes(), this::assertAttributeEquals);
         assertListEquals(line.getImages(), dto.getImages(), this::assertImageEquals);
     }
@@ -127,10 +125,5 @@ class OrderMapperImplTest {
 
     private void assertImageEquals(String image, ImageDto dto) {
         assertThat(dto.getUrl()).isEqualTo(image);
-    }
-
-    private void assertPriceEquals(Money money, MoneyDto moneyDto) {
-        assertThat(moneyDto.getAmount()).isEqualTo(money.getAmount());
-        assertThat(moneyDto.getCurrency()).isEqualTo(money.getCurrency().getCurrencyCode());
     }
 }
