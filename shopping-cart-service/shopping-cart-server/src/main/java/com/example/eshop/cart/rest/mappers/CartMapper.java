@@ -63,6 +63,7 @@ public abstract class CartMapper {
 
         return new CartDto()
                 .id(cart.getId() != null ? cart.getId().toString() : null) // NOSONAR id can be null
+                .totalPrice(cart.getTotalPrice())
                 .items(items);
     }
 

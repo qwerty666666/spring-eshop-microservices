@@ -38,6 +38,8 @@ public class Assertions {
     public static void assertCartEquals(Cart cart, Map<Ean, SkuWithProductDto> productInfo, CartDto dto) {
         // id
         assertThat(dto.getId()).isEqualTo(cart.getId() == null ? null : cart.getId().toString());
+        // price
+        assertThat(dto.getTotalPrice()).isEqualTo(cart.getTotalPrice());
         // items
         Assertions.assertListEquals(cart.getItems(), dto.getItems(), (item, itemDto) -> {
             assertCartItemEquals(item, productInfo.get(item.getEan()), itemDto);
