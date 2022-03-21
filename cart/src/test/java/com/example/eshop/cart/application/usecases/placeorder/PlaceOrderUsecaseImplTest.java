@@ -1,6 +1,5 @@
 package com.example.eshop.cart.application.usecases.placeorder;
 
-import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.cart.domain.checkout.order.Order;
@@ -13,6 +12,7 @@ import com.example.eshop.cart.stubs.DeliveryServiceStub;
 import com.example.eshop.cart.stubs.PaymentServiceStub;
 import com.example.eshop.cart.utils.TestDataUtils;
 import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
 import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEvent;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
@@ -66,8 +66,6 @@ class PlaceOrderUsecaseImplTest {
         // createOrderDto
         var customerId = FakeData.customerId();
         var cartDto = FakeData.cartDto();
-        var cart = new Cart(customerId);
-        cart.addItem(cartItemEan, cartItemPrice, cartItemQuantity);
 
         createOrderDto = new CreateOrderDto(customerId, cartDto, FakeData.deliveryAddress(),
                 new DeliveryServiceId("1"), new PaymentServiceId("1"));
@@ -92,7 +90,14 @@ class PlaceOrderUsecaseImplTest {
         stockReservationService = mock(StockReservationService.class);
 
         // catalogService
-        var skuWithProductDto = TestDataUtils.toSkuWithProductDto(cart.getItem(cartItemEan));
+        var product = TestDataUtils.fakeProduct();
+        var skuWithProductDto = SkuWithProductDto.builder()
+                .ean(cartItemEan)
+                .price(cartItemPrice)
+                .quantity(cartItemQuantity)
+                .productId(product.getId())
+                .product(product)
+                .build();
         catalogService = mock(CatalogService.class);
         when(catalogService.getSku(List.of(cartItemEan))).thenReturn(Mono.just(
                 Map.of(cartItemEan, skuWithProductDto)

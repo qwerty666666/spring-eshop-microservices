@@ -4,7 +4,6 @@ import com.example.eshop.cart.client.model.AttributeDto;
 import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.client.model.CartItemDto;
 import com.example.eshop.cart.client.model.ImageDto;
-import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
@@ -53,22 +52,6 @@ public class FakeData {
 
     public static Ean ean() {
         return Ean.fromString("1234567890123");
-    }
-
-    public static Cart cart() {
-        return cart(customerId());
-    }
-
-    public static Cart cart(String customerId) {
-        var cart = new Cart(customerId);
-
-        cart.addItem(ean(), Money.USD(123), 10);
-
-        return cart;
-    }
-
-    public static Cart emptyCart(String customerId) {
-        return new Cart(customerId);
     }
 
     public static CartDto emptyCartDto() {
