@@ -1,13 +1,11 @@
 package com.example.eshop.rest.controllers;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
-import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
 import com.example.eshop.cart.application.usecases.checkout.CheckoutForm;
 import com.example.eshop.cart.application.usecases.checkout.CheckoutProcessService;
-import com.example.eshop.cart.application.usecases.clearcart.ClearCartService;
 import com.example.eshop.cart.application.usecases.placeorder.PlaceOrderUsecase;
+import com.example.eshop.cart.client.CartServiceClient;
 import com.example.eshop.cart.client.model.CartDto;
-import com.example.eshop.cart.domain.cart.Cart;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
 import com.example.eshop.cart.domain.checkout.order.Order;
@@ -31,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import reactor.core.publisher.Mono;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -44,8 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = CheckoutController.class)
 @ControllerTest
 class CheckoutControllerTest {
-    @MockBean
-    private CartQueryService cartQueryService;
     @MockBean
     private ClearCartService clearCartService;
     @MockBean
@@ -61,7 +58,6 @@ class CheckoutControllerTest {
     private ObjectMapper objectMapper;
 
     private final String customerId = AuthConfig.CUSTOMER_ID;
-    private final Cart cart = FakeData.cart(customerId);
     private final CartDto cartDto = FakeData.cartDto();
 
     private final DeliveryAddress deliveryAddress = FakeData.deliveryAddress();
@@ -83,8 +79,9 @@ class CheckoutControllerTest {
 
     @BeforeEach
     void setUp() {
-        when(cartQueryService.getForCustomer(customerId)).thenReturn(cart);
-        when(checkoutMapper.toCreateOrderDto(checkoutRequestDto, customerId, cart)).thenReturn(createOrderDto);
+        when(cartServiceClient.getCart(customerId)).thenReturn(Mono.just(cartDto));
+
+        when(checkoutMapper.toCreateOrderDto(checkoutRequestDto, customerId, cartDto)).thenReturn(createOrderDto);
     }
 
     @Nested
@@ -124,7 +121,7 @@ class CheckoutControllerTest {
 
         @Test
         @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
-        void whenCheckout_thenReturnCheckout() throws Exception {
+        void whenCheckoutRequest_thenReturnCheckout() throws Exception {
             // Given
             when(checkoutProcessService.process(createOrderDto)).thenReturn(checkoutForm);
 

@@ -1,10 +1,10 @@
 package com.example.eshop.rest.controllers;
 
-import com.example.eshop.cart.application.usecases.cartquery.CartQueryService;
 import com.example.eshop.cart.application.usecases.checkout.CheckoutProcessService;
 import com.example.eshop.cart.application.usecases.clearcart.ClearCartService;
 import com.example.eshop.cart.application.usecases.placeorder.PlaceOrderUsecase;
-import com.example.eshop.cart.domain.cart.Cart;
+import com.example.eshop.cart.client.CartServiceClient;
+import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
 import com.example.eshop.localizer.Localizer;
 import com.example.eshop.rest.api.CheckoutApi;
@@ -25,13 +25,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import java.time.Duration;
 
 @RestController
 @RequestMapping(UriUtils.API_BASE_PATH_PROPERTY)
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CheckoutController extends BaseController implements CheckoutApi {
-    private final CartQueryService cartQueryService;
+    private final CartServiceClient cartServiceClient;
     private final ClearCartService clearCartService;
 
     private final CheckoutProcessService checkoutProcessService;
@@ -89,9 +90,10 @@ public class CheckoutController extends BaseController implements CheckoutApi {
         return checkoutMapper.toCreateOrderDto(checkoutRequestDto, customerId, cart);
     }
 
-    private Cart getCartForAuthenticatedCustomer() {
-        var userDetails = getCurrentAuthenticationOrFail();
+    private CartDto getCartForAuthenticatedCustomer() {
+        var customerId = getCurrentAuthenticationOrFail().getCustomerId();
 
-        return cartQueryService.getForCustomer(userDetails.getCustomerId());
+        return cartServiceClient.getCart(customerId)
+                .block(Duration.ofSeconds(5));
     }
 }

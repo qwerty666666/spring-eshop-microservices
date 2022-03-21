@@ -16,7 +16,7 @@ public final class AuthUtils {
      * @return currently authenticated principal
      */
     public static Optional<Authentication> getCurrentAuthentication() {
-        return Optional.of(SecurityContextHolder.getContext().getAuthentication());
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
     }
 
     /**
