@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 public class WebClientCartServiceClient implements CartServiceClient {
     private static final String API_PREFIX = "/api";
     private static final String CART_URL = API_PREFIX + "/cart";
+    private static final String CART_ITEMS_URL = CART_URL + "/items";
 
     private final WebClient webClient;
 
@@ -23,7 +24,11 @@ public class WebClientCartServiceClient implements CartServiceClient {
     }
 
     @Override
-    public Mono<Void> clear(String customerId) {
-        return null;
+    public Mono<CartDto> clear(String customerId) {
+        return webClient.delete()
+                .uri(CART_ITEMS_URL)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(CartDto.class);
     }
 }

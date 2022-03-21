@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ControllerTest
 class CheckoutControllerTest {
     @MockBean
-    private ClearCartService clearCartService;
+    private CartServiceClient cartServiceClient;
     @MockBean
     private PlaceOrderUsecase placeOrderUsecase;
     @MockBean
@@ -80,6 +80,7 @@ class CheckoutControllerTest {
     @BeforeEach
     void setUp() {
         when(cartServiceClient.getCart(customerId)).thenReturn(Mono.just(cartDto));
+        when(cartServiceClient.clear(customerId)).thenReturn(Mono.just(cartDto));
 
         when(checkoutMapper.toCreateOrderDto(checkoutRequestDto, customerId, cartDto)).thenReturn(createOrderDto);
     }
@@ -174,7 +175,7 @@ class CheckoutControllerTest {
                     .andExpect(header().exists(HttpHeaders.LOCATION));
 
             verify(placeOrderUsecase).place(createOrderDto);
-            verify(clearCartService).clear(customerId);
+            verify(cartServiceClient).clear(customerId);
         }
 
         private ResultActions performPlaceOrderRequest() throws Exception {

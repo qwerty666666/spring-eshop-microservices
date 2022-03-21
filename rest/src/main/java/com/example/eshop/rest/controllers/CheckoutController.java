@@ -1,7 +1,6 @@
 package com.example.eshop.rest.controllers;
 
 import com.example.eshop.cart.application.usecases.checkout.CheckoutProcessService;
-import com.example.eshop.cart.application.usecases.clearcart.ClearCartService;
 import com.example.eshop.cart.application.usecases.placeorder.PlaceOrderUsecase;
 import com.example.eshop.cart.client.CartServiceClient;
 import com.example.eshop.cart.client.model.CartDto;
@@ -33,7 +32,6 @@ import java.time.Duration;
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CheckoutController extends BaseController implements CheckoutApi {
     private final CartServiceClient cartServiceClient;
-    private final ClearCartService clearCartService;
 
     private final CheckoutProcessService checkoutProcessService;
     private final PlaceOrderUsecase placeOrderUsecase;
@@ -75,7 +73,7 @@ public class CheckoutController extends BaseController implements CheckoutApi {
         var order = placeOrderUsecase.place(createOrderDto);
 
         // clear customer's cart
-        clearCartService.clear(getCurrentAuthenticationOrFail().getCustomerId());
+       clearCustomerCart();
 
         // and return Location to created order
         var location = uriUtils.buildOrderUri(order.getId());
@@ -95,5 +93,10 @@ public class CheckoutController extends BaseController implements CheckoutApi {
 
         return cartServiceClient.getCart(customerId)
                 .block(Duration.ofSeconds(5));
+    }
+
+    private void clearCustomerCart() {
+        var customerId = getCurrentAuthenticationOrFail().getCustomerId();
+        cartServiceClient.clear(customerId).block();
     }
 }

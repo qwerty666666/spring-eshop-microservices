@@ -15,5 +15,5 @@ public interface CartServiceClient {
     /**
      * Clear customer's Cart
      */
-    Mono<Void> clear(String customerId);
+    Mono<CartDto> clear(String customerId);
 }
