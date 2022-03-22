@@ -1,16 +1,16 @@
 package com.example.eshop.rest.mappers;
 
-import com.example.eshop.cart.application.usecases.checkout.CheckoutForm;
-import com.example.eshop.cart.application.usecases.checkout.Total;
+import com.example.eshop.checkout.application.services.checkoutprocess.dto.CheckoutForm;
+import com.example.eshop.checkout.application.services.checkoutprocess.dto.Total;
 import com.example.eshop.cart.client.model.CartDto;
-import com.example.eshop.cart.domain.checkout.delivery.DeliveryService;
-import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
-import com.example.eshop.cart.domain.checkout.delivery.Shipment;
-import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
-import com.example.eshop.cart.domain.checkout.order.Order;
-import com.example.eshop.cart.domain.checkout.payment.PaymentService;
-import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
-import com.example.eshop.cart.infrastructure.tests.FakeData;
+import com.example.eshop.checkout.domain.delivery.DeliveryService;
+import com.example.eshop.checkout.domain.delivery.DeliveryService.DeliveryServiceId;
+import com.example.eshop.checkout.domain.delivery.Shipment;
+import com.example.eshop.checkout.domain.order.DeliveryAddress;
+import com.example.eshop.checkout.domain.order.Order;
+import com.example.eshop.checkout.domain.payment.PaymentService;
+import com.example.eshop.checkout.domain.payment.PaymentService.PaymentServiceId;
+import com.example.eshop.checkout.infrastructure.tests.FakeData;
 import com.example.eshop.rest.config.MappersTest;
 import com.example.eshop.rest.dto.CheckoutFormDto;
 import com.example.eshop.rest.dto.CheckoutTotalDto;
@@ -53,13 +53,13 @@ class CheckoutMapperTest {
         // cart
         assertThat(dto.getCart()).isEqualTo(expectedCartDto);
         // address
-        assertAddressEquals(form.getOrder().getAddress(), dto.getDeliveryAddress());
+        assertAddressEquals(form.order().getAddress(), dto.getDeliveryAddress());
         // deliveries
-        Assertions.assertListEquals(form.getAvailableDeliveries(), dto.getAvailableDeliveries(), this::assertDeliveryServiceEquals);
+        Assertions.assertListEquals(form.availableDeliveries(), dto.getAvailableDeliveries(), this::assertDeliveryServiceEquals);
         // payments
-        Assertions.assertListEquals(form.getAvailablePayments(), dto.getAvailablePayments(), this::assertPaymentServiceEquals);
+        Assertions.assertListEquals(form.availablePayments(), dto.getAvailablePayments(), this::assertPaymentServiceEquals);
         // Total
-        assertTotalEquals(form.getTotal(), dto.getTotal());
+        assertTotalEquals(form.total(), dto.getTotal());
     }
 
     private void assertAddressEquals(DeliveryAddress address, DeliveryAddressDto dto) {
@@ -83,9 +83,9 @@ class CheckoutMapperTest {
     }
 
     private void assertTotalEquals(Total total, CheckoutTotalDto dto) {
-        assertThat(dto.getCartPrice()).isEqualTo(total.getCartPrice());
-        assertThat(dto.getDeliveryPrice()).isEqualTo(total.getDeliveryPrice());
-        assertThat(dto.getTotalPrice()).isEqualTo(total.getTotalPrice());
+        assertThat(dto.getCartPrice()).isEqualTo(total.cartPrice());
+        assertThat(dto.getDeliveryPrice()).isEqualTo(total.deliveryPrice());
+        assertThat(dto.getTotalPrice()).isEqualTo(total.totalPrice());
     }
 
     private static class DeliveryServiceStub extends DeliveryService {

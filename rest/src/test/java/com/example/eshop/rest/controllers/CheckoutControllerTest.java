@@ -1,15 +1,15 @@
 package com.example.eshop.rest.controllers;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
-import com.example.eshop.cart.application.usecases.checkout.CheckoutForm;
-import com.example.eshop.cart.application.usecases.checkout.CheckoutProcessService;
-import com.example.eshop.cart.application.usecases.placeorder.PlaceOrderUsecase;
+import com.example.eshop.checkout.application.services.checkoutprocess.dto.CheckoutForm;
+import com.example.eshop.checkout.application.services.checkoutprocess.CheckoutProcessService;
+import com.example.eshop.checkout.application.services.placeorder.PlaceOrderService;
 import com.example.eshop.cart.client.CartServiceClient;
 import com.example.eshop.cart.client.model.CartDto;
-import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
-import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
-import com.example.eshop.cart.domain.checkout.order.Order;
-import com.example.eshop.cart.infrastructure.tests.FakeData;
+import com.example.eshop.checkout.application.services.CreateOrderDto;
+import com.example.eshop.checkout.domain.order.DeliveryAddress;
+import com.example.eshop.checkout.domain.order.Order;
+import com.example.eshop.checkout.infrastructure.tests.FakeData;
 import com.example.eshop.rest.config.AuthConfig;
 import com.example.eshop.rest.config.ControllerTest;
 import com.example.eshop.rest.dto.CheckoutFormDto;
@@ -46,7 +46,7 @@ class CheckoutControllerTest {
     @MockBean
     private CartServiceClient cartServiceClient;
     @MockBean
-    private PlaceOrderUsecase placeOrderUsecase;
+    private PlaceOrderService placeOrderService;
     @MockBean
     private CheckoutProcessService checkoutProcessService;
     @MockBean
@@ -158,7 +158,7 @@ class CheckoutControllerTest {
         @Test
         @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void givenInvalidRequest_whenPlaceOrder_thenReturn400() throws Exception {
-            when(placeOrderUsecase.place(createOrderDto)).thenThrow(new ValidationException(new Errors()));
+            when(placeOrderService.place(createOrderDto)).thenThrow(new ValidationException(new Errors()));
 
             performPlaceOrderRequest()
                     .andExpect(status().isBadRequest());
@@ -168,13 +168,13 @@ class CheckoutControllerTest {
         @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
         void whenPlaceOrder_thenCartIsClearedAndReturn200() throws Exception {
             var createdOrder = new Order(UUID.randomUUID(), customerId, cartDto, deliveryAddress, null, null);
-            when(placeOrderUsecase.place(createOrderDto)).thenReturn(createdOrder);
+            when(placeOrderService.place(createOrderDto)).thenReturn(createdOrder);
 
             performPlaceOrderRequest()
                     .andExpect(status().isCreated())
                     .andExpect(header().exists(HttpHeaders.LOCATION));
 
-            verify(placeOrderUsecase).place(createOrderDto);
+            verify(placeOrderService).place(createOrderDto);
             verify(cartServiceClient).clear(customerId);
         }
 

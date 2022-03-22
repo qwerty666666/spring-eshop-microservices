@@ -1,11 +1,11 @@
 package com.example.eshop.rest.mappers;
 
-import com.example.eshop.cart.application.usecases.checkout.CheckoutForm;
+import com.example.eshop.checkout.application.services.checkoutprocess.dto.CheckoutForm;
 import com.example.eshop.cart.client.model.CartDto;
-import com.example.eshop.cart.domain.checkout.delivery.DeliveryService.DeliveryServiceId;
-import com.example.eshop.cart.domain.checkout.order.CreateOrderDto;
-import com.example.eshop.cart.domain.checkout.order.DeliveryAddress;
-import com.example.eshop.cart.domain.checkout.payment.PaymentService.PaymentServiceId;
+import com.example.eshop.checkout.domain.delivery.DeliveryService.DeliveryServiceId;
+import com.example.eshop.checkout.application.services.CreateOrderDto;
+import com.example.eshop.checkout.domain.order.DeliveryAddress;
+import com.example.eshop.checkout.domain.payment.PaymentService.PaymentServiceId;
 import com.example.eshop.rest.dto.CheckoutFormDto;
 import com.example.eshop.rest.dto.CheckoutRequestDto;
 import com.example.eshop.rest.dto.DeliveryAddressDto;
