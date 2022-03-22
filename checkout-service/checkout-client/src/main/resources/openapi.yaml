@@ -1,0 +1,346 @@
+openapi: 3.0.3
+
+info:
+  version: 1.0.0
+  title: Spring E-Shop
+  description: |
+    `Checkout` is a process before place `Order` where customer can choose
+    different options like payment and delivery service.
+
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+
+tags:
+  - name: checkout
+
+servers:
+  - url: '/api'
+
+security:
+  - bearerAuth: []
+
+paths:
+  /checkout:
+    post:
+      tags:
+        - checkout
+      summary: Updates info during checkout
+      operationId: checkout
+      requestBody:
+        $ref: '#/components/requestBodies/checkout_order'
+      responses:
+        200:
+          $ref: '#/components/responses/checkout_form'
+        400:
+          $ref: '#/components/responses/validation_error'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+  /checkout/confirm:
+    post:
+      tags:
+        - checkout
+      summary: Create new Order from the authorized customer Cart
+      operationId: placeOrder
+      requestBody:
+        $ref: '#/components/requestBodies/checkout_order'
+      responses:
+        201:
+          $ref: '#/components/responses/created'
+        400:
+          $ref: '#/components/responses/validation_error'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+components:
+  schemas:
+    image:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://example.com/images/photo.png
+      required:
+        - url
+
+    attribute:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - id
+        - name
+        - value
+      example:
+        id: 1
+        name: size
+        value: XXL
+
+    ean:
+      type: string
+      format: gtin13
+      description: Global Trade Item Number (GTIN-13)
+      example: '5901234123457'
+
+    money:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: 0
+          example: 100.1
+        currency:
+          type: string
+          description: 3 letter currency code as defined by ISO-4217
+          format: iso-4217
+          example: EUR
+      required:
+        - amount
+        - currency
+
+    validation-error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-error'
+      required:
+        - errors
+
+    field-error:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - field
+        - message
+      example:
+        field: email
+        message: Invalid email format
+
+    cart:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1234
+        totalPrice:
+          $ref: '#/components/schemas/money'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/cart-item'
+      required:
+        - id
+        - items
+        - totalPrice
+
+    cart-item:
+      type: object
+      properties:
+        ean:
+          $ref: '#/components/schemas/ean'
+        price:
+          $ref: '#/components/schemas/money'
+        productName:
+          type: string
+          example: Sneakers
+        quantity:
+          $ref: '#/components/schemas/cart-item-quantity'
+        availableQuantity:
+          $ref: '#/components/schemas/available-quantity'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+      required:
+        - ean
+        - price
+        - productName
+        - quantity
+        - availableQuantity
+        - attributes
+        - images
+
+    cart-item-quantity:
+      type: integer
+      minimum: 1
+      example: 7
+
+    available-quantity:
+      type: integer
+      minimum: 0
+      description: Available quantity for purchase
+      example: 12
+
+    checkout-request:
+      type: object
+      properties:
+        deliveryServiceId:
+          type: string
+          example: 'courier'
+        paymentServiceId:
+          type: string
+          example: 'online'
+        address:
+          $ref: '#/components/schemas/delivery-address'
+
+    checkout-form:
+      type: object
+      properties:
+        cart:
+          $ref: '#/components/schemas/cart'
+        deliveryAddress:
+          $ref: '#/components/schemas/delivery-address'
+        availableDeliveries:
+          type: array
+          items:
+            $ref: '#/components/schemas/delivery-service'
+        availablePayments:
+          type: array
+          items:
+            $ref: '#/components/schemas/payment-service'
+        total:
+          $ref: '#/components/schemas/checkout-total'
+      required:
+        - cart
+        - deliveryAddress
+        - availableDeliveries
+        - availablePayments
+        - total
+
+    delivery-address:
+      type: object
+      properties:
+        fullname:
+          type: string
+        phone:
+          $ref: '#/components/schemas/phone'
+        country:
+          type: string
+        city:
+          type: string
+        street:
+          type: string
+        building:
+          type: string
+        flat:
+          type: string
+      example:
+        fullname: 'Rick Sanches'
+        phone: '+79993334444'
+        country: 'Russia'
+        city: 'Khasavyurt'
+        street: 'Street'
+        building: '14/2'
+        flat: '12'
+
+    phone:
+      type: string
+      pattern: '^\+7\d{10}$'
+      example: '+79993334444'
+
+    delivery-service:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      example:
+        id: '123'
+        name: 'Courier'
+
+    payment-service:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      example:
+        id: '543'
+        name: 'Online'
+
+    checkout-total:
+      type: object
+      properties:
+        cartPrice:
+          $ref: '#/components/schemas/money'
+        deliveryPrice:
+          $ref: '#/components/schemas/money'
+        totalPrice:
+          $ref: '#/components/schemas/money'
+      required:
+        - cartPrice
+        - deliveryPrice
+        - totalPrice
+      example:
+        cartPrice:
+          amount: 100
+          currency: 'USD'
+        deliveryPrice:
+          amount: 10
+          currency: 'USD'
+        totalPrice:
+          amount: 110
+          currency: 'USD'
+
+  requestBodies:
+    checkout_order:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/checkout-request'
+
+  responses:
+    created:
+      description: Created
+      headers:
+        Location:
+          schema:
+            type: string
+            example: /api/products/123/
+
+    requires_authentication:
+      description: Requires authentication
+
+    checkout_form:
+      description: Checkout info
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/checkout-form'
+
+    validation_error:
+      description: Request parameters validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validation-error'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
