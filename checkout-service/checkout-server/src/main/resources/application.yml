@@ -1,0 +1,33 @@
+server:
+  port: 0
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: checkout-service
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:28000/auth/realms/test
+
+  devtools:
+    livereload:
+      enabled: false
+
+  web:
+    locale: en_US
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    preferIpAddress: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

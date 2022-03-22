@@ -2,10 +2,12 @@ package com.example.eshop.checkout;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
-public class CartApplication {
+@EnableEurekaClient
+public class CheckoutApplication {
     public static void main(String[] args) {
-        SpringApplication.run(CartApplication.class, args);
+        SpringApplication.run(CheckoutApplication.class, args);
     }
 }

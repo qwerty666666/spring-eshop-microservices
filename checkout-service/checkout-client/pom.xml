@@ -29,10 +29,6 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>catalog-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.example.eshop</groupId>
             <artifactId>shopping-cart-client</artifactId>
         </dependency>
 
