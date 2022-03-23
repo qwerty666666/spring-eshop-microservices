@@ -32,6 +32,8 @@ public class TokenController {
     public Mono<ResponseEntity> index(ServerWebExchange exchange) {
         OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
                 .principal(ANONYMOUS_AUTHENTICATION)
+                // this attribute is used in SecurityConfig#contextAttributesMapper to extract
+                // username / password to oauth2 authorize request context attributes
                 .attribute(ServerWebExchange.class.getName(), exchange)
                 .build();
 
@@ -77,7 +79,7 @@ public class TokenController {
      *         in password grant flow are invalid
      */
     private boolean isInvalidGrantException(Throwable e) {
-        return e instanceof ClientAuthorizationException clientException &&
+        return (e instanceof ClientAuthorizationException clientException) &&
                 clientException.getError().getErrorCode().equals(OAuth2ErrorCodes.INVALID_GRANT);
     }
 }
