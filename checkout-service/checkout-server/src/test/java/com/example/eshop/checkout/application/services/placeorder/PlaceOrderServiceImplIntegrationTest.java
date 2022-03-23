@@ -1,6 +1,7 @@
 package com.example.eshop.checkout.application.services.placeorder;
 
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
+import com.example.eshop.checkout.FakeData;
 import com.example.eshop.checkout.config.AuthConfig;
 import com.example.eshop.checkout.application.services.CreateOrderDto;
 import com.example.eshop.sharedtest.IntegrationTest;
@@ -22,9 +23,7 @@ class PlaceOrderServiceImplIntegrationTest {
     @Test
     @WithMockCustomJwtAuthentication(customerId = AuthConfig.CUSTOMER_ID)
     void givenNonAuthorizedUser_whenPlaceOrder_thenThrowAccessDeniedException() {
-        var createOrderDto = CreateOrderDto.builder()
-                .customerId("nonAuthorizedCustomerId")
-                .build();
+        var createOrderDto = FakeData.createOrderDto("nonAuthorizedCustomerId");
 
         assertThatThrownBy(() -> placeOrderService.place(createOrderDto))
                 .isInstanceOf(AccessDeniedException.class);

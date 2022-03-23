@@ -23,6 +23,8 @@
     <properties>
         <shared-kernel.version>0.0.1-SNAPSHOT</shared-kernel.version>
         <shopping-cart-service.version>1.0.0-SNAPSHOT</shopping-cart-service.version>
+        <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
+        <rest-utils.version>1.0.0-SNAPSHOT</rest-utils.version>
     </properties>
 
     <dependencyManagement>
@@ -36,6 +38,16 @@
                 <groupId>com.example.eshop</groupId>
                 <artifactId>shopping-cart-client</artifactId>
                 <version>${shopping-cart-service.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.example.eshop</groupId>
+                <artifactId>rest-utils</artifactId>
+                <version>${rest-utils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.example.eshop</groupId>
+                <artifactId>shared-rest-models</artifactId>
+                <version>${shared-rest-models.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

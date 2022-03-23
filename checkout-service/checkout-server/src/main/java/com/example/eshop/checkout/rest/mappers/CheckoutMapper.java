@@ -1,14 +1,14 @@
-package com.example.eshop.rest.mappers;
+package com.example.eshop.checkout.rest.mappers;
 
 import com.example.eshop.checkout.application.services.checkoutprocess.dto.CheckoutForm;
 import com.example.eshop.cart.client.model.CartDto;
+import com.example.eshop.checkout.client.model.CheckoutFormDto;
+import com.example.eshop.checkout.client.model.CheckoutRequestDto;
+import com.example.eshop.checkout.client.model.DeliveryAddressDto;
 import com.example.eshop.checkout.domain.delivery.DeliveryService.DeliveryServiceId;
 import com.example.eshop.checkout.application.services.CreateOrderDto;
 import com.example.eshop.checkout.domain.order.DeliveryAddress;
 import com.example.eshop.checkout.domain.payment.PaymentService.PaymentServiceId;
-import com.example.eshop.rest.dto.CheckoutFormDto;
-import com.example.eshop.rest.dto.CheckoutRequestDto;
-import com.example.eshop.rest.dto.DeliveryAddressDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.lang.Nullable;

@@ -26,7 +26,7 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.util.Map;
 
-@Configuration("cart-kafkaConfig")
+@Configuration
 @ConditionalOnProperty(value = KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY, havingValue = "false", matchIfMissing = true)
 public class KafkaConfig {
     public static final String DISABLE_KAFKA_CONFIG_PROPERTY = "kafka.disabled";

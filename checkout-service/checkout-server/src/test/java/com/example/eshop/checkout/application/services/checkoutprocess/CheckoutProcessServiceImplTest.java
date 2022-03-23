@@ -10,7 +10,7 @@ import com.example.eshop.checkout.application.services.OrderFactoryImpl;
 import com.example.eshop.checkout.domain.payment.PaymentService;
 import com.example.eshop.checkout.domain.payment.PaymentService.PaymentServiceId;
 import com.example.eshop.checkout.domain.payment.PaymentServiceRepository;
-import com.example.eshop.checkout.infrastructure.tests.FakeData;
+import com.example.eshop.checkout.FakeData;
 import com.example.eshop.checkout.stubs.DeliveryServiceStub;
 import com.example.eshop.checkout.stubs.PaymentServiceStub;
 import org.junit.jupiter.api.BeforeEach;

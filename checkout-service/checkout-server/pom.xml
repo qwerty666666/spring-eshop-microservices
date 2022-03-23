@@ -20,6 +20,9 @@
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <auth.version>1.0.0-SNAPSHOT</auth.version>
         <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+
+        <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
+        <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
     </properties>
 
     <dependencies>
@@ -48,6 +51,14 @@
             <artifactId>localizer</artifactId>
             <version>${localizer.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>rest-utils</artifactId>
+        </dependency>
 
         <!-- Devtools -->
         <dependency>
@@ -68,6 +79,11 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
 
@@ -119,6 +135,14 @@
             <version>${auth.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Swagger -->
+        <!-- required for openapi-generator-maven-plugin controller interfaces code-generation -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-swagger2.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -143,6 +167,57 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.parent.basedir}/checkout-client/src/main/resources/openapi.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
+                            <apiPackage>com.example.eshop.checkout.rest.api</apiPackage>
+                            <generateApiDocumentation>true</generateApiDocumentation>
+                            <generateModels>false</generateModels>
+                            <modelPackage>com.example.eshop.checkout.client.model</modelPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
+
+                            <typeMappings>
+                                <mapping>string+gtin13=ean</mapping>
+                            </typeMappings>
+                            <importMappings>
+                                <!-- common VO -->
+                                <mapping>money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <!-- common rest models -->
+                                <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
+                                <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
+                                <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
+                                <!-- shared models from cart service -->
+                                <mapping>cart=com.example.eshop.cart.client.model.CartDto</mapping>
+                                <mapping>cart-item=com.example.eshop.cart.client.model.CartItemDto</mapping>
+                                <mapping>attribute=com.example.eshop.cart.client.model.AttributeDto</mapping>
+                                <mapping>image=com.example.eshop.cart.client.model.ImageDto</mapping>
+                            </importMappings>
+
+                            <configOptions>
+                                <dateLibrary>java8</dateLibrary>
+                                <openApiNullable>false</openApiNullable>
+                                <!-- skip generation of Api Controller -->
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useTags>true</useTags>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

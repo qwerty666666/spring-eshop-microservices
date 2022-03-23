@@ -1,18 +1,17 @@
-package com.example.eshop.rest.controllers;
+package com.example.eshop.checkout.rest.controllers;
 
-import com.example.eshop.checkout.application.services.checkoutprocess.CheckoutProcessService;
-import com.example.eshop.checkout.application.services.placeorder.PlaceOrderService;
 import com.example.eshop.cart.client.CartServiceClient;
 import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.checkout.application.services.CreateOrderDto;
+import com.example.eshop.checkout.application.services.checkoutprocess.CheckoutProcessService;
+import com.example.eshop.checkout.application.services.placeorder.PlaceOrderService;
+import com.example.eshop.checkout.client.model.CheckoutFormDto;
+import com.example.eshop.checkout.client.model.CheckoutRequestDto;
+import com.example.eshop.checkout.rest.api.CheckoutApi;
+import com.example.eshop.checkout.rest.mappers.CheckoutMapper;
+import com.example.eshop.checkout.rest.utils.UriUtils;
 import com.example.eshop.localizer.Localizer;
-import com.example.eshop.rest.api.CheckoutApi;
-import com.example.eshop.rest.controllers.base.BaseController;
-import com.example.eshop.rest.dto.CheckoutFormDto;
-import com.example.eshop.rest.dto.CheckoutRequestDto;
-import com.example.eshop.rest.mappers.CheckoutMapper;
 import com.example.eshop.rest.models.ValidationErrorDto;
-import com.example.eshop.rest.utils.UriUtils;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Duration;
 
 @RestController
-@RequestMapping(UriUtils.API_BASE_PATH_PROPERTY)
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)  // for access to autowired fields from @ExceptionHandler
 public class CheckoutController extends BaseController implements CheckoutApi {
@@ -50,7 +49,7 @@ public class CheckoutController extends BaseController implements CheckoutApi {
         var errors = new ValidationErrorDto();
 
         for (var err: e.getErrors()) {
-            errors.addError(err.getField(), localizer.getMessage(err.getMessageCode(), err.getMessageParams()));
+            errors.addError(err.getField(), getLocalizer().getMessage(err.getMessageCode(), err.getMessageParams()));
         }
 
         return errors;
@@ -67,9 +66,8 @@ public class CheckoutController extends BaseController implements CheckoutApi {
 
     @Override
     public ResponseEntity<Void> placeOrder(CheckoutRequestDto checkoutRequestDto) {
-        var createOrderDto = buildCreateOrderDto(checkoutRequestDto);
-
         // place order
+        var createOrderDto = buildCreateOrderDto(checkoutRequestDto);
         var order = placeOrderService.place(createOrderDto);
 
         // clear customer's cart

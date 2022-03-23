@@ -10,7 +10,7 @@ import com.example.eshop.checkout.domain.payment.PaymentService.PaymentServiceId
 import com.example.eshop.checkout.domain.placeorder.PlaceOrderResult;
 import com.example.eshop.checkout.domain.placeorder.PlaceOrderService;
 import com.example.eshop.checkout.domain.placeorder.PlaceOrderValidator;
-import com.example.eshop.checkout.infrastructure.tests.FakeData;
+import com.example.eshop.checkout.FakeData;
 import com.example.eshop.checkout.stubs.DeliveryServiceStub;
 import com.example.eshop.checkout.stubs.PaymentServiceStub;
 import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;

@@ -31,6 +31,10 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shopping-cart-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+        </dependency>
 
         <!-- Devtools -->
         <dependency>
@@ -83,7 +87,7 @@
 
                             <modelPackage>com.example.eshop.checkout.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateModelDocumentation>true</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
 
                             <apiPackage>com.example.eshop.checkout.client.api</apiPackage>

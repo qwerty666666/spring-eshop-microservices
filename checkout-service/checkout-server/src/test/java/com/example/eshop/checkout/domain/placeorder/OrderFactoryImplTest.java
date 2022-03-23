@@ -9,7 +9,7 @@ import com.example.eshop.checkout.application.services.OrderFactory;
 import com.example.eshop.checkout.application.services.OrderFactoryImpl;
 import com.example.eshop.checkout.domain.payment.PaymentService.PaymentServiceId;
 import com.example.eshop.checkout.domain.payment.PaymentServiceRepository;
-import com.example.eshop.checkout.infrastructure.tests.FakeData;
+import com.example.eshop.checkout.FakeData;
 import com.example.eshop.sharedkernel.domain.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -47,11 +47,6 @@ class OrderFactoryImplTest {
     class ValidationTest {
         @Nested
         class AddressValidationTest {
-            @Test
-            void nullAddress() {
-                assertThrowValidationException(createWithAddress(null));
-            }
-
             private CreateOrderDto createWithAddress(DeliveryAddress address) {
                 return CreateOrderDto.builder()
                         .customerId(customerId)
@@ -69,11 +64,6 @@ class OrderFactoryImplTest {
 
         @Nested
         class CustomerIdValidationTest {
-            @Test
-            void nullCustomerId() {
-                assertThrowValidationException(createWithCustomer(null));
-            }
-
             private CreateOrderDto createWithCustomer(String customerId) {
                 return CreateOrderDto.builder()
                         .customerId(customerId)
@@ -91,11 +81,6 @@ class OrderFactoryImplTest {
 
         @Nested
         class CartValidationTest {
-            @Test
-            void nullCart() {
-                assertThrowValidationException(createWithCart(null));
-            }
-
             @Test
             void emptyCart() {
                 assertThrowValidationException(createWithCart(FakeData.emptyCartDto()));

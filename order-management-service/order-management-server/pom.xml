@@ -202,6 +202,7 @@
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
 
                             <apiPackage>com.example.eshop.order.client.api</apiPackage>
+                            <generateApiDocumentation>true</generateApiDocumentation>
                             <generateModels>false</generateModels>
                             <modelPackage>com.example.eshop.order.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>

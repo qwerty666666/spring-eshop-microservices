@@ -5,7 +5,7 @@ import com.example.eshop.checkout.domain.delivery.DeliveryService;
 import com.example.eshop.checkout.domain.order.DeliveryAddress;
 import com.example.eshop.checkout.domain.order.Order;
 import com.example.eshop.checkout.domain.payment.PaymentService;
-import com.example.eshop.checkout.infrastructure.tests.FakeData;
+import com.example.eshop.checkout.FakeData;
 import com.example.eshop.checkout.stubs.DeliveryServiceStub;
 import com.example.eshop.checkout.stubs.PaymentServiceStub;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;

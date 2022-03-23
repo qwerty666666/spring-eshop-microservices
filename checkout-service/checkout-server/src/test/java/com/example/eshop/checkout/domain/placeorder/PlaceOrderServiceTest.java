@@ -1,7 +1,7 @@
 package com.example.eshop.checkout.domain.placeorder;
 
 import com.example.eshop.checkout.domain.order.Order;
-import com.example.eshop.checkout.infrastructure.tests.FakeData;
+import com.example.eshop.checkout.FakeData;
 import com.example.eshop.checkout.stubs.DeliveryServiceStub;
 import com.example.eshop.checkout.stubs.PaymentServiceStub;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
