@@ -1,6 +1,6 @@
 package com.example.eshop.cart.config;
 
-import com.example.eshop.sharedkernel.infrastructure.dal.SimpleNaturalIdRepositoryImpl;
+import com.example.eshop.springdatajpautils.SimpleNaturalIdRepositoryImpl;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 

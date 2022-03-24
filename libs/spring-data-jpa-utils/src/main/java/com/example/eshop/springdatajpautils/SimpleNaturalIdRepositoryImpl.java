@@ -1,4 +1,4 @@
-package com.example.eshop.sharedkernel.infrastructure.dal;
+package com.example.eshop.springdatajpautils;
 
 import org.hibernate.Session;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;

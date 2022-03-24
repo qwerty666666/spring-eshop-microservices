@@ -20,6 +20,7 @@
 
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+        <spring-data-jpa-utils.version>1.0.0-SNAPSHOT</spring-data-jpa-utils.version>
 
         <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
@@ -80,6 +81,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>spring-data-jpa-utils</artifactId>
+            <version>${spring-data-jpa-utils.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

@@ -18,5 +18,6 @@
         <module>kafka-test</module>
         <module>rest-utils</module>
         <module>shared-rest-models</module>
+        <module>spring-data-jpa-utils</module>
     </modules>
 </project>
