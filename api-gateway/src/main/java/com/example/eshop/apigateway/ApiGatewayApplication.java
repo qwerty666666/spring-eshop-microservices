@@ -46,6 +46,11 @@ public class ApiGatewayApplication {
                         .path("/api/cart/**")
                         .uri("lb://shopping-cart-service")
                 )
+                .route("checkout", r -> r
+                        .order(400)
+                        .path("/api/checkout/**")
+                        .uri("lb://checkout-service")
+                )
                 .route("monolith", r -> r
                         .order(1000)
                         .path("/**")

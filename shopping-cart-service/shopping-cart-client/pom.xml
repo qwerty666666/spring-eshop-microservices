@@ -85,7 +85,7 @@
 
                             <modelPackage>com.example.eshop.cart.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateModelDocumentation>true</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
 
                             <apiPackage>com.example.eshop.cart.client.api</apiPackage>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>checkout-service</artifactId>
+        <groupId>com.example.eshop</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>checkout-server</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <description>Checkout microservice</description>
+
+    <properties>
+        <warehouse-service.version>1.0.0-SNAPSHOT</warehouse-service.version>
+
+        <localizer.version>1.0.0-SNAPSHOT</localizer.version>
+        <auth.version>1.0.0-SNAPSHOT</auth.version>
+        <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+
+        <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
+        <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
+    </properties>
+
+    <dependencies>
+        <!-- Project libs -->
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>checkout-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-kernel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>warehouse-client</artifactId>
+            <version>${warehouse-service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shopping-cart-client</artifactId>
+            <version>${shopping-cart-service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>localizer</artifactId>
+            <version>${localizer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>rest-utils</artifactId>
+        </dependency>
+
+        <!-- Devtools -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <!-- Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>auth</artifactId>
+            <version>${auth.version}</version>
+        </dependency>
+
+        <!-- Kafka -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-test</artifactId>
+            <version>${shared-test.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>auth-test</artifactId>
+            <version>${auth.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Swagger -->
+        <!-- required for openapi-generator-maven-plugin controller interfaces code-generation -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-swagger2.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.parent.basedir}/checkout-client/src/main/resources/openapi.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
+                            <apiPackage>com.example.eshop.checkout.rest.api</apiPackage>
+                            <generateApiDocumentation>true</generateApiDocumentation>
+                            <generateModels>false</generateModels>
+                            <modelPackage>com.example.eshop.checkout.client.model</modelPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
+
+                            <typeMappings>
+                                <mapping>string+gtin13=ean</mapping>
+                            </typeMappings>
+                            <importMappings>
+                                <!-- common VO -->
+                                <mapping>money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <!-- common rest models -->
+                                <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
+                                <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
+                                <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
+                                <!-- shared models from cart service -->
+                                <mapping>cart=com.example.eshop.cart.client.model.CartDto</mapping>
+                                <mapping>cart-item=com.example.eshop.cart.client.model.CartItemDto</mapping>
+                                <mapping>attribute=com.example.eshop.cart.client.model.AttributeDto</mapping>
+                                <mapping>image=com.example.eshop.cart.client.model.ImageDto</mapping>
+                            </importMappings>
+
+                            <configOptions>
+                                <dateLibrary>java8</dateLibrary>
+                                <openApiNullable>false</openApiNullable>
+                                <!-- skip generation of Api Controller -->
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useTags>true</useTags>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

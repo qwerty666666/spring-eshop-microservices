@@ -17,12 +17,14 @@
 
     <modules>
         <module>checkout-client</module>
+        <module>checkout-server</module>
     </modules>
 
     <properties>
         <shared-kernel.version>0.0.1-SNAPSHOT</shared-kernel.version>
-        <catalog-service.version>1.0.0-SNAPSHOT</catalog-service.version>
         <shopping-cart-service.version>1.0.0-SNAPSHOT</shopping-cart-service.version>
+        <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
+        <rest-utils.version>1.0.0-SNAPSHOT</rest-utils.version>
     </properties>
 
     <dependencyManagement>
@@ -34,13 +36,18 @@
             </dependency>
             <dependency>
                 <groupId>com.example.eshop</groupId>
-                <artifactId>catalog-client</artifactId>
-                <version>${catalog-service.version}</version>
+                <artifactId>shopping-cart-client</artifactId>
+                <version>${shopping-cart-service.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.example.eshop</groupId>
-                <artifactId>shopping-cart-client</artifactId>
-                <version>${shopping-cart-service.version}</version>
+                <artifactId>rest-utils</artifactId>
+                <version>${rest-utils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.example.eshop</groupId>
+                <artifactId>shared-rest-models</artifactId>
+                <version>${shared-rest-models.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

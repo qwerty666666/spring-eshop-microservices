@@ -14,6 +14,13 @@
     <version>1.0.0-SNAPSHOT</version>
     <description>Shared DTO for checkout service clients</description>
 
+    <properties>
+        <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
+        <swagger-annotations.version>1.6.4</swagger-annotations.version>
+        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
+        <jsr305.version>3.0.2</jsr305.version>
+    </properties>
+
     <dependencies>
         <!-- Project libs -->
         <dependency>
@@ -22,17 +29,105 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>catalog-client</artifactId>
+            <artifactId>shopping-cart-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>shopping-cart-client</artifactId>
+            <artifactId>shared-rest-models</artifactId>
         </dependency>
 
+        <!-- Devtools -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- Swagger -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${jackson-databind-nullable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>${jsr305.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${basedir}/src/main/resources/openapi.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
+                            <modelPackage>com.example.eshop.checkout.client.model</modelPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
+                            <generateModelDocumentation>true</generateModelDocumentation>
+                            <generateModelTests>false</generateModelTests>
+
+                            <apiPackage>com.example.eshop.checkout.client.api</apiPackage>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateApiTests>false</generateApiTests>
+
+                            <typeMappings>
+                                <mapping>string+gtin13=ean</mapping>
+                            </typeMappings>
+                            <importMappings>
+                                <!-- common VO -->
+                                <mapping>money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <!-- common rest models -->
+                                <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
+                                <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
+                                <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
+                                <!-- shared models from cart service -->
+                                <mapping>cart=com.example.eshop.cart.client.model.CartDto</mapping>
+                                <mapping>cart-item=com.example.eshop.cart.client.model.CartItemDto</mapping>
+                                <mapping>attribute=com.example.eshop.cart.client.model.AttributeDto</mapping>
+                                <mapping>image=com.example.eshop.cart.client.model.ImageDto</mapping>
+                            </importMappings>
+
+                            <configOptions>
+                                <dateLibrary>java8</dateLibrary>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <library>webclient</library>
+                                <openApiNullable>false</openApiNullable>
+                                <useBeanValidation>true</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @lombok.Builder
+                                    @lombok.NoArgsConstructor
+                                    @lombok.AllArgsConstructor
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

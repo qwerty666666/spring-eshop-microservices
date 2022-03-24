@@ -179,9 +179,10 @@
                             <inputSpec>${project.parent.basedir}/catalog-client/src/main/resources/openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
-                            <generateModels>false</generateModels>
 
                             <apiPackage>com.example.eshop.catalog.rest.api</apiPackage>
+                            <generateApiDocumentation>true</generateApiDocumentation>
+                            <generateModels>false</generateModels>
                             <modelPackage>com.example.eshop.catalog.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
 

@@ -61,7 +61,8 @@ public class SecurityConfig {
         return authorizedClientManager;
     }
 
-    private Function<OAuth2AuthorizeRequest, Mono<Map<String, Object>>> contextAttributesMapper(ServerCodecConfigurer serverCodecConfigurer) {
+    private Function<OAuth2AuthorizeRequest, Mono<Map<String, Object>>> contextAttributesMapper(
+            ServerCodecConfigurer serverCodecConfigurer) {
         // takes `username` and `password` parameters from request body
 
         return authorizeRequest -> {
