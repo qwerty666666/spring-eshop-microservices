@@ -4,7 +4,7 @@ import com.example.eshop.cart.client.model.CartDto;
 import com.example.eshop.cart.client.model.CartItemDto;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItem;
-import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.CatalogServiceClient;
 import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import org.mapstruct.InjectionStrategy;
@@ -20,12 +20,12 @@ import java.util.Optional;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public abstract class CartMapper {
-    private CatalogService catalogService;
+    private CatalogServiceClient catalogService;
 
     // we can't use constructor injection in MapStruct for not @Mapper::uses dependencies
     @Autowired
-    public void setCatalogService(CatalogService catalogService) {
-        this.catalogService = catalogService;
+    public void setCatalogService(CatalogServiceClient catalogServiceClient) {
+        this.catalogService = catalogServiceClient;
     }
 
     public CartDto toCartDto(Cart cart) {

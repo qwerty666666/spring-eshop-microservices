@@ -2,7 +2,7 @@ package com.example.eshop.cart.rest.mappers;
 
 import com.example.eshop.cart.config.MapperTest;
 import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.CatalogServiceClient;
 import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.catalog.client.model.AttributeDto;
 import com.example.eshop.catalog.client.model.ImageDto;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 @MapperTest
 class CartMapperImplTest {
     @MockBean
-    private CatalogService catalogService;
+    private CatalogServiceClient catalogServiceClient;
 
     @Autowired
     private CartMapper mapper;
@@ -68,7 +68,7 @@ class CartMapperImplTest {
                 ean2, sku2
         );
 
-        when(catalogService.getSku(argThat(ArgMatchers.listContainsExactlyInAnyOrder(ean1, ean2))))
+        when(catalogServiceClient.getSku(argThat(ArgMatchers.listContainsExactlyInAnyOrder(ean1, ean2))))
                 .thenReturn(Mono.just(skuMap));
 
         var cart = new Cart("1");

@@ -2,7 +2,7 @@ package com.example.eshop.cart.application.services.cartitem;
 
 import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.domain.Cart;
-import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.CatalogServiceClient;
 import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class CartItemServiceImpl implements CartItemService {
-    private final CatalogService catalogService;
+    private final CatalogServiceClient catalogServiceClient;
     private final CartQueryService cartQueryService;
     private AddCartItemRule addCartItemRule = new AvailableQuantityRule();
 
@@ -86,7 +86,7 @@ public class CartItemServiceImpl implements CartItemService {
      * @throws ProductNotFoundException if product does not exist in catalog
      */
     private SkuWithProductDto getSku(AddCartItemCommand command) {
-        return catalogService.getSku(command.ean())
+        return catalogServiceClient.getSku(command.ean())
                 .blockOptional()
                 .orElseThrow(() -> new ProductNotFoundException(command.ean(), "Sku for EAN " + command.ean() + " does not exist"));
     }

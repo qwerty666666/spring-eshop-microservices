@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Gateway to Catalog microservice
  */
-public interface CatalogService {
+public interface CatalogServiceClient {
     /**
      * Returns sku by given EAN and {@code Mono.empty} if sku with
      * given EAN does not found.

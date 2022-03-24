@@ -6,7 +6,7 @@ import com.example.eshop.cart.application.services.cartquery.CartQueryService;
 import com.example.eshop.cart.config.AuthConfig;
 import com.example.eshop.cart.domain.Cart;
 import com.example.eshop.cart.domain.CartItem;
-import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.CatalogServiceClient;
 import com.example.eshop.catalog.client.model.SkuWithProductDto;
 import com.example.eshop.catalog.client.model.ProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
@@ -43,7 +43,7 @@ class CartItemServiceTest {
     @MockBean
     private CartQueryService cartQueryService;
     @MockBean
-    private CatalogService catalogService;
+    private CatalogServiceClient catalogServiceClient;
 
     @Autowired
     private CartItemService cartItemService;
@@ -75,9 +75,9 @@ class CartItemServiceTest {
                 )
                 .build();
 
-        when(catalogService.getSku(newEan)).thenReturn(Mono.just(newSku));
-        when(catalogService.getSku(existedInCartEan)).thenReturn(Mono.just(existedInCartSku));
-        when(catalogService.getSku(nonExistedInCatalogEan)).thenReturn(Mono.empty());
+        when(catalogServiceClient.getSku(newEan)).thenReturn(Mono.just(newSku));
+        when(catalogServiceClient.getSku(existedInCartEan)).thenReturn(Mono.just(existedInCartSku));
+        when(catalogServiceClient.getSku(nonExistedInCatalogEan)).thenReturn(Mono.empty());
     }
 
     @Nested

@@ -1,6 +1,6 @@
 package com.example.eshop.cart.config;
 
-import com.example.eshop.catalog.client.CatalogService;
+import com.example.eshop.catalog.client.CatalogServiceClient;
 import com.example.eshop.localizer.Localizer;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +12,8 @@ import static org.mockito.Mockito.mock;
 @ComponentScan("com.example.eshop.cart.rest.mappers")
 public class MapperTestsConfig {
     @Bean
-    public CatalogService catalogService() {
-        return mock(CatalogService.class);
+    public CatalogServiceClient catalogService() {
+        return mock(CatalogServiceClient.class);
     }
 
     @Bean

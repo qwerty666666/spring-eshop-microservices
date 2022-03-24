@@ -15,10 +15,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class CatalogServiceImpl implements CatalogService {
+public class WebClientCatalogServiceClient implements CatalogServiceClient {
     private static final String API_PREFIX = "/api";
     private static final String SKU_URL = API_PREFIX + "/sku";
 
+    // TODO there should be http client abstraction instead of WebClient
     private final WebClient webClient;
 
     @Override
