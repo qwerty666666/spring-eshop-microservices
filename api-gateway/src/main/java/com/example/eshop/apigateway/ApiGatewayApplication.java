@@ -1,61 +1,16 @@
 package com.example.eshop.apigateway;
 
-import com.example.eshop.apigateway.filters.UpperBoundLimitRequestParameterFilterFactory;
+import com.example.eshop.apigateway.config.AppProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.gateway.route.RouteLocator;
-import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableEurekaClient
+@EnableConfigurationProperties({ AppProperties.class })
 public class ApiGatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(ApiGatewayApplication.class, args);
-    }
-
-    @Bean
-    public RouteLocator routeLocator(RouteLocatorBuilder routeLocatorBuilder) {
-        return routeLocatorBuilder.routes()
-                .route("catalog", r -> r
-                        .order(100)
-                        .path("/api/{path:(?:products|categories|sku)}/**")
-                        .filters(f -> f
-                                .filter(new UpperBoundLimitRequestParameterFilterFactory().apply(config -> config
-                                        .setParameterName("per_page")
-                                        .setMaxValue(30)
-                                ))
-                        )
-                        .uri("lb://catalog-service")
-
-                )
-                .route("orders", r -> r
-                        .order(200)
-                        .path("/api/orders/**")
-                        .filters(f -> f
-                                .filter(new UpperBoundLimitRequestParameterFilterFactory().apply(config -> config
-                                        .setParameterName("per_page")
-                                        .setMaxValue(30)
-                                ))
-                        )
-                        .uri("lb://orders-service")
-                )
-                .route("cart", r -> r
-                        .order(300)
-                        .path("/api/cart/**")
-                        .uri("lb://shopping-cart-service")
-                )
-                .route("checkout", r -> r
-                        .order(400)
-                        .path("/api/checkout/**")
-                        .uri("lb://checkout-service")
-                )
-                .route("monolith", r -> r
-                        .order(1000)
-                        .path("/**")
-                        .uri("lb://monolith")
-                )
-                .build();
     }
 }

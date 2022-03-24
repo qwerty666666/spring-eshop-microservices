@@ -16,6 +16,7 @@
 
     <properties>
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
+        <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
     </properties>
 
     <dependencies>
@@ -25,19 +26,32 @@
             <artifactId>localizer</artifactId>
             <version>${localizer.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+            <version>${shared-rest-models.version}</version>
+        </dependency>
 
         <!-- Devtools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-actuator</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Gateway -->
@@ -48,6 +62,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
         <!-- Auth -->
@@ -64,6 +82,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -24,3 +24,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     preferIpAddress: true
+
+app:
+  oas:
+    url: /api
+    spec-file-url: /openapi.yaml

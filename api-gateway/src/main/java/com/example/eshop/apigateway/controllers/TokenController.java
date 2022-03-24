@@ -1,6 +1,8 @@
 package com.example.eshop.apigateway.controllers;
 
 import com.example.eshop.localizer.Localizer;
+import com.example.eshop.rest.models.BasicErrorDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.client.ClientAuthorizationException;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,7 +65,7 @@ public class TokenController {
     private ResponseEntity invalidUserCredentialsResponse() {
         return ResponseEntity.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new BasicErrorResponse(400, localizer.getMessage("token_invalidUserCredentials")));
+                .body(new BasicErrorDto(400, localizer.getMessage("token_invalidUserCredentials")));
     }
 
     /**
@@ -71,7 +74,7 @@ public class TokenController {
     private ResponseEntity invalidUserInputResponse() {
         return ResponseEntity.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new BasicErrorResponse(400, localizer.getMessage("token_missedRequiredParameters")));
+                .body(new BasicErrorDto(400, localizer.getMessage("token_missedRequiredParameters")));
     }
 
     /**
@@ -81,5 +84,16 @@ public class TokenController {
     private boolean isInvalidGrantException(Throwable e) {
         return (e instanceof ClientAuthorizationException clientException) &&
                 clientException.getError().getErrorCode().equals(OAuth2ErrorCodes.INVALID_GRANT);
+    }
+
+    /**
+     * Access token response for token Endpoint
+     */
+    public record TokenResponse(
+            @JsonProperty("access_token") String accessToken
+    ) {
+        public TokenResponse(OAuth2AccessToken token) {
+            this(token.getTokenValue());
+        }
     }
 }
