@@ -1,8 +1,0 @@
-app:
-  schema: https
-  host: ${HEROKU_APP_NAME}.herokuapp.com
-  port: ${PORT}
-  static-resources-location: file:~/files/
-
-sentry:
-  send-default-pii: true

@@ -44,11 +44,6 @@ public class RoutingConfig {
                         .path("/api/checkout/**")
                         .uri("lb://checkout-service")
                 )
-                .route("monolith", r -> r
-                        .order(1000)
-                        .path("/api/**")
-                        .uri("lb://monolith")
-                )
                 .build();
     }
 }
