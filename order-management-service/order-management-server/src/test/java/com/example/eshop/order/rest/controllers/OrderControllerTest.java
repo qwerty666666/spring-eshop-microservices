@@ -5,7 +5,6 @@ import com.example.eshop.order.application.services.queryorder.OrderNotFoundExce
 import com.example.eshop.order.application.services.queryorder.QueryOrderService;
 import com.example.eshop.order.config.AuthConfig;
 import com.example.eshop.order.config.ControllerTest;
-import com.example.eshop.order.config.MapperTestsConfig;
 import com.example.eshop.order.domain.order.Order;
 import com.example.eshop.order.FakeData;
 import com.example.eshop.order.rest.mappers.OrderMapper;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;

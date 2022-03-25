@@ -10,7 +10,6 @@ import com.example.eshop.checkout.client.model.CheckoutFormDto;
 import com.example.eshop.checkout.client.model.CheckoutRequestDto;
 import com.example.eshop.checkout.config.AuthConfig;
 import com.example.eshop.checkout.config.ControllerTest;
-import com.example.eshop.checkout.domain.order.DeliveryAddress;
 import com.example.eshop.checkout.FakeData;
 import com.example.eshop.checkout.rest.mappers.CheckoutMapper;
 import com.example.eshop.sharedkernel.domain.validation.Errors;
