@@ -1,4 +1,4 @@
-package com.example.eshop.sharedtest;
+package com.example.eshop.testutils;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;

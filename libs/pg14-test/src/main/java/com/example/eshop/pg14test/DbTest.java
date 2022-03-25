@@ -1,6 +1,6 @@
 package com.example.eshop.pg14test;
 
-import com.example.eshop.sharedtest.IntegrationTest;
+import com.example.eshop.testutils.IntegrationTest;
 import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.TestPropertySource;

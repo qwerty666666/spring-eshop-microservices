@@ -1,7 +1,7 @@
 package com.example.eshop.messagerelay;
 
 import com.example.eshop.kafkatest.RunKafkaTestcontainer;
-import com.example.eshop.sharedtest.IntegrationTest;
+import com.example.eshop.testutils.IntegrationTest;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
 import com.example.eshop.transactionaloutbox.messagerelay.MessageRelay;

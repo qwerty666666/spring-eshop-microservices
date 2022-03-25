@@ -1,6 +1,6 @@
 package com.example.eshop.checkout.config;
 
-import com.example.eshop.sharedtest.IntegrationTest;
+import com.example.eshop.testutils.IntegrationTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;

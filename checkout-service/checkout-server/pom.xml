@@ -19,7 +19,7 @@
 
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <auth.version>1.0.0-SNAPSHOT</auth.version>
-        <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+        <test-utils.version>1.0.0-SNAPSHOT</test-utils.version>
 
         <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
@@ -125,8 +125,8 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>shared-test</artifactId>
-            <version>${shared-test.version}</version>
+            <artifactId>test-utils</artifactId>
+            <version>${test-utils.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

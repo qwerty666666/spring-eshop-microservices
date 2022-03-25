@@ -19,7 +19,7 @@
         <catalog-service.version>1.0.0-SNAPSHOT</catalog-service.version>
 
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
-        <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+        <test-utils.version>1.0.0-SNAPSHOT</test-utils.version>
         <spring-data-jpa-utils.version>1.0.0-SNAPSHOT</spring-data-jpa-utils.version>
 
         <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
@@ -141,14 +141,19 @@
         <!-- Tests -->
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>shared-test</artifactId>
-            <version>${shared-test.version}</version>
+            <artifactId>test-utils</artifactId>
+            <version>${test-utils.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
             <artifactId>auth-test</artifactId>
             <version>${auth.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -206,6 +211,7 @@
 
                             <apiPackage>com.example.eshop.cart.client.api</apiPackage>
                             <generateApiDocumentation>true</generateApiDocumentation>
+
                             <generateModels>false</generateModels>
                             <modelPackage>com.example.eshop.cart.client.model</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>

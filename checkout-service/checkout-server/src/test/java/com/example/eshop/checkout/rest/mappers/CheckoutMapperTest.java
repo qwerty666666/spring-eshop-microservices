@@ -12,7 +12,7 @@ import com.example.eshop.checkout.config.MappersTest;
 import com.example.eshop.checkout.domain.delivery.DeliveryService;
 import com.example.eshop.checkout.domain.order.DeliveryAddress;
 import com.example.eshop.checkout.domain.payment.PaymentService;
-import com.example.eshop.sharedtest.Assertions;
+import com.example.eshop.testutils.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

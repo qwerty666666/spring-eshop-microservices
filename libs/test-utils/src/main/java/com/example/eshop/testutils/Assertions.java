@@ -1,4 +1,4 @@
-package com.example.eshop.sharedtest;
+package com.example.eshop.testutils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

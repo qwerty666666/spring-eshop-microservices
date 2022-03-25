@@ -2,7 +2,7 @@ package com.example.eshop.catalog.configs;
 
 import com.example.eshop.catalog.config.KafkaConfig;
 import com.example.eshop.kafkatest.RunKafkaTestcontainer;
-import com.example.eshop.sharedtest.IntegrationTest;
+import com.example.eshop.testutils.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import java.lang.annotation.Documented;

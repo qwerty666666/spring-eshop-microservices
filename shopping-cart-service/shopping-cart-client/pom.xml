@@ -88,9 +88,7 @@
                             <generateModelDocumentation>true</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
 
-                            <apiPackage>com.example.eshop.cart.client.api</apiPackage>
-                            <generateApiDocumentation>false</generateApiDocumentation>
-                            <generateApiTests>false</generateApiTests>
+                            <generateApis>false</generateApis>
 
                             <typeMappings>
                                 <mapping>string+gtin13=ean</mapping>

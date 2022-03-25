@@ -19,7 +19,7 @@
     <properties>
         <java.version>17</java.version>
 
-        <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+        <test-utils.version>1.0.0-SNAPSHOT</test-utils.version>
 
         <kafka.testcontainers.version>1.16.3</kafka.testcontainers.version>
     </properties>
@@ -27,8 +27,8 @@
     <dependencies>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>shared-test</artifactId>
-            <version>${shared-test.version}</version>
+            <artifactId>test-utils</artifactId>
+            <version>${test-utils.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>

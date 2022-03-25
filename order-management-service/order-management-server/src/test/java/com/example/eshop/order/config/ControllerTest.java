@@ -1,6 +1,6 @@
 package com.example.eshop.order.config;
 
-import com.example.eshop.sharedtest.IntegrationTest;
+import com.example.eshop.testutils.IntegrationTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import java.lang.annotation.Documented;

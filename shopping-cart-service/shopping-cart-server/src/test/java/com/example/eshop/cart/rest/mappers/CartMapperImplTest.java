@@ -9,7 +9,7 @@ import com.example.eshop.catalog.client.model.ImageDto;
 import com.example.eshop.catalog.client.model.ProductDto;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
-import com.example.eshop.sharedtest.ArgMatchers;
+import com.example.eshop.testutils.ArgMatchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;

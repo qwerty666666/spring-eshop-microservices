@@ -23,6 +23,8 @@
         <auth.version>1.0.0-SNAPSHOT</auth.version>
         <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
         <rest-utils.version>1.0.0-SNAPSHOT</rest-utils.version>
+        <test-utils.version>1.0.0-SNAPSHOT</test-utils.version>
+        <shopping-cart-service.version>1.0.0-SNAPSHOT</shopping-cart-service.version>
     </properties>
 
     <dependencies>
@@ -61,6 +63,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-rest-models</artifactId>
             <version>${shared-rest-models.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shopping-cart-client</artifactId>
+            <version>${shopping-cart-service.version}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -129,8 +136,8 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>shared-test</artifactId>
-            <version>${project.version}</version>
+            <artifactId>test-utils</artifactId>
+            <version>${test-utils.version}</version>
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
