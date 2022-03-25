@@ -3,7 +3,7 @@ package com.example.eshop.order.application.services.queryorder;
 import com.example.eshop.auth.WithMockCustomJwtAuthentication;
 import com.example.eshop.order.config.AuthConfig;
 import com.example.eshop.order.domain.order.Order;
-import com.example.eshop.sharedtest.dbtests.DbTest;
+import com.example.eshop.pg14test.DbTest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

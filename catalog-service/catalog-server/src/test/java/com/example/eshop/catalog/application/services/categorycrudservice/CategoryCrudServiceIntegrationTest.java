@@ -3,7 +3,7 @@ package com.example.eshop.catalog.application.services.categorycrudservice;
 import com.example.eshop.catalog.domain.category.Category;
 import com.example.eshop.catalog.domain.category.Category.CategoryId;
 import com.example.eshop.sharedtest.IntegrationTest;
-import com.example.eshop.sharedtest.dbtests.DbTest;
+import com.example.eshop.pg14test.DbTest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

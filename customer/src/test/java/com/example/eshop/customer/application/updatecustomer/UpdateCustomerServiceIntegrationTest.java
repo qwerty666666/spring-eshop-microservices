@@ -1,7 +1,7 @@
 package com.example.eshop.customer.application.updatecustomer;
 
 import com.example.eshop.customer.domain.customer.Customer.CustomerId;
-import com.example.eshop.sharedtest.dbtests.DbTest;
+import com.example.eshop.pg14test.DbTest;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
@@ -20,7 +20,7 @@ class UpdateCustomerServiceIntegrationTest {
     @DataSet("customers.yml")
     @ExpectedDataSet("expectedUpdateCustomers.yml")
     @DBUnit(cacheConnection = false, caseSensitiveTableNames = true)
-    void givenUpdateCustomerCommand_whenUpdateCustomer_thenDbUpdated() {
+    void givenUpdateCustomerCommand_whenUpdateCustomer_thenDbUpdated() { // NOSONAR add at least one assertion
         // Given
         var id = new CustomerId("1");
         var firstname = "firstname";

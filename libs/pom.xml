@@ -19,5 +19,6 @@
         <module>rest-utils</module>
         <module>shared-rest-models</module>
         <module>spring-data-jpa-utils</module>
+        <module>pg14-test</module>
     </modules>
 </project>

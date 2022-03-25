@@ -4,4 +4,3 @@
 properties:
   # required for PostgreSQL
   caseSensitiveTableNames: true
-  datatypeFactory: !!com.example.eshop.sharedtest.dbtests.PostgresDataTypeFactory {}

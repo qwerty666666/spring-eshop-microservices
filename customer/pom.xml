@@ -14,6 +14,7 @@
     <properties>
         <passay.version>1.6.1</passay.version>
         <auth.version>1.0.0-SNAPSHOT</auth.version>
+        <pg14-test.version>1.0.0-SNAPSHOT</pg14-test.version>
     </properties>
 
     <dependencies>
@@ -87,6 +88,12 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-test</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>pg14-test</artifactId>
+            <version>${pg14-test.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

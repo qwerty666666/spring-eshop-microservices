@@ -12,7 +12,7 @@ import com.example.eshop.checkout.client.events.orderplacedevent.PaymentServiceD
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedkernel.domain.valueobject.Money;
 import com.example.eshop.sharedkernel.domain.valueobject.Phone;
-import com.example.eshop.sharedtest.dbtests.DbTest;
+import com.example.eshop.pg14test.DbTest;
 import com.example.eshop.warehouse.KafkaTest;
 import com.example.eshop.warehouse.application.services.reserve.ReserveStockItemService;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;

@@ -1,4 +1,4 @@
-package com.example.eshop.sharedtest.dbtests;
+package com.example.eshop.pg14test;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

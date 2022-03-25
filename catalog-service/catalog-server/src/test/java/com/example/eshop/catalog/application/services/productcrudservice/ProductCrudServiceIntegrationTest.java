@@ -6,7 +6,7 @@ import com.example.eshop.catalog.domain.product.Product;
 import com.example.eshop.catalog.domain.product.Product.ProductId;
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
 import com.example.eshop.sharedtest.IntegrationTest;
-import com.example.eshop.sharedtest.dbtests.DbTest;
+import com.example.eshop.pg14test.DbTest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

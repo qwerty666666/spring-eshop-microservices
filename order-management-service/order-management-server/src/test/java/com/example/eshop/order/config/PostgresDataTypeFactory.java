@@ -1,4 +1,4 @@
-package com.example.eshop.sharedtest.dbtests;
+package com.example.eshop.order.config;
 
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.DataTypeException;

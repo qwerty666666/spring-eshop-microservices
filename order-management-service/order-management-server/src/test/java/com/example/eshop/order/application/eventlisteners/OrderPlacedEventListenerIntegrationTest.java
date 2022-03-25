@@ -5,7 +5,7 @@ import com.example.eshop.checkout.client.events.orderplacedevent.OrderPlacedEven
 import com.example.eshop.order.FakeData;
 import com.example.eshop.order.application.services.createorder.CreateOrderService;
 import com.example.eshop.order.config.KafkaTest;
-import com.example.eshop.sharedtest.dbtests.DbTest;
+import com.example.eshop.pg14test.DbTest;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.apache.kafka.clients.producer.ProducerConfig;

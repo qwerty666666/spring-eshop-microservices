@@ -1,7 +1,7 @@
 package com.example.eshop.warehouse.application.services.reserve;
 
 import com.example.eshop.sharedkernel.domain.valueobject.Ean;
-import com.example.eshop.sharedtest.dbtests.DbTest;
+import com.example.eshop.pg14test.DbTest;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
 import com.example.eshop.warehouse.client.reservationresult.InsufficientQuantityError;

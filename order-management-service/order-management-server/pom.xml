@@ -18,6 +18,7 @@
         <auth.version>1.0.0-SNAPSHOT</auth.version>
         <checkout.version>1.0.0-SNAPSHOT</checkout.version>
         <shared-test.version>0.0.1-SNAPSHOT</shared-test.version>
+        <pg14-test.version>1.0.0-SNAPSHOT</pg14-test.version>
         <kafka-test.version>1.0.0-SNAPSHOT</kafka-test.version>
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
 
@@ -142,6 +143,12 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-test</artifactId>
             <version>${shared-test.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>pg14-test</artifactId>
+            <version>${pg14-test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
