@@ -7,7 +7,7 @@
     <parent>
         <artifactId>eshop</artifactId>
         <groupId>com.example.eshop</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>order-management-service</artifactId>
@@ -21,7 +21,7 @@
     </modules>
 
     <properties>
-        <shared-kernel.version>0.0.1-SNAPSHOT</shared-kernel.version>
+        <shared-kernel.version>1.0.0-SNAPSHOT</shared-kernel.version>
         <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
         <rest-utils.version>1.0.0-SNAPSHOT</rest-utils.version>
     </properties>

@@ -1,4 +1,4 @@
-CREATE TABLE stock_items
+CREATE TABLE IF NOT EXISTS stock_items
 (
     id       bigint                        NOT NULL,
     ean      character varying(255) UNIQUE NOT NULL,

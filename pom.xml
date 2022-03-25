@@ -12,15 +12,13 @@
 
     <groupId>com.example.eshop</groupId>
     <artifactId>eshop</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>eshop</name>
     <description>¯\_(ツ)_/¯</description>
     <packaging>pom</packaging>
 
     <modules>
         <module>shared-kernel</module>
-        <module>rest</module>
-        <module>customer</module>
         <module>libs</module>
         <module>message-relay-service</module>
         <module>warehouse-service</module>
@@ -46,6 +44,14 @@
 
         <integration.tests.tag>IntegrationTest</integration.tests.tag>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
