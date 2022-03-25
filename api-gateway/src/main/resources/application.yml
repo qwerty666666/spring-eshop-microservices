@@ -29,3 +29,8 @@ app:
   oas:
     url: /api
     spec-file-url: /openapi.yaml
+
+server:
+  error:
+    whitelabel:
+      enabled: false
