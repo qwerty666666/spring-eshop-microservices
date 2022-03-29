@@ -1,0 +1,75 @@
+# These properties are shared across all services
+#
+
+server:
+  port: 0
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+
+  # Disable defaults
+
+  jpa:
+    open-in-view: false
+  devtools:
+    livereload:
+      enabled: false
+
+  # Web
+
+  web:
+    locale: en_US
+
+  # Security
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:28000/auth/realms/test
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:28000/auth/realms/test
+
+  # Kafka
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+  # Jackson
+
+  jackson:
+    serialization:
+      indent_output: true
+
+  # Config Server
+
+  cloud:
+    bus:
+      refresh:
+        enabled: true
+      env:
+        enabled: false
+
+# Actuator
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+# Eureka
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 20
+    preferIpAddress: true

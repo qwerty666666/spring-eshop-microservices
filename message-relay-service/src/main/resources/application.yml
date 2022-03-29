@@ -1,8 +1,12 @@
 spring:
-  main:
-    web-application-type: none
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+  application:
+    name: message-relay-service
+
+  config:
+    import: configserver:http://localhost:8888
+
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 5

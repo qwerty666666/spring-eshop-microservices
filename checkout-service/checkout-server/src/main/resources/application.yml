@@ -1,9 +1,3 @@
-server:
-  port: 0
-  error:
-    whitelabel:
-      enabled: false
-
 spring:
   application:
     name: checkout-service
@@ -14,25 +8,11 @@ spring:
         jwt:
           issuer-uri: http://localhost:28000/auth/realms/test
 
-  devtools:
-    livereload:
-      enabled: false
+  config:
+    import: configserver:http://localhost:8888
 
-  web:
-    locale: en_US
-
-eureka:
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    preferIpAddress: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-
-rest:
-  schema: http
-  host: localhost
-  port: 8080
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 5

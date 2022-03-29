@@ -1,36 +1,12 @@
-server:
-  port: 0
-  error:
-    whitelabel:
-      enabled: false
-
 spring:
   application:
     name: shopping-cart-service
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:28000/auth/realms/test
+  config:
+    import: configserver:http://localhost:8888
 
-  devtools:
-    livereload:
-      enabled: false
-
-  jpa:
-    open-in-view: false
-
-  web:
-    locale: en_US
-
-eureka:
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    preferIpAddress: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 5

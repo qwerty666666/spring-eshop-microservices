@@ -1,0 +1,4 @@
+rest:
+  schema: http
+  host: localhost
+  port: 8080

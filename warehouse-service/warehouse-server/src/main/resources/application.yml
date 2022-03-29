@@ -1,26 +1,12 @@
 spring:
   application:
-    name: warehouse
+    name: warehouse-service
 
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  config:
+    import: configserver:http://localhost:8888
 
-  jpa:
-    open-in-view: false
-
-  devtools:
-    livereload:
-      enabled: false
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-
-server:
-  port: 0
-
-app:
-  kafka:
-    consumer-group: warehouse
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 5

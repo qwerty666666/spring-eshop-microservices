@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/catalog
+    username: postgres
+    password: pass
+
+app:
+  kafka:
+    consumer-group: catalog
+
+  images-base-path: /images
+  api-base-path: /api
+  public-host-name: http://localhost:8080
