@@ -9,6 +9,10 @@ import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Message relay that polls messages from the given DataSource
+ * and produce them to Kafka.
+ */
 @Slf4j
 public class DefaultMessageRelay implements MessageRelay {
     private static final int DEFAULT_POLL_BATCH_SIZE = 5;

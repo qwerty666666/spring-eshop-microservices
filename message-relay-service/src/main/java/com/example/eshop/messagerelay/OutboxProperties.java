@@ -13,6 +13,9 @@ import java.util.Map;
 @Setter
 @ConfigurationProperties("outbox")
 public class OutboxProperties {
+    /**
+     * Data sources from which messages will be polled
+     */
     private Map<String, DataSourceProperties> dataSources = new HashMap<>();
 
     @Getter

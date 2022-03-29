@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
 /**
- * Give all messages to Kafka Client.
+ * Produce all messages to Kafka.
  *
  * Kafka client can batch messages before send them to broker,
  * and client will wait for inger.ms if the buffer is not full.

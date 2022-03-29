@@ -70,7 +70,7 @@ public class SingleThreadedMessageRelay implements MessageRelay {
             return;
         }
 
-        log.info("start Message Relay '%s'".formatted(name));
+        log.info("Start Message Relay '%s'".formatted(name));
 
         executorService.scheduleWithFixedDelay(this::publishMessages, 0, pollPeriod, pollTimeUnit);
         isRunning = true;
@@ -82,7 +82,7 @@ public class SingleThreadedMessageRelay implements MessageRelay {
             return;
         }
 
-        log.info("stop Message Relay '%s'".formatted(name));
+        log.info("Stop Message Relay '%s'".formatted(name));
 
         executorService.shutdown();
         isRunning = false;
@@ -97,7 +97,15 @@ public class SingleThreadedMessageRelay implements MessageRelay {
             do {
                 newMessages = transactionalOutbox.getMessages(pollBatchSize);
 
+                if (log.isDebugEnabled()) {
+                    log.debug("Polled " + newMessages.size() + " new messages");
+                }
+
                 var publishedMessages = brokerProducer.apply(newMessages);
+
+                if (log.isDebugEnabled()) {
+                    log.debug(publishedMessages.size() + " was published to message broker");
+                }
 
                 transactionalOutbox.remove(publishedMessages);
             } while (newMessages.size() >= pollBatchSize);
