@@ -1,2 +1,21 @@
-kafka:
-  disabled: true
+# Config Server
+
+spring:
+  cloud:
+    config:
+      enabled: false
+    bus:
+      enabled: false
+
+# Eureka
+
+eureka:
+  client:
+    enabled: false
+
+# App
+
+app:
+  catalog-service:
+    connect-timeout-ms: 3000
+    read-timeout-ms: 3000

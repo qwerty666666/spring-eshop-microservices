@@ -32,10 +32,10 @@ public class TokenController {
      * Generate new access_token for user
      */
     @PostMapping("/token")
-    public Mono<ResponseEntity> index(ServerWebExchange exchange) {
+    public Mono<ResponseEntity> index(ServerWebExchange exchange) { // NOSONAR raw type
         OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
                 .principal(ANONYMOUS_AUTHENTICATION)
-                // this attribute is used in SecurityConfig#contextAttributesMapper to extract
+                // this attribute is used in Oauth2Config#contextAttributesMapper to extract
                 // username / password to oauth2 authorize request context attributes
                 .attribute(ServerWebExchange.class.getName(), exchange)
                 .build();
@@ -53,7 +53,7 @@ public class TokenController {
     /**
      * @return response with token
      */
-    private ResponseEntity accessTokenResponse(String accessToken) {
+    private ResponseEntity accessTokenResponse(String accessToken) { // NOSONAR raw type
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new TokenResponse(accessToken));
@@ -62,7 +62,7 @@ public class TokenController {
     /**
      * @return response if user credentials are invalid
      */
-    private ResponseEntity invalidUserCredentialsResponse() {
+    private ResponseEntity invalidUserCredentialsResponse() { // NOSONAR raw type
         return ResponseEntity.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new BasicErrorDto(400, localizer.getMessage("token_invalidUserCredentials")));
@@ -71,7 +71,7 @@ public class TokenController {
     /**
      * @return response if request parameters are invalid
      */
-    private ResponseEntity invalidUserInputResponse() {
+    private ResponseEntity invalidUserInputResponse() { // NOSONAR raw type
         return ResponseEntity.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new BasicErrorDto(400, localizer.getMessage("token_missedRequiredParameters")));

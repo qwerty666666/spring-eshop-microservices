@@ -4,6 +4,7 @@ import com.example.eshop.cart.client.CartServiceClient;
 import com.example.eshop.cart.client.WebClientCartServiceClient;
 import io.netty.channel.ChannelOption;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -15,22 +16,25 @@ import java.time.Duration;
 @Configuration
 public class CartServiceClientConfig {
     @Bean
-    public CartServiceClient cartService() {
-        var webClient = cartWebClientBuilder().build();
+    @RefreshScope
+    public CartServiceClient cartService(AppProperties appProperties) {
+        var webClient = cartWebClientBuilder(appProperties).build();
 
         return new WebClientCartServiceClient(webClient);
     }
 
     @Bean
+    @RefreshScope
     @LoadBalanced
-    public WebClient.Builder cartWebClientBuilder() {
+    public WebClient.Builder cartWebClientBuilder(AppProperties appProperties) {
+        var cartServiceProperties = appProperties.getCartService();
+
         return WebClient.builder()
                 .baseUrl("lb://shopping-cart-service/")
                 .clientConnector(new ReactorClientHttpConnector(
                         HttpClient.create()
-                                .wiretap(true)
-                                .responseTimeout(Duration.ofMillis(3000))
-                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
+                                .responseTimeout(Duration.ofMillis(cartServiceProperties.getReadTimeoutMs()))
+                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, cartServiceProperties.getConnectTimeoutMs())
                 ))
                 // Relay Bearer token from current request.
                 //

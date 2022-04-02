@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/warehouse
+    username: postgres
+    password: pass
+
+app:
+  kafka:
+    consumer-group: warehouse

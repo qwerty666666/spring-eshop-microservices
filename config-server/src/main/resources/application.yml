@@ -1,0 +1,32 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+
+  profiles:
+    active: native # enables files backend
+
+  cloud:
+    config:
+      server:
+        native:
+          search-locations:
+            - classpath:./services-configs
+            - classpath:./services-configs/{application}
+
+    bus:
+      refresh:
+        enabled: true
+      env:
+        enabled: false
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

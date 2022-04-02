@@ -1,0 +1,16 @@
+spring:
+  main:
+    web-application-type: none
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+
+outbox:
+  data-sources:
+    warehouse:
+      url: jdbc:postgresql://localhost:5432/warehouse
+      username: postgres
+      password: pass
+      type: org.postgresql.ds.PGSimpleDataSource

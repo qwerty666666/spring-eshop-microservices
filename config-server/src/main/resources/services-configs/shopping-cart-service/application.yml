@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cart
+    username: postgres
+    password: pass
+
+app:
+  catalog-service:
+    connect-timeout-ms: 3000
+    read-timeout-ms: 3000

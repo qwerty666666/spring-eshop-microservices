@@ -1,12 +1,27 @@
-spring:
-  jackson:
-    serialization:
-      indent_output: true
+# Config Server
 
-app:
-  public-host-name: http://localhost
-  api-base-path: /api
-  images-base-path: /tmp/test
+spring:
+  cloud:
+    config:
+      enabled: false
+    bus:
+      enabled: false
+
+# Eureka
+
+eureka:
+  client:
+    enabled: false
+
+# App
 
 kafka:
   disabled: true
+
+app:
+  kafka:
+    consumer-group: catalog
+
+  public-host-name: http://localhost
+  api-base-path: /api
+  images-base-path: /tmp/test

@@ -1,2 +1,23 @@
+# Config Server
+
+spring:
+  cloud:
+    config:
+      enabled: false
+    bus:
+      enabled: false
+
+# Eureka
+
+eureka:
+  client:
+    enabled: false
+
+# App
+
 kafka:
   disabled: true
+
+app:
+  kafka:
+    consumer-group: warehouse

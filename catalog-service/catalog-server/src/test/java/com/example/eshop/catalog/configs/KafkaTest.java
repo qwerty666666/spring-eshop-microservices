@@ -4,6 +4,7 @@ import com.example.eshop.catalog.config.KafkaConfig;
 import com.example.eshop.kafkatest.RunKafkaTestcontainer;
 import com.example.eshop.testutils.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,5 +26,6 @@ import java.lang.annotation.Target;
 @IntegrationTest
 @RunKafkaTestcontainer
 @TestPropertySource(properties = KafkaConfig.DISABLE_KAFKA_CONFIG_PROPERTY + "=false")
+@ActiveProfiles({ "test", "integration-test" })
 public @interface KafkaTest {
 }
