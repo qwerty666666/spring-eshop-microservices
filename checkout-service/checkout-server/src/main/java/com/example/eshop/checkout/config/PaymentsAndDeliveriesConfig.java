@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration
-public class CheckoutConfig {
+public class PaymentsAndDeliveriesConfig {
     @Bean
     public DeliveryServiceRepository inMemoryDeliveryServiceRepository() {
         return new InMemoryDeliveryServiceRepository(List.of(

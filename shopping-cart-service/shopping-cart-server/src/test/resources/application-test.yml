@@ -1,2 +1,9 @@
-kafka:
-  disabled: true
+spring:
+  cloud:
+    config:
+      enabled: false
+
+app:
+  catalog-service:
+    connect-timeout-ms: 3000
+    read-timeout-ms: 3000

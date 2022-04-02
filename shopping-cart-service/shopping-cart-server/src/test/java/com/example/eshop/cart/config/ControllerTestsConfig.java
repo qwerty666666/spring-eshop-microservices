@@ -5,6 +5,7 @@ import com.example.eshop.restutils.converters.ConvertersAutoConfiguration;
 import com.example.eshop.restutils.errorhandling.MvcErrorHandlersAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Import;
 
 @TestConfiguration
 @ImportAutoConfiguration({
@@ -12,5 +13,6 @@ import org.springframework.boot.test.context.TestConfiguration;
         ConvertersAutoConfiguration.class,
         MvcErrorHandlersAutoConfiguration.class
 })
+@Import({ SecurityTestConfig.class })
 public class ControllerTestsConfig {
 }
