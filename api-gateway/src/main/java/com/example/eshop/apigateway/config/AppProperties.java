@@ -3,7 +3,6 @@ package com.example.eshop.apigateway.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -22,7 +21,6 @@ public class AppProperties {
      */
     public static final String SWAGGER_SPEC_FILE_LOCATION = "${app.oas.spec-file-url}";
 
-    @NestedConfigurationProperty
     @NotNull
     private OasProperties oas;
 

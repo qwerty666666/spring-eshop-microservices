@@ -1,7 +1,19 @@
+# Config Server
+
 spring:
   cloud:
     config:
       enabled: false
+    bus:
+      enabled: false
+
+# Eureka
+
+eureka:
+  client:
+    enabled: false
+
+# App
 
 app:
   catalog-service:

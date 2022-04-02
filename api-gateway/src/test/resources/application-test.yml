@@ -15,9 +15,7 @@ eureka:
 
 # App
 
-kafka:
-  disabled: true
-
 app:
-  kafka:
-    consumer-group: warehouse
+  oas:
+    url: /api
+    spec-file-url: /openapi.yaml

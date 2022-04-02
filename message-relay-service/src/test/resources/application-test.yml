@@ -1,4 +1,14 @@
 spring:
+  # Config Server
+
+  cloud:
+    config:
+      enabled: false
+    bus:
+      enabled: false
+
+  # Kafka
+
   kafka:
     consumer:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer

@@ -13,6 +13,6 @@ import org.springframework.context.annotation.Import;
         ConvertersAutoConfiguration.class,
         MvcErrorHandlersAutoConfiguration.class
 })
-@Import({ SecurityTestConfig.class })
+@Import({ AuthConfig.class })
 public class ControllerTestsConfig {
 }

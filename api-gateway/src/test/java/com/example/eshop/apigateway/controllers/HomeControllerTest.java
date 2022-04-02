@@ -1,14 +1,16 @@
 package com.example.eshop.apigateway.controllers;
 
 import com.example.eshop.apigateway.config.AppProperties;
+import com.example.eshop.apigateway.configs.ControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-@SpringBootTest
-@AutoConfigureWebTestClient
+@WebFluxTest(HomeController.class)
+@ControllerTest
+@ActiveProfiles("test")
 class HomeControllerTest {
     @Autowired
     private WebTestClient webTestClient;
