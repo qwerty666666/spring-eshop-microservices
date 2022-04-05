@@ -48,6 +48,23 @@ spring:
       env:
         enabled: false
 
+  # Sleuth
+
+  sleuth:
+    jdbc:
+      enabled: false
+    tx:
+      enabled: false
+    sampler:
+      probability: 1
+
+# p6spy
+
+decorator:
+  datasource:
+    sleuth:
+      enabled: false  # disable creating new span in sql requests
+
 # Actuator
 
 management:
