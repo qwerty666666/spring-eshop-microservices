@@ -11,7 +11,7 @@
 
     <modules>
         <module>transactional-outbox-core</module>
-        <module>transactional-outbox-spring-data</module>
+        <module>transactional-outbox-spring</module>
         <module>message-relay</module>
     </modules>
 </project>

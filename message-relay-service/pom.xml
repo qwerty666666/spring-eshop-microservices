@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>transactional-outbox-spring-data</artifactId>
+            <artifactId>transactional-outbox-spring</artifactId>
             <version>${transactional-outbox.version}</version>
         </dependency>
 

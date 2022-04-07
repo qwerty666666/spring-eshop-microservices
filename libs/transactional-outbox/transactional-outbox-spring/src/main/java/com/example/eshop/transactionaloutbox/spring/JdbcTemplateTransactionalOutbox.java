@@ -1,4 +1,4 @@
-package com.example.eshop.transactionaloutbox.springdata;
+package com.example.eshop.transactionaloutbox.spring;
 
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
