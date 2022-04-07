@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 public class SingleThreadedMessageRelay implements MessageRelay {
     private final String name;
     private final TransactionalOutbox transactionalOutbox;
-    private final BrokerProducer brokerProducer;
+    private final BatchingBrokerProducer brokerProducer;
     private final int pollBatchSize;
     private final long pollPeriod;
     private final TimeUnit pollTimeUnit;
@@ -55,7 +55,7 @@ public class SingleThreadedMessageRelay implements MessageRelay {
         this.name = name;
         this.transactionalOutbox = transactionalOutbox;
         this.pollBatchSize = pollBatchSize;
-        this.brokerProducer = brokerProducer;
+        this.brokerProducer = new BatchingBrokerProducer(brokerProducer);
         this.pollPeriod = pollPeriod;
         this.pollTimeUnit = pollTimeUnit;
 
@@ -72,7 +72,7 @@ public class SingleThreadedMessageRelay implements MessageRelay {
 
         log.info("Start Message Relay '%s'".formatted(name));
 
-        executorService.scheduleWithFixedDelay(this::publishMessages, 0, pollPeriod, pollTimeUnit);
+        executorService.scheduleWithFixedDelay(decorateTask(this::publishMessages), 0, pollPeriod, pollTimeUnit);
         isRunning = true;
     }
 
@@ -91,27 +91,39 @@ public class SingleThreadedMessageRelay implements MessageRelay {
     }
 
     private void publishMessages() {
-        try {
-            List<OutboxMessage> newMessages;
+        List<OutboxMessage> newMessages;
 
-            do {
-                newMessages = transactionalOutbox.getMessages(pollBatchSize);
+        do {
+            newMessages = transactionalOutbox.getMessages(pollBatchSize);
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Polled " + newMessages.size() + " new messages");
-                }
+            if (log.isDebugEnabled()) {
+                log.debug("Polled " + newMessages.size() + " new messages");
+            }
 
-                var publishedMessages = brokerProducer.apply(newMessages);
+            var publishedMessages = brokerProducer.process(newMessages);
 
-                if (log.isDebugEnabled()) {
-                    log.debug(publishedMessages.size() + " was published to message broker");
-                }
+            if (log.isDebugEnabled()) {
+                log.debug(publishedMessages.size() + " was published to message broker");
+            }
 
-                transactionalOutbox.remove(publishedMessages);
-            } while (newMessages.size() >= pollBatchSize);
-        } catch (Exception e) {
-            // if exception occurs while scheduled executor service is running, it fails silently
-            log.error("publishMessages failed with exception", e);
-        }
+            // TODO handle messages that can't be published
+            // otherwise we will handle the same invalid messages all the time
+
+            transactionalOutbox.remove(publishedMessages);
+        } while (newMessages.size() >= pollBatchSize);
+    }
+
+    /**
+     * We need to wrap task scheduled by executor service in try-catch block
+     * because otherwise task fail will halt the executor service silently.
+     */
+    private Runnable decorateTask(Runnable task) {
+        return () -> {
+            try {
+                task.run();
+            } catch (Exception e) {
+                log.error("message relay " + name + " failed with exception", e);
+            }
+        };
     }
 }

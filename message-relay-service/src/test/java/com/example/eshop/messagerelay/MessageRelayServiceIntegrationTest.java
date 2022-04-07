@@ -1,11 +1,11 @@
 package com.example.eshop.messagerelay;
 
 import com.example.eshop.kafkatest.RunKafkaTestcontainer;
+import com.example.eshop.messagerelay.OutboxProperties.DataSourceProperties;
 import com.example.eshop.testutils.IntegrationTest;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.TransactionalOutbox;
-import com.example.eshop.transactionaloutbox.messagerelay.MessageRelay;
-import com.example.eshop.transactionaloutbox.springdata.JdbcTemplateTransactionalOutbox;
+import com.example.eshop.transactionaloutbox.spring.JdbcTemplateTransactionalOutbox;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -14,38 +14,33 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @TestInstance(Lifecycle.PER_CLASS)
-@SpringBootTest(properties = {
-        "logging.level.org.apache.kafka=info"  // hide listener log noise
-})
+@SpringBootTest
 @ActiveProfiles("test")
 @IntegrationTest
-@AutoConfigureTestDatabase
 @RunKafkaTestcontainer
-class DefaultMessageRelayIntegrationTest {
+class MessageRelayServiceIntegrationTest {
     public static final String TOPIC = "test_topic";
 
-    @Configuration
-    @Import({ KafkaAutoConfiguration.class, JacksonAutoConfiguration.class })
-    public static class C {
+    @TestConfiguration
+    @ImportAutoConfiguration({ EmbeddedDataSourceConfiguration.class })
+    public static class TestConfig {
         @Bean
         public Consumer<String, Message> kafkaConsumer(ConsumerFactory<String, Message> consumerFactory) {
             var consumer = consumerFactory.createConsumer("testGroup");
@@ -58,9 +53,19 @@ class DefaultMessageRelayIntegrationTest {
             return new JdbcTemplateTransactionalOutbox(dataSource);
         }
 
+        @SneakyThrows
         @Bean
-        public MessageRelay messageRelay(DataSource dataSource, KafkaTemplate<String, byte[]> kafkaTemplate) {
-            return new DefaultMessageRelay("test", dataSource, kafkaTemplate, 1, 1, TimeUnit.SECONDS);
+        public OutboxProperties outboxProperties(DataSource dataSource) {
+            var simpleDriverDataSource = dataSource.unwrap(SimpleDriverDataSource.class);
+
+            var dataSourcesProps = Map.of("test", new DataSourceProperties()
+                    .setUrl(simpleDriverDataSource.getUrl())
+                    .setUsername(simpleDriverDataSource.getUsername())
+                    .setPassword(simpleDriverDataSource.getPassword())
+            );
+
+            return new OutboxProperties()
+                    .setDataSources(dataSourcesProps);
         }
     }
 
@@ -71,9 +76,6 @@ class DefaultMessageRelayIntegrationTest {
     private TransactionalOutbox transactionalOutbox;
 
     @Autowired
-    private MessageRelay messageRelay;
-
-    @Autowired
     private Consumer<String, Message> consumer;
 
     @Autowired
@@ -82,7 +84,6 @@ class DefaultMessageRelayIntegrationTest {
     @BeforeAll
     void setUp() {
         createOutboxTable();
-        startMessageRelay();
     }
 
     @SneakyThrows
@@ -100,10 +101,6 @@ class DefaultMessageRelayIntegrationTest {
                     creation_time timestamp not null
                 )"""
         );
-    }
-
-    private void startMessageRelay() {
-        messageRelay.start();
     }
 
     @Test

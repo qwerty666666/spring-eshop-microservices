@@ -2,6 +2,7 @@ package com.example.eshop.messagerelay;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.jdbc.DatabaseDriver;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 @Getter
 @Setter
+@Accessors(chain = true)
 @ConfigurationProperties("outbox")
 public class OutboxProperties {
     /**
@@ -20,6 +22,7 @@ public class OutboxProperties {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class DataSourceProperties {
         private String url;
         private String username;

@@ -72,12 +72,22 @@ public class StockItem extends AggregateRoot<Long> {
     }
 
     /**
+     * @return if given {@code quantity} can be reserved
+     */
+    public boolean canReserve(StockQuantity quantity) {
+        return getStockQuantity().compareTo(quantity) >= 0;
+    }
+
+    /**
      * Decreases stock quantity by given amount {@code quantity}
      *
      * @throws InsufficientStockQuantityException if {@code quantity} is greater than existed stock quantity
      */
     public void reserve(StockQuantity quantity) {
-        log.info("{}: Reserve {}", this, quantity);
+        if (!canReserve(quantity)) {
+            throw new InsufficientStockQuantityException("Can't reserve" + quantity + "items. Only " +
+                    getStockQuantity() + " items are available");
+        }
 
         changeQuantity(stockQuantity.subtract(quantity));
     }
@@ -86,8 +96,6 @@ public class StockItem extends AggregateRoot<Long> {
      * Increases stock quantity by given amount {@code quantity}
      */
     public void supply(StockQuantity quantity) {
-        log.info("{}: Supply {}", this, quantity);
-
         changeQuantity(stockQuantity.add(quantity));
     }
 

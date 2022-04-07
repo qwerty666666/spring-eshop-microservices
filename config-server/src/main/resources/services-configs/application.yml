@@ -48,6 +48,29 @@ spring:
       env:
         enabled: false
 
+  # Sleuth
+
+  sleuth:
+    jdbc:
+      enabled: false
+      p6spy:
+        enabled: false
+    tx:
+      enabled: false
+    sampler:
+      probability: 1
+  zipkin:
+    sender:
+      type: kafka
+
+# p6spy
+
+decorator:
+  datasource:
+    enabled: false
+    sleuth:
+      enabled: false  # disable creating new span in sql requests
+
 # Actuator
 
 management:

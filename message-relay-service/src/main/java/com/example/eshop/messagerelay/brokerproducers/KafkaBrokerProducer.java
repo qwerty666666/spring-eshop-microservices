@@ -1,17 +1,14 @@
-package com.example.eshop.messagerelay;
+package com.example.eshop.messagerelay.brokerproducers;
 
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.messagerelay.BrokerProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.mapping.AbstractJavaTypeMapper;
-import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.IntStream;
 
 /**
  * Produce all messages to Kafka.
@@ -23,35 +20,21 @@ import java.util.stream.IntStream;
  * same partition. But between different partitions, there is can
  * be that some messages from the batch are not delivered, while
  * others are delivered successfully. Therefore, this implementation
- * can't be used if we should preserve order as in underlying
+ * can't be used if we should preserve order the same as in underlying
  * outbox, or we should produce single messages without batching.
  */
-@Component
-public class DefaultKafkaProducer implements BrokerProducer {
+public class KafkaBrokerProducer implements BrokerProducer {
     private final KafkaTemplate<String, byte[]> kafkaTemplate;
 
-    public DefaultKafkaProducer(KafkaTemplate<String, byte[]> kafkaTemplate) {
+    public KafkaBrokerProducer(KafkaTemplate<String, byte[]> kafkaTemplate) {
         Objects.requireNonNull(kafkaTemplate, "kafkaTemplate is required");
 
         this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
-    public List<OutboxMessage> apply(List<OutboxMessage> messages) {
-        var futures = messages.stream()
-                .map(message -> kafkaTemplate.send(createRecord(message)).completable())
-                .toList();
-
-        try {
-            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
-        } catch (Exception ignored) {
-            // exception is thrown if any of futures failed
-        }
-
-        return IntStream.range(0, messages.size())
-                .filter(i -> !futures.get(i).isCompletedExceptionally())
-                .mapToObj(messages::get)
-                .toList();
+    public CompletableFuture<?> process(OutboxMessage message) {
+        return kafkaTemplate.send(createRecord(message)).completable();
     }
 
     private ProducerRecord<String, byte[]> createRecord(OutboxMessage message) {

@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>com.example.eshop</groupId>
-            <artifactId>transactional-outbox-spring-data</artifactId>
+            <artifactId>transactional-outbox-spring</artifactId>
             <version>${transactional-outbox.version}</version>
         </dependency>
         <dependency>
@@ -71,11 +71,13 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- Spring Cloud -->
+        <!-- Eureka -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+
+        <!-- Config Server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
@@ -83,6 +85,16 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-kafka</artifactId>
+        </dependency>
+
+        <!-- Spring Sleuth -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
         </dependency>
 
         <!-- Database -->

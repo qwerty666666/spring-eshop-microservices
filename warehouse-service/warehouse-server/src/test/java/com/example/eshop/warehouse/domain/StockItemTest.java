@@ -5,6 +5,7 @@ import com.example.eshop.warehouse.client.events.ProductStockChangedEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class StockItemTest {
     private final static Ean EAN = Ean.fromString("0799439112766");
@@ -30,5 +31,16 @@ class StockItemTest {
         stockItem.supply(THREE);
 
         assertThat(stockItem.getDomainEventsAndClear()).contains(expectedEvent);
+    }
+
+    @Test
+    void canReserveItemsOnlyWhenAvailableQuantityIsNotLessThanRequested() {
+        var stockItem = new StockItem(EAN, SEVEN);
+
+        assertAll(
+                () -> assertThat(stockItem.canReserve(TEN)).isFalse(),
+                () -> assertThat(stockItem.canReserve(SEVEN)).isTrue(),
+                () -> assertThat(stockItem.canReserve(THREE)).isTrue()
+        );
     }
 }

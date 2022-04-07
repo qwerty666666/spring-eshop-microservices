@@ -1,11 +1,15 @@
 spring:
   # Config Server
-
   cloud:
     config:
       enabled: false
     bus:
       enabled: false
+
+  # Sleuth
+  sleuth:
+    sampler:
+      probability: 0
 
   # Kafka
 

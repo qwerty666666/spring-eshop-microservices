@@ -17,6 +17,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.stream.Collectors;
 
@@ -33,29 +34,40 @@ public class ReserveStockForOrderEventListener {
             containerFactory = "reserveStocksForOrderKafkaListenerContainerFactory"
     )
     @SendTo
-    @Transactional
+    @Transactional(
+            isolation = Isolation.REPEATABLE_READ // required for ReserveStockItemService
+    )
     public ReservationResult handleEvent(@Payload OrderDto order, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key) {
         var processedMessage = processedMessageRepository.findByMessageKeyAndMessageClass(key, OrderDto.class);
 
         if (processedMessage.isPresent()) {
-            log.trace("Skip duplicated ReserveStockForOrderEvent: " + key);
-
-            return (ReservationResult) processedMessage.get().getResult();
-        } else {
-            log.trace("Process ReserveStockForOrderEvent: " + order);
-
-            var reservationResult = handleEvent(order);
-
-            processedMessageRepository.save(new ProcessedMessage(key, OrderDto.class, reservationResult));
-
-            return reservationResult;
+            return handleDuplicatedEvent(key, processedMessage.get());
         }
+
+        return handleNewEvent(order, key);
     }
 
-    private ReservationResult handleEvent(OrderDto order) {
+    /**
+     * Handle stock reservation event that was processed before
+     */
+    private ReservationResult handleDuplicatedEvent(String key, ProcessedMessage processedMessage) {
+        log.trace("Skip duplicated ReserveStockForOrderEvent: " + key);
+
+        return (ReservationResult) processedMessage.getResult();
+    }
+
+    /**
+     * Handle new stock reservation event
+     */
+    private ReservationResult handleNewEvent(OrderDto order, String key) {
+        log.trace("Process ReserveStockForOrderEvent: " + order);
+
         var reservingItems = order.cart().getItems().stream()
                 .collect(Collectors.toMap(CartItemDto::getEan, item -> StockQuantity.of(item.getQuantity())));
+        var reservationResult = reserveStockItemService.reserve(reservingItems);
 
-        return reserveStockItemService.reserve(reservingItems);
+        processedMessageRepository.save(new ProcessedMessage(key, OrderDto.class, reservationResult));
+
+        return reservationResult;
     }
 }

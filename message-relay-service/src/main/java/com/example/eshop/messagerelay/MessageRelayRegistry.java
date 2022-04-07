@@ -1,12 +1,14 @@
 package com.example.eshop.messagerelay;
 
+import com.example.eshop.messagerelay.OutboxProperties.DataSourceProperties;
+import com.example.eshop.transactionaloutbox.messagerelay.BrokerProducer;
 import com.example.eshop.transactionaloutbox.messagerelay.MessageRelay;
+import com.example.eshop.transactionaloutbox.spring.JdbcTemplateTransactionalOutbox;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
@@ -20,7 +22,7 @@ import javax.annotation.PostConstruct;
 public class MessageRelayRegistry {
     private final GenericApplicationContext context;
     private final OutboxProperties outboxProperties;
-    private final KafkaTemplate<String, byte[]> kafkaTemplate;
+    private final BrokerProducer brokerProducer;
 
     @PostConstruct
     private void init() {
@@ -32,6 +34,11 @@ public class MessageRelayRegistry {
         if (shouldReinitMessageRelays(event)) {
             initAndRunMessageRelays();
         }
+    }
+
+    private boolean shouldReinitMessageRelays(EnvironmentChangeEvent event) {
+        return event.getKeys().stream()
+                .anyMatch(configName -> configName.startsWith("outbox."));
     }
 
     /**
@@ -50,7 +57,7 @@ public class MessageRelayRegistry {
 
             // register message relay bean and run it
             context.registerBean(beanName, MessageRelay.class,
-                    () -> new DefaultMessageRelay(serviceName, dataSourceProperties.createDataSource(), kafkaTemplate));
+                    () -> createMessageRelay(serviceName, dataSourceProperties));
             context.getBean(beanName, MessageRelay.class).start();
         });
     }
@@ -70,8 +77,9 @@ public class MessageRelayRegistry {
         }
     }
 
-    private boolean shouldReinitMessageRelays(EnvironmentChangeEvent event) {
-        return event.getKeys().stream()
-                .anyMatch(configName -> configName.startsWith("outbox."));
+    private MessageRelay createMessageRelay(String serviceName, DataSourceProperties dataSourceProperties) {
+        var transactionalOutbox = new JdbcTemplateTransactionalOutbox(dataSourceProperties.createDataSource());
+
+        return new DefaultMessageRelay(serviceName, transactionalOutbox, brokerProducer);
     }
 }

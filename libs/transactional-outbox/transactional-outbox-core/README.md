@@ -25,7 +25,7 @@ CREATE TABLE transactional_outbox
 
 #### 2. Create TransactionalOutbox instance
 
-You can use [JdbcTemplateTransactionalOutbox](../transactional-outbox-spring-data) if you
+You can use [JdbcTemplateTransactionalOutbox](../transactional-outbox-spring) if you
 use Spring's transaction management.
 
 ```java

@@ -75,6 +75,17 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 
+  zipkin:
+    image: ghcr.io/openzipkin/zipkin:2.23.16
+    container_name: zipkin
+    networks:
+      - app-tier
+    environment:
+      - STORAGE_TYPE=mem
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+    ports:
+      - "9411:9411"
+
 networks:
   postgres:
     driver: bridge
