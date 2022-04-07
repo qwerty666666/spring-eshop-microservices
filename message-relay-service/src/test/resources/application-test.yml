@@ -7,6 +7,11 @@ spring:
     bus:
       enabled: false
 
+  # Sleuth
+  sleuth:
+    sampler:
+      probability: 0
+
   # Kafka
 
   kafka:
@@ -16,3 +21,8 @@ spring:
       auto-offset-reset: earliest
       properties:
         spring.json.trusted.packages: '*'
+
+decorator:
+  datasource:
+    sleuth:
+      enabled: false

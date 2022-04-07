@@ -53,6 +53,8 @@ spring:
   sleuth:
     jdbc:
       enabled: false
+      p6spy:
+        enabled: false
     tx:
       enabled: false
     sampler:
@@ -62,6 +64,7 @@ spring:
 
 decorator:
   datasource:
+    enabled: false
     sleuth:
       enabled: false  # disable creating new span in sql requests
 
