@@ -59,6 +59,9 @@ spring:
       enabled: false
     sampler:
       probability: 1
+  zipkin:
+    sender:
+      type: kafka
 
 # p6spy
 

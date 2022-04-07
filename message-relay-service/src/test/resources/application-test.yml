@@ -1,6 +1,5 @@
 spring:
   # Config Server
-
   cloud:
     config:
       enabled: false
@@ -21,8 +20,3 @@ spring:
       auto-offset-reset: earliest
       properties:
         spring.json.trusted.packages: '*'
-
-decorator:
-  datasource:
-    sleuth:
-      enabled: false

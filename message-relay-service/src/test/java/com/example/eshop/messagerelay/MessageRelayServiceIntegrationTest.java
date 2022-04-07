@@ -31,9 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @TestInstance(Lifecycle.PER_CLASS)
-@SpringBootTest(properties = {
-        "logging.level.org.apache.kafka=info"  // hide listener log noise
-})
+@SpringBootTest
 @ActiveProfiles("test")
 @IntegrationTest
 @RunKafkaTestcontainer

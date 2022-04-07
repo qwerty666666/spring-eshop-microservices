@@ -106,6 +106,12 @@
             <artifactId>spring-cloud-sleuth-zipkin</artifactId>
         </dependency>
 
+        <!-- Kafka -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
         <!-- Tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
