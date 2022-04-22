@@ -11,6 +11,15 @@ outbox:
   data-sources:
     warehouse:
       url: jdbc:postgresql://localhost:5432/warehouse
-      username: postgres
-      password: pass
+      username: ${POSTGRES_USER:admin}
+      password: ${POSTGRES_PASSWORD:admin}
       type: org.postgresql.ds.PGSimpleDataSource
+
+---
+
+spring.config.activate.on-profile: docker
+
+outbox:
+  data-sources:
+    warehouse:
+      url: jdbc:postgresql://postgres:5432/warehouse

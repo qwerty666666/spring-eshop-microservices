@@ -28,16 +28,16 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:28000/auth/realms/test
+          issuer-uri: ${IDP_URL:http://localhost:28000/auth/realms/test}
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost:28000/auth/realms/test
+            issuer-uri: ${IDP_URL:http://localhost:28000/auth/realms/test}
 
   # Kafka
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
   # Config Server
 
@@ -84,7 +84,7 @@ management:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${SERVICE_DISCOVERY_URL:http://localhost:8761/eureka}
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     preferIpAddress: true

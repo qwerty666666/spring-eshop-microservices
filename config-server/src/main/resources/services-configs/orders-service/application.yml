@@ -1,9 +1,15 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/orders
-    username: postgres
-    password: pass
+    username: ${POSTGRES_USER:admin}
+    password: ${POSTGRES_PASSWORD:admin}
 
 app:
   kafka:
     consumer-group: orders-management
+
+---
+
+spring.config.activate.on-profile: docker
+
+spring.datasource.url: jdbc:postgresql://postgres:5432/orders
