@@ -1,13 +1,13 @@
-version: 3.9
+#
+# This file contains services for monitoring
+#
 
-networks:
-  app-tier:
-    driver: bridge
+version: "3.9"
 
 services:
   zipkin:
     image: ghcr.io/openzipkin/zipkin:2.23.16
-    container_name: zipkin
+    container_name: eshop-zipkin
     environment:
       - STORAGE_TYPE=mem
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
@@ -15,3 +15,8 @@ services:
       - "9411:9411"
     networks:
       - app-tier
+
+networks:
+  app-tier:
+    name: eshop-app-tier
+    driver: bridge

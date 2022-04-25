@@ -1,9 +1,12 @@
-version: "3.9"
+#
+# This file is used for local development.
+# Unlike ./docker-compose.yml it exposes ports to localhost
+# and doesn't include microservice containers (supposed that
+# microservices will be run as local jars and not as docker
+# containers during development).
+#
 
-networks:
-  app-tier:
-    name: eshop-app-tier
-    driver: bridge
+version: "3.9"
 
 services:
   postgres:
@@ -70,3 +73,8 @@ services:
         condition: service_healthy
     networks:
       - app-tier
+
+networks:
+  app-tier:
+    name: eshop-app-tier
+    driver: bridge
