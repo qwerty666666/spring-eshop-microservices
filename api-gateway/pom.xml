@@ -17,6 +17,8 @@
     <properties>
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
+
+        <logstash-logback-encoder.version>7.1.1</logstash-logback-encoder.version>
     </properties>
 
     <dependencies>
@@ -110,6 +112,13 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <!-- Logs -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
         </dependency>
 
         <!-- Tests -->
