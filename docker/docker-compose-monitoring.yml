@@ -1,0 +1,17 @@
+version: 3.9
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  zipkin:
+    image: ghcr.io/openzipkin/zipkin:2.23.16
+    container_name: zipkin
+    environment:
+      - STORAGE_TYPE=mem
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+    ports:
+      - "9411:9411"
+    networks:
+      - app-tier

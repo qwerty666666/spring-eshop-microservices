@@ -21,7 +21,7 @@ public class UriUtils {
      */
     public URI buildOrderUri(UUID orderId) {
         return getServerUriComponentsBuilder()
-                .path(restProperties.getApiBasePath() + ORDER_URI_TEMPLATE)
+                .path(ORDER_URI_TEMPLATE)
                 .buildAndExpand(orderId.toString())
                 .toUri();
     }

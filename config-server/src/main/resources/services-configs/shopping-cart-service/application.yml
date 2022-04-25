@@ -1,10 +1,16 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/cart
-    username: postgres
-    password: pass
+    username: ${POSTGRES_USER:admin}
+    password: ${POSTGRES_PASSWORD:admin}
 
 app:
   catalog-service:
     connect-timeout-ms: 3000
     read-timeout-ms: 3000
+
+---
+
+spring.config.activate.on-profile: docker
+
+spring.datasource.url: jdbc:postgresql://postgres:5432/cart

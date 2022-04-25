@@ -27,9 +27,4 @@ public class RestProperties {
      */
     @NotEmpty
     private String port;
-
-    /**
-     * Base path to api Endpoints (e.g. /api)
-     */
-    private String apiBasePath;
 }

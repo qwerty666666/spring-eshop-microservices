@@ -1,8 +1,8 @@
-spring:
-  application:
-    name: catalog-service
+spring.application.name: catalog-service
 
 ---
+
+spring.config.activate.on-profile: "!test"
 
 # Load configs from Config Server for non-test environments
 
@@ -21,10 +21,6 @@ spring:
 
 spring:
   config:
-    activate:
-      on-profile:
-        - "!test"
-
     import: configserver:http://localhost:8888
 
   cloud:
@@ -32,3 +28,18 @@ spring:
       fail-fast: true
       retry:
         max-attempts: 5
+
+---
+
+spring.config.activate.on-profile: test-data
+
+spring:
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:/test-data/data-dev-postgres.sql
+      # It is ScriptUtils.EOF_STATEMENT_SEPARATOR constant.
+      # This constant defines that init sql script should not be split into multiple statements.
+      # We use it because Spring fails with handle ';' in Stored Procedures.
+      # See SPR-15438 https://github.com/spring-projects/spring-framework/issues/19999
+      separator: ^^^ END OF SCRIPT ^^^

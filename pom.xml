@@ -36,7 +36,7 @@
 
         <mapstruct.version>1.5.0.Beta1</mapstruct.version>
         <lombok.version>1.18.20</lombok.version>
-        <spring-boot.version>2.5.2</spring-boot.version>
+        <spring-boot.version>2.6.2</spring-boot.version>
         <p6spy-spring-boot-starter.version>1.7.1</p6spy-spring-boot-starter.version>
         <spring-data-jpa-entity-graph.version>2.5.0</spring-data-jpa-entity-graph.version>
         <commons-collections4.version>4.4</commons-collections4.version>
@@ -123,6 +123,16 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>app-eshop/${project.artifactId}</name>
+                    </image>
+                </configuration>
+            </plugin>
+
             <!-- Unit Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
