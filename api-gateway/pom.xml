@@ -15,6 +15,7 @@
     <description>API Gateway</description>
 
     <properties>
+        <auth.version>1.0.0-SNAPSHOT</auth.version>
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
 
@@ -76,6 +77,15 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>auth</artifactId>
+            <version>${auth.version}</version>
         </dependency>
 
         <!-- Eureka -->

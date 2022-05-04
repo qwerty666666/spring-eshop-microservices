@@ -59,6 +59,11 @@ spring:
       enabled: false
     sampler:
       probability: 1
+    baggage:
+      remote-fields:      # list of baggages which should be relayed for remote calls
+        - customer-id
+      correlation-fields: # list of baggages which should be added to MDC
+        - customer-id
   zipkin:
     sender:
       type: kafka
