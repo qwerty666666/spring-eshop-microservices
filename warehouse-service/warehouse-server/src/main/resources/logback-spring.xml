@@ -7,13 +7,17 @@
     <springProperty name="LOGSTASH_HOST" source="logstash.host" defaultValue="localhost"/>
     <springProperty name="LOGSTASH_PORT" source="logstash.port" defaultValue="5000"/>
 
-    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>${LOGSTASH_HOST}:${LOGSTASH_PORT}</destination>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
-    </appender>
+    <springProfile name="elk-logs">
+        <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>${LOGSTASH_HOST}:${LOGSTASH_PORT}</destination>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        </appender>
+    </springProfile>
 
     <root level="INFO">
-        <appender-ref ref="LOGSTASH" />
+        <springProfile name="elk-logs">
+            <appender-ref ref="LOGSTASH" />
+        </springProfile>
         <appender-ref ref="CONSOLE" />
     </root>
 </configuration>
