@@ -177,7 +177,7 @@ public class Cart extends AggregateRoot<Long> {
     public void clear() {
         this.items.clear();
 
-        log.info("Clear cart");
+        log.info("Cart " + this.getId() + " is cleared");
     }
 
     /**

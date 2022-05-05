@@ -107,7 +107,7 @@ public class Order extends AggregateRoot<UUID> {
     private void setStatus(OrderStatus status) {
         this.status = status;
 
-        log.info("Status changed " + status);
+        log.info(this + ": Status changed " + status);
     }
 
     /**
@@ -156,5 +156,10 @@ public class Order extends AggregateRoot<UUID> {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Order{id=" + id + "}";
     }
 }

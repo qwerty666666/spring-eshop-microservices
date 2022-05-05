@@ -151,7 +151,7 @@ public class Sku implements Entity<Long> {
     void changeAvailableQuantity(int availableQuantity) {
         setAvailableQuantity(availableQuantity);
 
-        log.info("SKU: " + this + ". Available quantity changed to " + availableQuantity);
+        log.info(this + ". Available quantity changed to " + availableQuantity);
     }
 
     private void setAvailableQuantity(int availableQuantity) {
@@ -159,7 +159,7 @@ public class Sku implements Entity<Long> {
 
         this.availableQuantity = availableQuantity;
 
-        log.info("SKU: " + this + ". Available quantity changed to " + availableQuantity);
+        log.info(this + ". Available quantity changed to " + availableQuantity);
     }
 
     /**
