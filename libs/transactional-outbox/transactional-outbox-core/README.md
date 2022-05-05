@@ -19,6 +19,7 @@ CREATE TABLE transactional_outbox
     aggregate_id  character varying(255),           -- source Aggregate ID
     type          character varying(255),           -- message class FQN
     request_id    character varying(255),           -- request ID for distributed tracing
+    customer_id   character varying(255),           -- customer ID for distributed tracing
     creation_time timestamp              NOT NULL   -- UTC time when OutboxMessage was created
 );
 ```

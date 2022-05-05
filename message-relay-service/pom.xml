@@ -18,6 +18,7 @@
         <message-relay.version>1.0.0-SNAPSHOT</message-relay.version>
         <kafka-test.version>1.0.0-SNAPSHOT</kafka-test.version>
         <transactional-outbox.version>1.0.0-SNAPSHOT</transactional-outbox.version>
+        <distributed-tracing.version>1.0.0-SNAPSHOT</distributed-tracing.version>
 
         <lombok.version>1.18.22</lombok.version>
         <logstash-logback-encoder.version>7.1.1</logstash-logback-encoder.version>
@@ -34,6 +35,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>transactional-outbox-spring</artifactId>
             <version>${transactional-outbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>distributed-tracing</artifactId>
+            <version>${distributed-tracing.version}</version>
         </dependency>
 
         <!-- Devtools -->

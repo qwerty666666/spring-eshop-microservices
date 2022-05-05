@@ -1,5 +1,6 @@
 package com.example.eshop.messagerelay.brokerproducers;
 
+import com.example.eshop.distributedtracing.BaggageFields;
 import com.example.eshop.transactionaloutbox.OutboxMessage;
 import com.example.eshop.transactionaloutbox.messagerelay.BrokerProducer;
 import org.springframework.cloud.sleuth.Span;
@@ -69,7 +70,11 @@ public class TracingBrokerProducerDecorator implements BrokerProducer {
      * Process {@link OutboxMessage} in new {@link Span}
      */
     private CompletableFuture<?> processInNewSpan(OutboxMessage message, Span span) {
-        try (var spanInScope = tracer.withSpan(span)) {
+        try (var spanInScope = tracer.withSpan(span);
+             var customerIdBaggage = tracer.createBaggage(BaggageFields.CUSTOMER_ID.name());
+        ) {
+            customerIdBaggage.set(message.getCustomerId());
+
             return delegate.process(message);
         } finally {
             span.end();

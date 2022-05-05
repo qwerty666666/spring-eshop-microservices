@@ -37,8 +37,8 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
     public void add(List<OutboxMessage> messages) {
         jdbcTemplate.batchUpdate(
                 """
-                INSERT INTO transactional_outbox(aggregate, aggregate_id, type, topic, payload, request_id, creation_time)
-                VALUES (:aggregate, :aggregate_id, :type, :topic, :payload, :request_id, :creation_time)""",
+                INSERT INTO transactional_outbox(aggregate, aggregate_id, type, topic, payload, request_id, customer_id, creation_time)
+                VALUES (:aggregate, :aggregate_id, :type, :topic, :payload, :request_id, :customer_id, :creation_time)""",
                 messages.stream()
                         .map(message -> new MapSqlParameterSource()
                                 .addValue("aggregate", message.getAggregate())
@@ -47,6 +47,7 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
                                 .addValue("topic", message.getTopic())
                                 .addValue("payload", message.getPayload())
                                 .addValue("request_id", message.getRequestId())
+                                .addValue("customer_id", message.getCustomerId())
                                 .addValue("creation_time", Timestamp.from(message.getCreationTime()))
                         )
                         .toArray(SqlParameterSource[]::new)
@@ -73,6 +74,7 @@ public class JdbcTemplateTransactionalOutbox implements TransactionalOutbox {
                 rs.getString("key"),
                 rs.getBytes("payload"),
                 rs.getString("request_id"),
+                rs.getString("customer_id"),
                 rs.getTimestamp("creation_time").toInstant()
         );
     }

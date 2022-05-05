@@ -1,6 +1,7 @@
 package com.example.eshop.apigateway.config.tracing;
 
 import com.example.eshop.auth.CustomJwtAuthentication;
+import com.example.eshop.distributedtracing.BaggageFields;
 import org.springframework.cloud.sleuth.instrument.web.WebFluxSleuthOperators;
 import org.springframework.core.Ordered;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;

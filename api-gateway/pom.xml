@@ -18,6 +18,7 @@
         <auth.version>1.0.0-SNAPSHOT</auth.version>
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
+        <distributed-tracing.version>1.0.0-SNAPSHOT</distributed-tracing.version>
 
         <logstash-logback-encoder.version>7.1.1</logstash-logback-encoder.version>
     </properties>
@@ -33,6 +34,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-rest-models</artifactId>
             <version>${shared-rest-models.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>distributed-tracing</artifactId>
+            <version>${distributed-tracing.version}</version>
         </dependency>
 
         <!-- Devtools -->

@@ -3,6 +3,7 @@ package com.example.eshop.apigateway.config.tracing;
 import brave.baggage.CorrelationScopeConfig.SingleCorrelationField;
 import brave.context.slf4j.MDCScopeDecorator;
 import brave.propagation.CurrentTraceContext.ScopeDecorator;
+import com.example.eshop.distributedtracing.BaggageFields;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

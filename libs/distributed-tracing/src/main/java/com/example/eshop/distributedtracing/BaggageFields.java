@@ -1,4 +1,4 @@
-package com.example.eshop.apigateway.config.tracing;
+package com.example.eshop.distributedtracing;
 
 import brave.baggage.BaggageField;
 import lombok.AccessLevel;
