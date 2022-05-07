@@ -16,6 +16,22 @@ services:
     networks:
       - app-tier
 
+  prometheus:
+    image: bitnami/prometheus:2.35.0
+    container_name: eshop-prometheus
+    volumes:
+      - eshop-prometheus:/opt/bitnami/prometheus/data
+      - ./prometheus:/etc/prometheus/
+    ports:
+      - "9090:9090"
+    networks:
+      - app-tier
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  eshop-prometheus:
+
 networks:
   app-tier:
     name: eshop-app-tier
