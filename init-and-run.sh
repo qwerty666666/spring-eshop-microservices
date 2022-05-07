@@ -1,12 +1,9 @@
 ./scripts/mvn-install.sh
 ./scripts/build-images.sh
 
-cd docker
-
 docker-compose \
-    --env-file .env.init-test-data \
-    -f docker-compose.yml \
-    -f docker-compose.init.yml \
+#    --env-file .env.init-test-data \
+    -f docker/elk/docker-compose.yml \
+    -f docker/services/docker-compose.yml \
+    -f docker/services/docker-compose.init.yml \
     up -d
-
-cd ..

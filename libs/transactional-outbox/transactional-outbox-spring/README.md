@@ -33,12 +33,15 @@ class MyService {
 }
 ```
 
-### Sleuth
+### Distributed Tracing
 
-The lib provides `SleuthB3RequestIdSupplier` - the `RequestIdSupplier` which takes current 
+The lib provides:
+* `SleuthB3RequestIdSupplier` - the `RequestIdSupplier` which takes current 
 request ID from Spring's Sleuth `Tracer`. The returned value is generated in 
 [b3 single format](https://github.com/openzipkin/b3-propagation#single-header}) and can be 
 used directly in http header for example.
+* `SleuthBaggageCustomerIdSupplier` - the `CustomerIdSupplier` which takes current 
+customer ID from `customer-id` baggage of current `Tracer`.
 
 ```java
 import org.springframework.stereotype.Service;
@@ -47,7 +50,8 @@ import org.springframework.stereotype.Service;
 public DomainEventOutboxMessageFactory outboxMessageFactory(ObjectMapper objectMapper,Tracer tracer){
     return new DomainEventOutboxMessageFactory(
         new JacksonEventSerializer(objectMapper),
-        new SleuthB3RequestIdSupplier(tracer)
+        new SleuthB3RequestIdSupplier(tracer),
+        new SleuthBaggageCustomerIdSupplier(tracer)
     );
 }
 
@@ -60,6 +64,7 @@ class MyService {
         var message = messageFactory.create("topic-name", domainEvent, aggregateRoot);
         
         var requestId = message.getRequestId(); // 80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-1-05e3ac9a4f6e3b90
+        var customerId = message.getCustomerId(); // 3487gw78ogerwq78gr2
     }
 }
 ```

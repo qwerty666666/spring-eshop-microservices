@@ -59,6 +59,11 @@ spring:
       enabled: false
     sampler:
       probability: 1
+    baggage:
+      remote-fields:      # list of baggages which should be relayed for remote calls
+        - customer-id
+      correlation-fields: # list of baggages which should be added to MDC
+        - customer-id
   zipkin:
     sender:
       type: kafka
@@ -88,3 +93,9 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     preferIpAddress: true
+
+# Logstash
+
+logstash:
+  host: ${LOGSTASH_HOST:localhost}
+  port: ${LOGSTASH_PORT:5000}

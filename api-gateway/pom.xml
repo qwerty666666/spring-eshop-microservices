@@ -15,8 +15,12 @@
     <description>API Gateway</description>
 
     <properties>
+        <auth.version>1.0.0-SNAPSHOT</auth.version>
         <localizer.version>1.0.0-SNAPSHOT</localizer.version>
         <shared-rest-models.version>1.0.0-SNAPSHOT</shared-rest-models.version>
+        <distributed-tracing.version>1.0.0-SNAPSHOT</distributed-tracing.version>
+
+        <logstash-logback-encoder.version>7.1.1</logstash-logback-encoder.version>
     </properties>
 
     <dependencies>
@@ -30,6 +34,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>shared-rest-models</artifactId>
             <version>${shared-rest-models.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>distributed-tracing</artifactId>
+            <version>${distributed-tracing.version}</version>
         </dependency>
 
         <!-- Devtools -->
@@ -75,6 +84,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>auth</artifactId>
+            <version>${auth.version}</version>
+        </dependency>
 
         <!-- Eureka -->
         <dependency>
@@ -110,6 +128,13 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <!-- Logs -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
         </dependency>
 
         <!-- Tests -->

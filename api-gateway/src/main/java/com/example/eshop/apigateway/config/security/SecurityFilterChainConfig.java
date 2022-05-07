@@ -1,5 +1,6 @@
 package com.example.eshop.apigateway.config.security;
 
+import com.example.eshop.auth.ReactiveJwtAuthenticationConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -23,6 +24,10 @@ public class SecurityFilterChainConfig {
                 // Authorize
                 .authorizeExchange().anyExchange().permitAll()
                 .and()
+                .oauth2ResourceServer(resourceServer -> resourceServer
+                        .jwt()
+                        .jwtAuthenticationConverter(new ReactiveJwtAuthenticationConverter())
+                )
                 .build();
     }
 }

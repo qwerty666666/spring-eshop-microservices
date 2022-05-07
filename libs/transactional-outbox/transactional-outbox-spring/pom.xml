@@ -23,6 +23,8 @@
         <junit.version>5.8.2</junit.version>
         <h2.version>1.4.194</h2.version>
         <spring-jdbc.version>5.3.13</spring-jdbc.version>
+
+        <distributed-tracing.version>1.0.0-SNAPSHOT</distributed-tracing.version>
     </properties>
 
     <dependencies>
@@ -30,6 +32,11 @@
             <groupId>com.example.eshop</groupId>
             <artifactId>transactional-outbox-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>distributed-tracing</artifactId>
+            <version>${distributed-tracing.version}</version>
         </dependency>
 
         <!-- JDBC -->

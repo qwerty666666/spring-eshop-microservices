@@ -1,9 +1,8 @@
-version: "3.9"
+#
+# The file contains all microservice containers and infrastructure services.
+#
 
-networks:
-  app-tier:
-    name: eshop-app-tier
-    driver: bridge
+version: "3.9"
 
 services:
   postgres:
@@ -14,6 +13,8 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+#    volumes:
+#      - ./postgres/data:/var/lib/postgresql/data
     networks:
       - app-tier
 
@@ -85,6 +86,8 @@ services:
       - IDP_URL
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
     depends_on:
       - kafka
     networks:
@@ -104,6 +107,8 @@ services:
     environment:
       - SPRING_CONFIG_IMPORT=${CONFIG_SERVER_URL:-localhost:8888}
       - KAFKA_BOOTSTRAP_SERVERS
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
     depends_on:
       config-server:
         condition: service_healthy
@@ -126,6 +131,8 @@ services:
       - SERVICE_DISCOVERY_URL
       - IDP_URL
       - KAFKA_BOOTSTRAP_SERVERS
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
     depends_on:
       config-server:
         condition: service_healthy
@@ -153,6 +160,8 @@ services:
       - IDP_URL
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
     depends_on:
       config-server:
         condition: service_healthy
@@ -178,6 +187,8 @@ services:
       - SERVICE_DISCOVERY_URL
       - KAFKA_BOOTSTRAP_SERVERS
       - IDP_URL
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
     depends_on:
       config-server:
         condition: service_healthy
@@ -203,6 +214,8 @@ services:
       - IDP_URL
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
     depends_on:
       config-server:
         condition: service_healthy
@@ -228,6 +241,8 @@ services:
       - IDP_URL
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
     depends_on:
       config-server:
         condition: service_healthy
@@ -255,6 +270,8 @@ services:
       - IDP_URL
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
     depends_on:
       config-server:
         condition: service_healthy
@@ -282,6 +299,8 @@ services:
       - IDP_URL
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
     depends_on:
       config-server:
         condition: service_healthy
@@ -291,3 +310,8 @@ services:
         condition: service_healthy
     networks:
       - app-tier
+
+networks:
+  app-tier:
+    name: eshop-app-tier
+    driver: bridge

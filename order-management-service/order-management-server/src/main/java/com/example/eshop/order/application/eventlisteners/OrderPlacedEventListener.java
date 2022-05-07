@@ -43,6 +43,6 @@ public class OrderPlacedEventListener {
     private void processEvent(OrderPlacedEvent event) {
         var order = mapper.toOrder(event);
 
-        createOrderService.save(order);
+        createOrderService.create(order);
     }
 }

@@ -90,6 +90,6 @@ class OrderPlacedEventListenerIntegrationTest {
                     .get(5, TimeUnit.SECONDS);
         }
 
-        verify(createOrderService, timeout(5000).only()).save(expectedOrder);
+        verify(createOrderService, timeout(5000).only()).create(expectedOrder);
     }
 }

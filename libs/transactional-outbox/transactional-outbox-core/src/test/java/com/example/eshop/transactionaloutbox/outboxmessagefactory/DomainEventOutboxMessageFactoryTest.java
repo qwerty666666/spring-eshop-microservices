@@ -18,7 +18,10 @@ class DomainEventOutboxMessageFactoryTest {
         var requestId = "requestId";
         RequestIdSupplier requestIdSupplier = () -> requestId;
 
-        var factory = new DomainEventOutboxMessageFactory(eventSerializer, requestIdSupplier);
+        var customerId = "customerId";
+        CustomerIdSupplier customerIdSupplier = () -> customerId;
+
+        var factory = new DomainEventOutboxMessageFactory(eventSerializer, requestIdSupplier, customerIdSupplier);
 
         var topic = "topic";
         var key = "key";
@@ -32,6 +35,7 @@ class DomainEventOutboxMessageFactoryTest {
         assertArrayEquals(serializedEvent, message.getPayload());
         assertEquals(key, message.getKey());
         assertEquals(requestId, message.getRequestId());
+        assertEquals(customerId, message.getCustomerId());
         assertEquals(Aggregate.class.getName(), message.getAggregate());
         assertEquals(aggregateId, message.getAggregateId());
         assertEquals(Event.class.getName(), message.getType());

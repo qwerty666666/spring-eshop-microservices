@@ -5,6 +5,7 @@ import com.example.eshop.transactionaloutbox.outboxmessagefactory.DomainEventOut
 import com.example.eshop.transactionaloutbox.outboxmessagefactory.JacksonEventSerializer;
 import com.example.eshop.transactionaloutbox.spring.JdbcTemplateTransactionalOutbox;
 import com.example.eshop.transactionaloutbox.spring.SleuthB3RequestIdSupplier;
+import com.example.eshop.transactionaloutbox.spring.SleuthBaggageCustomerIdSupplier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,8 @@ public class TransactionalOutboxConfig {
     public DomainEventOutboxMessageFactory outboxMessageFactory(ObjectMapper objectMapper, Tracer tracer) {
         return new DomainEventOutboxMessageFactory(
                 new JacksonEventSerializer(objectMapper),
-                new SleuthB3RequestIdSupplier(tracer)
+                new SleuthB3RequestIdSupplier(tracer),
+                new SleuthBaggageCustomerIdSupplier(tracer)
         );
     }
 }

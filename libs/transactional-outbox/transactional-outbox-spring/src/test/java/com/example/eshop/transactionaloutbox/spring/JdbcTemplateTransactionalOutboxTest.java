@@ -30,10 +30,11 @@ class JdbcTemplateTransactionalOutboxTest {
     private static final String AGGREGATE = "java.lang.Object";
     private static final String AGGREGATE_ID = "aggregateId";
     private static final String REQUEST_ID = "requestId";
+    private static final String CUSTOMER_ID = "customerId";
     private static final String TYPE = "java.lang.Object";
     private static final Instant CREATION_TIME = LocalDate.parse("2016-04-17").atStartOfDay().toInstant(ZoneOffset.UTC);
     private static final OutboxMessage MESSAGE = new OutboxMessage(ID, AGGREGATE, AGGREGATE_ID, TYPE, TOPIC, KEY, PAYLOAD,
-            REQUEST_ID, CREATION_TIME);
+            REQUEST_ID, CUSTOMER_ID, CREATION_TIME);
 
     private JdbcDataSource dataSource;
     private TransactionalOutbox transactionalOutbox;
@@ -55,6 +56,7 @@ class JdbcTemplateTransactionalOutboxTest {
                     payload       bytea,
                     key           bytea,
                     request_id    varchar(255),
+                    customer_id   varchar(255),
                     creation_time timestamp not null
                 )"""
         );
@@ -83,6 +85,7 @@ class JdbcTemplateTransactionalOutboxTest {
         assertEquals(AGGREGATE, rs.getString("aggregate"));
         assertEquals(AGGREGATE_ID, rs.getString("aggregate_id"));
         assertEquals(REQUEST_ID, rs.getString("request_id"));
+        assertEquals(CUSTOMER_ID, rs.getString("customer_id"));
         assertEquals(TYPE, rs.getString("type"));
         assertEquals(CREATION_TIME, rs.getTimestamp("creation_time").toInstant());
 
@@ -101,6 +104,7 @@ class JdbcTemplateTransactionalOutboxTest {
         assertEquals(AGGREGATE, messages.get(0).getAggregate());
         assertEquals(AGGREGATE_ID, messages.get(0).getAggregateId());
         assertEquals(REQUEST_ID, messages.get(0).getRequestId());
+        assertEquals(CUSTOMER_ID, messages.get(0).getCustomerId());
         assertEquals(TYPE, messages.get(0).getType());
         assertEquals(CREATION_TIME, messages.get(0).getCreationTime());
     }
@@ -120,8 +124,9 @@ class JdbcTemplateTransactionalOutboxTest {
 
     private void fillTestData() throws SQLException {
         var ps = dataSource.getConnection().prepareStatement("""
-                 insert into transactional_outbox(id, aggregate, aggregate_id, type, topic, payload, request_id, creation_time)
-                 values (?, ?, ?, ?, ?, ?, ?, ?)""");
+                 insert into transactional_outbox(id, aggregate, aggregate_id, type, topic, payload, request_id,
+                    customer_id, creation_time)
+                 values (?, ?, ?, ?, ?, ?, ?, ?, ?)""");
         ps.setInt(1, ID);
         ps.setString(2, AGGREGATE);
         ps.setString(3, AGGREGATE_ID);
@@ -129,7 +134,8 @@ class JdbcTemplateTransactionalOutboxTest {
         ps.setString(5, TOPIC);
         ps.setObject(6, PAYLOAD);
         ps.setString(7, REQUEST_ID);
-        ps.setTimestamp(8, Timestamp.from(CREATION_TIME));
+        ps.setString(8, CUSTOMER_ID);
+        ps.setTimestamp(9, Timestamp.from(CREATION_TIME));
 
         ps.execute();
     }
