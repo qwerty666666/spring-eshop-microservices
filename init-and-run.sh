@@ -10,7 +10,7 @@ docker-compose \
 # run services
 
 docker-compose \
-    -f docker/services/docker-compose.yml \
+    -f docker/services/docker-compose.prod.yml \
     -f docker/services/docker-compose.init.yml \
     up -d
 
