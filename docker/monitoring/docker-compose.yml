@@ -21,7 +21,7 @@ services:
     container_name: eshop-prometheus
     volumes:
       - eshop-prometheus:/opt/bitnami/prometheus/data
-      - ./prometheus:/etc/prometheus/
+      - ${PROMETHEUS_CONFIG_PATH:-./prometheus/prometheus.yml}:/opt/bitnami/prometheus/conf/prometheus.yml
     ports:
       - "9090:9090"
     networks:

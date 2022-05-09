@@ -2,6 +2,9 @@
 # Builds Docker images for microservices
 #
 
+set -euo pipefail
+
+
 source "$(dirname "$0")"/functions.sh
 
 
@@ -33,7 +36,7 @@ function build_image_layered() {
 
   # build image
   echo "building image..."
-  docker build -f "$app_path"/docker/Dockerfile \
+  docker build -f "$app_path"/docker/services/Dockerfile \
       -t "${name}":latest .
 
   cd - || exit 1

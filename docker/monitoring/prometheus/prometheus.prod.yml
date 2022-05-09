@@ -4,9 +4,8 @@ global:
 
 scrape_configs:
   - job_name: 'eureka-discovery'
-    metrics_path: /actuator/prometheus
     eureka_sd_configs:
-      - server: http://host.docker.internal:8761/eureka
+      - server: http://eureka:8761/eureka
         refresh_interval: 10s
     relabel_configs:
       # Scrape only application that have "prometheus.scrape = true" metadata.
@@ -14,7 +13,7 @@ scrape_configs:
         action: keep
         regex: true
       # Takes metric path from "prometheus.path = <metric path>" annotation.
-      - source_labels: [__meta_eureka_app_instance_metadata_prometheus_path]
+      - source_labels: [ __meta_eureka_app_instance_metadata_prometheus_path ]
         action: replace
         regex: (.+)
         target_label: __metrics_path__
@@ -22,9 +21,3 @@ scrape_configs:
         target_label: application
       - source_labels: [ __address__ ]
         target_label: instance
-      # Replace url to "host.docker.internal" for local dev
-      - source_labels: [ __address__ ]
-        action: replace
-        regex: ([\d\.]+)(:\d+)?
-        replacement: host.docker.internal$2
-        target_label: __address__
