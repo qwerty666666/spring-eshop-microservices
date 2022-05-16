@@ -27,6 +27,8 @@ docker-compose -f docker/monitoring/docker-compose.yml up -d zipkin
 
 > ```Zipkin```: [localhost:9411](http://localhost:9411)
 
+![Zipkin](docs/imgs/zipkin.png)
+
 ## Logs Aggregation (ELK)
 
 ![log aggregation diagram](docs/imgs/elk_logs_diagram.png)
