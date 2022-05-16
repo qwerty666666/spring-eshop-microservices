@@ -1,7 +1,9 @@
 package com.example.eshop.order.application.services.createorder;
 
+import com.example.eshop.order.config.MetricsConfig;
 import com.example.eshop.order.domain.order.Order;
 import com.example.eshop.order.domain.order.OrderRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Lookup;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class CreateOrderServiceImpl implements CreateOrderService {
     private final OrderRepository orderRepository;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public void create(Order order) {
@@ -21,6 +24,8 @@ public class CreateOrderServiceImpl implements CreateOrderService {
         getSelfFromContext().createInternal(order);
 
         log.info(order + " created");
+
+        recordMetrics();
     }
 
     @Transactional
@@ -30,6 +35,10 @@ public class CreateOrderServiceImpl implements CreateOrderService {
 
     @Lookup
     protected CreateOrderServiceImpl getSelfFromContext() {
-        return null;    // NOSONAR non-null api
+        return this;
+    }
+
+    protected void recordMetrics() {
+        meterRegistry.counter(MetricsConfig.ORDERS_CREATED_METRIC_NAME).increment();
     }
 }
