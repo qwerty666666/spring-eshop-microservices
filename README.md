@@ -15,8 +15,6 @@
 * Передачи событий в ```Kafka```
 * Передачи событий через ```Transactional Outbox```
 
-###### Enable Zipkin
-
 Трейсы передаются в ```Zipkin``` через ```Kafka```.
 
 ```Zipkin``` можно запустить через ```docker-compose```
@@ -40,9 +38,6 @@ docker-compose -f docker/monitoring/docker-compose.yml up -d zipkin
 и в ```Kibana``` доступна фильтрация и поиск по этим полям.
 
 ![Kibana filter by customer id](docs/imgs/kibana_filter_by_customer_id.png)
-
-
-###### Enable ELK
 
 Для сбора логов в _ELK_ необходимо запускать сервис с профилем
 ```-Dspring.active.profiles=elk-logs```.
