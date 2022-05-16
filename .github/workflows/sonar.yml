@@ -2,7 +2,7 @@ name: SonarCloud
 
 on:
   push:
-    branches: [master, dev]
+    branches: [master, microservices]
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -39,4 +39,4 @@ jobs:
           -Dsonar.projectKey=qwerty666666_spring-eshop
           -Dsonar.organization=qwerty666666
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.coverage.jacoco.xmlReportPaths=./rest/target/site/jacoco/jacoco.xml,./rest/target/site/jacoco-aggregate/jacoco.xml
+          -Dsonar.coverage.jacoco.xmlReportPaths=./target/site/jacoco/jacoco.xml,./target/site/jacoco-aggregate/jacoco.xml

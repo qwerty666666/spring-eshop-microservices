@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches-ignore: [dev, master]
+    branches-ignore: [microservices, master]
 
 jobs:
   build:
