@@ -1,0 +1,23 @@
+global:
+  scrape_interval:     10s
+  evaluation_interval: 10s
+
+scrape_configs:
+  - job_name: 'eureka-discovery'
+    eureka_sd_configs:
+      - server: http://eureka:8761/eureka
+        refresh_interval: 10s
+    relabel_configs:
+      # Scrape only application that have "prometheus.scrape = true" metadata.
+      - source_labels: [ __meta_eureka_app_instance_metadata_prometheus_scrape ]
+        action: keep
+        regex: true
+      # Takes metric path from "prometheus.path = <metric path>" annotation.
+      - source_labels: [ __meta_eureka_app_instance_metadata_prometheus_path ]
+        action: replace
+        regex: (.+)
+        target_label: __metrics_path__
+      - source_labels: [ __meta_eureka_app_name ]
+        target_label: application
+      - source_labels: [ __address__ ]
+        target_label: instance

@@ -23,7 +23,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 )
                 // authorization
                 .authorizeRequests(requests -> requests
-                        .anyRequest().authenticated()
+                        .antMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(resourceServer -> resourceServer
                         .jwt()

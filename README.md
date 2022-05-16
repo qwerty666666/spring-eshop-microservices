@@ -1,4 +1,4 @@
-
+# Observability
 
 ## Distributed Tracing (Spring Sleuth + Zipkin)
 
@@ -33,7 +33,7 @@ docker-compose -f docker/monitoring/docker-compose.yml up -d zipkin
 
 > Логи отправляются в ```Logstash``` асинхронно через TCP, поэтому возможно потеря части логов.
 
-Во все логи в ```MDC``` добавляются поля ```Trace ID``` и
+Во все логи через ```MDC``` добавляются поля ```Trace ID``` и
 ```Customer ID```, полученные из [Distributed Tracing](#distributed-tracing-spring-sleuth--zipkin)'а,
 и в ```Kibana``` доступна фильтрация и поиск по этим полям.
 
@@ -54,3 +54,18 @@ docker-compose -f docker/elk/docker-compose.yml up -d
 > ```Kibana```: [localhost:5601](http://localhost:5601)  
 _User: elastic_  
 _Password: admin_
+
+
+## Monitoring (Prometheus + Grafana)
+
+_Prometheus_ и _Grafana_ можно запустить через ```docker-compose```
+
+```shell
+docker-compose -f docker/monitoring/docker-compose.yml
+```
+
+> ```Grafana```: [localhost:3000](http://localhost:3000)  
+_User: admin_  
+_Password admin_ 
+
+![Grafana Dashboard](docs/imgs/grafana_dashboard.png)
