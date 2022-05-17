@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 
 @TestConfiguration
 @ImportAutoConfiguration({ LocalizerAutoConfiguration.class })
-@Import({ SecurityFilterChainConfig.class })
+@Import({ SecurityFilterChainConfig.class, AuthConfig.class })
 @EnableConfigurationProperties({ AppProperties.class })
 public class ControllerTestsConfig {
 }

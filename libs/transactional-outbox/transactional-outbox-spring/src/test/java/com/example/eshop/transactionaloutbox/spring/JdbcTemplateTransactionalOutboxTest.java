@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class JdbcTemplateTransactionalOutboxTest {
     private static final Integer ID = 1;
     private static final String TOPIC = "topic";
-    private static final byte[] PAYLOAD = new byte[] {};
+    private static final byte[] PAYLOAD = new byte[]{};
     private static final String KEY = "key";
     private static final String AGGREGATE = "java.lang.Object";
     private static final String AGGREGATE_ID = "aggregateId";
@@ -42,31 +42,35 @@ class JdbcTemplateTransactionalOutboxTest {
     @BeforeAll
     void beforeAll() throws SQLException {
         dataSource = new JdbcDataSource();
-        dataSource.setURL("jdbc:h2:mem:test");
+        dataSource.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
         dataSource.setUser("sa");
         dataSource.setPassword("sa");
 
-        dataSource.getConnection().createStatement().execute("""
-                create table transactional_outbox(
-                    id            bigint auto_increment,
-                    aggregate     varchar(255),
-                    aggregate_id  varchar(255),
-                    type          varchar(255),
-                    topic         varchar(255) not null,
-                    payload       bytea,
-                    key           bytea,
-                    request_id    varchar(255),
-                    customer_id   varchar(255),
-                    creation_time timestamp not null
-                )"""
-        );
+        try (var stmt = dataSource.getConnection().createStatement()) {
+            stmt.execute("""
+                    create table transactional_outbox(
+                        id            bigint auto_increment,
+                        aggregate     varchar(255),
+                        aggregate_id  varchar(255),
+                        type          varchar(255),
+                        topic         varchar(255) not null,
+                        payload       bytea,
+                        key           bytea,
+                        request_id    varchar(255),
+                        customer_id   varchar(255),
+                        creation_time timestamp not null
+                    )"""
+            );
+        }
 
         transactionalOutbox = new JdbcTemplateTransactionalOutbox(dataSource);
     }
 
     @AfterEach
     void tearDown() throws SQLException {
-        dataSource.getConnection().createStatement().execute("truncate table transactional_outbox");
+        try (var stmt = dataSource.getConnection().createStatement()) {
+            stmt.execute("truncate table transactional_outbox");
+        }
     }
 
     @Test
@@ -75,21 +79,23 @@ class JdbcTemplateTransactionalOutboxTest {
         transactionalOutbox.add(List.of(MESSAGE));
 
         // Then
-        var rs = queryAllMessages();
+        try (var stmt = dataSource.getConnection().createStatement();
+             var rs = stmt.executeQuery("select * from transactional_outbox");
+        ) {
+            assertTrue(rs.next());
 
-        assertTrue(rs.next());
+            assertEquals(MESSAGE.getId(), rs.getInt("id"));
+            assertEquals(MESSAGE.getTopic(), rs.getString("topic"));
+            assertArrayEquals(MESSAGE.getPayload(), rs.getBytes("payload"));
+            assertEquals(MESSAGE.getAggregate(), rs.getString("aggregate"));
+            assertEquals(MESSAGE.getAggregateId(), rs.getString("aggregate_id"));
+            assertEquals(MESSAGE.getRequestId(), rs.getString("request_id"));
+            assertEquals(MESSAGE.getCustomerId(), rs.getString("customer_id"));
+            assertEquals(MESSAGE.getType(), rs.getString("type"));
+            assertEquals(MESSAGE.getCreationTime(), rs.getTimestamp("creation_time").toInstant());
 
-        assertEquals(ID, rs.getInt("id"));
-        assertEquals(TOPIC, rs.getString("topic"));
-        assertArrayEquals(PAYLOAD, rs.getBytes("payload"));
-        assertEquals(AGGREGATE, rs.getString("aggregate"));
-        assertEquals(AGGREGATE_ID, rs.getString("aggregate_id"));
-        assertEquals(REQUEST_ID, rs.getString("request_id"));
-        assertEquals(CUSTOMER_ID, rs.getString("customer_id"));
-        assertEquals(TYPE, rs.getString("type"));
-        assertEquals(CREATION_TIME, rs.getTimestamp("creation_time").toInstant());
-
-        assertFalse(rs.next());
+            assertFalse(rs.next());
+        }
     }
 
     @Test
@@ -115,28 +121,29 @@ class JdbcTemplateTransactionalOutboxTest {
 
         transactionalOutbox.remove(MESSAGE);
 
-        assertFalse(queryAllMessages().next());
-    }
-
-    private ResultSet queryAllMessages() throws SQLException {
-        return dataSource.getConnection().createStatement().executeQuery("select * from transactional_outbox");
+        try (var stmt = dataSource.getConnection().createStatement();
+             var rs = stmt.executeQuery("select * from transactional_outbox");
+        ) {
+            assertFalse(rs.next());
+        }
     }
 
     private void fillTestData() throws SQLException {
-        var ps = dataSource.getConnection().prepareStatement("""
-                 insert into transactional_outbox(id, aggregate, aggregate_id, type, topic, payload, request_id,
-                    customer_id, creation_time)
-                 values (?, ?, ?, ?, ?, ?, ?, ?, ?)""");
-        ps.setInt(1, ID);
-        ps.setString(2, AGGREGATE);
-        ps.setString(3, AGGREGATE_ID);
-        ps.setString(4, TYPE);
-        ps.setString(5, TOPIC);
-        ps.setObject(6, PAYLOAD);
-        ps.setString(7, REQUEST_ID);
-        ps.setString(8, CUSTOMER_ID);
-        ps.setTimestamp(9, Timestamp.from(CREATION_TIME));
+        try (var ps = dataSource.getConnection().prepareStatement("""
+                insert into transactional_outbox(id, aggregate, aggregate_id, type, topic, payload, request_id,
+                   customer_id, creation_time)
+                values (?, ?, ?, ?, ?, ?, ?, ?, ?)""")) {
+            ps.setInt(1, ID);
+            ps.setString(2, AGGREGATE);
+            ps.setString(3, AGGREGATE_ID);
+            ps.setString(4, TYPE);
+            ps.setString(5, TOPIC);
+            ps.setObject(6, PAYLOAD);
+            ps.setString(7, REQUEST_ID);
+            ps.setString(8, CUSTOMER_ID);
+            ps.setTimestamp(9, Timestamp.from(CREATION_TIME));
 
-        ps.execute();
+            ps.execute();
+        }
     }
 }

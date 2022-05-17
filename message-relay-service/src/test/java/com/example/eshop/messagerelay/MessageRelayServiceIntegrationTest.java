@@ -98,6 +98,7 @@ class MessageRelayServiceIntegrationTest {
                     payload       bytea,
                     key           bytea,
                     request_id    varchar(255),
+                    customer_id   varchar(255),
                     creation_time timestamp not null
                 )"""
         );
