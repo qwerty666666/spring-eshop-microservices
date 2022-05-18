@@ -7,17 +7,10 @@ info:
     Simple REST API for e-shop.
 
     This API allows to:
-    - register new customers
-    - manage profile info
     - retrieve catalog data
     - manage shopping carts
     - purchase products through checkout flow
     - retrieve order history
-
-    ## Customer
-    `Customer` is a registered user.
-
-    Only registered users can interact with cart and orders API.
 
     ## Catalog
     `Products` in catalog are grouped together in `Categories`.
@@ -44,18 +37,13 @@ info:
     `Order` contains information about purchase: delivery info, status,
     prices, etc..
 
-    ---
-
-    ## Authentication
-    This API use `Basic Auth` with credentials of Customer's _email_ and _password_.
-
   license:
     name: MIT
     url: https://spdx.org/licenses/MIT
 
 tags:
-  - name: catalog
-  - name: customer
+  - name: products
+  - name: categories
   - name: cart
   - name: checkout
   - name: order
@@ -70,7 +58,7 @@ paths:
   /products:
     get:
       tags:
-        - catalog
+        - products
       summary: Get product list
       operationId: getProductList
       security: []
@@ -80,11 +68,13 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/paged_product_list'
+        400:
+          $ref: '#/components/responses/validation_error'
 
   /products/{id}:
     get:
       tags:
-        - catalog
+        - products
       summary: Get Product information
       operationId: getProductById
       security: []
@@ -96,10 +86,25 @@ paths:
         404:
           $ref: '#/components/responses/not_found'
 
+  /sku:
+    get:
+      tags:
+        - products
+      summary: Get Sku information by given EAN list
+      operationId: getSku
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ean_filter'
+      responses:
+        200:
+          $ref: '#/components/responses/sku_list'
+        400:
+          $ref: '#/components/responses/validation_error'
+
   /categories:
     get:
       tags:
-        - catalog
+        - categories
       summary: Get Category list
       operationId: getCategoryList
       security: []
@@ -110,7 +115,7 @@ paths:
   /categories/tree:
     get:
       tags:
-        - catalog
+        - categories
       summary: Get Category hierarchy
       operationId: getCategoryTree
       security: []
@@ -121,7 +126,7 @@ paths:
   /categories/{id}:
     get:
       tags:
-        - catalog
+        - categories
       summary: Get Category information
       operationId: getCategoryById
       security: []
@@ -136,7 +141,7 @@ paths:
   /categories/{id}/products:
     get:
       tags:
-        - catalog
+        - categories
       summary: Get Product list for given Category
       operationId: getProductsByCategory
       security: []
@@ -147,45 +152,38 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/paged_product_list'
+        400:
+          $ref: '#/components/responses/validation_error'
         404:
           $ref: '#/components/responses/not_found'
 
-  /customers:
-    get:
-      tags:
-        - customer
-      summary: Get the authenticated customer
-      operationId: getAuthenticatedCustomer
-      responses:
-        200:
-          $ref: '#/components/responses/authenticated_customer'
-        401:
-          $ref: '#/components/responses/requires_authentication'
+  /checkout:
+      post:
+        tags:
+          - checkout
+        summary: Updates info during checkout
+        operationId: checkout
+        requestBody:
+          $ref: '#/components/requestBodies/checkout_order'
+        responses:
+          200:
+            $ref: '#/components/responses/checkout_form'
+          400:
+            $ref: '#/components/responses/validation_error'
+          401:
+            $ref: '#/components/responses/requires_authentication'
 
+  /checkout/confirm:
     post:
       tags:
-        - customer
-      summary: Register new customer
-      operationId: createCustomer
-      security: []
+        - checkout
+      summary: Create new Order from the authorized customer Cart
+      operationId: placeOrder
       requestBody:
-        $ref: '#/components/requestBodies/new_customer'
+        $ref: '#/components/requestBodies/checkout_order'
       responses:
         201:
-          $ref: '#/components/responses/customer'
-        400:
-          $ref: '#/components/responses/validation_error'
-
-    put:
-      tags:
-        - customer
-      summary: Update the authenticated customer
-      operationId: updateAuthenticatedCustomer
-      requestBody:
-        $ref: '#/components/requestBodies/update_customer'
-      responses:
-        200:
-          description: Customer updated
+          $ref: '#/components/responses/created'
         400:
           $ref: '#/components/responses/validation_error'
         401:
@@ -216,6 +214,21 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/cart'
+        400:
+          $ref: '#/components/responses/validation_error'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+        422:
+          $ref: '#/components/responses/unprocessable_entity'
+
+    delete:
+      tags:
+        - cart
+      summary: Clear cart
+      operationId: clearCart
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
         401:
           $ref: '#/components/responses/requires_authentication'
 
@@ -235,38 +248,6 @@ paths:
           $ref: '#/components/responses/requires_authentication'
         404:
           $ref: '#/components/responses/not_found'
-
-  /cart/checkout:
-    post:
-      tags:
-        - checkout
-      summary: Updates info during checkout
-      operationId: checkout
-      requestBody:
-        $ref: '#/components/requestBodies/checkout_order'
-      responses:
-        200:
-          $ref: '#/components/responses/checkout_form'
-        400:
-          $ref: '#/components/responses/validation_error'
-        401:
-          $ref: '#/components/responses/requires_authentication'
-
-  /cart/checkout/confirm:
-    post:
-      tags:
-        - checkout
-      summary: Create new Order from the authorized customer Cart
-      operationId: placeOrder
-      requestBody:
-        $ref: '#/components/requestBodies/checkout_order'
-      responses:
-        201:
-          $ref: '#/components/responses/created'
-        400:
-          $ref: '#/components/responses/validation_error'
-        401:
-          $ref: '#/components/responses/requires_authentication'
 
   /orders:
     get:
@@ -315,10 +296,6 @@ components:
         description:
           type: string
           example: Very cool Sneakers, omg!!
-        sku:
-          type: array
-          items:
-            $ref: '#/components/schemas/sku'
         images:
           type: array
           items:
@@ -327,7 +304,6 @@ components:
         - id
         - name
         - description
-        - sku
         - images
 
     image:
@@ -336,6 +312,8 @@ components:
         url:
           type: string
           example: https://example.com/images/photo.png
+      required:
+        - url
 
     sku:
       description: Stock Keeping Unit
@@ -345,6 +323,8 @@ components:
           $ref: '#/components/schemas/money'
         ean:
           $ref: '#/components/schemas/ean'
+        productId:
+          type: string
         quantity:
           $ref: '#/components/schemas/available-quantity'
         attributes:
@@ -354,8 +334,25 @@ components:
       required:
         - price
         - ean
+        - productId
         - quantity
         - attributes
+
+    product-with-sku:
+      allOf:
+        - $ref: '#/components/schemas/product'
+        - type: object
+          properties:
+            sku:
+              type: array
+              items:
+                $ref: '#/components/schemas/sku'
+      required:
+        - id
+        - name
+        - description
+        - sku
+        - images
 
     available-quantity:
       type: integer
@@ -367,11 +364,16 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          format: int64
         name:
           type: string
         value:
           type: string
+      required:
+        - id
+        - name
+        - value
       example:
         id: 1
         name: size
@@ -399,44 +401,6 @@ components:
         - amount
         - currency
 
-    basic-error:
-      type: object
-      properties:
-        status:
-          type: integer
-          minimum: 100
-          maximum: 600
-          exclusiveMaximum: true
-        detail:
-          type: string
-      required:
-        - status
-        - detail
-
-    validation-error:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/field-error'
-      required:
-        - errors
-
-    field-error:
-      type: object
-      properties:
-        field:
-          type: string
-        message:
-          type: string
-      required:
-        - field
-        - message
-      example:
-        field: email
-        message: Invalid email format
-
     pageable:
       type: object
       properties:
@@ -456,6 +420,11 @@ components:
           type: integer
           minimum: 0
           example: 3
+      required:
+        - page
+        - perPage
+        - totalItems
+        - totalPages
 
     category:
       type: object
@@ -495,67 +464,72 @@ components:
         - id
         - name
 
-    customer-fields:
+    paged-product-list:
       type: object
-      description: Common customer's fields
       properties:
-        firstname:
-          type: string
-          example: Rick
-        lastname:
-          type: string
-          example: Sanchez
-        email:
-          type: string
-          format: email
-          example: rick-sanchez@example.com
-        birthday:
-          type: string
-          format: date
-          example: '2000-07-21'
-          nullable: true
+        pageable:
+          $ref: '#/components/schemas/pageable'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/product-with-sku'
       required:
-        - firstname
-        - lastname
-        - email
+        - pageable
+        - items
 
-    customer:
-      allOf:
-        - type: object
-          properties:
-            id:
-              type: string
-        - $ref: '#/components/schemas/customer-fields'
+    sku-info:
+      type: object
+      description: Sku list. Products field is a map of type productId -> product for all sku
+      properties:
+        products:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/product'
+        sku:
+          type: array
+          items:
+            $ref: '#/components/schemas/sku'
       required:
-        - id
-        - firstname
-        - lastname
-        - email
-      example:
-        id: 1
-        firstname: 'Rick'
-        lastname: 'Sanchez'
-        email: 'rick-sanchez@example.com'
-        birthday: '2000-07-22'
+        - products
+        - sku
 
-    new-customer:
-      allOf:
-        - type: object
-          properties:
-            password:
-              type: string
-        - $ref: '#/components/schemas/customer-fields'
+    basic-error:
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+        detail:
+          type: string
       required:
-        - firstname
-        - lastname
-        - email
-        - password
+        - status
+        - detail
+
+    validation-error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-error'
+      required:
+        - errors
+
+    field-error:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - field
+        - message
       example:
-        firstname: 'Rick'
-        lastname: 'Sanchez'
-        email: 'rick-sanchez@example.com'
-        birthday: '2000-07-21'
-        password: 'fuiwer89234'
+        field: pageSize
+        message: Invalid page size
 
     cart:
       type: object
@@ -563,10 +537,16 @@ components:
         id:
           type: string
           example: 1234
+        totalPrice:
+          $ref: '#/components/schemas/money'
         items:
           type: array
           items:
             $ref: '#/components/schemas/cart-item'
+      required:
+        - id
+        - items
+        - totalPrice
 
     cart-item:
       type: object
@@ -595,16 +575,9 @@ components:
         - price
         - productName
         - quantity
+        - availableQuantity
         - attributes
         - images
-
-    add-cart-item-command:
-      type: object
-      properties:
-        ean:
-          $ref: '#/components/schemas/ean'
-        quantity:
-          $ref: '#/components/schemas/cart-item-quantity'
 
     cart-item-quantity:
       type: integer
@@ -647,6 +620,74 @@ components:
         - availablePayments
         - total
 
+    phone:
+      type: string
+      pattern: '^\+7\d{10}$'
+      example: '+79993334444'
+
+    delivery-service:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      example:
+        id: '123'
+        name: 'Courier'
+
+    payment-service:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      example:
+        id: '543'
+        name: 'Online'
+
+    checkout-total:
+      type: object
+      properties:
+        cartPrice:
+          $ref: '#/components/schemas/money'
+        deliveryPrice:
+          $ref: '#/components/schemas/money'
+        totalPrice:
+          $ref: '#/components/schemas/money'
+      required:
+        - cartPrice
+        - deliveryPrice
+        - totalPrice
+      example:
+        cartPrice:
+          amount: 100
+          currency: 'USD'
+        deliveryPrice:
+          amount: 10
+          currency: 'USD'
+        totalPrice:
+          amount: 110
+          currency: 'USD'
+
+    add-cart-item-command:
+      type: object
+      properties:
+        ean:
+          $ref: '#/components/schemas/ean'
+        quantity:
+          $ref: '#/components/schemas/cart-item-quantity'
+      required:
+        - ean
+        - quantity
+
     delivery-address:
       type: object
       properties:
@@ -664,6 +705,12 @@ components:
           type: string
         flat:
           type: string
+      required:
+        - fullname
+        - phone
+        - country
+        - city
+        - building
       example:
         fullname: 'Rick Sanches'
         phone: '+79993334444'
@@ -672,63 +719,6 @@ components:
         street: 'Street'
         building: '14/2'
         flat: '12'
-
-    phone:
-      type: string
-      pattern: '^\+7\d{10}$'
-      example: '+79993334444'
-
-    delivery-service:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-      example:
-        id: '123'
-        name: 'Courier'
-
-    payment-service:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-      example:
-        id: '543'
-        name: 'Online'
-
-    checkout-total:
-      type: object
-      properties:
-        cartPrice:
-          $ref: '#/components/schemas/money'
-        deliveryPrice:
-          $ref: '#/components/schemas/money'
-        totalPrice:
-          $ref: '#/components/schemas/money'
-      example:
-        cartPrice:
-          amount: 100
-          currency: 'USD'
-        deliveryPrice:
-          amount: 10
-          currency: 'USD'
-        totalPrice:
-          amount: 110
-          currency: 'USD'
-
-    paged-product-list:
-      type: object
-      properties:
-        pageable:
-          $ref: '#/components/schemas/pageable'
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/product'
 
     paged-order-list:
       type: object
@@ -739,16 +729,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/order'
-
-    paged:
-      type: object
-      properties:
-        pageable:
-          $ref: '#/components/schemas/pageable'
-        items:
-          type: array
-          items:
-            type: object
+      required:
+        - pageable
+        - items
 
     order:
       type: object
@@ -770,6 +753,14 @@ components:
           $ref: '#/components/schemas/order-payment'
         total:
           $ref: '#/components/schemas/order-total'
+      required:
+        - id
+        - lines
+        - status
+        - address
+        - delivery
+        - payment
+        - total
 
     order-status:
       type: object
@@ -779,6 +770,9 @@ components:
           enum: [PENDING]
         name:
           type: string
+      required:
+        - code
+        - name
       example:
         code: PENDING
         name: Ожидает
@@ -878,17 +872,11 @@ components:
           currency: 'USD'
 
   requestBodies:
-    new_customer:
+    checkout_order:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/new-customer'
-
-    update_customer:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/customer-fields'
+            $ref: '#/components/schemas/checkout-request'
 
     add_cart_item:
       content:
@@ -896,21 +884,7 @@ components:
           schema:
             $ref: '#/components/schemas/add-cart-item-command'
 
-    checkout_order:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/checkout-request'
-
   responses:
-    created:
-      description: Created
-      headers:
-        Location:
-          schema:
-            type: string
-            example: /api/products/123/
-
     not_found:
       description: Resource not found
       content:
@@ -921,18 +895,26 @@ components:
             default:
               $ref: '#/components/examples/not_found'
 
-    requires_authentication:
-      description: Requires authentication
-
-    forbidden:
-      description: Forbidden
+    validation_error:
+      description: Request parameters validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validation-error'
 
     product:
       description: Product
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/product'
+            $ref: '#/components/schemas/product-with-sku'
+
+    sku_list:
+      description: Sku information
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sku-info'
 
     paged_product_list:
       description: Product List
@@ -972,19 +954,35 @@ components:
             default:
               $ref: '#/components/examples/category_tree'
 
-    customer:
-      description: Customer
-      content:
-        application/json:
+    created:
+      description: Created
+      headers:
+        Location:
           schema:
-            $ref: '#/components/schemas/customer'
+            type: string
+            example: /api/products/123/
 
-    authenticated_customer:
-      description: Authenticated Customer
+    requires_authentication:
+      description: Requires authentication
+
+    checkout_form:
+      description: Checkout info
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/customer'
+            $ref: '#/components/schemas/checkout-form'
+
+    unprocessable_entity:
+      description: Unprocessable Entity indicates that the server understands
+        the content type of the request entity, and the syntax of the request
+        entity is correct, but it was unable to process the contained instructions.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/basic-error'
+          examples:
+            default:
+              $ref: '#/components/examples/unprocessable_entity'
 
     cart:
       description: Cart
@@ -993,12 +991,8 @@ components:
           schema:
             $ref: '#/components/schemas/cart'
 
-    checkout_form:
-      description: Checkout info
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/checkout-form'
+    forbidden:
+      description: Forbidden
 
     paged_order_list:
       description: Order List
@@ -1014,13 +1008,6 @@ components:
           schema:
             $ref: '#/components/schemas/order'
 
-    validation_error:
-      description: Request parameters validation errors
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/validation-error'
-
   parameters:
     product_list_per_page:
       name: per_page
@@ -1028,19 +1015,8 @@ components:
       in: query
       schema:
         type: integer
-        maximum: 50
         minimum: 1
         default: 30
-
-    orders_list_per_page:
-      name: per_page
-      description: Results per page
-      in: query
-      schema:
-        type: integer
-        maximum: 30
-        minimum: 1
-        default: 10
 
     page:
       name: page
@@ -1059,6 +1035,32 @@ components:
         type: string
         example: 1
 
+    ean_filter:
+      name: ean
+      in: query
+      description: Filter products by given EANs
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ean'
+
+    ean:
+      name: ean
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ean'
+
+    orders_list_per_page:
+      name: per_page
+      description: Results per page
+      in: query
+      schema:
+        type: integer
+        maximum: 30
+        minimum: 1
+        default: 10
+
     order_id:
       name: order_id
       in: path
@@ -1067,13 +1069,6 @@ components:
         type: string
         format: uuid
         example: 'bc046a6e-1e2b-468a-9a98-1ce99f087249'
-
-    ean:
-      name: ean
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/ean'
 
   examples:
     categories:
@@ -1107,6 +1102,11 @@ components:
       value:
         status: 404
         detail: Resource not found
+
+    unprocessable_entity:
+      value:
+        status: 422
+        detail: Can't do operation with given parameters
 
   securitySchemes:
     bearerAuth:

@@ -1,6 +1,6 @@
 A simple e-shop pet-project build on top of Java 17, Spring Cloud, microservices and DDD.
 
-# Table of Content
+# Table of Contents
 
 - [Stack](#stack)
 - [Getting Started](#getting-started)
@@ -21,7 +21,6 @@ A simple e-shop pet-project build on top of Java 17, Spring Cloud, microservices
   * [Distributed Tracing (Spring Sleuth + Zipkin)](#distributed-tracing--spring-sleuth---zipkin-)
   * [Logs Aggregation (ELK)](#logs-aggregation--elk-)
   * [Monitoring (Prometheus + Grafana)](#monitoring--prometheus---grafana-)
-
 
 
 # Stack
@@ -158,7 +157,7 @@ Warehouse service is responsible for managing stocks information and sku reserva
 
 Order management service is responsible for storing orders history and order management.
 
-### API Gateway
+### API Gateway (Spring Cloud Gateway)
 
 For gateway we use [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway).
 
@@ -168,11 +167,11 @@ In project gateway is used for:
 * authentication
 * rate limiting
 
-### Service Discovery
+### Service Discovery (Eureka)
 
 [Eureka](https://github.com/Netflix/eureka) is used for Service Discovery.
 
-### Externalized Configuration
+### Externalized Configuration (Spring Cloud Config)
 
 For externalized configuration we use [Spring Cloud Config](https://cloud.spring.io/spring-cloud-config)
 with File System backend storage for simplicity, and [Spring Cloud Bus](https://spring.io/projects/spring-cloud-bus) 
@@ -251,8 +250,8 @@ Shared Kernel contains base classes for them:
 
 # API
 
-The application exposes REST API to the clients. The OpenAPI spec can be found [there](api-gateway/src/main/resources/static/openapi.yaml)
-or can be accessed with Swagger UI http://localhost:8080
+The application exposes REST API to the clients. The OpenAPI spec can be found [there](api-gateway/src/main/resources/static/openapi.yaml),
+or can be accessed with Swagger UI http://localhost:8080, or you can use [postman collection](postman). 
 
 During development specification-first approach is used with code generation (DTOs and controller interfaces) 
 using the [openapi-maven-generator-plugin](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator-maven-plugin).
