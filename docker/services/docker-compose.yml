@@ -77,6 +77,14 @@ services:
     networks:
       - app-tier
 
+  redis:
+    image: redis:7.0.0
+    container_name: eshop-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-tier
+
 networks:
   app-tier:
     name: eshop-app-tier

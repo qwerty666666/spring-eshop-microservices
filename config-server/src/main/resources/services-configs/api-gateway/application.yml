@@ -11,6 +11,10 @@ spring:
             client-secret: D0pgFM1UBhRM20pHoJ1T8dXh0KCBjs9w
             authorization-grant-type: password
 
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
 app:
   oas:
     url: /api
