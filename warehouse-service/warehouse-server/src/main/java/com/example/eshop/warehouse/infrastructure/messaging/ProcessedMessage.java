@@ -1,4 +1,4 @@
-package com.example.eshop.warehouse.messaging;
+package com.example.eshop.warehouse.infrastructure.messaging;
 
 import com.example.eshop.sharedkernel.domain.Assertions;
 import lombok.AccessLevel;
