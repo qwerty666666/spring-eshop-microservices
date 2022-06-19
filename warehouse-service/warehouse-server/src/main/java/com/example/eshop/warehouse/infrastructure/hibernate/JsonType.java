@@ -1,4 +1,4 @@
-package com.example.eshop.warehouse.infrastructure.messaging;
+package com.example.eshop.warehouse.infrastructure.hibernate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;

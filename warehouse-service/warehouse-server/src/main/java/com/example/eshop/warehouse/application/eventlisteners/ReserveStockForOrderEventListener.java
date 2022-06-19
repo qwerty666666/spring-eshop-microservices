@@ -6,8 +6,7 @@ import com.example.eshop.checkout.client.events.orderplacedevent.OrderDto;
 import com.example.eshop.warehouse.application.services.reserve.ReserveStockItemService;
 import com.example.eshop.warehouse.client.reservationresult.ReservationResult;
 import com.example.eshop.warehouse.domain.StockQuantity;
-import com.example.eshop.warehouse.infrastructure.messaging.ProcessedMessage;
-import com.example.eshop.warehouse.infrastructure.messaging.ProcessedMessageRepository;
+import com.example.eshop.warehouse.infrastructure.messaging.DeduplicationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -21,13 +20,16 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.stream.Collectors;
 
+/**
+ * Reserve stock items Event Handler.
+ */
 @Component
 @Lazy(false)
 @RequiredArgsConstructor
 @Slf4j
 public class ReserveStockForOrderEventListener {
     private final ReserveStockItemService reserveStockItemService;
-    private final ProcessedMessageRepository processedMessageRepository;
+    private final DeduplicationService deduplicationService;
 
     @KafkaListener(
             topics = CheckoutApi.RESERVE_STOCKS_TOPIC,
@@ -37,37 +39,14 @@ public class ReserveStockForOrderEventListener {
     @Transactional(
             isolation = Isolation.REPEATABLE_READ // required for ReserveStockItemService
     )
-    public ReservationResult handleEvent(@Payload OrderDto order, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key) {
-        var processedMessage = processedMessageRepository.findByMessageKeyAndMessageClass(key, OrderDto.class);
-
-        if (processedMessage.isPresent()) {
-            return handleDuplicatedEvent(key, processedMessage.get());
-        }
-
-        return handleNewEvent(order, key);
+    public ReservationResult onEvent(@Payload OrderDto order, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key) {
+        return deduplicationService.deduplicate(order, key, this::handleEvent);
     }
 
-    /**
-     * Handle stock reservation event that was processed before
-     */
-    private ReservationResult handleDuplicatedEvent(String key, ProcessedMessage processedMessage) {
-        log.trace("Skip duplicated ReserveStockForOrderEvent: " + key);
-
-        return (ReservationResult) processedMessage.getResult();
-    }
-
-    /**
-     * Handle new stock reservation event
-     */
-    private ReservationResult handleNewEvent(OrderDto order, String key) {
-        log.trace("Process ReserveStockForOrderEvent: " + order);
-
+    private ReservationResult handleEvent(OrderDto order, String key) {
         var reservingItems = order.cart().getItems().stream()
                 .collect(Collectors.toMap(CartItemDto::getEan, item -> StockQuantity.of(item.getQuantity())));
-        var reservationResult = reserveStockItemService.reserve(reservingItems);
 
-        processedMessageRepository.save(new ProcessedMessage(key, OrderDto.class, reservationResult));
-
-        return reservationResult;
+        return reserveStockItemService.reserve(reservingItems);
     }
 }

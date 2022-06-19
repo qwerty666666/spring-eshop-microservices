@@ -1,6 +1,7 @@
 package com.example.eshop.warehouse.infrastructure.messaging;
 
 import com.example.eshop.sharedkernel.domain.Assertions;
+import com.example.eshop.warehouse.infrastructure.hibernate.JsonType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

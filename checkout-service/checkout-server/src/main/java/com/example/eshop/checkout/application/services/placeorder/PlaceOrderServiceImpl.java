@@ -45,12 +45,12 @@ public class PlaceOrderServiceImpl implements PlaceOrderService {
         }
 
         // publish Application events
-        fireOrderPlacedEvents(order);
+        firePlaceOrderEvents(order);
 
         return order;
     }
 
-    private void fireOrderPlacedEvents(Order order) {
+    private void firePlaceOrderEvents(Order order) {
         var orderDto = orderMapper.toOrderDto(order);
 
         reserveStocksInWarehouse(orderDto);

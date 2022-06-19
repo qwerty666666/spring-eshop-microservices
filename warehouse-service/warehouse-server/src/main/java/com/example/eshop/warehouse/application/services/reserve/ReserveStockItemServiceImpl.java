@@ -38,23 +38,17 @@ public class ReserveStockItemServiceImpl implements ReserveStockItemService {
             isolation = Isolation.REPEATABLE_READ // use REPEATABLE_READ to prevent lost updates
     )
     public ReservationResult reserve(Map<Ean, StockQuantity> reserveQuantity) {
-        // find required StockItems
         var eanList = reserveQuantity.keySet();
         var stockItems = getStockItems(eanList);
 
-        // try to reserve
         var reservationResult = reserve(reserveQuantity, stockItems);
-
-        // rollback if there are any failed reservation
         if (!reservationResult.isSuccess()) {
             log.debug("Can't reserve stocks. Reason: " + reservationResult.getErrors());
             return reservationResult;
         }
 
-        // publish StockItem Domain Events
         saveDomainEventsToOutbox(stockItems.values());
 
-        // and return Success
         return ReservationResult.success();
     }
 
@@ -71,25 +65,24 @@ public class ReserveStockItemServiceImpl implements ReserveStockItemService {
      */
     private ReservationResult reserve(Map<Ean, StockQuantity> reserveQuantity, Map<Ean, StockItem> stockItems) {
         var errors = checkIfItemsCanBeReserved(reserveQuantity, stockItems);
-
-        if (errors.isEmpty()) {
-            reserveQuantity.forEach((ean, qty) -> stockItems.get(ean).reserve(qty));
-
-            return ReservationResult.success();
+        if (!errors.isEmpty()) {
+            return ReservationResult.failure(errors);
         }
 
-        return ReservationResult.failure(errors);
+        reserveQuantity.forEach((ean, qty) -> stockItems.get(ean).reserve(qty));
+
+        return ReservationResult.success();
     }
 
     /**
-     * Checks if all items can be reserved and return errors if
-     * any of the items can't.
+     * Checks if all items can be reserved and return errors if any of the
+     * items can't.
      */
     private List<ReservationError> checkIfItemsCanBeReserved(Map<Ean, StockQuantity> reserveQuantity, Map<Ean, StockItem> stockItems) {
         var errors = new ArrayList<ReservationError>();
 
         reserveQuantity.forEach((ean, qty) -> {
-            // check stock item existence
+            // check if stock item exists
             if (!stockItems.containsKey(ean)) {
                 errors.add(new StockItemNotFoundError(ean, "StockItem with EAN " + ean + " does not exist"));
                 return;
