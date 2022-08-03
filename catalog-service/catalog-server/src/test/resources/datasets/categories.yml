@@ -1,0 +1,15 @@
+categories:
+  - id: 1
+    name: "parent"
+
+  - id: 2
+    name: "child 1"
+    parent_id: 1
+
+  - id: 3
+    name: "child 2"
+    parent_id: 1
+    
+  - id: 4
+    name: "grandchild 1"
+    parent_id: 3

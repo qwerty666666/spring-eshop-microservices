@@ -1,0 +1,51 @@
+name: 'Build'
+description: |
+  Builds jar and run tests.
+
+  This action allow to specify which tests should be run (unit / integration)
+  and if code coverage is required.
+
+inputs:
+  code-coverage:
+    description: 'Run tests with code coverage.'
+    required: false
+    default: false
+  tests:
+    description: 'Which tests should be run. Allowed values: integration, unit, skip.'
+    required: false
+    default: skip
+
+runs:
+  using: "composite"
+  steps:
+    # Set up JDK
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+        cache: 'maven'
+
+    # Build project and run tests
+    - name: Maven Verify
+      shell: bash
+      run: |
+        case "${{ inputs.tests }}" in
+          ("skip" | "unit") MAVEN_PHASE="package" ;;
+          ("integration") MAVEN_PHASE="verify" ;;
+          (*) echo "Unknown tests parameter. Allowed values: 'integration', 'unit', 'skip'. Provided '${{ inputs.tests }}'" && exit 1 ;;
+        esac
+
+        MAVEN_OPTS=''
+
+        if [ "${{ inputs.tests }}" = "skip" ]
+        then
+          MAVEN_OPTS="${MAVEN_OPTS} -DskipTests"
+        fi
+
+        if [ "${{ inputs.code-coverage }}" = true -a "${{ inputs.tests }}" != "skip" ]
+        then
+          MAVEN_OPTS="${MAVEN_OPTS} -P code-coverage"
+        fi
+
+        mvn -B clean $MAVEN_PHASE $MAVEN_OPTS

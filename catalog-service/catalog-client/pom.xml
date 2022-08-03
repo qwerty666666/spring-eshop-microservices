@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>catalog-service</artifactId>
+        <groupId>com.example.eshop</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>catalog-client</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <description>Shared DTO for catalog service clients</description>
+
+    <properties>
+        <openapi-generator-maven-plugin.version>5.2.0</openapi-generator-maven-plugin.version>
+        <swagger-annotations.version>1.6.4</swagger-annotations.version>
+        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
+        <jsr305.version>3.0.2</jsr305.version>
+    </properties>
+
+    <dependencies>
+        <!-- Project libs -->
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-kernel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.example.eshop</groupId>
+            <artifactId>shared-rest-models</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webflux</artifactId>
+        </dependency>
+
+        <!-- Swagger -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${jackson-databind-nullable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>${jsr305.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${basedir}/src/main/resources/openapi.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
+                            <modelPackage>com.example.eshop.catalog.client.model</modelPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
+                            <generateModelDocumentation>true</generateModelDocumentation>
+                            <generateModelTests>false</generateModelTests>
+
+                            <generateApis>false</generateApis>
+
+                            <typeMappings>
+                                <mapping>string+gtin13=ean</mapping>
+                            </typeMappings>
+                            <importMappings>
+                                <mapping>money=com.example.eshop.sharedkernel.domain.valueobject.Money</mapping>
+                                <mapping>ean=com.example.eshop.sharedkernel.domain.valueobject.Ean</mapping>
+                                <mapping>validation-error=com.example.eshop.rest.models.ValidationErrorDto</mapping>
+                                <mapping>field-error=com.example.eshop.rest.models.FieldErrorDto</mapping>
+                                <mapping>basic-error=com.example.eshop.rest.models.BasicErrorDto</mapping>
+                            </importMappings>
+
+                            <configOptions>
+                                <dateLibrary>java8</dateLibrary>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <library>webclient</library>
+                                <openApiNullable>false</openApiNullable>
+                                <additionalModelTypeAnnotations>
+                                    @lombok.Builder
+                                    @lombok.NoArgsConstructor
+                                    @lombok.AllArgsConstructor
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

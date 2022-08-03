@@ -1,0 +1,104 @@
+# These properties are shared across all services
+#
+
+server:
+  port: 0
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+
+  # Disable defaults
+
+  jpa:
+    open-in-view: false
+  devtools:
+    livereload:
+      enabled: false
+
+  # Web
+
+  web:
+    locale: en_US
+
+  # Security
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${IDP_URL:http://localhost:28000/auth/realms/test}
+      client:
+        provider:
+          keycloak:
+            issuer-uri: ${IDP_URL:http://localhost:28000/auth/realms/test}
+
+  # Kafka
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+  # Config Server
+
+  cloud:
+    bus:
+      refresh:
+        enabled: true
+      env:
+        enabled: false
+
+  # Sleuth
+
+  sleuth:
+    jdbc:
+      enabled: false
+      p6spy:
+        enabled: false
+    tx:
+      enabled: false
+    sampler:
+      probability: 1
+    baggage:
+      remote-fields:      # list of baggages which should be relayed for remote calls
+        - customer-id
+      correlation-fields: # list of baggages which should be added to MDC
+        - customer-id
+  zipkin:
+    sender:
+      type: kafka
+
+# p6spy
+
+decorator:
+  datasource:
+    enabled: false
+    sleuth:
+      enabled: false  # disable creating new span in sql requests
+
+# Actuator
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+# Eureka
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${SERVICE_DISCOVERY_URL:http://localhost:8761/eureka}
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    preferIpAddress: true
+    metadata-map:
+      "prometheus.scrape": "true"
+      "prometheus.path": "/actuator/prometheus"
+
+# Logstash
+
+logstash:
+  host: ${LOGSTASH_HOST:localhost}
+  port: ${LOGSTASH_PORT:5000}

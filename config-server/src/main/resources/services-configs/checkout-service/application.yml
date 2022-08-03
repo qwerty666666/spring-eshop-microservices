@@ -1,0 +1,12 @@
+rest:
+  schema: http
+  host: localhost
+  port: 8080
+
+app:
+  cart-service:
+    connect-timeout-ms: 3000
+    read-timeout-ms: 3000
+  kafka:
+    order-placed-event-published-timeout-ms: 5000
+    stock-reservation-reply-timeout-ms: 5000

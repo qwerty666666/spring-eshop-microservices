@@ -1,0 +1,42 @@
+name: SonarCloud
+
+on:
+  push:
+    branches: [master, microservices]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      # Build and run tests
+      - uses: ./.github/actions/build
+        with:
+          code-coverage: true
+          tests: integration
+
+      # Cache Sonar packages
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      # Run Sonar
+      - name: Sonar analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          -Dsonar.projectKey=qwerty666666_spring-eshop
+          -Dsonar.organization=qwerty666666
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.coverage.jacoco.xmlReportPaths=./target/site/jacoco/jacoco.xml,./target/site/jacoco-aggregate/jacoco.xml

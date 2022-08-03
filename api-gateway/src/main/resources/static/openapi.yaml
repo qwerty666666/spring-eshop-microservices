@@ -1,0 +1,1115 @@
+openapi: 3.0.3
+
+info:
+  version: 1.0.0
+  title: Spring E-Shop
+  description: |
+    Simple REST API for e-shop.
+
+    This API allows to:
+    - retrieve catalog data
+    - manage shopping carts
+    - purchase products through checkout flow
+    - retrieve order history
+
+    ## Catalog
+    `Products` in catalog are grouped together in `Categories`.
+
+    `Categories` are hierarchical and form a `Category Tree`.
+
+    Every `Product` contains list of `SKU`, where each `SKU` is a distinct
+    product variant with unique attributes like size. Every `SKU` is unique
+    identified by `EAN` code.
+
+    ## Cart
+    Every `Customer` has a Shopping `Cart`.
+
+    `Cart` consist of `items` where each `item` has unique `SKU`.
+    Customer can add, remove and update `SKU` in the Shopping `Cart`.
+
+    _Note_: When `Customer` creates `Order`, the Shopping `Cart` is cleared.
+
+    ## Checkout
+    `Checkout` is a process before place `Order` where customer can choose
+    different options like payment and delivery service.
+
+    ## Order
+    `Order` contains information about purchase: delivery info, status,
+    prices, etc..
+
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+
+tags:
+  - name: products
+  - name: categories
+  - name: cart
+  - name: checkout
+  - name: order
+
+servers:
+  - url: '/api'
+
+security:
+  - bearerAuth: []
+
+paths:
+  /products:
+    get:
+      tags:
+        - products
+      summary: Get product list
+      operationId: getProductList
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/product_list_per_page'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+          $ref: '#/components/responses/paged_product_list'
+        400:
+          $ref: '#/components/responses/validation_error'
+
+  /products/{id}:
+    get:
+      tags:
+        - products
+      summary: Get Product information
+      operationId: getProductById
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          $ref: '#/components/responses/product'
+        404:
+          $ref: '#/components/responses/not_found'
+
+  /sku:
+    get:
+      tags:
+        - products
+      summary: Get Sku information by given EAN list
+      operationId: getSku
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ean_filter'
+      responses:
+        200:
+          $ref: '#/components/responses/sku_list'
+        400:
+          $ref: '#/components/responses/validation_error'
+
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: Get Category list
+      operationId: getCategoryList
+      security: []
+      responses:
+        200:
+          $ref: '#/components/responses/category_list'
+
+  /categories/tree:
+    get:
+      tags:
+        - categories
+      summary: Get Category hierarchy
+      operationId: getCategoryTree
+      security: []
+      responses:
+        200:
+          $ref: '#/components/responses/category_tree'
+
+  /categories/{id}:
+    get:
+      tags:
+        - categories
+      summary: Get Category information
+      operationId: getCategoryById
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          $ref: '#/components/responses/category'
+        404:
+          $ref: '#/components/responses/not_found'
+
+  /categories/{id}/products:
+    get:
+      tags:
+        - categories
+      summary: Get Product list for given Category
+      operationId: getProductsByCategory
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/product_list_per_page'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          $ref: '#/components/responses/paged_product_list'
+        400:
+          $ref: '#/components/responses/validation_error'
+        404:
+          $ref: '#/components/responses/not_found'
+
+  /checkout:
+      post:
+        tags:
+          - checkout
+        summary: Updates info during checkout
+        operationId: checkout
+        requestBody:
+          $ref: '#/components/requestBodies/checkout_order'
+        responses:
+          200:
+            $ref: '#/components/responses/checkout_form'
+          400:
+            $ref: '#/components/responses/validation_error'
+          401:
+            $ref: '#/components/responses/requires_authentication'
+
+  /checkout/confirm:
+    post:
+      tags:
+        - checkout
+      summary: Create new Order from the authorized customer Cart
+      operationId: placeOrder
+      requestBody:
+        $ref: '#/components/requestBodies/checkout_order'
+      responses:
+        201:
+          $ref: '#/components/responses/created'
+        400:
+          $ref: '#/components/responses/validation_error'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+  /cart:
+    get:
+      tags:
+        - cart
+      summary: Get cart for the authenticated customer
+      operationId: getCart
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+  /cart/items:
+    put:
+      tags:
+        - cart
+      summary: Add new item to cart of authorized customer or
+        change quantity of already existed in cart item, if item
+        with the given EAN already exist in the cart
+      operationId: addCartItem
+      requestBody:
+        $ref: '#/components/requestBodies/add_cart_item'
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        400:
+          $ref: '#/components/responses/validation_error'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+        422:
+          $ref: '#/components/responses/unprocessable_entity'
+
+    delete:
+      tags:
+        - cart
+      summary: Clear cart
+      operationId: clearCart
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+  /cart/items/{ean}:
+    delete:
+      tags:
+        - cart
+      summary: Remove cart item with provided EAN from authorized
+        customer's cart
+      operationId: removeCartItem
+      parameters:
+        - $ref: '#/components/parameters/ean'
+      responses:
+        200:
+          $ref: '#/components/responses/cart'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+        404:
+          $ref: '#/components/responses/not_found'
+
+  /orders:
+    get:
+      tags:
+        - order
+      summary: Get authorized customer orders list
+      operationId: getOrderList
+      parameters:
+        - $ref: '#/components/parameters/orders_list_per_page'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+          $ref: '#/components/responses/paged_order_list'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+
+  /orders/{order_id}:
+    get:
+      tags:
+        - order
+      summary: Get order info
+      operationId: getOrder
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+      responses:
+        200:
+          $ref: '#/components/responses/order'
+        401:
+          $ref: '#/components/responses/requires_authentication'
+        403:
+          $ref: '#/components/responses/forbidden'
+        404:
+          $ref: '#/components/responses/not_found'
+
+components:
+  schemas:
+    product:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        name:
+          type: string
+          example: Sneakers
+        description:
+          type: string
+          example: Very cool Sneakers, omg!!
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+      required:
+        - id
+        - name
+        - description
+        - images
+
+    image:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://example.com/images/photo.png
+      required:
+        - url
+
+    sku:
+      description: Stock Keeping Unit
+      type: object
+      properties:
+        price:
+          $ref: '#/components/schemas/money'
+        ean:
+          $ref: '#/components/schemas/ean'
+        productId:
+          type: string
+        quantity:
+          $ref: '#/components/schemas/available-quantity'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
+      required:
+        - price
+        - ean
+        - productId
+        - quantity
+        - attributes
+
+    product-with-sku:
+      allOf:
+        - $ref: '#/components/schemas/product'
+        - type: object
+          properties:
+            sku:
+              type: array
+              items:
+                $ref: '#/components/schemas/sku'
+      required:
+        - id
+        - name
+        - description
+        - sku
+        - images
+
+    available-quantity:
+      type: integer
+      minimum: 0
+      description: Available quantity for purchase
+      example: 12
+
+    attribute:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - id
+        - name
+        - value
+      example:
+        id: 1
+        name: size
+        value: XXL
+
+    ean:
+      type: string
+      format: gtin13
+      description: Global Trade Item Number (GTIN-13)
+      example: '5901234123457'
+
+    money:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: 0
+          example: 100.1
+        currency:
+          type: string
+          description: 3 letter currency code as defined by ISO-4217
+          format: iso-4217
+          example: EUR
+      required:
+        - amount
+        - currency
+
+    pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          example: 2
+        perPage:
+          type: integer
+          minimum: 1
+          example: 30
+        totalItems:
+          type: integer
+          minimum: 0
+          example: 63
+        totalPages:
+          type: integer
+          minimum: 0
+          example: 3
+      required:
+        - page
+        - perPage
+        - totalItems
+        - totalPages
+
+    category:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        name:
+          type: string
+          example: Sneakers
+        parentId:
+          type: string
+          example: 1
+          nullable: true
+      required:
+        - id
+        - name
+      example:
+        id: 1
+        name: 'Clothes'
+        parentId: 2
+
+    category-tree-item:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        name:
+          type: string
+          example: Sneakers
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/category-tree-item'
+      required:
+        - id
+        - name
+
+    paged-product-list:
+      type: object
+      properties:
+        pageable:
+          $ref: '#/components/schemas/pageable'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/product-with-sku'
+      required:
+        - pageable
+        - items
+
+    sku-info:
+      type: object
+      description: Sku list. Products field is a map of type productId -> product for all sku
+      properties:
+        products:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/product'
+        sku:
+          type: array
+          items:
+            $ref: '#/components/schemas/sku'
+      required:
+        - products
+        - sku
+
+    basic-error:
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+        detail:
+          type: string
+      required:
+        - status
+        - detail
+
+    validation-error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-error'
+      required:
+        - errors
+
+    field-error:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - field
+        - message
+      example:
+        field: pageSize
+        message: Invalid page size
+
+    cart:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1234
+        totalPrice:
+          $ref: '#/components/schemas/money'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/cart-item'
+      required:
+        - id
+        - items
+        - totalPrice
+
+    cart-item:
+      type: object
+      properties:
+        ean:
+          $ref: '#/components/schemas/ean'
+        price:
+          $ref: '#/components/schemas/money'
+        productName:
+          type: string
+          example: Sneakers
+        quantity:
+          $ref: '#/components/schemas/cart-item-quantity'
+        availableQuantity:
+          $ref: '#/components/schemas/available-quantity'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+      required:
+        - ean
+        - price
+        - productName
+        - quantity
+        - availableQuantity
+        - attributes
+        - images
+
+    cart-item-quantity:
+      type: integer
+      minimum: 1
+      example: 7
+
+    checkout-request:
+      type: object
+      properties:
+        deliveryServiceId:
+          type: string
+          example: 'courier'
+        paymentServiceId:
+          type: string
+          example: 'online'
+        address:
+          $ref: '#/components/schemas/delivery-address'
+
+    checkout-form:
+      type: object
+      properties:
+        cart:
+          $ref: '#/components/schemas/cart'
+        deliveryAddress:
+          $ref: '#/components/schemas/delivery-address'
+        availableDeliveries:
+          type: array
+          items:
+            $ref: '#/components/schemas/delivery-service'
+        availablePayments:
+          type: array
+          items:
+            $ref: '#/components/schemas/payment-service'
+        total:
+          $ref: '#/components/schemas/checkout-total'
+      required:
+        - cart
+        - deliveryAddress
+        - availableDeliveries
+        - availablePayments
+        - total
+
+    phone:
+      type: string
+      pattern: '^\+7\d{10}$'
+      example: '+79993334444'
+
+    delivery-service:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      example:
+        id: '123'
+        name: 'Courier'
+
+    payment-service:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      example:
+        id: '543'
+        name: 'Online'
+
+    checkout-total:
+      type: object
+      properties:
+        cartPrice:
+          $ref: '#/components/schemas/money'
+        deliveryPrice:
+          $ref: '#/components/schemas/money'
+        totalPrice:
+          $ref: '#/components/schemas/money'
+      required:
+        - cartPrice
+        - deliveryPrice
+        - totalPrice
+      example:
+        cartPrice:
+          amount: 100
+          currency: 'USD'
+        deliveryPrice:
+          amount: 10
+          currency: 'USD'
+        totalPrice:
+          amount: 110
+          currency: 'USD'
+
+    add-cart-item-command:
+      type: object
+      properties:
+        ean:
+          $ref: '#/components/schemas/ean'
+        quantity:
+          $ref: '#/components/schemas/cart-item-quantity'
+      required:
+        - ean
+        - quantity
+
+    delivery-address:
+      type: object
+      properties:
+        fullname:
+          type: string
+        phone:
+          $ref: '#/components/schemas/phone'
+        country:
+          type: string
+        city:
+          type: string
+        street:
+          type: string
+        building:
+          type: string
+        flat:
+          type: string
+      required:
+        - fullname
+        - phone
+        - country
+        - city
+        - building
+      example:
+        fullname: 'Rick Sanches'
+        phone: '+79993334444'
+        country: 'Russia'
+        city: 'Khasavyurt'
+        street: 'Street'
+        building: '14/2'
+        flat: '12'
+
+    paged-order-list:
+      type: object
+      properties:
+        pageable:
+          $ref: '#/components/schemas/pageable'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/order'
+      required:
+        - pageable
+        - items
+
+    order:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/order-line'
+        status:
+          $ref: '#/components/schemas/order-status'
+        address:
+          $ref: '#/components/schemas/delivery-address'
+        delivery:
+          $ref: '#/components/schemas/order-delivery'
+        payment:
+          $ref: '#/components/schemas/order-payment'
+        total:
+          $ref: '#/components/schemas/order-total'
+      required:
+        - id
+        - lines
+        - status
+        - address
+        - delivery
+        - payment
+        - total
+
+    order-status:
+      type: object
+      properties:
+        code:
+          type: string
+          enum: [PENDING]
+        name:
+          type: string
+      required:
+        - code
+        - name
+      example:
+        code: PENDING
+        name: Ожидает
+
+    order-line:
+      type: object
+      properties:
+        id:
+          type: string
+        ean:
+          $ref: '#/components/schemas/ean'
+        quantity:
+          type: integer
+        productName:
+          type: string
+        itemPrice:
+          $ref: '#/components/schemas/money'
+        linePrice:
+          $ref: '#/components/schemas/money'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/attribute'
+      required:
+        - id
+        - ean
+        - quantity
+        - productName
+        - itemPrice
+        - linePrice
+        - images
+        - attributes
+      example:
+        id: 123
+        ean: '5901234123457'
+        quantity: 3
+        productName: 'Sneakers'
+        itemPrice:
+          amount: 100
+          currency: USD
+        linePrice:
+          amount: 300
+          currency: USD
+        images:
+          - url: https://example.com/images/photo.png
+        attributes:
+          - id: 1
+            name: size
+            value: XXL
+
+    order-delivery:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+      example:
+        name: Courier
+
+    order-payment:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+      example:
+        name: Cash
+
+    order-total:
+      type: object
+      properties:
+        cartPrice:
+          $ref: '#/components/schemas/money'
+        deliveryPrice:
+          $ref: '#/components/schemas/money'
+        totalPrice:
+          $ref: '#/components/schemas/money'
+      required:
+        - cartPrice
+        - deliveryPrice
+        - totalPrice
+      example:
+        cartPrice:
+          amount: 100
+          currency: 'USD'
+        deliveryPrice:
+          amount: 10
+          currency: 'USD'
+        totalPrice:
+          amount: 110
+          currency: 'USD'
+
+  requestBodies:
+    checkout_order:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/checkout-request'
+
+    add_cart_item:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/add-cart-item-command'
+
+  responses:
+    not_found:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/basic-error'
+          examples:
+            default:
+              $ref: '#/components/examples/not_found'
+
+    validation_error:
+      description: Request parameters validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validation-error'
+
+    product:
+      description: Product
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/product-with-sku'
+
+    sku_list:
+      description: Sku information
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sku-info'
+
+    paged_product_list:
+      description: Product List
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/paged-product-list'
+
+    category:
+      description: Category Information
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/category'
+
+    category_list:
+      description: Category List
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/category'
+          examples:
+            default:
+              $ref: '#/components/examples/categories'
+
+    category_tree:
+      description: Category hierarchy
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/category-tree-item'
+          examples:
+            default:
+              $ref: '#/components/examples/category_tree'
+
+    created:
+      description: Created
+      headers:
+        Location:
+          schema:
+            type: string
+            example: /api/products/123/
+
+    requires_authentication:
+      description: Requires authentication
+
+    checkout_form:
+      description: Checkout info
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/checkout-form'
+
+    unprocessable_entity:
+      description: Unprocessable Entity indicates that the server understands
+        the content type of the request entity, and the syntax of the request
+        entity is correct, but it was unable to process the contained instructions.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/basic-error'
+          examples:
+            default:
+              $ref: '#/components/examples/unprocessable_entity'
+
+    cart:
+      description: Cart
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cart'
+
+    forbidden:
+      description: Forbidden
+
+    paged_order_list:
+      description: Order List
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/paged-order-list'
+
+    order:
+      description: Order Info
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order'
+
+  parameters:
+    product_list_per_page:
+      name: per_page
+      description: Results per page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 30
+
+    page:
+      name: page
+      description: Page number of the results to fetch
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 1
+
+    ean_filter:
+      name: ean
+      in: query
+      description: Filter products by given EANs
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ean'
+
+    ean:
+      name: ean
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ean'
+
+    orders_list_per_page:
+      name: per_page
+      description: Results per page
+      in: query
+      schema:
+        type: integer
+        maximum: 30
+        minimum: 1
+        default: 10
+
+    order_id:
+      name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 'bc046a6e-1e2b-468a-9a98-1ce99f087249'
+
+  examples:
+    categories:
+      value:
+        - id: 1
+          name: 'Clothes'
+          parentId: null
+        - id: 2
+          name: 'Sneakers'
+          parentId: 1
+
+    category_tree:
+      value:
+        - id: 1
+          name: 'Clothes'
+          children:
+            - id: 2
+              name: 'Sneakers'
+              children:
+                - id: 3
+                  name: 'Running'
+                  children: []
+            - id: 4
+              name: 'Shorts'
+              children: []
+        - id: 5
+          name: 'Accessories'
+          children: []
+
+    not_found:
+      value:
+        status: 404
+        detail: Resource not found
+
+    unprocessable_entity:
+      value:
+        status: 422
+        detail: Can't do operation with given parameters
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -25,8 +25,11 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
+!.github/actions/build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+
+**/application-*dev.yml

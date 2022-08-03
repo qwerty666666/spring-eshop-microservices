@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: message-relay-service
+
+---
+
+# Load configs from Config Server for non-test environments
+
+spring:
+  config:
+    activate:
+      on-profile:
+        - "!test"
+
+    import: configserver:http://localhost:8888
+
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 5

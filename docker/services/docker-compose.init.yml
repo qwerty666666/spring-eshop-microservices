@@ -1,0 +1,19 @@
+#
+# This file adds initialization data for containers.
+# It should be used once during the initial startup, and must override
+# docker-compose.yml (e.g. docker-compose -f docker-compose.yml
+# -f docker-compose.init.yml ...)
+#
+
+version: "3.9"
+
+services:
+  postgres:
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d
+
+  keycloak:
+    environment:
+      KEYCLOAK_IMPORT: /tmp/init/test_realm.json
+    volumes:
+      - ./keycloak/init:/tmp/init

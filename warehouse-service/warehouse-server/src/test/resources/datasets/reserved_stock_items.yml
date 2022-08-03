@@ -1,0 +1,8 @@
+stock_items:
+  - id: 1
+    ean: "0000000000001"
+    quantity: 5
+
+  - id: 2
+    ean: "0000000000002"
+    quantity: 10

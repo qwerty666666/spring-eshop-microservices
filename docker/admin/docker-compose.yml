@@ -1,0 +1,34 @@
+#
+# This file contains administration services.
+#
+
+version: "3.9"
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4:6.1
+    container_name: eshop-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    networks:
+      - app-tier
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: eshop-kafka-ui
+    ports:
+      - "8085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    name: eshop-app-tier
+    driver: bridge

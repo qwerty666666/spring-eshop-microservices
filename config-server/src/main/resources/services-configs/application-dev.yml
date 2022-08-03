@@ -1,0 +1,11 @@
+# These properties are shared across all services
+
+spring:
+  jackson:
+    serialization:
+      indent_output: true
+
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 20

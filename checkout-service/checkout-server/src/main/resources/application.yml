@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: checkout-service
+
+---
+
+# Load configs from Config Server for non-test environments
+
+# Note: If we use "spring.config.import" in "application.yml" then
+# "spring.config.import" environment contributor will be added to
+# children of "application.yml" environment contributor. And it means
+# that profile-aware environment resolver
+# (ConfigDataLocationResolver#resolveProfileSpecific) will be called
+# first for "spring.config.import" and only after that for
+# "application-{profile}.yml", i.e. config server data will be loaded
+# before "application-test.yml" is loaded. And therefore we can't
+# disable config server for tests in profile specific yml file.
+# To overcome that issue we can use "spring.config.activate.on-profile"
+# and enable config server only for specific environments instead of
+# disabling it for test env.
+
+spring:
+  config:
+    activate:
+      on-profile:
+        - "!test"
+
+    import: configserver:http://localhost:8888
+
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 5

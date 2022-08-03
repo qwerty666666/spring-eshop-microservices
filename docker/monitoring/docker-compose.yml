@@ -1,0 +1,50 @@
+#
+# This file contains services for monitoring
+#
+
+version: "3.9"
+
+services:
+  zipkin:
+    image: ghcr.io/openzipkin/zipkin:2.23.16
+    container_name: eshop-zipkin
+    environment:
+      - STORAGE_TYPE=mem
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+    ports:
+      - "9411:9411"
+    networks:
+      - app-tier
+
+  prometheus:
+    image: bitnami/prometheus:2.35.0
+    container_name: eshop-prometheus
+    volumes:
+      - eshop-prometheus:/opt/bitnami/prometheus/data
+      - ${PROMETHEUS_CONFIG_PATH:-./prometheus/prometheus.yml}:/opt/bitnami/prometheus/conf/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - app-tier
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana:8.5.2
+    container_name: eshop-grafana
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - app-tier
+
+volumes:
+  eshop-prometheus:
+
+networks:
+  app-tier:
+    name: eshop-app-tier
+    driver: bridge

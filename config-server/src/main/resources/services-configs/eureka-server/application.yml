@@ -1,0 +1,13 @@
+server:
+  port: 8761
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+
+  server:
+    enable-self-preservation: false #default true
+    eviction-interval-timer-in-ms: 5000 #default 60000
+    response-cache-update-interval-ms: 5000 #default 30000
+    use-read-only-response-cache: false

@@ -1,0 +1,414 @@
+{
+	"info": {
+		"_postman_id": "3186670f-1aea-475c-a82a-4c268395099c",
+		"name": "E-shop",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Catalog",
+			"item": [
+				{
+					"name": "Product List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/products/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product List (page 2, perPage 20)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/products/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product \"Nike Air Force 1 '07\"",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "Products from \"Clothes\" Category (page 2)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/categories/5/products/?page=2",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"categories",
+								"5",
+								"products",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/categories/tree/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"categories",
+								"tree",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category Tree",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/categories/tree/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"categories",
+								"tree",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category \"Clothes\"",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Cart",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base-url}}/cart",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add CartItem - 4117361491824 (qty 2)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ean\": \"4117361491824\",\r\n    \"quantity\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/cart/items/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"cart",
+								"items",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add CartItem - 1015011507981 (qty 2)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ean\": \"1015011507981\",\r\n    \"quantity\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/cart/items/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"cart",
+								"items",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove 1015011507981",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/cart/items/1015011507981/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"cart",
+								"items",
+								"1015011507981",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clear cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/cart/items/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"cart",
+								"items",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Checkout",
+			"item": [
+				{
+					"name": "Checkout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"deliveryServiceId\": \"standard\",\r\n    \"paymentServiceId\": \"cash\",\r\n    \"address\": {\r\n        \"fullname\": \"Rick Sanches\",\r\n        \"phone\": \"+79993334444\",\r\n        \"country\": \"Russia\",\r\n        \"city\": \"Khasavyurt\",\r\n        \"street\": \"Street\",\r\n        \"building\": \"14/2\",\r\n        \"flat\": \"12\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/checkout",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checkout Confirm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"deliveryServiceId\": \"standard\",\r\n    \"paymentServiceId\": \"cash\",\r\n    \"address\": {\r\n        \"fullname\": \"Rick Sanches\",\r\n        \"phone\": \"+79993334444\",\r\n        \"country\": \"Russia\",\r\n        \"city\": \"Khasavyurt\",\r\n        \"street\": \"Street\",\r\n        \"building\": \"14/2\",\r\n        \"flat\": \"12\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/checkout/confirm",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"checkout",
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Get Order List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/orders/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"orders",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ops",
+			"item": [
+				{
+					"name": "Bus Refresh",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/actuator/busrefresh/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"actuator",
+								"busrefresh",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bus Refresh Change",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/actuator/busrefresh/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"actuator",
+								"busrefresh",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

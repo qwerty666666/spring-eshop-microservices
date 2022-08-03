@@ -1,0 +1,33 @@
+spring:
+  # Config Server
+  cloud:
+    config:
+      enabled: false
+    bus:
+      enabled: false
+
+  # Sleuth
+  sleuth:
+    sampler:
+      probability: 0
+    jdbc:
+      p6spy:
+        enabled: false
+
+decorator:
+  datasource:
+    sleuth:
+      enabled: false
+
+# Eureka
+
+eureka:
+  client:
+    enabled: false
+
+# App
+
+app:
+  catalog-service:
+    connect-timeout-ms: 3000
+    read-timeout-ms: 3000

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/catalog
+    username: ${POSTGRES_USER:admin}
+    password: ${POSTGRES_PASSWORD:admin}
+
+app:
+  kafka:
+    consumer-group: catalog
+
+  images-base-path: /images
+  api-base-path: /api
+  public-host-name: http://localhost:8080
+
+---
+
+spring.config.activate.on-profile: docker
+
+spring.datasource.url: jdbc:postgresql://postgres:5432/catalog

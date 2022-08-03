@@ -1,0 +1,39 @@
+spring:
+  # Config Server
+  cloud:
+    config:
+      enabled: false
+    bus:
+      enabled: false
+
+  # Sleuth
+  sleuth:
+    sampler:
+      probability: 0
+    jdbc:
+      p6spy:
+        enabled: false
+
+decorator:
+  datasource:
+    sleuth:
+      enabled: false
+
+# Eureka
+
+eureka:
+  client:
+    enabled: false
+
+# App
+
+kafka:
+  disabled: true
+
+app:
+  kafka:
+    consumer-group: catalog
+
+  public-host-name: http://localhost
+  api-base-path: /api
+  images-base-path: /tmp/test

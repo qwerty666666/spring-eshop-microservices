@@ -1,0 +1,10 @@
+# Note: this config overwrites config from pg14-test lib and add support
+# for pg enums
+
+# We use global properties instead of configuring through @DbUnit on
+# @DbTest meta-annotation, because @DbUnit is not discovered from @Nested tests.
+
+properties:
+  # required for PostgreSQL
+  caseSensitiveTableNames: true
+  datatypeFactory: !!com.example.eshop.order.config.PostgresDataTypeFactory {}

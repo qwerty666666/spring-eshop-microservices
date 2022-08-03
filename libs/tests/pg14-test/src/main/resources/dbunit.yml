@@ -1,0 +1,6 @@
+# We use global properties instead of configuring through @DbUnit on
+# @DbTest meta-annotation, because @DbUnit is not discovered from @Nested tests.
+
+properties:
+  # required for PostgreSQL
+  caseSensitiveTableNames: true

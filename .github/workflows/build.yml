@@ -1,0 +1,16 @@
+name: Build
+
+on:
+  push:
+    branches-ignore: [microservices, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout
+      - uses: actions/checkout@v2
+
+      # Builds
+      - uses: ./.github/actions/build
